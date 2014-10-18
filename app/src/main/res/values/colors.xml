@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="white">#ffffff</color>
+    <color name="red">#CC0000</color>
+    <color name="dark">#E6E6E6</color>
+    <color name="user_card_view_border">#ffc9c9c9</color>
+    <color name="list_divider">#272727</color>
+    <color name="nav_drawer_group_grey">#ff3c3c32</color>
+    <color name="date_color">#acacac</color>
+    <color name="black">#000000</color>
+    <color name="transparent">#77ffffff</color>
+    <color name="header_grey">#6d6e71</color>
+
+    <color name="color_news">#eb2227</color>
+    <color name="color_bola">#a6ce39</color>
+    <color name="color_life">#e32e6a</color>
+    <color name="color_forum">#0087c9</color>
+    <color name="color_jualbeli">#f26522</color>
+    <color name="color_auto">#231f20</color>
+    <color name="color_log">#a9328c</color>
+</resources>
