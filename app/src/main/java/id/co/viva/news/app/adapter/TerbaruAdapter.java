@@ -66,7 +66,7 @@ public class TerbaruAdapter extends BaseAdapter {
             holder.subkanal_item_news_layout = (RelativeLayout) view.findViewById(R.id.subkanal_item_news_layout);
 
             News news = newsArrayList.get(position);
-            Picasso.with(context).load(news.getImage_url()).resize(89, 89).centerCrop().into(holder.icon_item_news);
+            Picasso.with(context).load(news.getImage_url()).resize(90, 89).centerCrop().into(holder.icon_item_news);
             holder.title_item_news.setText(news.getTitle());
             holder.date_item_news.setText(news.getDate_publish());
             holder.subkanal_item_news.setText(news.getKanal());
