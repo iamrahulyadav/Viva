@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,13 +20,20 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.nhaarman.listviewanimations.appearance.AnimationAdapter;
+import com.nhaarman.listviewanimations.appearance.simple.ScaleInAnimationAdapter;
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.VivaApp;
+import id.co.viva.news.app.adapter.RelatedAdapter;
+import id.co.viva.news.app.model.RelatedArticle;
 
 /**
  * Created by root on 07/10/14.
@@ -34,10 +42,15 @@ public class DetailHeadlineIndexFragment extends Fragment {
 
     private String id;
     private RelativeLayout layoutSubkanal;
+    private RelativeLayout headerRelated;
     private boolean isInternetPresent = false;
     private String cachedResponse;
     private RelativeLayout loading_layout;
     private TextView tvNoResult;
+    private ArrayList<RelatedArticle> relatedArticleArrayList;
+    private RelatedAdapter adapter;
+    private AnimationAdapter mAnimAdapter;
+    private ListView listView;
 
     private String title;
     private String kanal;
@@ -66,10 +79,14 @@ public class DetailHeadlineIndexFragment extends Fragment {
         View view = inflater.inflate(R.layout.item_detail_headline, container, false);
 
         loading_layout = (RelativeLayout) view.findViewById(R.id.loading_progress_layout);
+        headerRelated = (RelativeLayout) view.findViewById(R.id.header_related_article_headline);
+        headerRelated.setVisibility(View.GONE);
         tvNoResult = (TextView) view.findViewById(R.id.text_no_result_detail_headline);
         tvNoResult.setVisibility(View.GONE);
 
         layoutSubkanal = (RelativeLayout) view.findViewById(R.id.layout_subkanal_detail_headline);
+        listView = (ListView) view.findViewById(R.id.list_related_article_headline);
+        relatedArticleArrayList = new ArrayList<RelatedArticle>();
         final TextView tvTitleHeadlineDetail = (TextView) view.findViewById(R.id.title_detail_headline);
         final TextView tvSubkanalTitleHeadlineDetail = (TextView) view.findViewById(R.id.title_subkanal_detail_headline);
         final TextView tvDateHeadlineDetail = (TextView) view.findViewById(R.id.date_detail_headline);
@@ -92,6 +109,22 @@ public class DetailHeadlineIndexFragment extends Fragment {
                 content = detail.getString(Constant.content);
                 reporter_name = detail.getString(Constant.reporter_name);
 
+                JSONArray related_article = response.getJSONArray(Constant.related_article);
+                for(int i=0; i<related_article.length(); i++) {
+                    JSONObject objRelated = related_article.getJSONObject(i);
+                    String id = objRelated.getString(Constant.id);
+                    String article_id = objRelated.getString(Constant.article_id);
+                    String related_article_id = objRelated.getString(Constant.related_article_id);
+                    String related_title = objRelated.getString(Constant.related_title);
+                    String related_channel_level_1_id = objRelated.getString(Constant.related_channel_level_1_id);
+                    String channel_id = objRelated.getString(Constant.channel_id);
+                    String related_date_publish = objRelated.getString(Constant.related_date_publish);
+                    String image = objRelated.getString(Constant.image);
+                    relatedArticleArrayList.add(new RelatedArticle(id, article_id, related_article_id, related_title,
+                            related_channel_level_1_id, channel_id, related_date_publish, image));
+                    Log.i(Constant.TAG, "RELATED ARTICLE HEADLINE CACHED : " + relatedArticleArrayList.get(i).getRelated_title());
+                }
+
                 tvTitleHeadlineDetail.setText(title);
                 tvSubkanalTitleHeadlineDetail.setText(kanal);
                 tvDateHeadlineDetail.setText(date_publish);
@@ -99,6 +132,16 @@ public class DetailHeadlineIndexFragment extends Fragment {
                 tvContentHeadlineDetail.setMovementMethod(LinkMovementMethod.getInstance());
                 tvReporterHeadlineDetail.setText(reporter_name);
                 Picasso.with(VivaApp.getInstance()).load(image_url).into(ivThumbDetailHeadline);
+
+                if(relatedArticleArrayList.size() > 0 || !relatedArticleArrayList.isEmpty()) {
+                    adapter = new RelatedAdapter(getActivity(), relatedArticleArrayList);
+                    mAnimAdapter = new ScaleInAnimationAdapter(adapter);
+                    mAnimAdapter.setAbsListView(listView);
+                    listView.setAdapter(mAnimAdapter);
+                    Constant.setListViewHeightBasedOnChildren(listView);
+                    adapter.notifyDataSetChanged();
+                    headerRelated.setVisibility(View.VISIBLE);
+                }
 
                 if(kanal.equals("politik")) {
                     layoutSubkanal.setBackgroundResource(R.color.color_news);
@@ -151,6 +194,22 @@ public class DetailHeadlineIndexFragment extends Fragment {
                                     content = detail.getString(Constant.content);
                                     reporter_name = detail.getString(Constant.reporter_name);
 
+                                    JSONArray related_article = response.getJSONArray(Constant.related_article);
+                                    for(int i=0; i<related_article.length(); i++) {
+                                        JSONObject objRelated = related_article.getJSONObject(i);
+                                        String id = objRelated.getString(Constant.id);
+                                        String article_id = objRelated.getString(Constant.article_id);
+                                        String related_article_id = objRelated.getString(Constant.related_article_id);
+                                        String related_title = objRelated.getString(Constant.related_title);
+                                        String related_channel_level_1_id = objRelated.getString(Constant.related_channel_level_1_id);
+                                        String channel_id = objRelated.getString(Constant.channel_id);
+                                        String related_date_publish = objRelated.getString(Constant.related_date_publish);
+                                        String image = objRelated.getString(Constant.image);
+                                        relatedArticleArrayList.add(new RelatedArticle(id, article_id, related_article_id, related_title,
+                                                related_channel_level_1_id, channel_id, related_date_publish, image));
+                                        Log.i(Constant.TAG, "RELATED ARTICLE HEADLNE : " + relatedArticleArrayList.get(i).getRelated_title());
+                                    }
+
                                     tvTitleHeadlineDetail.setText(title);
                                     tvSubkanalTitleHeadlineDetail.setText(kanal);
                                     tvDateHeadlineDetail.setText(date_publish);
@@ -158,6 +217,16 @@ public class DetailHeadlineIndexFragment extends Fragment {
                                     tvContentHeadlineDetail.setMovementMethod(LinkMovementMethod.getInstance());
                                     tvReporterHeadlineDetail.setText(reporter_name);
                                     Picasso.with(VivaApp.getInstance()).load(image_url).into(ivThumbDetailHeadline);
+
+                                    if(relatedArticleArrayList.size() > 0 || !relatedArticleArrayList.isEmpty()) {
+                                        adapter = new RelatedAdapter(getActivity(), relatedArticleArrayList);
+                                        mAnimAdapter = new ScaleInAnimationAdapter(adapter);
+                                        mAnimAdapter.setAbsListView(listView);
+                                        listView.setAdapter(mAnimAdapter);
+                                        Constant.setListViewHeightBasedOnChildren(listView);
+                                        adapter.notifyDataSetChanged();
+                                        headerRelated.setVisibility(View.VISIBLE);
+                                    }
 
                                     if(kanal.equals("politik")) {
                                         layoutSubkanal.setBackgroundResource(R.color.color_news);

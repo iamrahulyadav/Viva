@@ -1,34 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/card_background_second">
-    <ImageView
+    android:layout_height="match_parent">
+    <id.co.viva.news.app.component.SquareImageView
         android:id="@+id/item_thumb_news"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"/>
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="5dp"
-        android:background="@color/white">
+        android:background="@color/transparent">
         <id.co.viva.news.app.component.BounvenoTextView
-            android:id="@+id/item_title_news"
+            android:id="@+id/item_title_kanal_news"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:maxLines="3"
-            android:text="@string/abc_action_mode_done"
-            android:textSize="16sp"
+            android:layout_centerInParent="true"
+            android:textSize="18sp"
             android:textStyle="bold"
-            android:textColor="@color/black"/>
-        <id.co.viva.news.app.component.BounvenoTextView
-            android:id="@+id/item_date_news"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/item_title_news"
-            android:textSize="12sp"
-            android:text="@string/abc_activitychooserview_choose_application"
-            android:textColor="@color/nav_drawer_group_grey"/>
+            android:textColor="@color/white"/>
     </RelativeLayout>
-</LinearLayout>
+</RelativeLayout>

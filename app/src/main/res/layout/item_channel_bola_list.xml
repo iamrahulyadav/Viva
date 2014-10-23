@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent">
+    <LinearLayout
+        android:id="@+id/item_index_bola_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@drawable/card_background_second">
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_weight="2"
+            android:layout_gravity="center"
+            android:background="@drawable/default_image"
+            android:gravity="center"
+            android:layout_height="80dp">
+            <ImageView
+                android:id="@+id/image_item_channel_bola"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_margin="3dp"
+                android:scaleType="fitXY"/>
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_weight="5"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="3dp"
+            android:layout_height="match_parent">
+            <id.co.viva.news.app.component.BounvenoTextView
+                android:id="@+id/title_item_channel_bola"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="2dp"
+                android:maxLines="2"
+                android:paddingTop="6dip"
+                android:textColor="@color/nav_drawer_group_grey"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+            <id.co.viva.news.app.component.BounvenoTextView
+                android:id="@+id/date_item_channel_bola"
+                android:layout_alignParentBottom="true"
+                android:layout_width="fill_parent"
+                android:text="@android:string/unknownName"
+                android:layout_height="wrap_content"
+                android:paddingBottom="2dp"
+                android:textColor="@color/date_color" />
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"/>
+    </LinearLayout>
+</RelativeLayout>

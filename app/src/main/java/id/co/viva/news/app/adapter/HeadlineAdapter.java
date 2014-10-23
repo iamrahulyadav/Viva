@@ -66,7 +66,7 @@ public class HeadlineAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int position) {
-        return headlineArrayList.get(position).getKanal();
+        return headlineArrayList.get(position).getKanal().toUpperCase();
     }
 
     @Override

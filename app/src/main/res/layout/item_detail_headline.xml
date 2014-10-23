@@ -1,103 +1,128 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.nirhart.parallaxscroll.views.ParallaxScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@drawable/card_background_second">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:parallax_factor="1.9">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="5dp"
         android:padding="5dp">
-        <id.co.viva.news.app.component.BounvenoTextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:text="@string/label_no_results"
-            android:layout_centerInParent="true"
-            android:textColor="@color/header_grey"
-            android:id="@+id/text_no_result_detail_headline"/>
-        <RelativeLayout
-            android:id="@+id/loading_progress_layout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:padding="10dp">
-            <id.co.viva.news.app.component.LoadingView
-                android:id="@+id/loading_progress"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
-                android:src="@drawable/ic_action_refresh_light"/>
-        </RelativeLayout>
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/title_and_kanal_detail_layout"
-            android:orientation="horizontal">
-            <id.co.viva.news.app.component.BounvenoTextView
-                android:id="@+id/title_detail_headline"
-                android:layout_width="0dp"
-                android:layout_weight="5"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="3dp"
-                android:textColor="@color/black"
-                android:textStyle="bold"
-                android:textSize="22sp"/>
-            <RelativeLayout
-                android:id="@+id/layout_subkanal_detail_headline"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="3dp"
-                android:layout_marginTop="3dp"
-                android:layout_weight="1">
-                <id.co.viva.news.app.component.BounvenoTextView
-                    android:id="@+id/title_subkanal_detail_headline"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:textColor="@color/white"
-                    android:textStyle="bold"
-                    android:textSize="14sp"/>
-            </RelativeLayout>
-        </LinearLayout>
-        <id.co.viva.news.app.component.BounvenoTextView
-            android:id="@+id/date_detail_headline"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/date_color"
-            android:layout_below="@id/title_and_kanal_detail_layout"
-            android:layout_marginLeft="3dp"
-            android:textSize="16sp"/>
-        <id.co.viva.news.app.component.BounvenoTextView
-            android:id="@+id/reporter_detail_headline"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/date_detail_headline"
-            android:layout_marginLeft="3dp"
-            android:layout_marginBottom="3dp"
-            android:textColor="@color/red"
-            android:textSize="16sp"/>
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/thumb_detail_headline_layout"
-            android:layout_below="@+id/reporter_detail_headline"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp">
+            android:id="@+id/thumb_detail_headline_layout">
             <ImageView
                 android:id="@+id/thumb_detail_headline"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="220dp"
+                android:src="@drawable/logo_viva_coid_wide"
                 android:scaleType="fitXY"/>
         </RelativeLayout>
-        <id.co.viva.news.app.component.BounvenoTextView
-            android:id="@+id/content_detail_headline"
-            android:layout_below="@id/thumb_detail_headline_layout"
-            android:layout_width="wrap_content"
-            android:textSize="16sp"
-            android:textColor="@color/black"
-            android:layout_height="wrap_content" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="5dp"
+            android:paddingBottom="5dp"
+            android:background="@color/white"
+            android:layout_below="@id/thumb_detail_headline_layout">
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/title_and_kanal_detail_layout"
+                android:orientation="horizontal">
+                <id.co.viva.news.app.component.BounvenoTextView
+                    android:id="@+id/title_detail_headline"
+                    android:layout_width="0dp"
+                    android:layout_weight="5"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
+                    android:textSize="22sp"/>
+                <RelativeLayout
+                    android:id="@+id/layout_subkanal_detail_headline"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:layout_weight="1">
+                    <id.co.viva.news.app.component.BounvenoTextView
+                        android:id="@+id/title_subkanal_detail_headline"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:textColor="@color/white"
+                        android:textStyle="bold"
+                        android:textSize="14sp"/>
+                </RelativeLayout>
+            </LinearLayout>
+            <id.co.viva.news.app.component.BounvenoTextView
+                android:id="@+id/date_detail_headline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/date_color"
+                android:layout_below="@id/title_and_kanal_detail_layout"
+                android:textSize="16sp"/>
+            <id.co.viva.news.app.component.BounvenoTextView
+                android:id="@+id/reporter_detail_headline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/date_detail_headline"
+                android:layout_marginBottom="3dp"
+                android:textColor="@color/red"
+                android:textSize="16sp"/>
+            <id.co.viva.news.app.component.BounvenoTextView
+                android:id="@+id/content_detail_headline"
+                android:layout_below="@id/reporter_detail_headline"
+                android:layout_width="wrap_content"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:layout_height="wrap_content" />
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:id="@+id/header_related_article_headline"
+                android:layout_below="@id/content_detail_headline"
+                android:background="@color/header_grey">
+                <id.co.viva.news.app.component.BounvenoTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:layout_margin="5dp"
+                    android:text="@string/label_related_article"/>
+            </RelativeLayout>
+            <ListView
+                android:layout_width="match_parent"
+                android:layout_height="fill_parent"
+                android:layout_below="@id/header_related_article_headline"
+                android:id="@+id/list_related_article_headline"/>
+            <id.co.viva.news.app.component.BounvenoTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:layout_centerHorizontal="true"
+                android:text="@string/label_no_results"
+                android:layout_below="@id/reporter_detail_headline"
+                android:textColor="@color/header_grey"
+                android:id="@+id/text_no_result_detail_headline"/>
+            <RelativeLayout
+                android:id="@+id/loading_progress_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/reporter_detail_headline"
+                android:padding="10dp">
+                <id.co.viva.news.app.component.LoadingView
+                    android:id="@+id/loading_progress"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:src="@drawable/ic_action_refresh_light"/>
+            </RelativeLayout>
+        </RelativeLayout>
     </RelativeLayout>
-</ScrollView>
+</com.nirhart.parallaxscroll.views.ParallaxScrollView>

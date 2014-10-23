@@ -6,14 +6,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
+import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.R;
+import id.co.viva.news.app.VivaApp;
 import id.co.viva.news.app.model.News;
 
 /**
@@ -48,8 +52,7 @@ public class TerbaruAdapter extends BaseAdapter {
         public ImageView icon_item_news;
         public TextView title_item_news;
         public TextView date_item_news;
-        public TextView subkanal_item_news;
-        private RelativeLayout subkanal_item_news_layout;
+        private ImageView subkanal_item_news_layout;
     }
 
     @Override
@@ -62,41 +65,46 @@ public class TerbaruAdapter extends BaseAdapter {
             holder.icon_item_news = (ImageView) view.findViewById(R.id.image_item_news);
             holder.title_item_news = (TextView) view.findViewById(R.id.title_item_latest);
             holder.date_item_news = (TextView) view.findViewById(R.id.date_item_news);
-            holder.subkanal_item_news = (TextView) view.findViewById(R.id.subkanal_item_news);
-            holder.subkanal_item_news_layout = (RelativeLayout) view.findViewById(R.id.subkanal_item_news_layout);
+            holder.subkanal_item_news_layout = (ImageView) view.findViewById(R.id.subkanal_item_news_layout);
 
             News news = newsArrayList.get(position);
-            Picasso.with(context).load(news.getImage_url()).resize(90, 89).centerCrop().into(holder.icon_item_news);
+            Picasso.with(context).load(news.getImage_url()).resize(90, 90).centerCrop().into(holder.icon_item_news);
             holder.title_item_news.setText(news.getTitle());
-            holder.date_item_news.setText(news.getDate_publish());
-            holder.subkanal_item_news.setText(news.getKanal());
+
+            try {
+                DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                Date date = (Date)formatter.parse(news.getDate_publish());
+                holder.date_item_news.setText(Constant.getTimeAgo(date.getTime(), context));
+            } catch (Exception e) {
+                e.getMessage();
+            }
 
             if(news.getKanal().equalsIgnoreCase("bisnis")) {
-                holder.subkanal_item_news_layout.setBackgroundResource(R.color.color_news);
+                holder.subkanal_item_news_layout.setImageResource(R.drawable.pita_news);
             } else if(news.getKanal().equalsIgnoreCase("nasional")) {
-                holder.subkanal_item_news_layout.setBackgroundResource(R.color.color_news);
+                holder.subkanal_item_news_layout.setImageResource(R.drawable.pita_news);
             } else if(news.getKanal().equalsIgnoreCase("metro")) {
-                holder.subkanal_item_news_layout.setBackgroundResource(R.color.color_jualbeli);
+                holder.subkanal_item_news_layout.setImageResource(R.drawable.pita_life);
             } else if(news.getKanal().equalsIgnoreCase("politik")) {
-                holder.subkanal_item_news_layout.setBackgroundResource(R.color.color_jualbeli);
+                holder.subkanal_item_news_layout.setImageResource(R.drawable.pita_news);
             } else if(news.getKanal().equalsIgnoreCase("dunia")) {
-                holder.subkanal_item_news_layout.setBackgroundResource(R.color.color_log);
+                holder.subkanal_item_news_layout.setImageResource(R.drawable.pita_life);
             } else if(news.getKanal().equalsIgnoreCase("sainstek")) {
-                holder.subkanal_item_news_layout.setBackgroundResource(R.color.color_log);
+                holder.subkanal_item_news_layout.setImageResource(R.drawable.pita_news);
             } else if(news.getKanal().equalsIgnoreCase("sorot")) {
-                holder.subkanal_item_news_layout.setBackgroundResource(R.color.color_forum);
+                holder.subkanal_item_news_layout.setImageResource(R.drawable.pita_news);
             } else if(news.getKanal().equalsIgnoreCase("wawancara")) {
-                holder.subkanal_item_news_layout.setBackgroundResource(R.color.color_forum);
+                holder.subkanal_item_news_layout.setImageResource(R.drawable.pita_news);
             } else if(news.getKanal().equalsIgnoreCase("fokus")) {
-                holder.subkanal_item_news_layout.setBackgroundResource(R.color.color_auto);
+                holder.subkanal_item_news_layout.setImageResource(R.drawable.pita_news);
             } else if(news.getKanal().equalsIgnoreCase("bola")) {
-                holder.subkanal_item_news_layout.setBackgroundResource(R.color.color_bola);
+                holder.subkanal_item_news_layout.setImageResource(R.drawable.pita_bola);
             } else if(news.getKanal().equalsIgnoreCase("vlog")) {
-                holder.subkanal_item_news_layout.setBackgroundResource(R.color.color_life);
+                holder.subkanal_item_news_layout.setImageResource(R.drawable.pita_default);
             } else if(news.getKanal().equalsIgnoreCase("lifestyle")) {
-                holder.subkanal_item_news_layout.setBackgroundResource(R.color.color_log);
+                holder.subkanal_item_news_layout.setImageResource(R.drawable.pita_life);
             } else if(news.getKanal().equalsIgnoreCase("otomotif")) {
-                holder.subkanal_item_news_layout.setBackgroundResource(R.color.color_news);
+                holder.subkanal_item_news_layout.setImageResource(R.drawable.pita_default);
             }
             view.setTag(holder);
         }

@@ -5,23 +5,18 @@
     <ImageView
         android:id="@+id/image_headline"
         android:layout_width="fill_parent"
-        android:layout_marginTop="1dp"
-        android:layout_marginBottom="3dp"
-        android:paddingLeft="2dp"
-        android:paddingRight="2dp"
         android:layout_height="wrap_content"/>
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:background="@color/transparent"
-        android:layout_marginBottom="3dp"
         android:layout_alignParentBottom="true">
         <id.co.viva.news.app.component.BounvenoTextView
             android:id="@+id/title_headline"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:textColor="@color/black"
+            android:layout_margin="5dp"
+            android:textColor="@color/white"
             android:textStyle="bold"
             android:textSize="18sp"/>
     </RelativeLayout>

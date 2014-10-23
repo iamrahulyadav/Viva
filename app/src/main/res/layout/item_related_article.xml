@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_margin="5dp"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content">
+    <id.co.viva.news.app.component.BounvenoTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/title_related_article"
+        android:textColor="@color/black"
+        android:textSize="14sp"/>
+    <id.co.viva.news.app.component.BounvenoTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/date_related_article"
+        android:textColor="@color/date_color"
+        android:textSize="14sp"/>
+</LinearLayout>

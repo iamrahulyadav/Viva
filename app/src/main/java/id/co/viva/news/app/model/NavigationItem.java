@@ -10,6 +10,10 @@ public class NavigationItem {
         this.icon = icon;
     }
 
+    public NavigationItem(int icon) {
+        this.icon = icon;
+    }
+
     public String getTitle(){
         return this.title;
     }

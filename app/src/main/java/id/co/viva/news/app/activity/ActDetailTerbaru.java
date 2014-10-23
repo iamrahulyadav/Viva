@@ -39,6 +39,7 @@ public class ActDetailTerbaru extends FragmentActivity {
         getActionBar().setTitle("Terbaru");
 
         int position = 0;
+        //TODO Handle go back from open url in browser
         for(News news : LatestFragment.newsArrayList) {
             if(news.getId().equals(id)) break;
             position++;

@@ -1,6 +1,8 @@
 package id.co.viva.news.app.fragment;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -13,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
@@ -42,27 +45,38 @@ import id.co.viva.news.app.model.News;
  */
 public class LatestFragment extends Fragment {
 
+    final private static String HEADLINES = "headlines";
+    final private static String NEWS = "terbaru";
+
     public static ArrayList<Headline> headlineArrayList;
     public static ArrayList<News> newsArrayList;
 
     private HeadlineAdapter headlineAdapter;
     private TerbaruAdapter terbaruAdapter;
+    private long currentDate;
     private ViewPager viewPager;
     private PagerTabStrip pagerTabStrip;
     private ListView listView;
+    private TextView lastUpdate;
     private RelativeLayout loading_layout;
     private AnimationAdapter mAnimAdapter;
     private Boolean isInternetPresent = false;
     private JSONArray jsonArrayResponses,
             jsonArraySegmentHeadline, jsonArraySegmentNews;
 
-    final private static String HEADLINES = "headlines";
-    final private static String NEWS = "terbaru";
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         isInternetPresent = VivaApp.getInstance().getConnectionStatus().isConnectingToInternet();
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        ColorDrawable colorDrawable = new ColorDrawable();
+        colorDrawable.setColor(getResources().getColor(R.color.dark));
+        activity.getActionBar().setBackgroundDrawable(colorDrawable);
+        activity.getActionBar().setIcon(R.drawable.logo_viva_coid);
     }
 
     @Override
@@ -72,9 +86,10 @@ public class LatestFragment extends Fragment {
             loading_layout.setVisibility(View.VISIBLE);
 
             viewPager = (ViewPager) rootView.findViewById(R.id.vp_headline);
+            lastUpdate = (TextView) rootView.findViewById(R.id.date_terbaru);
 
             pagerTabStrip = (PagerTabStrip) rootView.findViewById(R.id.pager_header);
-            pagerTabStrip.setDrawFullUnderline(true);
+            pagerTabStrip.setDrawFullUnderline(false);
             pagerTabStrip.setTabIndicatorColor(getResources().getColor(R.color.header_grey));
             pagerTabStrip.setTextColor(getResources().getColor(R.color.header_grey));
 
@@ -163,6 +178,8 @@ public class LatestFragment extends Fragment {
                                     terbaruAdapter.notifyDataSetChanged();
                                     loading_layout.setVisibility(View.GONE);
                                 }
+                                currentDate = System.currentTimeMillis();
+                                lastUpdate.setText(Constant.getDate(currentDate));
                             } catch (Exception e) {
                                 e.getMessage();
                             }
@@ -226,6 +243,7 @@ public class LatestFragment extends Fragment {
                                 terbaruAdapter.notifyDataSetChanged();
                                 loading_layout.setVisibility(View.GONE);
                             }
+                            lastUpdate.setText(Constant.getDate(currentDate));
                         }
                     } catch (Exception e) {
                         e.getMessage();
@@ -237,7 +255,6 @@ public class LatestFragment extends Fragment {
                     3000,
                     DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                     DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-            stringRequest.setRetryPolicy(new DefaultRetryPolicy(3000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
             VivaApp.getInstance().getRequestQueue().getCache().invalidate(Constant.URL_HOMEPAGE, true);
             VivaApp.getInstance().getRequestQueue().getCache().get(Constant.URL_HOMEPAGE);
             VivaApp.getInstance().addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
@@ -298,6 +315,7 @@ public class LatestFragment extends Fragment {
                         terbaruAdapter.notifyDataSetChanged();
                         loading_layout.setVisibility(View.GONE);
                     }
+                    lastUpdate.setText(Constant.getDate(currentDate));
                 }
             } catch (Exception e) {
                 e.getMessage();

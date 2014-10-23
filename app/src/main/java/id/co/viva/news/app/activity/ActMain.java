@@ -25,7 +25,10 @@ import java.util.ArrayList;
 import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.adapter.NavigationAdapter;
+import id.co.viva.news.app.fragment.BolaFragment;
 import id.co.viva.news.app.fragment.LatestFragment;
+import id.co.viva.news.app.fragment.LifeFragment;
+import id.co.viva.news.app.fragment.NewsFragment;
 import id.co.viva.news.app.model.NavigationItem;
 
 public class ActMain extends FragmentActivity {
@@ -35,7 +38,7 @@ public class ActMain extends FragmentActivity {
     private ListView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
     private TypedArray navMenuIcons;
-    private String[] navMenuTitles;
+//    private String[] navMenuTitles;
     private ArrayList<NavigationItem> navDrawerItems;
     private NavigationAdapter adapter;
     private CharSequence mDrawerTitle;
@@ -46,8 +49,8 @@ public class ActMain extends FragmentActivity {
         setContentView(R.layout.act_main);
 
         mTitle = mDrawerTitle = getTitle();
-        navMenuTitles = getResources()
-                .getStringArray(R.array.nav_drawer_items);
+//        navMenuTitles = getResources()
+//                .getStringArray(R.array.nav_drawer_items);
         navMenuIcons = getResources()
                 .obtainTypedArray(R.array.nav_drawer_icons);
 
@@ -59,10 +62,10 @@ public class ActMain extends FragmentActivity {
         mDrawerList.addHeaderView(header, null, false);
 
         navDrawerItems = new ArrayList<NavigationItem>();
-        navDrawerItems.add(new NavigationItem(navMenuTitles[0], navMenuIcons.getResourceId(0, -1)));
-        navDrawerItems.add(new NavigationItem(navMenuTitles[1], navMenuIcons.getResourceId(1, -1)));
-        navDrawerItems.add(new NavigationItem(navMenuTitles[2], navMenuIcons.getResourceId(2, -1)));
-        navDrawerItems.add(new NavigationItem(navMenuTitles[3], navMenuIcons.getResourceId(3, -1)));
+        navDrawerItems.add(new NavigationItem(navMenuIcons.getResourceId(0, -1)));
+        navDrawerItems.add(new NavigationItem(navMenuIcons.getResourceId(1, -1)));
+        navDrawerItems.add(new NavigationItem(navMenuIcons.getResourceId(2, -1)));
+        navDrawerItems.add(new NavigationItem(navMenuIcons.getResourceId(3, -1)));
         navMenuIcons.recycle();
 
         mDrawerList.setOnItemClickListener(new SlideMenuClickListener());
@@ -106,10 +109,13 @@ public class ActMain extends FragmentActivity {
                 fragment = new LatestFragment();
                 break;
             case 2:
-                fragment = new LatestFragment();
+                fragment = new NewsFragment();
                 break;
             case 3:
-                fragment =  new LatestFragment();
+                fragment =  new BolaFragment();
+                break;
+            case 4:
+                fragment =  new LifeFragment();
                 break;
             default:
                 break;
@@ -122,7 +128,7 @@ public class ActMain extends FragmentActivity {
                     .commit();
             mDrawerList.setItemChecked(position, true);
             mDrawerList.setSelection(position);
-            setTitle(navMenuTitles[position]);
+//            setTitle(navMenuTitles[position]);
             mDrawerLayout.closeDrawer(mDrawerList);
         } else {
             Log.e(Constant.TAG, "Error creating fragment..");

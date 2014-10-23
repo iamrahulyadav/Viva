@@ -10,6 +10,8 @@
     <string name="search_hint">Search</string>
     <string name="label_channel">CHANNEL</string>
     <string name="label_no_results">No Results.</string>
+    <string name="label_related_article">Artikel Terkait</string>
+    <string name="label_terbaru">TERBARU</string>
 
     <!-- Title for Viva Menu -->
     <string name="title_viva_bola">Viva Bola</string>
@@ -30,10 +32,10 @@
 
     <!-- Nav Drawer List Item Icons -->
     <array name="nav_drawer_icons">
-        <item>@drawable/ic_whats_hot</item>
-        <item>@drawable/ic_communities</item>
         <item>@drawable/ic_home</item>
-        <item>@drawable/ic_photos</item>
+        <item>@drawable/viva_news</item>
+        <item>@drawable/viva_bola</item>
+        <item>@drawable/viva_life</item>
     </array>
 
 </resources>

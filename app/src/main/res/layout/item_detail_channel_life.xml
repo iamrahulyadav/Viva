@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <ListView
+        android:id="@+id/list_channel_life"
+        android:layout_width="fill_parent"
+        android:choiceMode="singleChoice"
+        android:divider="@color/list_divider"
+        android:dividerHeight="0dp"
+        android:layout_height="fill_parent"
+        android:listSelector="@color/color_life">
+    </ListView>
+    <id.co.viva.news.app.component.BounvenoTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:layout_centerInParent="true"
+        android:text="@string/label_no_results"
+        android:textColor="@color/header_grey"
+        android:id="@+id/text_no_result_detail_channel_life"/>
+    <RelativeLayout
+        android:id="@+id/loading_progress_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:padding="10dp">
+        <id.co.viva.news.app.component.LoadingView
+            android:id="@+id/loading_progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/ic_action_refresh_light"/>
+    </RelativeLayout>
+</RelativeLayout>

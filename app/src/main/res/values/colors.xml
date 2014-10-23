@@ -8,7 +8,7 @@
     <color name="nav_drawer_group_grey">#ff3c3c32</color>
     <color name="date_color">#acacac</color>
     <color name="black">#000000</color>
-    <color name="transparent">#77ffffff</color>
+    <color name="transparent">#55000000</color>
     <color name="header_grey">#6d6e71</color>
 
     <color name="color_news">#eb2227</color>
