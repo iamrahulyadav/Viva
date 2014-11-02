@@ -58,6 +58,11 @@ public class Constant {
     private static final int HOUR_MILLIS = 60 * MINUTE_MILLIS;
     private static final int DAY_MILLIS = 24 * HOUR_MILLIS;
 
+    public static final String AT_LOG_DOMAIN = ".ati-host.net";
+    public static final String AT_SUB_DOMAIN = "logw351";
+    public static final String AT_SITE_ID = "551156";
+    public static final String AT_SUB_SITE = "1";
+
     public static void setListViewHeightBasedOnChildren(ListView listView) {
         ListAdapter listAdapter = listView.getAdapter();
         if (listAdapter == null) {
@@ -78,7 +83,7 @@ public class Constant {
         listView.setLayoutParams(params);
     }
 
-    public static String getTimeAgo(long time, Context ctx) {
+    public static String getTimeAgo(long time) {
         if (time < 1000000000000L) {
             time *= 1000;
         }

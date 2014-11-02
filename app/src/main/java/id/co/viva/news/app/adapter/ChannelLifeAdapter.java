@@ -62,7 +62,7 @@ public class ChannelLifeAdapter extends BaseAdapter {
         try {
             DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             Date date = (Date)formatter.parse(channelLife.getDate_publish());
-            date_item_channel_life.setText(Constant.getTimeAgo(date.getTime(), context));
+            date_item_channel_life.setText(Constant.getTimeAgo(date.getTime()));
         } catch (Exception e) {
             e.getMessage();
         }
