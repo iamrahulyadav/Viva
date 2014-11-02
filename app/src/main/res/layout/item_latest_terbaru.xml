@@ -1,58 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_height="wrap_content"
-    android:layout_width="match_parent">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
     <LinearLayout
-        android:id="@+id/terbaru_content_layout"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="@drawable/card_background_second">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="6dp"
+        android:orientation="vertical"
+        android:layout_marginRight="6dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
+        android:background="@drawable/google_card">
         <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_weight="2"
-            android:layout_gravity="center"
+            android:layout_width="match_parent"
             android:background="@drawable/default_image"
-            android:gravity="center"
-            android:layout_height="80dp">
+            android:layout_height="wrap_content">
             <ImageView
                 android:id="@+id/image_item_news"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:layout_margin="3dp"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
                 android:scaleType="fitXY"/>
         </RelativeLayout>
-        <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_weight="5"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="3dp"
-            android:layout_height="match_parent">
-            <id.co.viva.news.app.component.BounvenoTextView
-                android:id="@+id/title_item_latest"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingBottom="2dp"
-                android:maxLines="3"
-                android:paddingTop="6dip"
-                android:textColor="@color/nav_drawer_group_grey"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-            <id.co.viva.news.app.component.BounvenoTextView
-                android:id="@+id/date_item_news"
-                android:layout_alignParentBottom="true"
-                android:layout_width="fill_parent"
-                android:text="@android:string/unknownName"
-                android:layout_height="wrap_content"
-                android:paddingBottom="2dp"
-                android:textColor="@color/date_color" />
-        </RelativeLayout>
-        <ImageView
-            android:id="@+id/subkanal_item_news_layout"
-            android:layout_width="0dp"
-            android:layout_weight="1"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:src="@drawable/pita_bola"/>
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:orientation="horizontal">
+            <ImageView
+                android:id="@+id/icon_headline_terbaru"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="50dp"
+                android:layout_gravity="center_vertical"/>
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_weight="3"
+                android:layout_gravity="center_vertical"
+                android:layout_height="wrap_content">
+                <id.co.viva.news.app.component.BounvenoTextView
+                    android:id="@+id/title_item_latest"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="2dp"
+                    android:maxLines="3"
+                    android:paddingTop="6dip"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+                <id.co.viva.news.app.component.BounvenoTextView
+                    android:id="@+id/date_item_news"
+                    android:layout_width="wrap_content"
+                    android:layout_below="@id/title_item_latest"
+                    android:text="@android:string/unknownName"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="6dp"
+                    android:textColor="#424242" />
+            </RelativeLayout>
+        </LinearLayout>
     </LinearLayout>
-</RelativeLayout>
+</FrameLayout>

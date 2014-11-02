@@ -8,11 +8,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ShareActionProvider;
 
-import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.adapter.DetailTerbaruAdapter;
 import id.co.viva.news.app.component.ZoomOutPageTransformer;
-import id.co.viva.news.app.fragment.LatestFragment;
+import id.co.viva.news.app.fragment.TerbaruFragment;
 import id.co.viva.news.app.model.News;
 
 /**
@@ -40,12 +39,12 @@ public class ActDetailTerbaru extends FragmentActivity {
 
         int position = 0;
         //TODO Handle go back from open url in browser
-        for(News news : LatestFragment.newsArrayList) {
+        for(News news : TerbaruFragment.newsArrayList) {
             if(news.getId().equals(id)) break;
             position++;
         }
 
-        adapter = new DetailTerbaruAdapter(getSupportFragmentManager(), LatestFragment.newsArrayList);
+        adapter = new DetailTerbaruAdapter(getSupportFragmentManager(), TerbaruFragment.newsArrayList);
         viewPager = (ViewPager)findViewById(R.id.vp_news_detail);
         viewPager.setAdapter(adapter);
         viewPager.setPageTransformer(true, new ZoomOutPageTransformer());

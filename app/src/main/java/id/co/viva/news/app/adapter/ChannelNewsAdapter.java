@@ -10,8 +10,12 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
+import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.model.ChannelNews;
 
@@ -44,30 +48,29 @@ public class ChannelNewsAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View view, ViewGroup viewGroup) {
-        ViewHolder holder;
-        if(view == null) {
-            LayoutInflater inflater = LayoutInflater.from(context);
-            view = inflater.inflate(R.layout.item_channel_news_list, null);
-            holder = new ViewHolder();
-            holder.title_item_channel_news = (TextView) view.findViewById(R.id.title_item_channel_news);
-            holder.date_item_channel_news = (TextView) view.findViewById(R.id.date_item_channel_news);
-            holder.image_item_channel_news = (ImageView) view.findViewById(R.id.image_item_channel_news);
+        View rootView = LayoutInflater.from(context)
+                .inflate(R.layout.item_channel_news_list, viewGroup, false);
 
-            ChannelNews channelNews = channelNewsArrayList.get(position);
-            holder.title_item_channel_news.setText(channelNews.getTitle());
-            holder.date_item_channel_news.setText(channelNews.getDate_publish());
-            if(channelNews.getImage_url().length() > 0) {
-                Picasso.with(context).load(channelNews.getImage_url()).resize(90, 90).centerCrop().into(holder.image_item_channel_news);
-            }
+        TextView title_item_channel_news = (TextView) rootView.findViewById(R.id.title_item_channel_news);
+        TextView date_item_channel_news = (TextView) rootView.findViewById(R.id.date_item_channel_news);
+        ImageView image_item_channel_news = (ImageView) rootView.findViewById(R.id.image_item_channel_news);
 
-            view.setTag(holder);
+        ChannelNews channelNews = channelNewsArrayList.get(position);
+        title_item_channel_news.setText(channelNews.getTitle());
+
+        try {
+            DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Date date = (Date)formatter.parse(channelNews.getDate_publish());
+            date_item_channel_news.setText(Constant.getTimeAgo(date.getTime(), context));
+        } catch (Exception e) {
+            e.getMessage();
         }
-        return view;
+
+        if(channelNews.getImage_url().length() > 0) {
+            Picasso.with(context).load(channelNews.getImage_url()).into(image_item_channel_news);
+        }
+
+        return rootView;
     }
 
-    private static class ViewHolder {
-        private TextView title_item_channel_news;
-        private TextView date_item_channel_news;
-        private ImageView image_item_channel_news;
-    }
 }

@@ -10,8 +10,12 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
+import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.model.ChannelBola;
 
@@ -45,31 +49,29 @@ public class ChannelBolaAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View view, ViewGroup viewGroup) {
-        ViewHolder holder;
-        if(view == null) {
-            LayoutInflater inflater = LayoutInflater.from(context);
-            view = inflater.inflate(R.layout.item_channel_bola_list, null);
-            holder = new ViewHolder();
-            holder.title_item_channel_bola = (TextView) view.findViewById(R.id.title_item_channel_bola);
-            holder.date_item_channel_bola = (TextView) view.findViewById(R.id.date_item_channel_bola);
-            holder.image_item_channel_bola = (ImageView) view.findViewById(R.id.image_item_channel_bola);
+        View rootView = LayoutInflater.from(context)
+                .inflate(R.layout.item_channel_bola_list, viewGroup, false);
 
-            ChannelBola channelBola = channelBolaArrayList.get(position);
-            holder.title_item_channel_bola.setText(channelBola.getTitle());
-            holder.date_item_channel_bola.setText(channelBola.getDate_publish());
-            if(channelBola.getImage_url().length() > 0) {
-                Picasso.with(context).load(channelBola.getImage_url()).resize(90, 90).centerCrop().into(holder.image_item_channel_bola);
-            }
+        TextView title_item_channel_bola = (TextView) rootView.findViewById(R.id.title_item_channel_bola);
+        TextView date_item_channel_bola = (TextView) rootView.findViewById(R.id.date_item_channel_bola);
+        ImageView image_item_channel_bola = (ImageView) rootView.findViewById(R.id.image_item_channel_bola);
 
-            view.setTag(holder);
+        ChannelBola channelBola = channelBolaArrayList.get(position);
+        title_item_channel_bola.setText(channelBola.getTitle());
+
+        try {
+            DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Date date = (Date)formatter.parse(channelBola.getDate_publish());
+            date_item_channel_bola.setText(Constant.getTimeAgo(date.getTime(), context));
+        } catch (Exception e) {
+            e.getMessage();
         }
-        return view;
-    }
 
-    private static class ViewHolder {
-        private TextView title_item_channel_bola;
-        private TextView date_item_channel_bola;
-        private ImageView image_item_channel_bola;
+        if(channelBola.getImage_url().length() > 0) {
+            Picasso.with(context).load(channelBola.getImage_url()).into(image_item_channel_bola);
+        }
+
+        return rootView;
     }
 
 }

@@ -78,18 +78,6 @@ public class Constant {
         listView.setLayoutParams(params);
     }
 
-    public static String getDate(long timeStamp) {
-        try {
-            Calendar cal = Calendar.getInstance(Locale.ENGLISH);
-            cal.setTimeInMillis(timeStamp);
-            String date = DateFormat.format("HH:mm | dd-MM-yyyy", cal).toString();
-            return date;
-        } catch (Exception e) {
-            e.getMessage();
-            return "Error get date!";
-        }
-    }
-
     public static String getTimeAgo(long time, Context ctx) {
         if (time < 1000000000000L) {
             time *= 1000;
@@ -100,19 +88,19 @@ public class Constant {
         }
         final long diff = now - time;
         if (diff < MINUTE_MILLIS) {
-            return "just now";
+            return "baru saja";
         } else if (diff < 2 * MINUTE_MILLIS) {
-            return "a minute ago";
+            return "satu menit yang lalu";
         } else if (diff < 50 * MINUTE_MILLIS) {
-            return diff / MINUTE_MILLIS + " minutes ago";
+            return diff / MINUTE_MILLIS + " menit yang lalu";
         } else if (diff < 90 * MINUTE_MILLIS) {
-            return "an hour ago";
+            return "satu jam yang lalu";
         } else if (diff < 24 * HOUR_MILLIS) {
-            return diff / HOUR_MILLIS + " hours ago";
+            return diff / HOUR_MILLIS + " jam yang lalu";
         } else if (diff < 48 * HOUR_MILLIS) {
-            return "yesterday";
+            return "kemarin";
         } else {
-            return diff / DAY_MILLIS + " days ago";
+            return diff / DAY_MILLIS + " hari yang lalu";
         }
     }
 

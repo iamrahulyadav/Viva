@@ -45,30 +45,18 @@ public class FeaturedBolaAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View view, ViewGroup viewGroup) {
-        ViewHolder holder;
-        if(view == null) {
-            LayoutInflater inflater = LayoutInflater.from(context);
-            view = inflater.inflate(R.layout.item_grid_bola, null);
-            holder = new ViewHolder();
-
-            holder.title_kanal = (TextView) view.findViewById(R.id.item_title_kanal_bola);
-            holder.thumb_featured = (ImageView) view.findViewById(R.id.item_thumb_bola);
-
-            FeaturedBola featuredNews = subNewsArrayList.get(position);
-            holder.title_kanal.setText(featuredNews.getChannel_title().toUpperCase());
-
-            if(featuredNews.getImage_url().length() > 0) {
-                Picasso.with(context).load(featuredNews.getImage_url()).into(holder.thumb_featured);
-            }
-
-            view.setTag(holder);
+        View rootView = LayoutInflater.from(context)
+                .inflate(R.layout.item_grid_bola, viewGroup, false);
+        ImageView thumb_featured = (ImageView) rootView.findViewById(R.id.item_thumb_bola);
+        TextView title_kanal = (TextView) rootView.findViewById(R.id.item_title_kanal_bola);
+        FeaturedBola featuredBola = subNewsArrayList.get(position);
+        title_kanal.setText(featuredBola.getChannel_title().toUpperCase());
+        if(featuredBola.getImage_url().length() > 0) {
+            Picasso.with(context).load(featuredBola.getImage_url()).into(thumb_featured);
+        } else {
+            thumb_featured.setImageResource(R.drawable.default_image);
         }
-        return view;
-    }
-
-    private static class ViewHolder {
-        private ImageView thumb_featured;
-        private TextView title_kanal;
+        return rootView;
     }
 
 }

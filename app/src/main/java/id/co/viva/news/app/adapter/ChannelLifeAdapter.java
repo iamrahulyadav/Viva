@@ -10,8 +10,12 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
+import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.model.ChannelLife;
 
@@ -45,31 +49,29 @@ public class ChannelLifeAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View view, ViewGroup viewGroup) {
-        ViewHolder holder;
-        if(view == null) {
-            LayoutInflater inflater = LayoutInflater.from(context);
-            view = inflater.inflate(R.layout.item_channel_life_list, null);
-            holder = new ViewHolder();
-            holder.title_item_channel_life = (TextView) view.findViewById(R.id.title_item_channel_life);
-            holder.date_item_channel_life = (TextView) view.findViewById(R.id.date_item_channel_life);
-            holder.image_item_channel_life = (ImageView) view.findViewById(R.id.image_item_channel_life);
+        View rootView = LayoutInflater.from(context)
+                .inflate(R.layout.item_channel_life_list, viewGroup, false);
 
-            ChannelLife channelLife = channelLifeArrayList.get(position);
-            holder.title_item_channel_life.setText(channelLife.getTitle());
-            holder.date_item_channel_life.setText(channelLife.getDate_publish());
-            if(channelLife.getImage_url().length() > 0) {
-                Picasso.with(context).load(channelLife.getImage_url()).resize(90, 90).centerCrop().into(holder.image_item_channel_life);
-            }
+        TextView title_item_channel_life = (TextView) rootView.findViewById(R.id.title_item_channel_life);
+        TextView date_item_channel_life = (TextView) rootView.findViewById(R.id.date_item_channel_life);
+        ImageView image_item_channel_life = (ImageView) rootView.findViewById(R.id.image_item_channel_life);
 
-            view.setTag(holder);
+        ChannelLife channelLife = channelLifeArrayList.get(position);
+        title_item_channel_life.setText(channelLife.getTitle());
+
+        try {
+            DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Date date = (Date)formatter.parse(channelLife.getDate_publish());
+            date_item_channel_life.setText(Constant.getTimeAgo(date.getTime(), context));
+        } catch (Exception e) {
+            e.getMessage();
         }
-        return view;
-    }
 
-    private static class ViewHolder {
-        private TextView title_item_channel_life;
-        private TextView date_item_channel_life;
-        private ImageView image_item_channel_life;
+        if(channelLife.getImage_url().length() > 0) {
+            Picasso.with(context).load(channelLife.getImage_url()).into(image_item_channel_life);
+        }
+
+        return rootView;
     }
 
 }

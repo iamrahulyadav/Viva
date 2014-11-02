@@ -41,10 +41,10 @@ import id.co.viva.news.app.model.FeaturedLife;
 public class LifeFragment extends Fragment {
 
     public static ArrayList<FeaturedLife> featuredNewsArrayList;
+    private SwingBottomInAnimationAdapter swingBottomInAnimationAdapter;
     private boolean isInternetPresent = false;
     private GridView gridNews;
     private String cachedResponse;
-    private SwingBottomInAnimationAdapter swingBottomInAnimationAdapter;
     private RelativeLayout loading_layout;
     private TextView tvNoResult;
 
@@ -81,7 +81,8 @@ public class LifeFragment extends Fragment {
                     FeaturedLife featuredLife = featuredNewsArrayList.get(position);
                     Log.i(Constant.TAG, "ID : " + featuredLife.getChannel_id());
                     Bundle bundle = new Bundle();
-                    bundle.putString("id", featuredLife.getId());
+                    bundle.putString("id", featuredLife.getChannel_id());
+                    bundle.putString("channel_title", featuredLife.getChannel_title());
                     Intent intent = new Intent(VivaApp.getInstance(), ActDetailChannelLife.class);
                     intent.putExtras(bundle);
                     getActivity().startActivity(intent);

@@ -1,6 +1,9 @@
 package id.co.viva.news.app.component;
 
 import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Path;
+import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 

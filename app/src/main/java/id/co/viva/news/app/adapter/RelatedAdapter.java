@@ -5,7 +5,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -42,26 +45,18 @@ public class RelatedAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View view, ViewGroup viewGroup) {
-        ViewHolder holder;
-        if(view == null) {
-            LayoutInflater inflater = LayoutInflater.from(context);
-            view = inflater.inflate(R.layout.item_related_article, null);
-            holder = new ViewHolder();
-            holder.title_item_related = (TextView) view.findViewById(R.id.title_related_article);
-            holder.date_item_related = (TextView) view.findViewById(R.id.date_related_article);
+        View rootView = LayoutInflater.from(context)
+                .inflate(R.layout.item_related_article, viewGroup, false);
 
-            RelatedArticle relatedArticle = relatedArticleArrayList.get(position);
-            holder.title_item_related.setText(relatedArticle.getRelated_title());
-            holder.date_item_related.setText(relatedArticle.getRelated_date_publish());
+        TextView title_item_related = (TextView) rootView.findViewById(R.id.title_related_article);
+        ImageView image_item_related = (ImageView) rootView.findViewById(R.id.image_related_article);
 
-            view.setTag(holder);
+        RelatedArticle relatedArticle = relatedArticleArrayList.get(position);
+        title_item_related.setText(relatedArticle.getRelated_title());
+        if(relatedArticle.getImage().length() > 0) {
+            Picasso.with(context).load(relatedArticle.getImage()).into(image_item_related);
         }
-        return view;
-    }
-
-    private static class ViewHolder {
-        private TextView title_item_related;
-        private TextView date_item_related;
+        return rootView;
     }
 
 }

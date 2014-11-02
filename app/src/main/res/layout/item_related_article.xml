@@ -1,20 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_margin="5dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:paddingTop="5dp"
+    android:paddingBottom="5dp"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content">
-    <id.co.viva.news.app.component.BounvenoTextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/title_related_article"
-        android:textColor="@color/black"
-        android:textSize="14sp"/>
-    <id.co.viva.news.app.component.BounvenoTextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/date_related_article"
-        android:textColor="@color/date_color"
-        android:textSize="14sp"/>
+    android:layout_height="fill_parent">
+    <com.pkmmte.view.CircularImageView
+        android:id="@+id/image_related_article"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        app:border_color="@color/white"
+        app:border_width="4dp"
+        app:shadow="true"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:layout_marginLeft="5dp"
+        android:orientation="vertical">
+        <id.co.viva.news.app.component.BounvenoTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLines="3"
+            android:id="@+id/title_related_article"
+            android:textColor="@color/black"
+            android:textSize="17sp"/>
+    </LinearLayout>
 </LinearLayout>

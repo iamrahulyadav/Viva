@@ -4,36 +4,36 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
 import id.co.viva.news.app.R;
+import id.co.viva.news.app.interfaces.Item;
 import id.co.viva.news.app.model.NavigationItem;
+import id.co.viva.news.app.model.NavigationSectionItem;
 
 /**
  * Created by rezarachman on 30/09/14.
  */
-public class NavigationAdapter extends BaseAdapter {
+public class NavigationAdapter extends ArrayAdapter<Item> {
 
     private Context context;
-    private ArrayList<NavigationItem> navItems;
+    private ArrayList<Item> navItems;
+    private LayoutInflater vi;
 
-    public NavigationAdapter(Context context, ArrayList<NavigationItem> navItems){
+    public NavigationAdapter(Context context, ArrayList<Item> navItems) {
+        super(context, 0, navItems);
         this.context = context;
         this.navItems = navItems;
+        vi = LayoutInflater.from(context);
     }
 
     @Override
     public int getCount() {
         return navItems.size();
-    }
-
-    @Override
-    public Object getItem(int position) {
-        return navItems.get(position);
     }
 
     @Override
@@ -43,28 +43,30 @@ public class NavigationAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View view, ViewGroup viewGroup) {
-        ViewHolder holder;
-        if(view == null) {
-            LayoutInflater inflater = LayoutInflater.from(context);
-            view = inflater.inflate(R.layout.item_navigation_list, null);
-            holder = new ViewHolder();
-            holder.image = (ImageView) view.findViewById(R.id.icon_navigation_list);
-            holder.title = (TextView) view.findViewById(R.id.text_navigation_list);
-
-            if(String.valueOf(navItems.get(position).getIcon()) != null ||
-                    String.valueOf(navItems.get(position).getIcon()).isEmpty()) {
-                holder.image.setImageResource(navItems.get(position).getIcon());
+        View v = view;
+        Item item = navItems.get(position);
+        if(item != null) {
+            if(item.isSection()) {
+                NavigationSectionItem navigationSectionItem = (NavigationSectionItem) item;
+                v = vi.inflate(R.layout.item_navigation_section_list, null);
+                v.setOnClickListener(null);
+                v.setOnLongClickListener(null);
+                v.setLongClickable(false);
+                TextView sectionView = (TextView) v.findViewById(R.id.list_item_section_text);
+                sectionView.setText(navigationSectionItem.getTitle());
+            } else {
+                NavigationItem ei = (NavigationItem)item;
+                v = vi.inflate(R.layout.item_navigation_list, null);
+                final TextView title = (TextView)v.findViewById(R.id.text_navigation_list);
+                final ImageView image = (ImageView)v.findViewById(R.id.list_item_entry_drawable);
+                if(title != null)
+                    title.setText(ei.getTitle());
+                if(image != null)
+                    image.setImageResource(ei.getIcon());
             }
-            holder.title.setText(navItems.get(position).getTitle());
 
-            view.setTag(holder);
         }
-        return view;
-    }
-
-    private static class ViewHolder {
-        public ImageView image;
-        public TextView title;
+        return v;
     }
 
 }

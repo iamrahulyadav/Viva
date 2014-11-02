@@ -2,66 +2,196 @@ package id.co.viva.news.app.activity;
 
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.view.PagerTabStrip;
-import android.support.v4.view.ViewPager;
-import android.widget.SearchView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.SearchView;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.nhaarman.listviewanimations.appearance.AnimationAdapter;
+import com.nhaarman.listviewanimations.appearance.simple.ScaleInAnimationAdapter;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+
+import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.R;
-import id.co.viva.news.app.adapter.DetailChannelLifeAdapter;
-import id.co.viva.news.app.component.ZoomOutPageTransformer;
-import id.co.viva.news.app.fragment.LifeFragment;
-import id.co.viva.news.app.model.FeaturedLife;
+import id.co.viva.news.app.VivaApp;
+import id.co.viva.news.app.adapter.ChannelLifeAdapter;
+import id.co.viva.news.app.model.ChannelLife;
 
 /**
- * Created by reza on 23/10/14.
+ * Created by reza on 27/10/14.
  */
 public class ActDetailChannelLife extends FragmentActivity {
 
+    public static ArrayList<ChannelLife> channelLifeArrayList;
     private String id;
-    private ViewPager viewPager;
-    private DetailChannelLifeAdapter adapter;
-    private PagerTabStrip pagerTabStrip;
+    private String channel_title;
+    private boolean isInternetPresent = false;
+    private RelativeLayout loading_layout;
+    private TextView tvNoResult;
+    private TextView tvChannel;
+    private ListView listView;
+    private String cachedResponse;
+    private AnimationAdapter mAnimAdapter;
+    private JSONArray jsonArrayResponses, jsonArraySegmentHeadline;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Bundle bundle = getIntent().getExtras();
-        id = bundle.getString("id");
+        setContentView(R.layout.item_detail_channel_life);
 
-        setContentView(R.layout.act_detail_channel_life);
+        isInternetPresent = VivaApp.getInstance().getConnectionStatus().isConnectingToInternet();
 
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
-        getActionBar().setDisplayShowTitleEnabled(false);
-        getActionBar().setIcon(R.drawable.logo_viva_coid_second);
-
         ColorDrawable colorDrawable = new ColorDrawable();
         colorDrawable.setColor(getResources().getColor(R.color.color_life));
         getActionBar().setBackgroundDrawable(colorDrawable);
+        getActionBar().setDisplayShowTitleEnabled(false);
+        getActionBar().setIcon(R.drawable.logo_viva_coid_second);
 
-        int position = 0;
-        for(FeaturedLife featuredBola : LifeFragment.featuredNewsArrayList) {
-            if(featuredBola.getId().equals(id)) break;
-            position++;
+        Bundle bundle = getIntent().getExtras();
+        id = bundle.getString("id");
+        channel_title = bundle.getString("channel_title");
+
+        loading_layout = (RelativeLayout) findViewById(R.id.loading_progress_layout);
+        tvChannel = (TextView) findViewById(R.id.text_channel);
+        tvChannel.setText(channel_title.toUpperCase());
+        tvNoResult = (TextView) findViewById(R.id.text_no_result_detail_channel_life);
+        tvNoResult.setVisibility(View.GONE);
+        listView = (ListView) findViewById(R.id.list_channel_life);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                if (channelLifeArrayList.size() > 0) {
+                    ChannelLife news = channelLifeArrayList.get(position);
+                    Log.i(Constant.TAG, "ID : " + news.getId());
+                    Bundle bundle = new Bundle();
+                    bundle.putString("id", news.getId());
+                    bundle.putString("url_shared", news.getUrl());
+                    Intent intent = new Intent(VivaApp.getInstance(), ActDetailContentLife.class);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+                }
+            }
+        });
+        channelLifeArrayList = new ArrayList<ChannelLife>();
+
+        if(isInternetPresent) {
+            StringRequest stringRequest = new StringRequest(Request.Method.GET, Constant.URL_KANAL_DETAIL + id + "/2/0/10",
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String volleyResponse) {
+                            Log.i(Constant.TAG, "CHANNEL LIFE RESPONSE : " + volleyResponse);
+                            try {
+                                JSONObject jsonObject = new JSONObject(volleyResponse);
+                                jsonArrayResponses = jsonObject.getJSONArray(Constant.response);
+                                if (jsonArrayResponses != null) {
+                                    JSONObject objHeadline = jsonArrayResponses.getJSONObject(0);
+                                    if (objHeadline != null) {
+                                        jsonArraySegmentHeadline = objHeadline.getJSONArray(Constant.headlines);
+                                        for (int i = 0; i < jsonArraySegmentHeadline.length(); i++) {
+                                            JSONObject jsonHeadline = jsonArraySegmentHeadline.getJSONObject(i);
+                                            String id = jsonHeadline.getString(Constant.id);
+                                            String title = jsonHeadline.getString(Constant.title);
+                                            String kanal = jsonHeadline.getString(Constant.kanal);
+                                            String image_url = jsonHeadline.getString(Constant.image_url);
+                                            String date_publish = jsonHeadline.getString(Constant.date_publish);
+                                            String url = jsonHeadline.getString(Constant.url);
+                                            channelLifeArrayList.add(new ChannelLife(id, title, kanal,
+                                                    image_url, date_publish, url));
+                                            Log.i(Constant.TAG, "CHANNEL LIFE : " + channelLifeArrayList.get(i).getTitle());
+                                        }
+                                    }
+                                }
+                                if (channelLifeArrayList.size() > 0 || !channelLifeArrayList.isEmpty()) {
+                                    mAnimAdapter = new ScaleInAnimationAdapter(new ChannelLifeAdapter(VivaApp.getInstance(), channelLifeArrayList));
+                                    mAnimAdapter.setAbsListView(listView);
+                                    listView.setAdapter(mAnimAdapter);
+                                    mAnimAdapter.notifyDataSetChanged();
+                                    loading_layout.setVisibility(View.GONE);
+                                }
+                            } catch (Exception e) {
+                                e.getMessage();
+                            }
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError volleyError) {
+                            volleyError.getMessage();
+                        }
+                    });
+            stringRequest.setShouldCache(true);
+            stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                    Constant.TIME_OUT,
+                    DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+            VivaApp.getInstance().getRequestQueue().getCache().invalidate(Constant.URL_KANAL_DETAIL + id + "/2/0/10", true);
+            VivaApp.getInstance().getRequestQueue().getCache().get(Constant.URL_KANAL_DETAIL + id + "/2/0/10");
+            VivaApp.getInstance().addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
+        } else {
+            Toast.makeText(VivaApp.getInstance(), R.string.title_no_connection, Toast.LENGTH_SHORT).show();
+            if(VivaApp.getInstance().getRequestQueue().getCache().get(Constant.URL_KANAL_DETAIL + id + "/2/0/10") != null) {
+                cachedResponse = new String(VivaApp.getInstance().
+                        getRequestQueue().getCache().get(Constant.URL_KANAL_DETAIL + id + "/2/0/10").data);
+                Log.i(Constant.TAG, "CHANNEL LIFE CACHED RESPONSE : " + cachedResponse);
+                try{
+                    JSONObject jsonObject = new JSONObject(cachedResponse);
+                    jsonArrayResponses = jsonObject.getJSONArray(Constant.response);
+                    if(jsonArrayResponses != null) {
+                        JSONObject objHeadline = jsonArrayResponses.getJSONObject(0);
+                        if (objHeadline != null) {
+                            jsonArraySegmentHeadline = objHeadline.getJSONArray(Constant.headlines);
+                            for(int i=0; i<jsonArraySegmentHeadline.length(); i++) {
+                                JSONObject jsonHeadline = jsonArraySegmentHeadline.getJSONObject(i);
+                                String id = jsonHeadline.getString(Constant.id);
+                                String title = jsonHeadline.getString(Constant.title);
+                                String kanal = jsonHeadline.getString(Constant.kanal);
+                                String image_url = jsonHeadline.getString(Constant.image_url);
+                                String date_publish = jsonHeadline.getString(Constant.date_publish);
+                                String url = jsonHeadline.getString(Constant.url);
+                                channelLifeArrayList.add(new ChannelLife(id, title, kanal,
+                                        image_url, date_publish, url));
+                                Log.i(Constant.TAG, "CHANNEL BOLA CACHED : " + channelLifeArrayList.get(i).getTitle());
+                            }
+                        }
+                    }
+                    if(channelLifeArrayList.size() > 0 || !channelLifeArrayList.isEmpty()) {
+                        mAnimAdapter = new ScaleInAnimationAdapter(new ChannelLifeAdapter(VivaApp.getInstance(), channelLifeArrayList));
+                        mAnimAdapter.setAbsListView(listView);
+                        listView.setAdapter(mAnimAdapter);
+                        mAnimAdapter.notifyDataSetChanged();
+                        loading_layout.setVisibility(View.GONE);
+                    }
+                } catch (Exception e) {
+                    e.getMessage();
+                }
+            } else {
+                loading_layout.setVisibility(View.GONE);
+                tvNoResult.setVisibility(View.VISIBLE);
+            }
         }
-
-        pagerTabStrip = (PagerTabStrip) findViewById(R.id.pager_detail_channel_life);
-        pagerTabStrip.setDrawFullUnderline(false);
-        pagerTabStrip.setTabIndicatorColor(getResources().getColor(R.color.color_life));
-        pagerTabStrip.setTextColor(getResources().getColor(R.color.color_life));
-
-        adapter = new DetailChannelLifeAdapter(getSupportFragmentManager(), LifeFragment.featuredNewsArrayList);
-        viewPager = (ViewPager)findViewById(R.id.vp_detail_channel_life);
-        viewPager.setAdapter(adapter);
-        viewPager.setPageTransformer(true, new ZoomOutPageTransformer());
-        viewPager.setCurrentItem(position);
-        adapter.notifyDataSetChanged();
     }
 
     @Override

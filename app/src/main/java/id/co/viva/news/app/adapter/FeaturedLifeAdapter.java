@@ -45,29 +45,18 @@ public class FeaturedLifeAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View view, ViewGroup viewGroup) {
-        ViewHolder holder;
-        if(view == null) {
-            LayoutInflater inflater = LayoutInflater.from(context);
-            view = inflater.inflate(R.layout.item_grid_life, null);
-            holder = new ViewHolder();
-
-            holder.title_kanal = (TextView) view.findViewById(R.id.item_title_kanal_life);
-            holder.thumb_featured = (ImageView) view.findViewById(R.id.item_thumb_life);
-
-            FeaturedLife featuredNews = subNewsArrayList.get(position);
-            holder.title_kanal.setText(featuredNews.getChannel_title().toUpperCase());
-            if(featuredNews.getImage_url().length() > 0) {
-                Picasso.with(context).load(featuredNews.getImage_url()).into(holder.thumb_featured);
-            }
-
-            view.setTag(holder);
+        View rootView = LayoutInflater.from(context)
+                .inflate(R.layout.item_grid_life, viewGroup, false);
+        ImageView thumb_featured = (ImageView) rootView.findViewById(R.id.item_thumb_life);
+        TextView title_kanal = (TextView) rootView.findViewById(R.id.item_title_kanal_life);
+        FeaturedLife featuredLife = subNewsArrayList.get(position);
+        title_kanal.setText(featuredLife.getChannel_title().toUpperCase());
+        if(featuredLife.getImage_url().length() > 0) {
+            Picasso.with(context).load(featuredLife.getImage_url()).into(thumb_featured);
+        } else {
+            thumb_featured.setImageResource(R.drawable.default_image);
         }
-        return view;
-    }
-
-    private static class ViewHolder {
-        private ImageView thumb_featured;
-        private TextView title_kanal;
+        return rootView;
     }
 
 }

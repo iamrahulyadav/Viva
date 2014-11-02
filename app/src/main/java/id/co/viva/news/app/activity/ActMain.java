@@ -3,19 +3,16 @@ package id.co.viva.news.app.activity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.res.Configuration;
-import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SearchView;
@@ -26,10 +23,13 @@ import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.adapter.NavigationAdapter;
 import id.co.viva.news.app.fragment.BolaFragment;
-import id.co.viva.news.app.fragment.LatestFragment;
+import id.co.viva.news.app.fragment.HeadlineFragment;
+import id.co.viva.news.app.fragment.TerbaruFragment;
 import id.co.viva.news.app.fragment.LifeFragment;
 import id.co.viva.news.app.fragment.NewsFragment;
+import id.co.viva.news.app.interfaces.Item;
 import id.co.viva.news.app.model.NavigationItem;
+import id.co.viva.news.app.model.NavigationSectionItem;
 
 public class ActMain extends FragmentActivity {
 
@@ -37,9 +37,7 @@ public class ActMain extends FragmentActivity {
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
-    private TypedArray navMenuIcons;
-//    private String[] navMenuTitles;
-    private ArrayList<NavigationItem> navDrawerItems;
+    private ArrayList<Item> navDrawerItems;
     private NavigationAdapter adapter;
     private CharSequence mDrawerTitle;
 
@@ -49,24 +47,19 @@ public class ActMain extends FragmentActivity {
         setContentView(R.layout.act_main);
 
         mTitle = mDrawerTitle = getTitle();
-//        navMenuTitles = getResources()
-//                .getStringArray(R.array.nav_drawer_items);
-        navMenuIcons = getResources()
-                .obtainTypedArray(R.array.nav_drawer_icons);
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (ListView) findViewById(R.id.list_slidermenu);
 
-        LayoutInflater inflater = getLayoutInflater();
-        ViewGroup header = (ViewGroup)inflater.inflate(R.layout.header_navigation, mDrawerList, false);
-        mDrawerList.addHeaderView(header, null, false);
-
-        navDrawerItems = new ArrayList<NavigationItem>();
-        navDrawerItems.add(new NavigationItem(navMenuIcons.getResourceId(0, -1)));
-        navDrawerItems.add(new NavigationItem(navMenuIcons.getResourceId(1, -1)));
-        navDrawerItems.add(new NavigationItem(navMenuIcons.getResourceId(2, -1)));
-        navDrawerItems.add(new NavigationItem(navMenuIcons.getResourceId(3, -1)));
-        navMenuIcons.recycle();
+        navDrawerItems = new ArrayList<Item>();
+        navDrawerItems.add(new NavigationItem("Headlines", R.drawable.icon_headline));
+        navDrawerItems.add(new NavigationItem("Terbaru", R.drawable.icon_terbaru));
+        navDrawerItems.add(new NavigationSectionItem("CHANNELS"));
+        navDrawerItems.add(new NavigationItem("News", R.drawable.icon_viva_news));
+        navDrawerItems.add(new NavigationItem("Bola", R.drawable.icon_viva_bola));
+        navDrawerItems.add(new NavigationItem("Life", R.drawable.icon_viva_life));
+        navDrawerItems.add(new NavigationSectionItem("PREFERENCES"));
+        navDrawerItems.add(new NavigationItem("About", R.drawable.icon_about));
 
         mDrawerList.setOnItemClickListener(new SlideMenuClickListener());
         adapter = new NavigationAdapter(getApplicationContext(), navDrawerItems);
@@ -98,23 +91,26 @@ public class ActMain extends FragmentActivity {
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
         if(savedInstanceState == null) {
-            displayView(1);
+            displayView(0);
         }
     }
 
     private void displayView(int position) {
         android.support.v4.app.Fragment fragment = null;
         switch (position) {
-            case 1:
-                fragment = new LatestFragment();
+            case 0:
+                fragment = new HeadlineFragment();
                 break;
-            case 2:
-                fragment = new NewsFragment();
+            case 1:
+                fragment = new TerbaruFragment();
                 break;
             case 3:
-                fragment =  new BolaFragment();
+                fragment =  new NewsFragment();
                 break;
             case 4:
+                fragment =  new BolaFragment();
+                break;
+            case 5:
                 fragment =  new LifeFragment();
                 break;
             default:
@@ -128,7 +124,6 @@ public class ActMain extends FragmentActivity {
                     .commit();
             mDrawerList.setItemChecked(position, true);
             mDrawerList.setSelection(position);
-//            setTitle(navMenuTitles[position]);
             mDrawerLayout.closeDrawer(mDrawerList);
         } else {
             Log.e(Constant.TAG, "Error creating fragment..");
@@ -180,6 +175,15 @@ public class ActMain extends FragmentActivity {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(mDrawerLayout.isDrawerOpen(mDrawerList)) {
+            mDrawerLayout.closeDrawer(mDrawerList);
+        } else {
+            super.onBackPressed();
+        }
     }
 
 }

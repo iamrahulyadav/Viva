@@ -1,6 +1,8 @@
 package id.co.viva.news.app.model;
 
-public class NavigationItem {
+import id.co.viva.news.app.interfaces.Item;
+
+public class NavigationItem implements Item {
 
     private String title;
     private int icon;
@@ -8,6 +10,10 @@ public class NavigationItem {
     public NavigationItem(String title, int icon) {
         this.title = title;
         this.icon = icon;
+    }
+
+    public NavigationItem(String title) {
+        this.title = title;
     }
 
     public NavigationItem(int icon) {
@@ -28,6 +34,11 @@ public class NavigationItem {
 
     public void setIcon(int icon){
         this.icon = icon;
+    }
+
+    @Override
+    public boolean isSection() {
+        return false;
     }
 
 }

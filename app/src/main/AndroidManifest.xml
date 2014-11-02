@@ -17,22 +17,54 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".activity.ActMain"
-            android:label="@string/app_name">
-            <meta-data
-                android:name="android.app.default_searchable"
-                android:value=".activity.ActSearchResult" />
+            android:name=".activity.ActSplashScreen"
+            android:theme="@android:style/Theme.NoTitleBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".activity.ActMain"
+            android:theme="@style/AppTheme"/>
+            <meta-data
+                android:name="android.app.default_searchable"
+                android:value=".activity.ActSearchResult" />/>
+
         <activity
             android:name=".activity.ActDetailHeadline"
             android:theme="@style/AppTheme"/>
+
+        <activity
+            android:name=".activity.ActDetailContentDefault"
+            android:theme="@style/AppTheme"/>
+
+        <activity
+            android:name=".activity.ActDetailContentNews"
+            android:theme="@style/AppTheme"/>
+            <meta-data
+                android:name="android.app.default_searchable"
+                android:value=".activity.ActSearchResult" />/>
+
+        <activity
+            android:name=".activity.ActDetailContentLife"
+            android:theme="@style/AppTheme"/>
+            <meta-data
+                android:name="android.app.default_searchable"
+                android:value=".activity.ActSearchResult" />/>
+
+        <activity
+            android:name=".activity.ActDetailContentBola"
+            android:theme="@style/AppTheme"/>
+            <meta-data
+                android:name="android.app.default_searchable"
+                android:value=".activity.ActSearchResult" />
+
         <activity
             android:name=".activity.ActDetailTerbaru"
             android:theme="@style/AppTheme"/>
+
         <activity
             android:name=".activity.ActDetailChannelBola"
             android:theme="@style/AppTheme">
@@ -40,6 +72,7 @@
                 android:name="android.app.default_searchable"
                 android:value=".activity.ActSearchResult" />
         </activity>
+
         <activity
             android:name=".activity.ActDetailChannelLife"
             android:theme="@style/AppTheme">
@@ -47,6 +80,7 @@
                 android:name="android.app.default_searchable"
                 android:value=".activity.ActSearchResult" />
         </activity>
+
         <activity
             android:name=".activity.ActDetailChannelNews"
             android:theme="@style/AppTheme">
@@ -54,6 +88,7 @@
                 android:name="android.app.default_searchable"
                 android:value=".activity.ActSearchResult" />
         </activity>
+
         <activity
             android:name=".activity.ActSearchResult"
             android:parentActivityName=".activity.ActMain"

@@ -2,14 +2,26 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+    <id.co.viva.news.app.component.BounvenoTextView
+        android:layout_width="wrap_content"
+        android:text="@string/abc_searchview_description_search"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textColor="@color/color_news"
+        android:textSize="20sp"
+        android:layout_margin="10dp"
+        android:id="@+id/text_channel"/>
     <ListView
         android:id="@+id/list_channel_news"
         android:layout_width="fill_parent"
+        android:layout_below="@id/text_channel"
         android:choiceMode="singleChoice"
         android:divider="@color/list_divider"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="5dp"
         android:dividerHeight="0dp"
-        android:layout_height="fill_parent"
-        android:listSelector="@color/color_news">
+        android:layout_height="fill_parent">
     </ListView>
     <id.co.viva.news.app.component.BounvenoTextView
         android:layout_width="wrap_content"

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -33,7 +34,7 @@ import id.co.viva.news.app.model.SearchResult;
 /**
  * Created by reza on 13/10/14.
  */
-public class ActSearchResult extends FragmentActivity {
+public class ActSearchResult extends FragmentActivity implements AdapterView.OnItemClickListener {
 
     private TextView tvSearchResult;
     private ListView listSearchResult;
@@ -42,9 +43,9 @@ public class ActSearchResult extends FragmentActivity {
     private JSONArray jsonArrayResponses;
     private ArrayList<SearchResult> resultArrayList;
     private SearchResultAdapter adapter;
-    private AnimationAdapter mAnimAdapter;
     private RelativeLayout loading_layout;
     private TextView tvNoResult;
+    private AnimationAdapter mAnimAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +58,7 @@ public class ActSearchResult extends FragmentActivity {
 
         tvSearchResult = (TextView)findViewById(R.id.text_search_result);
         listSearchResult = (ListView)findViewById(R.id.list_search_result);
+        listSearchResult.setOnItemClickListener(this);
         tvNoResult = (TextView)findViewById(R.id.text_no_result);
         loading_layout = (RelativeLayout)findViewById(R.id.loading_progress_layout);
 
@@ -108,12 +110,11 @@ public class ActSearchResult extends FragmentActivity {
                                         Log.i(Constant.TAG, "SEARCH RESULTS : " + resultArrayList.get(i).getTitle());
                                     }
                                 }
-                                if(resultArrayList.size() > 0 || !resultArrayList.isEmpty()) {
-                                    adapter = new SearchResultAdapter(VivaApp.getInstance(), resultArrayList);
-                                    mAnimAdapter = new ScaleInAnimationAdapter(adapter);
+                                if (resultArrayList.size() > 0 || !resultArrayList.isEmpty()) {
+                                    mAnimAdapter = new ScaleInAnimationAdapter(new SearchResultAdapter(VivaApp.getInstance(), resultArrayList));
                                     mAnimAdapter.setAbsListView(listSearchResult);
                                     listSearchResult.setAdapter(mAnimAdapter);
-                                    adapter.notifyDataSetChanged();
+                                    mAnimAdapter.notifyDataSetChanged();
                                     loading_layout.setVisibility(View.GONE);
                                 }
                             } catch (Exception e) {
@@ -129,12 +130,26 @@ public class ActSearchResult extends FragmentActivity {
 
             stringRequest.setShouldCache(true);
             stringRequest.setRetryPolicy(new DefaultRetryPolicy(
-                    3000,
+                    Constant.TIME_OUT,
                     DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                     DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
             VivaApp.getInstance().getRequestQueue().getCache().invalidate(Constant.URL_SEARCH + query, true);
             VivaApp.getInstance().getRequestQueue().getCache().get(Constant.URL_SEARCH + query);
             VivaApp.getInstance().addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
+        }
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+        if(resultArrayList.size() > 0) {
+            SearchResult searchResult = resultArrayList.get(position);
+            Log.i(Constant.TAG, "ID : " + searchResult.getId());
+            Bundle bundle = new Bundle();
+            bundle.putString("id", searchResult.getId());
+            Intent intent = new Intent(VivaApp.getInstance(), ActDetailContentDefault.class);
+            intent.putExtras(bundle);
+            startActivity(intent);
+            overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
         }
     }
 

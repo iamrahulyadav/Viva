@@ -8,11 +8,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ShareActionProvider;
 
-import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.adapter.DetailHeadlineAdapter;
 import id.co.viva.news.app.component.ZoomOutPageTransformer;
-import id.co.viva.news.app.fragment.LatestFragment;
+import id.co.viva.news.app.fragment.HeadlineFragment;
+import id.co.viva.news.app.fragment.TerbaruFragment;
 import id.co.viva.news.app.model.Headline;
 
 /**
@@ -39,12 +39,12 @@ public class ActDetailHeadline extends FragmentActivity {
         getActionBar().setTitle("Headlines");
 
         int position = 0;
-        for(Headline headline : LatestFragment.headlineArrayList) {
+        for(Headline headline : HeadlineFragment.headlineArrayList) {
             if(headline.getId().equals(id)) break;
             position++;
         }
 
-        adapter = new DetailHeadlineAdapter(getSupportFragmentManager(), LatestFragment.headlineArrayList);
+        adapter = new DetailHeadlineAdapter(getSupportFragmentManager(), HeadlineFragment.headlineArrayList);
         viewPager = (ViewPager)findViewById(R.id.vp_headline_detail);
         viewPager.setAdapter(adapter);
         viewPager.setPageTransformer(true, new ZoomOutPageTransformer());

@@ -81,7 +81,8 @@ public class BolaFragment extends Fragment {
                     FeaturedBola featuredBola = featuredNewsArrayList.get(position);
                     Log.i(Constant.TAG, "ID : " + featuredBola.getChannel_id());
                     Bundle bundle = new Bundle();
-                    bundle.putString("id", featuredBola.getId());
+                    bundle.putString("id", featuredBola.getChannel_id());
+                    bundle.putString("channel_title", featuredBola.getChannel_title());
                     Intent intent = new Intent(VivaApp.getInstance(), ActDetailChannelBola.class);
                     intent.putExtras(bundle);
                     getActivity().startActivity(intent);
