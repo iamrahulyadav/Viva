@@ -23,20 +23,7 @@ public class DetailTerbaruAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        switch (position) {
-            case 0:
-                return DetailTerbaruIndexFragment.newInstance(newsArrayList.get(position).getId());
-            case 1:
-                return DetailTerbaruIndexFragment.newInstance(newsArrayList.get(position).getId());
-            case 2:
-                return DetailTerbaruIndexFragment.newInstance(newsArrayList.get(position).getId());
-            case 3:
-                return DetailTerbaruIndexFragment.newInstance(newsArrayList.get(position).getId());
-            case 4:
-                return DetailTerbaruIndexFragment.newInstance(newsArrayList.get(position).getId());
-            default:
-                return null;
-        }
+        return DetailTerbaruIndexFragment.newInstance(newsArrayList.get(position).getId());
     }
 
     @Override

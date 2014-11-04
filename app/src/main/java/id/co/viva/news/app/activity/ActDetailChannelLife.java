@@ -31,6 +31,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import id.co.viva.news.app.services.Analytics;
 import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.VivaApp;
@@ -53,6 +54,7 @@ public class ActDetailChannelLife extends FragmentActivity {
     private String cachedResponse;
     private AnimationAdapter mAnimAdapter;
     private JSONArray jsonArrayResponses, jsonArraySegmentHeadline;
+    private Analytics analytics;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +62,10 @@ public class ActDetailChannelLife extends FragmentActivity {
         setContentView(R.layout.item_detail_channel_life);
 
         isInternetPresent = VivaApp.getInstance().getConnectionStatus().isConnectingToInternet();
+
+        analytics = new Analytics();
+        analytics.getAnalyticByATInternet(Constant.SUBKANAL_LIFE_PAGE);
+        analytics.getAnalyticByGoogleAnalytic(Constant.SUBKANAL_LIFE_PAGE);
 
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);

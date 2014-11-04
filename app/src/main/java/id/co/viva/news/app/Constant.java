@@ -2,14 +2,13 @@ package id.co.viva.news.app;
 
 import android.app.ActionBar;
 import android.content.Context;
-import android.text.format.DateFormat;
+import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-
-import java.util.Calendar;
-import java.util.Locale;
 
 /**
  * Created by rezarachman on 02/10/14.
@@ -17,10 +16,16 @@ import java.util.Locale;
 public class Constant {
 
     public static final int TIME_OUT = 3000;
+    public final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+
+    public static final String GCM_SENDER_ID = "246836504311";
+    public static final String GCM_URL_BACKEND_SERVER = "http://apps.vivall.tv/gcm_registration.php";
 
     public static final String TAG = VivaApp.class.getSimpleName();
+    public static final String TAG_GCM = "VIVA-GCM";
+
     private static String BASE_URL = "http://www.viva.co.id/rss/api/mobile/";
-    public static String URL_HOMEPAGE = BASE_URL + "homepage";
+    public static String URL_HOMEPAGE = BASE_URL + "homepage/0";
     public static String URL_KANAL_NEWS = BASE_URL + "kanal_news";
     public static String URL_KANAL_BOLA = BASE_URL + "kanal_bola";
     public static String URL_KANAL_LIFE = BASE_URL + "kanal_life";
@@ -62,6 +67,23 @@ public class Constant {
     public static final String AT_SUB_DOMAIN = "logw351";
     public static final String AT_SITE_ID = "551156";
     public static final String AT_SUB_SITE = "1";
+
+    public static final String HEADLINE_PAGE = "HEADLINE_PAGE";
+    public static final String HEADLINE_DETAIL_PAGE = "HEADLINE_DETAIL_PAGE_";
+    public static final String TERBARU_PAGE = "TERBARU_PAGE";
+    public static final String TERBARU_DETAIL_PAGE = "TERBARU_DETAIL_PAGE_";
+    public static final String KANAL_NEWS_PAGE = "KANAL_NEWS_PAGE";
+    public static final String SUBKANAL_NEWS_PAGE = "SUBKANAL_NEWS_PAGE";
+    public static final String DETAIL_CONTENT_NEWS_PAGE = "DETAIL_CONTENT_NEWS_PAGE_";
+    public static final String KANAL_BOLA_PAGE = "KANAL_BOLA_PAGE";
+    public static final String SUBKANAL_BOLA_PAGE = "SUBKANAL_BOLA_PAGE";
+    public static final String DETAIL_CONTENT_BOLA_PAGE = "DETAIL_CONTENT_BOLA_PAGE_";
+    public static final String KANAL_LIFE_PAGE = "KANAL_LIFE_PAGE";
+    public static final String SUBKANAL_LIFE_PAGE = "SUBKANAL_LIFE_PAGE";
+    public static final String DETAIL_CONTENT_LIFE_PAGE = "DETAIL_CONTENT_LIFE_PAGE_";
+    public static final String SEARCH_RESULT_PAGE = "SEARCH_RESULT_PAGE_";
+    public static final String FROM_SEARCH_RESULT_DETAIL_CONTENT = "FROM_SEARCH_RESULT_DETAIL_CONTENT_";
+    public static final String FROM_RELATED_ARTICLE_DETAIL_CONTENT = "FROM_RELATED_ARTICLE_DETAIL_CONTENT_";
 
     public static void setListViewHeightBasedOnChildren(ListView listView) {
         ListAdapter listAdapter = listView.getAdapter();
@@ -107,6 +129,10 @@ public class Constant {
         } else {
             return diff / DAY_MILLIS + " hari yang lalu";
         }
+    }
+
+    public static SharedPreferences getSharedPreferences(Context context) {
+        return context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE);
     }
 
 }

@@ -34,6 +34,7 @@ import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
 
+import id.co.viva.news.app.services.Analytics;
 import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.VivaApp;
@@ -57,6 +58,7 @@ public class DetailHeadlineIndexFragment extends Fragment {
     private ArrayList<RelatedArticle> relatedArticleArrayList;
     private RelatedAdapter adapter;
     private ListView listView;
+    private Analytics analytics;
 
     private String title;
     private String image_url;
@@ -83,6 +85,10 @@ public class DetailHeadlineIndexFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.item_detail_headline, container, false);
 
+        analytics = new Analytics();
+        analytics.getAnalyticByATInternet(Constant.HEADLINE_DETAIL_PAGE);
+        analytics.getAnalyticByGoogleAnalytic(Constant.HEADLINE_DETAIL_PAGE);
+
         loading_layout = (RelativeLayout) view.findViewById(R.id.loading_progress_layout);
         headerRelated = (RelativeLayout) view.findViewById(R.id.header_related_article_headline);
         headerRelated.setVisibility(View.GONE);
@@ -100,6 +106,8 @@ public class DetailHeadlineIndexFragment extends Fragment {
                     Log.i(Constant.TAG, "ID : " + relatedArticle.getId());
                     Bundle bundle = new Bundle();
                     bundle.putString("id", relatedArticle.getRelated_article_id());
+                    bundle.putString("kanal", relatedArticle.getKanal());
+                    bundle.putString("shared_url", relatedArticle.getShared_url());
                     Intent intent = new Intent(VivaApp.getInstance(), ActDetailContentDefault.class);
                     intent.putExtras(bundle);
                     getActivity().startActivity(intent);
@@ -114,7 +122,11 @@ public class DetailHeadlineIndexFragment extends Fragment {
         final TextView tvDateHeadlineDetail = (TextView) view.findViewById(R.id.date_detail_headline);
         final TextView tvReporterHeadlineDetail = (TextView) view.findViewById(R.id.reporter_detail_headline);
         final TextView tvContentHeadlineDetail = (TextView) view.findViewById(R.id.content_detail_headline);
+
         final ImageView ivThumbDetailHeadline = (ImageView) view.findViewById(R.id.thumb_detail_headline);
+        ivThumbDetailHeadline.setFocusable(true);
+        ivThumbDetailHeadline.setFocusableInTouchMode(true);
+        ivThumbDetailHeadline.requestFocus();
 
         if(VivaApp.getInstance().getRequestQueue().getCache().get(Constant.URL_DETAIL + id) != null) {
             cachedResponse = new String(VivaApp.getInstance().
@@ -141,14 +153,16 @@ public class DetailHeadlineIndexFragment extends Fragment {
                     String channel_id = objRelated.getString(Constant.channel_id);
                     String related_date_publish = objRelated.getString(Constant.related_date_publish);
                     String image = objRelated.getString(Constant.image);
+                    String kanal = objRelated.getString(Constant.kanal);
+                    String shared_url = objRelated.getString(Constant.url);
                     relatedArticleArrayList.add(new RelatedArticle(id, article_id, related_article_id, related_title,
-                            related_channel_level_1_id, channel_id, related_date_publish, image));
+                            related_channel_level_1_id, channel_id, related_date_publish, image, kanal, shared_url));
                     Log.i(Constant.TAG, "RELATED ARTICLE HEADLINE CACHED : " + relatedArticleArrayList.get(i).getRelated_title());
                 }
 
                 tvTitleHeadlineDetail.setText(title);
                 tvDateHeadlineDetail.setText(date_publish);
-                tvContentHeadlineDetail.setText(Html.fromHtml(content));
+                tvContentHeadlineDetail.setText(Html.fromHtml(content).toString());
                 tvContentHeadlineDetail.setMovementMethod(LinkMovementMethod.getInstance());
 
                 Document doc = Jsoup.parse(content);
@@ -208,14 +222,16 @@ public class DetailHeadlineIndexFragment extends Fragment {
                                         String channel_id = objRelated.getString(Constant.channel_id);
                                         String related_date_publish = objRelated.getString(Constant.related_date_publish);
                                         String image = objRelated.getString(Constant.image);
+                                        String kanal = objRelated.getString(Constant.kanal);
+                                        String shared_url = objRelated.getString(Constant.url);
                                         relatedArticleArrayList.add(new RelatedArticle(id, article_id, related_article_id, related_title,
-                                                related_channel_level_1_id, channel_id, related_date_publish, image));
+                                                related_channel_level_1_id, channel_id, related_date_publish, image, kanal, shared_url));
                                         Log.i(Constant.TAG, "RELATED ARTICLE HEADLNE : " + relatedArticleArrayList.get(i).getRelated_title());
                                     }
 
                                     tvTitleHeadlineDetail.setText(title);
                                     tvDateHeadlineDetail.setText(date_publish);
-                                    tvContentHeadlineDetail.setText(Html.fromHtml(content));
+                                    tvContentHeadlineDetail.setText(Html.fromHtml(content).toString());
                                     tvContentHeadlineDetail.setMovementMethod(LinkMovementMethod.getInstance());
 
                                     Document doc = Jsoup.parse(content);
@@ -279,14 +295,16 @@ public class DetailHeadlineIndexFragment extends Fragment {
                                             String channel_id = objRelated.getString(Constant.channel_id);
                                             String related_date_publish = objRelated.getString(Constant.related_date_publish);
                                             String image = objRelated.getString(Constant.image);
+                                            String kanal = objRelated.getString(Constant.kanal);
+                                            String shared_url = objRelated.getString(Constant.url);
                                             relatedArticleArrayList.add(new RelatedArticle(id, article_id, related_article_id, related_title,
-                                                    related_channel_level_1_id, channel_id, related_date_publish, image));
+                                                    related_channel_level_1_id, channel_id, related_date_publish, image, kanal, shared_url));
                                             Log.i(Constant.TAG, "RELATED ARTICLE HEADLINE CACHED : " + relatedArticleArrayList.get(i).getRelated_title());
                                         }
 
                                         tvTitleHeadlineDetail.setText(title);
                                         tvDateHeadlineDetail.setText(date_publish);
-                                        tvContentHeadlineDetail.setText(Html.fromHtml(content));
+                                        tvContentHeadlineDetail.setText(Html.fromHtml(content).toString());
                                         tvContentHeadlineDetail.setMovementMethod(LinkMovementMethod.getInstance());
 
                                         Document doc = Jsoup.parse(content);

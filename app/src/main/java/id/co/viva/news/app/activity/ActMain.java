@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.adapter.NavigationAdapter;
+import id.co.viva.news.app.fragment.AboutFragment;
 import id.co.viva.news.app.fragment.BolaFragment;
 import id.co.viva.news.app.fragment.HeadlineFragment;
 import id.co.viva.news.app.fragment.TerbaruFragment;
@@ -52,8 +53,8 @@ public class ActMain extends FragmentActivity {
         mDrawerList = (ListView) findViewById(R.id.list_slidermenu);
 
         navDrawerItems = new ArrayList<Item>();
-        navDrawerItems.add(new NavigationItem("Headlines", R.drawable.icon_headline));
-        navDrawerItems.add(new NavigationItem("Terbaru", R.drawable.icon_terbaru));
+        navDrawerItems.add(new NavigationItem("Headlines", R.drawable.icon_terbaru));
+        navDrawerItems.add(new NavigationItem("Terbaru", R.drawable.icon_headline));
         navDrawerItems.add(new NavigationSectionItem("CHANNELS"));
         navDrawerItems.add(new NavigationItem("News", R.drawable.icon_viva_news));
         navDrawerItems.add(new NavigationItem("Bola", R.drawable.icon_viva_bola));
@@ -113,6 +114,9 @@ public class ActMain extends FragmentActivity {
             case 5:
                 fragment =  new LifeFragment();
                 break;
+            case 7:
+                fragment =  new AboutFragment();
+                break;
             default:
                 break;
         }
@@ -139,8 +143,6 @@ public class ActMain extends FragmentActivity {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
-        menu.findItem(R.id.action_settings).setVisible(!drawerOpen);
         return super.onPrepareOptionsMenu(menu);
     }
 

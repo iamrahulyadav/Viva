@@ -28,6 +28,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import id.co.viva.news.app.services.Analytics;
 import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.VivaApp;
@@ -47,6 +48,7 @@ public class LifeFragment extends Fragment {
     private String cachedResponse;
     private RelativeLayout loading_layout;
     private TextView tvNoResult;
+    private Analytics analytics;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -66,6 +68,10 @@ public class LifeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.frag_life, container, false);
+
+        analytics = new Analytics();
+        analytics.getAnalyticByATInternet(Constant.KANAL_LIFE_PAGE);
+        analytics.getAnalyticByGoogleAnalytic(Constant.KANAL_LIFE_PAGE);
 
         tvNoResult = (TextView) rootView.findViewById(R.id.text_no_result);
         tvNoResult.setVisibility(View.GONE);

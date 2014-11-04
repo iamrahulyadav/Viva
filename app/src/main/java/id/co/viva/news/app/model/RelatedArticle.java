@@ -13,6 +13,24 @@ public class RelatedArticle {
     private String channel_id;
     private String related_date_publish;
     private String image;
+    private String kanal;
+    private String shared_url;
+
+    public String getShared_url() {
+        return shared_url;
+    }
+
+    public void setShared_url(String shared_url) {
+        this.shared_url = shared_url;
+    }
+
+    public String getKanal() {
+        return kanal;
+    }
+
+    public void setKanal(String kanal) {
+        this.kanal = kanal;
+    }
 
     public String getImage() {
         return image;
@@ -80,7 +98,7 @@ public class RelatedArticle {
 
     public RelatedArticle(String id, String article_id, String related_article_id, String related_title,
                           String related_channel_level_1_id, String channel_id, String related_date_publish,
-                          String image) {
+                          String image, String kanal, String shared_url) {
         this.id = id;
         this.article_id = article_id;
         this.related_article_id = related_article_id;
@@ -89,6 +107,8 @@ public class RelatedArticle {
         this.channel_id = channel_id;
         this.related_date_publish = related_date_publish;
         this.image = image;
+        this.kanal = kanal;
+        this.shared_url = shared_url;
     }
 
 }

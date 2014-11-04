@@ -34,6 +34,7 @@ import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
 
+import id.co.viva.news.app.services.Analytics;
 import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.VivaApp;
@@ -57,6 +58,7 @@ public class DetailTerbaruIndexFragment extends Fragment {
     private ListView listView;
     private View imageContentLayout;
     private String imageContent;
+    private Analytics analytics;
 
     private String title;
     private String image_url;
@@ -83,6 +85,10 @@ public class DetailTerbaruIndexFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.item_detail_latest, container, false);
 
+        analytics = new Analytics();
+        analytics.getAnalyticByATInternet(Constant.TERBARU_DETAIL_PAGE);
+        analytics.getAnalyticByGoogleAnalytic(Constant.TERBARU_DETAIL_PAGE);
+
         loading_layout = (RelativeLayout) view.findViewById(R.id.loading_progress_layout);
         headerRelated = (RelativeLayout) view.findViewById(R.id.header_related_article);
         headerRelated.setVisibility(View.GONE);
@@ -101,6 +107,8 @@ public class DetailTerbaruIndexFragment extends Fragment {
                     Log.i(Constant.TAG, "ID : " + relatedArticle.getRelated_article_id());
                     Bundle bundle = new Bundle();
                     bundle.putString("id", relatedArticle.getRelated_article_id());
+                    bundle.putString("kanal", relatedArticle.getKanal());
+                    bundle.putString("shared_url", relatedArticle.getShared_url());
                     Intent intent = new Intent(VivaApp.getInstance(), ActDetailContentDefault.class);
                     intent.putExtras(bundle);
                     getActivity().startActivity(intent);
@@ -115,7 +123,11 @@ public class DetailTerbaruIndexFragment extends Fragment {
         final TextView tvDateNewsDetail = (TextView) view.findViewById(R.id.date_detail_news);
         final TextView tvReporterNewsDetail = (TextView) view.findViewById(R.id.reporter_detail_news);
         final TextView tvContentNewsDetail = (TextView) view.findViewById(R.id.content_detail_news);
+
         final ImageView ivThumbDetailNews = (ImageView) view.findViewById(R.id.thumb_detail_news);
+        ivThumbDetailNews.setFocusable(true);
+        ivThumbDetailNews.setFocusableInTouchMode(true);
+        ivThumbDetailNews.requestFocus();
 
         if(VivaApp.getInstance().getRequestQueue().getCache().get(Constant.URL_DETAIL + id) != null) {
             cachedResponse = new String(VivaApp.getInstance().
@@ -142,14 +154,16 @@ public class DetailTerbaruIndexFragment extends Fragment {
                     String channel_id = objRelated.getString(Constant.channel_id);
                     String related_date_publish = objRelated.getString(Constant.related_date_publish);
                     String image = objRelated.getString(Constant.image);
+                    String kanal = objRelated.getString(Constant.kanal);
+                    String shared_url = objRelated.getString(Constant.url);
                     relatedArticleArrayList.add(new RelatedArticle(id, article_id, related_article_id, related_title,
-                            related_channel_level_1_id, channel_id, related_date_publish, image));
+                            related_channel_level_1_id, channel_id, related_date_publish, image, kanal, shared_url));
                     Log.i(Constant.TAG, "RELATED ARTICLE CACHED : " + relatedArticleArrayList.get(i).getRelated_title());
                 }
 
                 tvTitleNewsDetail.setText(title);
                 tvDateNewsDetail.setText(date_publish);
-                tvContentNewsDetail.setText(Html.fromHtml(content));
+                tvContentNewsDetail.setText(Html.fromHtml(content).toString());
                 tvContentNewsDetail.setMovementMethod(LinkMovementMethod.getInstance());
 
                 Document doc = Jsoup.parse(content);
@@ -209,14 +223,16 @@ public class DetailTerbaruIndexFragment extends Fragment {
                                         String channel_id = objRelated.getString(Constant.channel_id);
                                         String related_date_publish = objRelated.getString(Constant.related_date_publish);
                                         String image = objRelated.getString(Constant.image);
+                                        String kanal = objRelated.getString(Constant.kanal);
+                                        String shared_url = objRelated.getString(Constant.url);
                                         relatedArticleArrayList.add(new RelatedArticle(id, article_id, related_article_id, related_title,
-                                                related_channel_level_1_id, channel_id, related_date_publish, image));
+                                                related_channel_level_1_id, channel_id, related_date_publish, image, kanal, shared_url));
                                         Log.i(Constant.TAG, "RELATED ARTICLE : " + relatedArticleArrayList.get(i).getRelated_title());
                                     }
 
                                     tvTitleNewsDetail.setText(title);
                                     tvDateNewsDetail.setText(date_publish);
-                                    tvContentNewsDetail.setText(Html.fromHtml(content));
+                                    tvContentNewsDetail.setText(Html.fromHtml(content).toString());
                                     tvContentNewsDetail.setMovementMethod(LinkMovementMethod.getInstance());
 
                                     Document doc = Jsoup.parse(content);
@@ -280,14 +296,16 @@ public class DetailTerbaruIndexFragment extends Fragment {
                                             String channel_id = objRelated.getString(Constant.channel_id);
                                             String related_date_publish = objRelated.getString(Constant.related_date_publish);
                                             String image = objRelated.getString(Constant.image);
+                                            String kanal = objRelated.getString(Constant.kanal);
+                                            String shared_url = objRelated.getString(Constant.url);
                                             relatedArticleArrayList.add(new RelatedArticle(id, article_id, related_article_id, related_title,
-                                                    related_channel_level_1_id, channel_id, related_date_publish, image));
+                                                    related_channel_level_1_id, channel_id, related_date_publish, image, kanal, shared_url));
                                             Log.i(Constant.TAG, "RELATED ARTICLE CACHED : " + relatedArticleArrayList.get(i).getRelated_title());
                                         }
 
                                         tvTitleNewsDetail.setText(title);
                                         tvDateNewsDetail.setText(date_publish);
-                                        tvContentNewsDetail.setText(Html.fromHtml(content));
+                                        tvContentNewsDetail.setText(Html.fromHtml(content).toString());
                                         tvContentNewsDetail.setMovementMethod(LinkMovementMethod.getInstance());
 
                                         Document doc = Jsoup.parse(content);

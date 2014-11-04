@@ -43,7 +43,8 @@ public class VivaApp extends Application {
 
     public ATParams getAtParams() {
         if(atTag == null) {
-            atTag = ATTag.init(getInstance(), Constant.AT_SUB_DOMAIN, Constant.AT_SITE_ID, Constant.AT_SUB_SITE);
+            atTag = ATTag.init(getInstance(), Constant.AT_SUB_DOMAIN,
+                    Constant.AT_SITE_ID, Constant.AT_SUB_SITE);
             atTag.setLogDomain(Constant.AT_LOG_DOMAIN);
         }
         if(atParams == null) {

@@ -25,6 +25,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import id.co.viva.news.app.services.Analytics;
 import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.VivaApp;
@@ -42,10 +43,17 @@ public class ActSearchResult extends FragmentActivity implements AdapterView.OnI
     private boolean isInternetPresent = false;
     private JSONArray jsonArrayResponses;
     private ArrayList<SearchResult> resultArrayList;
-    private SearchResultAdapter adapter;
     private RelativeLayout loading_layout;
     private TextView tvNoResult;
     private AnimationAdapter mAnimAdapter;
+    private Analytics analytics;
+
+    private String id ;
+    private String kanal ;
+    private String image_url ;
+    private String title ;
+    private String slug ;
+    private String date_publish ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +95,10 @@ public class ActSearchResult extends FragmentActivity implements AdapterView.OnI
             query = intent.getStringExtra(SearchManager.QUERY);
             tvSearchResult.setText("Hasil Pencarian : " + query);
 
+            analytics = new Analytics();
+            analytics.getAnalyticByATInternet(Constant.SEARCH_RESULT_PAGE + query.toUpperCase());
+            analytics.getAnalyticByGoogleAnalytic(Constant.SEARCH_RESULT_PAGE + query.toUpperCase());
+
             StringRequest stringRequest = new StringRequest(Request.Method.GET, Constant.URL_SEARCH + query,
                     new Response.Listener<String>() {
                         @Override
@@ -99,12 +111,12 @@ public class ActSearchResult extends FragmentActivity implements AdapterView.OnI
                                 if(jsonArrayResponses != null) {
                                     for(int i=0; i<jsonArrayResponses.length(); i++) {
                                         JSONObject jsonHeadline = jsonArrayResponses.getJSONObject(i);
-                                        String id = jsonHeadline.getString(Constant.id);
-                                        String kanal = jsonHeadline.getString(Constant.kanal);
-                                        String image_url = jsonHeadline.getString(Constant.image_url);
-                                        String title = jsonHeadline.getString(Constant.title);
-                                        String slug = jsonHeadline.getString(Constant.slug);
-                                        String date_publish = jsonHeadline.getString(Constant.date_publish);
+                                        id = jsonHeadline.getString(Constant.id);
+                                        kanal = jsonHeadline.getString(Constant.kanal);
+                                        image_url = jsonHeadline.getString(Constant.image_url);
+                                        title = jsonHeadline.getString(Constant.title);
+                                        slug = jsonHeadline.getString(Constant.slug);
+                                        date_publish = jsonHeadline.getString(Constant.date_publish);
                                         resultArrayList.add(new SearchResult(id, kanal, image_url,
                                                 title, slug, date_publish));
                                         Log.i(Constant.TAG, "SEARCH RESULTS : " + resultArrayList.get(i).getTitle());
@@ -146,6 +158,8 @@ public class ActSearchResult extends FragmentActivity implements AdapterView.OnI
             Log.i(Constant.TAG, "ID : " + searchResult.getId());
             Bundle bundle = new Bundle();
             bundle.putString("id", searchResult.getId());
+            bundle.putString("type", "search");
+            bundle.putString("kanal", searchResult.getKanal());
             Intent intent = new Intent(VivaApp.getInstance(), ActDetailContentDefault.class);
             intent.putExtras(bundle);
             startActivity(intent);

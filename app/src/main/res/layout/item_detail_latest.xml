@@ -17,7 +17,6 @@
                 android:id="@+id/thumb_detail_news"
                 android:layout_width="match_parent"
                 android:layout_height="220dp"
-
                 android:scaleType="fitXY"/>
         </RelativeLayout>
         <RelativeLayout
@@ -63,7 +62,7 @@
                 android:id="@+id/content_detail_news"
                 android:layout_below="@id/reporter_detail_news"
                 android:layout_width="wrap_content"
-                android:lineSpacingExtra="35px"
+                android:lineSpacingExtra="15px"
                 android:textSize="18sp"
                 android:textColor="@color/black"
                 android:layout_height="wrap_content" />

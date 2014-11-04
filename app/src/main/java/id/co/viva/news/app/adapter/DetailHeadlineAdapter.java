@@ -23,20 +23,7 @@ public class DetailHeadlineAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        switch (position) {
-            case 0:
-                return DetailHeadlineIndexFragment.newInstance(headlineList.get(position).getId());
-            case 1:
-                return DetailHeadlineIndexFragment.newInstance(headlineList.get(position).getId());
-            case 2:
-                return DetailHeadlineIndexFragment.newInstance(headlineList.get(position).getId());
-            case 3:
-                return DetailHeadlineIndexFragment.newInstance(headlineList.get(position).getId());
-            case 4:
-                return DetailHeadlineIndexFragment.newInstance(headlineList.get(position).getId());
-            default:
-                return null;
-        }
+        return DetailHeadlineIndexFragment.newInstance(headlineList.get(position).getId());
     }
 
     @Override
