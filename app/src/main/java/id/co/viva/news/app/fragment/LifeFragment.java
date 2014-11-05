@@ -196,6 +196,7 @@ public class LifeFragment extends Fragment {
                     e.getMessage();
                 }
             } else {
+                loading_layout.setVisibility(View.GONE);
                 tvNoResult.setVisibility(View.VISIBLE);
                 Toast.makeText(VivaApp.getInstance(), R.string.title_no_connection, Toast.LENGTH_SHORT).show();
             }

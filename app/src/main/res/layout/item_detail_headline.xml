@@ -100,7 +100,6 @@
                 android:textStyle="bold"
                 android:layout_centerHorizontal="true"
                 android:text="@string/label_no_results"
-                android:layout_below="@id/reporter_detail_headline"
                 android:textColor="@color/header_grey"
                 android:id="@+id/text_no_result_detail_headline"/>
             <RelativeLayout
@@ -108,7 +107,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:layout_below="@id/reporter_detail_headline"
                 android:padding="10dp">
                 <id.co.viva.news.app.component.LoadingView
                     android:id="@+id/loading_progress"

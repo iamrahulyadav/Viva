@@ -138,8 +138,7 @@ public class GCM {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("reg_id", Preferences.getGCMRegId());
                 params.put("package_name", package_name);
-//                params.put("app_version", String.valueOf(deviceInfo.getAppVersionName()));
-                params.put("app_version", "11");
+                params.put("app_version", String.valueOf(deviceInfo.getAppVersion()));
                 params.put("os_version", deviceInfo.getOSVersion());
                 params.put("model", deviceInfo.getModel());
                 params.put("country", deviceInfo.getSIMCountryISO());

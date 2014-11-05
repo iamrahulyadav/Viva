@@ -11,6 +11,15 @@ public class SearchResult {
     private String title;
     private String slug;
     private String date_publish;
+    private String url;
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
 
     public String getDate_publish() {
         return date_publish;
@@ -61,13 +70,14 @@ public class SearchResult {
     }
 
     public SearchResult(String id, String kanal, String image_url,
-                    String title, String slug, String date_publish) {
+                    String title, String slug, String date_publish, String url) {
         this.id = id;
         this.title = title;
         this.slug = slug;
         this.kanal = kanal;
         this.image_url = image_url;
         this.date_publish = date_publish;
+        this.url = url;
     }
 
 }

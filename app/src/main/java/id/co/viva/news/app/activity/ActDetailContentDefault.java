@@ -76,7 +76,7 @@ public class ActDetailContentDefault extends FragmentActivity implements Adapter
     private RelatedAdapter adapter;
     private ListView listView;
     private Analytics analytics;
-//    private RelativeLayout loading_layout;
+    private RelativeLayout loading_layout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,7 +125,7 @@ public class ActDetailContentDefault extends FragmentActivity implements Adapter
             getActionBar().setBackgroundDrawable(colorDrawable);
         }
 
-//        loading_layout = (RelativeLayout) findViewById(R.id.loading_progress_layout);
+        loading_layout = (RelativeLayout) findViewById(R.id.loading_progress_layout_default);
         headerRelated = (RelativeLayout) findViewById(R.id.header_related_article);
         headerRelated.setVisibility(View.GONE);
         tvNoResult = (TextView) findViewById(R.id.text_no_result_detail_content);
@@ -221,7 +221,7 @@ public class ActDetailContentDefault extends FragmentActivity implements Adapter
                     }
                 }
 
-//                loading_layout.setVisibility(View.GONE);
+                loading_layout.setVisibility(View.GONE);
             } catch (Exception e) {
                 e.getMessage();
             }
@@ -301,7 +301,7 @@ public class ActDetailContentDefault extends FragmentActivity implements Adapter
                                         }
                                     }
 
-//                                    loading_layout.setVisibility(View.GONE);
+                                    loading_layout.setVisibility(View.GONE);
                                 } catch (Exception e) {
                                     e.getMessage();
                                 }
@@ -325,7 +325,7 @@ public class ActDetailContentDefault extends FragmentActivity implements Adapter
                 VivaApp.getInstance().addToRequestQueue(request, Constant.JSON_REQUEST);
             } else {
                 Toast.makeText(VivaApp.getInstance(), R.string.title_no_connection, Toast.LENGTH_SHORT).show();
-//                loading_layout.setVisibility(View.GONE);
+                loading_layout.setVisibility(View.GONE);
                 tvNoResult.setVisibility(View.VISIBLE);
             }
         }
@@ -360,7 +360,7 @@ public class ActDetailContentDefault extends FragmentActivity implements Adapter
             RelatedArticle relatedArticles = relatedArticleArrayList.get(position);
             Log.i(Constant.TAG, "ID : " + relatedArticles.getId());
             Bundle bundle = new Bundle();
-            bundle.putString("id", relatedArticles.getId());
+            bundle.putString("id", relatedArticles.getRelated_article_id());
             bundle.putString("type", typeFrom);
             bundle.putString("kanal", relatedArticles.getKanal());
             bundle.putString("shared_url", relatedArticles.getShared_url());

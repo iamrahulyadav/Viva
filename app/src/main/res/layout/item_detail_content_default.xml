@@ -102,23 +102,21 @@
                 android:textStyle="bold"
                 android:layout_centerHorizontal="true"
                 android:text="@string/label_no_results"
-                android:layout_below="@id/reporter_detail_content_default"
                 android:textColor="@color/header_grey"
                 android:id="@+id/text_no_result_detail_content"/>
-            <!--<RelativeLayout-->
-                <!--android:id="@+id/loading_progress_layout"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_centerHorizontal="true"-->
-                <!--android:layout_below="@id/reporter_detail_content_default"-->
-                <!--android:padding="10dp">-->
-                <!--<id.co.viva.news.app.component.LoadingView-->
-                    <!--android:id="@+id/loading_progress"-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:layout_centerHorizontal="true"-->
-                    <!--android:src="@drawable/ic_action_refresh_light"/>-->
-            <!--</RelativeLayout>-->
+            <RelativeLayout
+                android:id="@+id/loading_progress_layout_default"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:padding="10dp">
+                <id.co.viva.news.app.component.LoadingView
+                    android:id="@+id/loading_progress"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:src="@drawable/ic_action_refresh_light"/>
+            </RelativeLayout>
         </RelativeLayout>
     </RelativeLayout>
 </com.nirhart.parallaxscroll.views.ParallaxScrollView>

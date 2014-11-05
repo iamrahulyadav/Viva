@@ -54,6 +54,7 @@ public class ActSearchResult extends FragmentActivity implements AdapterView.OnI
     private String title ;
     private String slug ;
     private String date_publish ;
+    private String url;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,8 +118,9 @@ public class ActSearchResult extends FragmentActivity implements AdapterView.OnI
                                         title = jsonHeadline.getString(Constant.title);
                                         slug = jsonHeadline.getString(Constant.slug);
                                         date_publish = jsonHeadline.getString(Constant.date_publish);
+                                        url = jsonHeadline.getString(Constant.url);
                                         resultArrayList.add(new SearchResult(id, kanal, image_url,
-                                                title, slug, date_publish));
+                                                title, slug, date_publish, url));
                                         Log.i(Constant.TAG, "SEARCH RESULTS : " + resultArrayList.get(i).getTitle());
                                     }
                                 }
@@ -160,6 +162,7 @@ public class ActSearchResult extends FragmentActivity implements AdapterView.OnI
             bundle.putString("id", searchResult.getId());
             bundle.putString("type", "search");
             bundle.putString("kanal", searchResult.getKanal());
+            bundle.putString("shared_url", searchResult.getUrl());
             Intent intent = new Intent(VivaApp.getInstance(), ActDetailContentDefault.class);
             intent.putExtras(bundle);
             startActivity(intent);
