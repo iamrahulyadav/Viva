@@ -11,6 +11,7 @@
     <string name="label_terbaru">TERBARU</string>
     <string name="label_headline">HEADLINES</string>
     <string name="label_content_not_update">Content is not updated</string>
+    <string name="label_error">Error was occured!</string>
 
     <!-- Title for Viva Menu -->
     <string name="title_viva_bola">Viva Bola</string>

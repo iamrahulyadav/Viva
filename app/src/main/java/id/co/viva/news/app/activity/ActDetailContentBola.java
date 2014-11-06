@@ -8,6 +8,7 @@ import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ShareActionProvider;
+import android.widget.Toast;
 
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.adapter.DetailContentAdapterBola;
@@ -20,7 +21,7 @@ import id.co.viva.news.app.model.ChannelBola;
 public class ActDetailContentBola extends FragmentActivity {
 
     private String id;
-    private String url_shared;
+    private String  url_shared;
     private ViewPager viewPager;
     private DetailContentAdapterBola adapter;
 
@@ -43,10 +44,15 @@ public class ActDetailContentBola extends FragmentActivity {
         getActionBar().setIcon(R.drawable.logo_viva_coid_second);
 
         int position = 0;
-        //TODO Handle go back from open url in browser
-        for(ChannelBola channelBola : ActDetailChannelBola.channelBolaArrayList) {
-            if(channelBola.getId().equals(id)) break;
-            position++;
+        if(ActDetailChannelBola.channelBolaArrayList.size() > 0) {
+            //TODO Handle go back from open url in browser
+            for(ChannelBola channelBola : ActDetailChannelBola.channelBolaArrayList) {
+                if(channelBola.getId().equals(id)) break;
+                position++;
+            }
+        } else {
+            Toast.makeText(this, R.string.label_error, Toast.LENGTH_SHORT).show();
+            onBackPressed();
         }
 
         adapter = new DetailContentAdapterBola(getSupportFragmentManager(), ActDetailChannelBola.channelBolaArrayList);

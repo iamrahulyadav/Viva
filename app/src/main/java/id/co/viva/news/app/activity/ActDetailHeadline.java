@@ -7,6 +7,7 @@ import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ShareActionProvider;
+import android.widget.Toast;
 
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.adapter.DetailHeadlineAdapter;
@@ -39,9 +40,15 @@ public class ActDetailHeadline extends FragmentActivity {
         getActionBar().setTitle("Headlines");
 
         int position = 0;
-        for(Headline headline : HeadlineFragment.headlineArrayList) {
-            if(headline.getId().equals(id)) break;
-            position++;
+        if(HeadlineFragment.headlineArrayList.size() > 0) {
+            //TODO Handle go back from open url in browser
+            for(Headline headline : HeadlineFragment.headlineArrayList) {
+                if(headline.getId().equals(id)) break;
+                position++;
+            }
+        } else {
+            Toast.makeText(this, R.string.label_error, Toast.LENGTH_SHORT).show();
+            onBackPressed();
         }
 
         adapter = new DetailHeadlineAdapter(getSupportFragmentManager(), HeadlineFragment.headlineArrayList);

@@ -34,7 +34,6 @@ public class BounvenoTextView extends TextView {
 
     @Override
     public void setError(CharSequence error) {
-        // TODO Auto-generated method stub
         super.setError(error);
         if (error == null) {
             restoreDrawables();

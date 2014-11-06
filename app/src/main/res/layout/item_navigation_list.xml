@@ -17,7 +17,6 @@
         <id.co.viva.news.app.component.BounvenoTextView android:id="@+id/text_navigation_list"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textStyle="bold"
             android:textColor="@color/black"
             android:singleLine="true"
             android:textAppearance="?android:attr/textAppearanceLarge"/>

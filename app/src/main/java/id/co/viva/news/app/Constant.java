@@ -3,8 +3,6 @@ package id.co.viva.news.app;
 import android.app.ActionBar;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListAdapter;

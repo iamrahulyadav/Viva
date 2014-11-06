@@ -153,14 +153,14 @@ public class ActDetailChannelNews extends FragmentActivity {
                     Constant.TIME_OUT,
                     DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                     DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-            VivaApp.getInstance().getRequestQueue().getCache().invalidate(Constant.URL_KANAL_DETAIL + id + "/2/0/10", true);
-            VivaApp.getInstance().getRequestQueue().getCache().get(Constant.URL_KANAL_DETAIL + id + "/2/0/10");
+            VivaApp.getInstance().getRequestQueue().getCache().invalidate(Constant.URL_KANAL_DETAIL + id + "/1/0/10", true);
+            VivaApp.getInstance().getRequestQueue().getCache().get(Constant.URL_KANAL_DETAIL + id + "/1/0/10");
             VivaApp.getInstance().addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
         } else {
             Toast.makeText(VivaApp.getInstance(), R.string.title_no_connection, Toast.LENGTH_SHORT).show();
-            if(VivaApp.getInstance().getRequestQueue().getCache().get(Constant.URL_KANAL_DETAIL + id + "/2/0/10") != null) {
+            if(VivaApp.getInstance().getRequestQueue().getCache().get(Constant.URL_KANAL_DETAIL + id + "/1/0/10") != null) {
                 cachedResponse = new String(VivaApp.getInstance().
-                        getRequestQueue().getCache().get(Constant.URL_KANAL_DETAIL + id + "/2/0/10").data);
+                        getRequestQueue().getCache().get(Constant.URL_KANAL_DETAIL + id + "/1/0/10").data);
                 Log.i(Constant.TAG, "CHANNEL NEWS CACHED RESPONSE : " + cachedResponse);
                 try{
                     JSONObject jsonObject = new JSONObject(cachedResponse);

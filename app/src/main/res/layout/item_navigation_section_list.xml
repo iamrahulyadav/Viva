@@ -15,6 +15,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginLeft="5dp"
+            android:textStyle="bold"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@color/white"/>
     </RelativeLayout>
