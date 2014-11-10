@@ -1,12 +1,9 @@
 package id.co.viva.news.app.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
-import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ShareActionProvider;
 import android.widget.Toast;
 
 import id.co.viva.news.app.R;
@@ -21,7 +18,6 @@ import id.co.viva.news.app.model.News;
 public class ActDetailTerbaru extends FragmentActivity {
 
     private String id;
-    private String url_shared;
     private ViewPager viewPager;
     private DetailTerbaruAdapter adapter;
 
@@ -30,7 +26,6 @@ public class ActDetailTerbaru extends FragmentActivity {
         super.onCreate(savedInstanceState);
         Bundle bundle = getIntent().getExtras();
         id = bundle.getString("id");
-        url_shared = bundle.getString("url_shared");
 
         setContentView(R.layout.frag_detail_terbaru);
         getActionBar().setDisplayHomeAsUpEnabled(true);
@@ -40,7 +35,6 @@ public class ActDetailTerbaru extends FragmentActivity {
 
         int position = 0;
         if(TerbaruFragment.newsArrayList.size() > 0) {
-            //TODO Handle go back from open url in browser
             for(News news : TerbaruFragment.newsArrayList) {
                 if(news.getId().equals(id)) break;
                 position++;
@@ -66,19 +60,6 @@ public class ActDetailTerbaru extends FragmentActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_detail_headline, menu);
-        MenuItem item = menu.findItem(R.id.action_share);
-        ShareActionProvider myShareActionProvider = (ShareActionProvider) item.getActionProvider();
-        Intent myIntent = new Intent();
-        myIntent.setAction(Intent.ACTION_SEND);
-        myIntent.putExtra(Intent.EXTRA_TEXT, url_shared);
-        myIntent.setType("text/plain");
-        myShareActionProvider.setShareIntent(myIntent);
-        return true;
     }
 
 }

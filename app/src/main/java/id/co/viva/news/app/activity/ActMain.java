@@ -41,6 +41,8 @@ public class ActMain extends FragmentActivity {
     private ArrayList<Item> navDrawerItems;
     private NavigationAdapter adapter;
     private CharSequence mDrawerTitle;
+    private android.support.v4.app.Fragment fragment = null;
+    private android.support.v4.app.FragmentManager fragmentManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,7 +99,6 @@ public class ActMain extends FragmentActivity {
     }
 
     private void displayView(int position) {
-        android.support.v4.app.Fragment fragment = null;
         switch (position) {
             case 0:
                 fragment = new HeadlineFragment();
@@ -120,11 +121,11 @@ public class ActMain extends FragmentActivity {
             default:
                 break;
         }
-        if (fragment != null) {
-            android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
+        if(fragment != null) {
+            fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction()
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                    .replace(R.id.frame_container, fragment)
+                    .replace(R.id.frame_container, fragment, "fragment")
                     .commit();
             mDrawerList.setItemChecked(position, true);
             mDrawerList.setSelection(position);
@@ -161,7 +162,7 @@ public class ActMain extends FragmentActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_frag_headline, menu);
+        inflater.inflate(R.menu.menu_frag_default, menu);
         SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView =
@@ -184,7 +185,17 @@ public class ActMain extends FragmentActivity {
         if(mDrawerLayout.isDrawerOpen(mDrawerList)) {
             mDrawerLayout.closeDrawer(mDrawerList);
         } else {
-            super.onBackPressed();
+            if(fragment.getClass().toString().equals(Constant.fragment_headline)) {
+                getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+                finish();
+            } else {
+                fragment = new HeadlineFragment();
+                fragmentManager = getSupportFragmentManager();
+                fragmentManager.beginTransaction()
+                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                        .replace(R.id.frame_container, fragment, "fragment")
+                        .commit();
+            }
         }
     }
 

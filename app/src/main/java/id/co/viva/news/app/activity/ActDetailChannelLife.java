@@ -93,7 +93,6 @@ public class ActDetailChannelLife extends FragmentActivity {
                     Log.i(Constant.TAG, "ID : " + news.getId());
                     Bundle bundle = new Bundle();
                     bundle.putString("id", news.getId());
-                    bundle.putString("url_shared", news.getUrl());
                     Intent intent = new Intent(VivaApp.getInstance(), ActDetailContentLife.class);
                     intent.putExtras(bundle);
                     startActivity(intent);
@@ -213,7 +212,7 @@ public class ActDetailChannelLife extends FragmentActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_frag_headline, menu);
+        inflater.inflate(R.menu.menu_frag_default, menu);
         SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView =

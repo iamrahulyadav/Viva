@@ -96,7 +96,6 @@ public class TerbaruFragment extends Fragment {
                     Log.i(Constant.TAG, "ID : " + news.getId());
                     Bundle bundle = new Bundle();
                     bundle.putString("id", news.getId());
-                    bundle.putString("url_shared", news.getUrl());
                     Intent intent = new Intent(VivaApp.getInstance(), ActDetailTerbaru.class);
                     intent.putExtras(bundle);
                     getActivity().startActivity(intent);

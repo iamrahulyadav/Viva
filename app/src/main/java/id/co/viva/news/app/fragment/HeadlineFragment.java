@@ -96,7 +96,6 @@ public class HeadlineFragment extends Fragment {
                     Log.i(Constant.TAG, "ID : " + headline.getId());
                     Bundle bundle = new Bundle();
                     bundle.putString("id", headline.getId());
-                    bundle.putString("url_shared", headline.getUrl());
                     Intent intent = new Intent(VivaApp.getInstance(), ActDetailHeadline.class);
                     intent.putExtras(bundle);
                     getActivity().startActivity(intent);

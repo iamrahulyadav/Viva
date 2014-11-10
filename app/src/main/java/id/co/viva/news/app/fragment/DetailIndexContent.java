@@ -9,6 +9,9 @@ import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -16,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.ShareActionProvider;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -67,6 +71,7 @@ public class DetailIndexContent extends Fragment implements AdapterView.OnItemCl
     private String date_publish;
     private String content;
     private String reporter_name;
+    private String url_shared;
 
     public static DetailIndexContent newInstance(String id, String kanals) {
         DetailIndexContent detailIndexContent = new DetailIndexContent();
@@ -89,6 +94,8 @@ public class DetailIndexContent extends Fragment implements AdapterView.OnItemCl
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.item_detail_content, container, false);
+
+        setHasOptionsMenu(true);
 
         if(kanals != null) {
             if(kanals.equalsIgnoreCase("bola")) {
@@ -139,6 +146,7 @@ public class DetailIndexContent extends Fragment implements AdapterView.OnItemCl
                 date_publish = detail.getString(Constant.date_publish);
                 content = detail.getString(Constant.content);
                 reporter_name = detail.getString(Constant.reporter_name);
+                url_shared = detail.getString(Constant.url);
 
                 JSONArray related_article = response.getJSONArray(Constant.related_article);
                 for(int i=0; i<related_article.length(); i++) {
@@ -219,6 +227,7 @@ public class DetailIndexContent extends Fragment implements AdapterView.OnItemCl
                                     date_publish = detail.getString(Constant.date_publish);
                                     content = detail.getString(Constant.content);
                                     reporter_name = detail.getString(Constant.reporter_name);
+                                    url_shared = detail.getString(Constant.url);
 
                                     JSONArray related_article = response.getJSONArray(Constant.related_article);
                                     for(int i=0; i<related_article.length(); i++) {
@@ -301,6 +310,7 @@ public class DetailIndexContent extends Fragment implements AdapterView.OnItemCl
                                         date_publish = detail.getString(Constant.date_publish);
                                         content = detail.getString(Constant.content);
                                         reporter_name = detail.getString(Constant.reporter_name);
+                                        url_shared = detail.getString(Constant.url);
 
                                         JSONArray related_article = response.getJSONArray(Constant.related_article);
                                         for(int i=0; i<related_article.length(); i++) {
@@ -403,6 +413,19 @@ public class DetailIndexContent extends Fragment implements AdapterView.OnItemCl
             startActivity(intent);
             getActivity().overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
         }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_frag_detail, menu);
+        MenuItem item = menu.findItem(R.id.action_share);
+        ShareActionProvider myShareActionProvider = (ShareActionProvider) item.getActionProvider();
+        Intent myIntent = new Intent();
+        myIntent.setAction(Intent.ACTION_SEND);
+        myIntent.putExtra(Intent.EXTRA_TEXT, url_shared);
+        myIntent.setType("text/plain");
+        myShareActionProvider.setShareIntent(myIntent);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
 }

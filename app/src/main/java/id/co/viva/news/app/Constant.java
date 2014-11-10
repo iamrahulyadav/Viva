@@ -16,6 +16,8 @@ public class Constant {
     public static final int TIME_OUT = 3000;
     public final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 
+    public static final String fragment_headline = "class id.co.viva.news.app.fragment.HeadlineFragment";
+
     public static final String GCM_SENDER_ID = "246836504311";
     public static final String GCM_URL_BACKEND_SERVER = "http://apps.vivall.tv/gcm_registration.php";
 

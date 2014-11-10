@@ -343,7 +343,7 @@ public class ActDetailContentDefault extends FragmentActivity implements Adapter
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_detail_headline, menu);
+        getMenuInflater().inflate(R.menu.menu_frag_detail, menu);
         MenuItem item = menu.findItem(R.id.action_share);
         ShareActionProvider myShareActionProvider = (ShareActionProvider) item.getActionProvider();
         Intent myIntent = new Intent();

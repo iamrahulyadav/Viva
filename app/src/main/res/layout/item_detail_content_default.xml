@@ -18,7 +18,6 @@
                 android:id="@+id/thumb_detail_content_default"
                 android:layout_width="match_parent"
                 android:layout_height="220dp"
-
                 android:scaleType="fitXY"/>
         </RelativeLayout>
         <RelativeLayout
