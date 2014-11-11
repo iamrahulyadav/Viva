@@ -195,6 +195,8 @@ public class ActMain extends FragmentActivity {
                         .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                         .replace(R.id.frame_container, fragment, "fragment")
                         .commit();
+                mDrawerList.setItemChecked(0, true);
+                mDrawerList.setSelection(0);
             }
         }
     }
