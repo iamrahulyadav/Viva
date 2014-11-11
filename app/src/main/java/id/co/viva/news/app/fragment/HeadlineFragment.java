@@ -41,7 +41,7 @@ import id.co.viva.news.app.model.Headline;
 /**
  * Created by reza on 28/10/14.
  */
-public class HeadlineFragment extends Fragment {
+public class HeadlineFragment extends Fragment implements AdapterView.OnItemClickListener {
 
     private static String HEADLINES = "headlines";
     public static ArrayList<Headline> headlineArrayList;
@@ -88,24 +88,11 @@ public class HeadlineFragment extends Fragment {
         labelText.setText(getString(R.string.label_headline));
 
         listView = (ListView) rootView.findViewById(R.id.list_terbaru_headline);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                if(headlineArrayList.size() > 0) {
-                    Headline headline = headlineArrayList.get(position);
-                    Log.i(Constant.TAG, "ID : " + headline.getId());
-                    Bundle bundle = new Bundle();
-                    bundle.putString("id", headline.getId());
-                    Intent intent = new Intent(VivaApp.getInstance(), ActDetailHeadline.class);
-                    intent.putExtras(bundle);
-                    getActivity().startActivity(intent);
-                    getActivity().overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
-                }
-            }
-        });
-        headlineArrayList = new ArrayList<Headline>();
+        listView.setOnItemClickListener(this);
 
+        headlineArrayList = new ArrayList<Headline>();
         parseJson(headlineArrayList);
+
         return rootView;
     }
 
@@ -262,6 +249,20 @@ public class HeadlineFragment extends Fragment {
                 e.getMessage();
             }
             Toast.makeText(VivaApp.getInstance(), R.string.title_no_connection, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+        if(headlineArrayList.size() > 0) {
+            Headline headline = headlineArrayList.get(position);
+            Log.i(Constant.TAG, "ID : " + headline.getId());
+            Bundle bundle = new Bundle();
+            bundle.putString("id", headline.getId());
+            Intent intent = new Intent(VivaApp.getInstance(), ActDetailHeadline.class);
+            intent.putExtras(bundle);
+            getActivity().startActivity(intent);
+            getActivity().overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
         }
     }
 

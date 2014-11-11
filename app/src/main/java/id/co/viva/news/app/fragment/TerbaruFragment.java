@@ -11,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,6 +29,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import id.co.viva.news.app.component.LoadMoreListView;
+import id.co.viva.news.app.interfaces.OnLoadMoreListener;
 import id.co.viva.news.app.services.Analytics;
 import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.R;
@@ -41,14 +42,16 @@ import id.co.viva.news.app.model.News;
 /**
  * Created by root on 09/10/14.
  */
-public class TerbaruFragment extends Fragment {
+public class TerbaruFragment extends Fragment implements AdapterView.OnItemClickListener, OnLoadMoreListener {
 
     final private static String NEWS = "terbaru";
     public static ArrayList<News> newsArrayList;
 
+    private int dataSize = 0;
+    private String data;
     private SwingBottomInAnimationAdapter swingBottomInAnimationAdapter;
     private TerbaruAdapter terbaruAdapter;
-    private ListView listView;
+    private LoadMoreListView listView;
     private TextView lastUpdate;
     private RelativeLayout loading_layout;
     private Boolean isInternetPresent = false;
@@ -87,23 +90,12 @@ public class TerbaruFragment extends Fragment {
         labelText.setText(getString(R.string.label_terbaru));
         lastUpdate = (TextView) rootView.findViewById(R.id.date_terbaru_headline);
 
-        listView = (ListView) rootView.findViewById(R.id.list_terbaru_headline);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                if(newsArrayList.size() > 0) {
-                    News news = newsArrayList.get(position);
-                    Log.i(Constant.TAG, "ID : " + news.getId());
-                    Bundle bundle = new Bundle();
-                    bundle.putString("id", news.getId());
-                    Intent intent = new Intent(VivaApp.getInstance(), ActDetailTerbaru.class);
-                    intent.putExtras(bundle);
-                    getActivity().startActivity(intent);
-                    getActivity().overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
-                }
-            }
-        });
         newsArrayList = new ArrayList<News>();
+        terbaruAdapter = new TerbaruAdapter(getActivity(), newsArrayList);
+
+        listView = (LoadMoreListView) rootView.findViewById(R.id.list_terbaru_headline);
+        listView.setOnItemClickListener(this);
+        listView.setOnLoadMoreListener(this);
 
         parseJson(newsArrayList);
 
@@ -141,7 +133,6 @@ public class TerbaruFragment extends Fragment {
                                 }
 
                                 if(news.size() > 0 || !news.isEmpty()) {
-                                    terbaruAdapter = new TerbaruAdapter(getActivity(), news);
                                     swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(terbaruAdapter);
                                     swingBottomInAnimationAdapter.setAbsListView(listView);
                                     assert swingBottomInAnimationAdapter.getViewAnimator() != null;
@@ -191,7 +182,6 @@ public class TerbaruFragment extends Fragment {
                             }
 
                             if(news.size() > 0 || !news.isEmpty()) {
-                                terbaruAdapter = new TerbaruAdapter(getActivity(), news);
                                 swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(terbaruAdapter);
                                 swingBottomInAnimationAdapter.setAbsListView(listView);
                                 assert swingBottomInAnimationAdapter.getViewAnimator() != null;
@@ -244,7 +234,6 @@ public class TerbaruFragment extends Fragment {
                     }
 
                     if(news.size() > 0 || !news.isEmpty()) {
-                        terbaruAdapter = new TerbaruAdapter(getActivity(), news);
                         swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(terbaruAdapter);
                         swingBottomInAnimationAdapter.setAbsListView(listView);
                         assert swingBottomInAnimationAdapter.getViewAnimator() != null;
@@ -260,6 +249,82 @@ public class TerbaruFragment extends Fragment {
                 e.getMessage();
             }
             Toast.makeText(VivaApp.getInstance(), R.string.title_no_connection, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+        if(newsArrayList.size() > 0) {
+            News news = newsArrayList.get(position);
+            Log.i(Constant.TAG, "ID : " + news.getId());
+            Bundle bundle = new Bundle();
+            bundle.putString("id", news.getId());
+            Intent intent = new Intent(VivaApp.getInstance(), ActDetailTerbaru.class);
+            intent.putExtras(bundle);
+            getActivity().startActivity(intent);
+            getActivity().overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+        }
+    }
+
+    @Override
+    public void onLoadMore() {
+        data = String.valueOf(dataSize += 10);
+        Log.i(Constant.TAG, "DATA PAGE : " + data);
+        if(isInternetPresent) {
+                StringRequest stringRequest = new StringRequest(Request.Method.GET, Constant.URL_HOMEPAGE + data,
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String volleyResponse) {
+                                Log.i(Constant.TAG, volleyResponse);
+                                try {
+                                    JSONObject jsonObject = new JSONObject(volleyResponse);
+                                    jsonArrayResponses = jsonObject.getJSONArray(Constant.response);
+                                    if(jsonArrayResponses != null) {
+                                        JSONObject objTerbaru = jsonArrayResponses.getJSONObject(1);
+                                        if(objTerbaru !=  null) {
+                                            jsonArraySegmentNews = objTerbaru.getJSONArray(NEWS);
+                                            for(int i=0; i<jsonArraySegmentNews.length(); i++) {
+                                                JSONObject jsonTerbaru = jsonArraySegmentNews.getJSONObject(i);
+                                                String id = jsonTerbaru.getString(Constant.id);
+                                                String title = jsonTerbaru.getString(Constant.title);
+                                                String slug = jsonTerbaru.getString(Constant.slug);
+                                                String kanal = jsonTerbaru.getString(Constant.kanal);
+                                                String url = jsonTerbaru.getString(Constant.url);
+                                                String image_url = jsonTerbaru.getString(Constant.image_url);
+                                                String date_publish = jsonTerbaru.getString(Constant.date_publish);
+                                                newsArrayList.add(new News(id, title, slug, kanal, url,
+                                                        image_url, date_publish));
+                                            }
+                                        }
+                                    }
+
+                                    if(newsArrayList.size() > 0 || !newsArrayList.isEmpty()) {
+                                        swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(terbaruAdapter);
+                                        swingBottomInAnimationAdapter.setAbsListView(listView);
+                                        assert swingBottomInAnimationAdapter.getViewAnimator() != null;
+                                        swingBottomInAnimationAdapter.getViewAnimator().setInitialDelayMillis(1000);
+                                        terbaruAdapter.notifyDataSetChanged();
+                                        listView.onLoadMoreComplete();
+                                    }
+                                } catch (Exception e) {
+                                    e.getMessage();
+                                }
+                            }
+                        }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+                        volleyError.getMessage();
+                        Toast.makeText(VivaApp.getInstance(), R.string.label_error, Toast.LENGTH_SHORT).show();
+                    }
+                });
+                stringRequest.setShouldCache(true);
+                stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                        Constant.TIME_OUT,
+                        DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                        DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+                VivaApp.getInstance().getRequestQueue().getCache().invalidate(Constant.URL_HOMEPAGE + data, true);
+                VivaApp.getInstance().getRequestQueue().getCache().get(Constant.URL_HOMEPAGE + data);
+                VivaApp.getInstance().addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
         }
     }
 

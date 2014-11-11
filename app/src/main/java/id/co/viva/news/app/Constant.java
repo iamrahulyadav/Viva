@@ -25,7 +25,7 @@ public class Constant {
     public static final String TAG_GCM = "VIVA-GCM";
 
     private static String BASE_URL = "http://www.viva.co.id/rss/api/mobile/";
-    public static String URL_HOMEPAGE = BASE_URL + "homepage/0";
+    public static String URL_HOMEPAGE = BASE_URL + "homepage/";
     public static String URL_KANAL_NEWS = BASE_URL + "kanal_news";
     public static String URL_KANAL_BOLA = BASE_URL + "kanal_bola";
     public static String URL_KANAL_LIFE = BASE_URL + "kanal_life";

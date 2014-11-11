@@ -28,7 +28,7 @@
                 android:textStyle="bold"
                 android:textSize="14sp"/>
         </RelativeLayout>
-        <ListView
+        <id.co.viva.news.app.component.LoadMoreListView
             xmlns:tools="http://schemas.android.com/tools"
             android:id="@+id/list_terbaru_headline"
             android:layout_width="match_parent"
@@ -41,8 +41,7 @@
             android:scrollbarStyle="outsideOverlay"
             tools:ignore="overdraw"
             android:layout_below="@id/header_terbaru_headline_and_date"
-            android:layout_height="match_parent">
-        </ListView>
+            android:layout_height="match_parent"/>
         <RelativeLayout
             android:id="@+id/loading_progress_layout"
             android:layout_width="wrap_content"

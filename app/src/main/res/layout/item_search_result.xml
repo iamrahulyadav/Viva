@@ -7,7 +7,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_marginTop="5dp"
-        android:background="@drawable/card_background_second">
+        android:background="@drawable/card_background">
         <RelativeLayout
             android:layout_width="100dp"
             android:layout_gravity="center"

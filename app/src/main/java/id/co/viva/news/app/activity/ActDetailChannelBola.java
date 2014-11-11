@@ -12,7 +12,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -31,6 +30,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import id.co.viva.news.app.component.LoadMoreListView;
+import id.co.viva.news.app.interfaces.OnLoadMoreListener;
 import id.co.viva.news.app.services.Analytics;
 import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.R;
@@ -41,7 +42,7 @@ import id.co.viva.news.app.model.ChannelBola;
 /**
  * Created by reza on 27/10/14.
  */
-public class ActDetailChannelBola extends FragmentActivity {
+public class ActDetailChannelBola extends FragmentActivity implements OnLoadMoreListener, AdapterView.OnItemClickListener {
 
     public static ArrayList<ChannelBola> channelBolaArrayList;
     private String id;
@@ -50,11 +51,14 @@ public class ActDetailChannelBola extends FragmentActivity {
     private RelativeLayout loading_layout;
     private TextView tvNoResult;
     private TextView tvChannel;
-    private ListView listView;
+    private LoadMoreListView listView;
     private String cachedResponse;
     private AnimationAdapter mAnimAdapter;
     private JSONArray jsonArrayResponses, jsonArraySegmentHeadline;
     private Analytics analytics;
+    private ChannelBolaAdapter adapter;
+    private int dataSize = 0;
+    private String data;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,27 +84,19 @@ public class ActDetailChannelBola extends FragmentActivity {
         channel_title = bundle.getString("channel_title");
 
         loading_layout = (RelativeLayout) findViewById(R.id.loading_progress_layout);
+
         tvChannel = (TextView) findViewById(R.id.text_channel);
         tvChannel.setText(channel_title.toUpperCase());
+
         tvNoResult = (TextView) findViewById(R.id.text_no_result_detail_channel_bola);
         tvNoResult.setVisibility(View.GONE);
-        listView = (ListView) findViewById(R.id.list_channel_bola);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                if(channelBolaArrayList.size() > 0) {
-                    ChannelBola news = channelBolaArrayList.get(position);
-                    Log.i(Constant.TAG, "ID : " + news.getId());
-                    Bundle bundle = new Bundle();
-                    bundle.putString("id", news.getId());
-                    Intent intent = new Intent(VivaApp.getInstance(), ActDetailContentBola.class);
-                    intent.putExtras(bundle);
-                    startActivity(intent);
-                    overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
-                }
-            }
-        });
+
         channelBolaArrayList = new ArrayList<ChannelBola>();
+        adapter = new ChannelBolaAdapter(VivaApp.getInstance(), channelBolaArrayList);
+
+        listView = (LoadMoreListView) findViewById(R.id.list_channel_bola);
+        listView.setOnItemClickListener(this);
+        listView.setOnLoadMoreListener(this);
 
         if(isInternetPresent) {
             StringRequest stringRequest = new StringRequest(Request.Method.GET, Constant.URL_KANAL_DETAIL + id + "/2/0/10",
@@ -130,7 +126,7 @@ public class ActDetailChannelBola extends FragmentActivity {
                                     }
                                 }
                                 if (channelBolaArrayList.size() > 0 || !channelBolaArrayList.isEmpty()) {
-                                    mAnimAdapter = new ScaleInAnimationAdapter(new ChannelBolaAdapter(VivaApp.getInstance(), channelBolaArrayList));
+                                    mAnimAdapter = new ScaleInAnimationAdapter(adapter);
                                     mAnimAdapter.setAbsListView(listView);
                                     listView.setAdapter(mAnimAdapter);
                                     mAnimAdapter.notifyDataSetChanged();
@@ -183,7 +179,7 @@ public class ActDetailChannelBola extends FragmentActivity {
                         }
                     }
                     if(channelBolaArrayList.size() > 0 || !channelBolaArrayList.isEmpty()) {
-                        mAnimAdapter = new ScaleInAnimationAdapter(new ChannelBolaAdapter(VivaApp.getInstance(), channelBolaArrayList));
+                        mAnimAdapter = new ScaleInAnimationAdapter(adapter);
                         mAnimAdapter.setAbsListView(listView);
                         listView.setAdapter(mAnimAdapter);
                         mAnimAdapter.notifyDataSetChanged();
@@ -220,6 +216,78 @@ public class ActDetailChannelBola extends FragmentActivity {
         searchView.setSearchableInfo(
                 searchManager.getSearchableInfo(getComponentName()));
         return true;
+    }
+
+    @Override
+    public void onLoadMore() {
+        data = String.valueOf(dataSize += 10);
+        Log.i(Constant.TAG, "DATA PAGE : " + data);
+        if(isInternetPresent) {
+            StringRequest stringRequest = new StringRequest(Request.Method.GET, Constant.URL_KANAL_DETAIL + id + "/2/" + data + "/10",
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String volleyResponse) {
+                            Log.i(Constant.TAG, "CHANNEL BOLA RESPONSE : " + volleyResponse);
+                            try {
+                                JSONObject jsonObject = new JSONObject(volleyResponse);
+                                jsonArrayResponses = jsonObject.getJSONArray(Constant.response);
+                                if (jsonArrayResponses != null) {
+                                    JSONObject objHeadline = jsonArrayResponses.getJSONObject(0);
+                                    if (objHeadline != null) {
+                                        jsonArraySegmentHeadline = objHeadline.getJSONArray(Constant.headlines);
+                                        for (int i = 0; i < jsonArraySegmentHeadline.length(); i++) {
+                                            JSONObject jsonHeadline = jsonArraySegmentHeadline.getJSONObject(i);
+                                            String id = jsonHeadline.getString(Constant.id);
+                                            String title = jsonHeadline.getString(Constant.title);
+                                            String kanal = jsonHeadline.getString(Constant.kanal);
+                                            String image_url = jsonHeadline.getString(Constant.image_url);
+                                            String date_publish = jsonHeadline.getString(Constant.date_publish);
+                                            String url = jsonHeadline.getString(Constant.url);
+                                            channelBolaArrayList.add(new ChannelBola(id, title, kanal,
+                                                    image_url, date_publish, url));
+                                        }
+                                    }
+                                }
+                                if (channelBolaArrayList.size() > 0 || !channelBolaArrayList.isEmpty()) {
+                                    mAnimAdapter = new ScaleInAnimationAdapter(adapter);
+                                    mAnimAdapter.setAbsListView(listView);
+                                    mAnimAdapter.notifyDataSetChanged();
+                                    listView.onLoadMoreComplete();
+                                }
+                            } catch (Exception e) {
+                                e.getMessage();
+                            }
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError volleyError) {
+                            volleyError.getMessage();
+                        }
+                    });
+            stringRequest.setShouldCache(true);
+            stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                    Constant.TIME_OUT,
+                    DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+            VivaApp.getInstance().getRequestQueue().getCache().invalidate(Constant.URL_KANAL_DETAIL + id + "/2/" + data + "/10", true);
+            VivaApp.getInstance().getRequestQueue().getCache().get(Constant.URL_KANAL_DETAIL + id + "/2/" + data + "/10");
+            VivaApp.getInstance().addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
+        }
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+        if(channelBolaArrayList.size() > 0) {
+            ChannelBola news = channelBolaArrayList.get(position);
+            Log.i(Constant.TAG, "ID : " + news.getId());
+            Bundle bundle = new Bundle();
+            bundle.putString("id", news.getId());
+            Intent intent = new Intent(VivaApp.getInstance(), ActDetailContentBola.class);
+            intent.putExtras(bundle);
+            startActivity(intent);
+            overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+        }
     }
 
 }
