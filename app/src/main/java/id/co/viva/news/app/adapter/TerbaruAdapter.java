@@ -58,7 +58,9 @@ public class TerbaruAdapter extends BaseAdapter {
         TextView date_item_news = (TextView) rootView.findViewById(R.id.date_item_news);
 
         News news = newsArrayList.get(position);
-        Picasso.with(context).load(news.getImage_url()).into(icon_item_news);
+        if(news.getImage_url().length() > 0) {
+            Picasso.with(context).load(news.getImage_url()).into(icon_item_news);
+        }
         title_item_news.setText(news.getTitle());
 
         if(news.getKanal().equalsIgnoreCase("bola")) {

@@ -2,7 +2,9 @@ package id.co.viva.news.app.fragment;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -12,7 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,6 +32,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import id.co.viva.news.app.component.GoogleMusicDicesDrawable;
 import id.co.viva.news.app.services.Analytics;
 import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.R;
@@ -50,7 +53,8 @@ public class HeadlineFragment extends Fragment implements AdapterView.OnItemClic
     private HeadlineAdapter headlineAdapter;
     private ListView listView;
     private TextView lastUpdate;
-    private RelativeLayout loading_layout;
+    private TextView labelLoadData;
+    private ProgressBar loading_layout;
     private Boolean isInternetPresent = false;
     private JSONArray jsonArrayResponses, jsonArraySegmentHeadline;
     private TextView labelText;
@@ -72,16 +76,29 @@ public class HeadlineFragment extends Fragment implements AdapterView.OnItemClic
         activity.getActionBar().setIcon(R.drawable.logo_viva_coid);
     }
 
+    private Drawable getProgressDrawable() {
+        Drawable progressDrawable = null;
+        progressDrawable = new GoogleMusicDicesDrawable.Builder().build();
+        return progressDrawable;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.frag_terbaru_headline, container, false);
 
+        loading_layout = (ProgressBar) rootView.findViewById(R.id.loading_progress_layout_headline_terbaru);
+        labelLoadData = (TextView) rootView.findViewById(R.id.text_loading_data);
+
+        Rect bounds = loading_layout.getIndeterminateDrawable().getBounds();
+        loading_layout.setIndeterminateDrawable(getProgressDrawable());
+        loading_layout.getIndeterminateDrawable().setBounds(bounds);
+
+        labelLoadData.setVisibility(View.VISIBLE);
+        loading_layout.setVisibility(View.VISIBLE);
+
         analytics = new Analytics();
         analytics.getAnalyticByATInternet(Constant.HEADLINE_PAGE);
         analytics.getAnalyticByGoogleAnalytic(Constant.HEADLINE_PAGE);
-
-        loading_layout = (RelativeLayout) rootView.findViewById(R.id.loading_progress_layout);
-        loading_layout.setVisibility(View.VISIBLE);
 
         lastUpdate = (TextView) rootView.findViewById(R.id.date_terbaru_headline);
         labelText = (TextView) rootView.findViewById(R.id.text_terbaru_headline);
@@ -136,6 +153,7 @@ public class HeadlineFragment extends Fragment implements AdapterView.OnItemClic
                                     listView.setAdapter(swingBottomInAnimationAdapter);
                                     headlineAdapter.notifyDataSetChanged();
                                     loading_layout.setVisibility(View.GONE);
+                                    labelLoadData.setVisibility(View.GONE);
                                 }
 
                                 Calendar cal=Calendar.getInstance();
@@ -187,6 +205,7 @@ public class HeadlineFragment extends Fragment implements AdapterView.OnItemClic
                                 listView.setAdapter(swingBottomInAnimationAdapter);
                                 headlineAdapter.notifyDataSetChanged();
                                 loading_layout.setVisibility(View.GONE);
+                                labelLoadData.setVisibility(View.GONE);
                             }
 
                             lastUpdate.setText(R.string.label_content_not_update);
@@ -241,6 +260,7 @@ public class HeadlineFragment extends Fragment implements AdapterView.OnItemClic
                         listView.setAdapter(swingBottomInAnimationAdapter);
                         headlineAdapter.notifyDataSetChanged();
                         loading_layout.setVisibility(View.GONE);
+                        labelLoadData.setVisibility(View.GONE);
                     }
 
                     lastUpdate.setText(R.string.label_content_not_update);

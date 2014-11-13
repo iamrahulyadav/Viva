@@ -31,7 +31,7 @@ public class ActSplashScreen extends Activity {
         gcm = GCM.getInstance(this);
 
         imageSplash = (ImageView)findViewById(R.id.image_splash);
-        imageSplash.setImageResource(R.drawable.ic_launcher);
+        imageSplash.setImageResource(R.drawable.icon_launcher);
         Animation fadeInAnimation = AnimationUtils.loadAnimation(this, R.anim.fade);
         imageSplash.startAnimation(fadeInAnimation);
 
@@ -41,7 +41,7 @@ public class ActSplashScreen extends Activity {
             new Handler().postDelayed(
                     new Runnable() {
                         public void run() {
-                            Intent intent = new Intent(getApplicationContext(), ActMain.class);
+                            Intent intent = new Intent(getApplicationContext(), ActLanding.class);
                             startActivity(intent);
                             overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
                             finish();
@@ -63,7 +63,7 @@ public class ActSplashScreen extends Activity {
             new Handler().postDelayed(
                     new Runnable() {
                         public void run() {
-                            Intent intent = new Intent(getApplicationContext(), ActMain.class);
+                            Intent intent = new Intent(getApplicationContext(), ActLanding.class);
                             startActivity(intent);
                             finish();
                         }

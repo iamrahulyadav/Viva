@@ -56,7 +56,9 @@ public class SearchResultAdapter extends BaseAdapter {
         RelativeLayout subkanal_item_search_result_layout = (RelativeLayout) rootView.findViewById(R.id.subkanal_item_search_result_layout);
 
         SearchResult result = searchResultArrayList.get(position);
-        Picasso.with(context).load(result.getImage_url()).into(icon_item_search_result);
+        if(result.getImage_url().length() > 0) {
+            Picasso.with(context).load(result.getImage_url()).into(icon_item_search_result);
+        }
         title_item_search_result.setText(result.getTitle());
         date_item_search_result.setText(result.getDate_publish());
         subkanal_item_search_result.setText(result.getKanal());

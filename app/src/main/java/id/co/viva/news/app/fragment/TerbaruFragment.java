@@ -2,7 +2,9 @@ package id.co.viva.news.app.fragment;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -11,7 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.RelativeLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,6 +31,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import id.co.viva.news.app.component.GoogleMusicDicesDrawable;
 import id.co.viva.news.app.component.LoadMoreListView;
 import id.co.viva.news.app.interfaces.OnLoadMoreListener;
 import id.co.viva.news.app.services.Analytics;
@@ -53,7 +56,8 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
     private TerbaruAdapter terbaruAdapter;
     private LoadMoreListView listView;
     private TextView lastUpdate;
-    private RelativeLayout loading_layout;
+    private ProgressBar loading_layout;
+    private TextView labelLoadData;
     private Boolean isInternetPresent = false;
     private JSONArray jsonArrayResponses, jsonArraySegmentNews;
     private TextView labelText;
@@ -75,16 +79,29 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
         activity.getActionBar().setIcon(R.drawable.logo_viva_coid);
     }
 
+    private Drawable getProgressDrawable() {
+        Drawable progressDrawable = null;
+        progressDrawable = new GoogleMusicDicesDrawable.Builder().build();
+        return progressDrawable;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.frag_terbaru_headline, container, false);
 
+        loading_layout = (ProgressBar) rootView.findViewById(R.id.loading_progress_layout_headline_terbaru);
+        labelLoadData = (TextView) rootView.findViewById(R.id.text_loading_data);
+
+        Rect bounds = loading_layout.getIndeterminateDrawable().getBounds();
+        loading_layout.setIndeterminateDrawable(getProgressDrawable());
+        loading_layout.getIndeterminateDrawable().setBounds(bounds);
+
+        labelLoadData.setVisibility(View.VISIBLE);
+        loading_layout.setVisibility(View.VISIBLE);
+
         analytics = new Analytics();
         analytics.getAnalyticByATInternet(Constant.TERBARU_PAGE);
         analytics.getAnalyticByGoogleAnalytic(Constant.TERBARU_PAGE);
-
-        loading_layout = (RelativeLayout) rootView.findViewById(R.id.loading_progress_layout);
-        loading_layout.setVisibility(View.VISIBLE);
 
         labelText = (TextView) rootView.findViewById(R.id.text_terbaru_headline);
         labelText.setText(getString(R.string.label_terbaru));
@@ -140,6 +157,7 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
                                     listView.setAdapter(swingBottomInAnimationAdapter);
                                     terbaruAdapter.notifyDataSetChanged();
                                     loading_layout.setVisibility(View.GONE);
+                                    labelLoadData.setVisibility(View.GONE);
                                 }
 
                                 Calendar cal=Calendar.getInstance();
@@ -189,6 +207,7 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
                                 listView.setAdapter(swingBottomInAnimationAdapter);
                                 terbaruAdapter.notifyDataSetChanged();
                                 loading_layout.setVisibility(View.GONE);
+                                labelLoadData.setVisibility(View.GONE);
                             }
 
                             lastUpdate.setText(R.string.label_content_not_update);
@@ -241,6 +260,7 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
                         listView.setAdapter(swingBottomInAnimationAdapter);
                         terbaruAdapter.notifyDataSetChanged();
                         loading_layout.setVisibility(View.GONE);
+                        labelLoadData.setVisibility(View.GONE);
                     }
 
                     lastUpdate.setText(R.string.label_content_not_update);

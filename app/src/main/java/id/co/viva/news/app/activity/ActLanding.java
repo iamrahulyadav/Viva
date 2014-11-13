@@ -32,10 +32,10 @@ import id.co.viva.news.app.interfaces.Item;
 import id.co.viva.news.app.model.NavigationItem;
 import id.co.viva.news.app.model.NavigationSectionItem;
 
-public class ActMain extends FragmentActivity {
+public class ActLanding extends FragmentActivity {
 
-    private CharSequence mTitle;
     private DrawerLayout mDrawerLayout;
+    private CharSequence mTitle;
     private ListView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
     private ArrayList<Item> navDrawerItems;
@@ -91,6 +91,7 @@ public class ActMain extends FragmentActivity {
                 super.setDrawerIndicatorEnabled(enable);
             }
         };
+
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
         if(savedInstanceState == null) {

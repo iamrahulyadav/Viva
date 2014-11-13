@@ -18,7 +18,7 @@
     <application
         android:name=".VivaApp"
         android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@drawable/icon_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
         <activity
@@ -31,7 +31,14 @@
         </activity>
 
         <activity
-            android:name=".activity.ActMain"
+            android:name=".activity.ActLanding"
+            android:theme="@style/AppTheme"/>
+            <meta-data
+                android:name="android.app.default_searchable"
+                android:value=".activity.ActSearchResult" />/>
+
+        <activity
+            android:name=".activity.ActBase"
             android:theme="@style/AppTheme"/>
             <meta-data
                 android:name="android.app.default_searchable"
@@ -96,7 +103,7 @@
 
         <activity
             android:name=".activity.ActSearchResult"
-            android:parentActivityName=".activity.ActMain"
+            android:parentActivityName=".activity.ActLanding"
             android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />

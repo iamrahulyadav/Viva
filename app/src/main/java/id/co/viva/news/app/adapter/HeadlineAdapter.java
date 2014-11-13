@@ -58,7 +58,9 @@ public class HeadlineAdapter extends BaseAdapter {
         TextView date_item_news = (TextView) rootView.findViewById(R.id.date_item_news);
 
         Headline headline = headlineArrayList.get(position);
-        Picasso.with(context).load(headline.getImage_url()).into(icon_item_news);
+        if(headline.getImage_url().length() > 0) {
+            Picasso.with(context).load(headline.getImage_url()).into(icon_item_news);
+        }
         title_item_news.setText(headline.getTitle());
 
         if(headline.getKanal().equalsIgnoreCase("bola")) {
