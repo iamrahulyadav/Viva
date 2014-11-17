@@ -7,7 +7,7 @@
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="35dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="0dp"
         android:background="@color/user_card_view_border">
         <id.co.viva.news.app.component.BounvenoTextView
             android:id="@+id/list_item_section_text"

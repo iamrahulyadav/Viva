@@ -16,6 +16,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.andexert.library.RippleView;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -39,7 +40,7 @@ import id.co.viva.news.app.model.FeaturedNews;
 /**
  * Created by reza on 15/10/14.
  */
-public class NewsFragment extends Fragment {
+public class NewsFragment extends Fragment implements View.OnClickListener {
 
     public static ArrayList<FeaturedNews> featuredNewsArrayList;
     private SwingBottomInAnimationAdapter swingBottomInAnimationAdapter;
@@ -49,6 +50,7 @@ public class NewsFragment extends Fragment {
     private RelativeLayout loading_layout;
     private TextView tvNoResult;
     private Analytics analytics;
+    private RippleView rippleView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -73,14 +75,18 @@ public class NewsFragment extends Fragment {
         analytics.getAnalyticByATInternet(Constant.KANAL_NEWS_PAGE);
         analytics.getAnalyticByGoogleAnalytic(Constant.KANAL_NEWS_PAGE);
 
-            tvNoResult = (TextView) rootView.findViewById(R.id.text_no_result);
-            tvNoResult.setVisibility(View.GONE);
+        tvNoResult = (TextView) rootView.findViewById(R.id.text_no_result);
+        tvNoResult.setVisibility(View.GONE);
 
-            loading_layout = (RelativeLayout) rootView.findViewById(R.id.loading_progress_layout);
-            loading_layout.setVisibility(View.VISIBLE);
+        loading_layout = (RelativeLayout) rootView.findViewById(R.id.loading_progress_layout);
+        loading_layout.setVisibility(View.VISIBLE);
 
-            gridNews = (GridView) rootView.findViewById(R.id.grid_news);
-            gridNews.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        rippleView = (RippleView) rootView.findViewById(R.id.layout_ripple_view);
+        rippleView.setVisibility(View.GONE);
+        rippleView.setOnClickListener(this);
+
+        gridNews = (GridView) rootView.findViewById(R.id.grid_news);
+        gridNews.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 if(featuredNewsArrayList.size() > 0) {
@@ -145,12 +151,14 @@ public class NewsFragment extends Fragment {
                         @Override
                         public void onErrorResponse(VolleyError volleyError) {
                             volleyError.getMessage();
+                            loading_layout.setVisibility(View.GONE);
+                            rippleView.setVisibility(View.VISIBLE);
                         }
                     });
             request.setShouldCache(true);
             request.setRetryPolicy(new DefaultRetryPolicy(
                     Constant.TIME_OUT,
-                    DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                    0,
                     DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
             VivaApp.getInstance().getRequestQueue().getCache().invalidate(Constant.URL_KANAL_NEWS, true);
             VivaApp.getInstance().getRequestQueue().getCache().get(Constant.URL_KANAL_NEWS);
@@ -203,6 +211,75 @@ public class NewsFragment extends Fragment {
         }
 
         return rootView;
+    }
+
+    @Override
+    public void onClick(View view) {
+        if(view.getId() == R.id.layout_ripple_view) {
+            if(isInternetPresent) {
+                rippleView.setVisibility(View.GONE);
+                loading_layout.setVisibility(View.VISIBLE);
+                StringRequest request = new StringRequest(Request.Method.GET, Constant.URL_KANAL_NEWS,
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String s) {
+                                Log.i(Constant.TAG, "KANAL NEWS RESPONSE : " + s);
+                                try {
+                                    JSONObject jsonObject = new JSONObject(s);
+                                    JSONArray response = jsonObject.getJSONArray(Constant.response);
+                                    for(int i=0; i<response.length(); i++) {
+                                        JSONObject obj = response.getJSONObject(i);
+                                        if(obj != null) {
+                                            JSONArray objKanal = obj.getJSONArray("news");
+                                            for(int j=0; j<objKanal.length(); j++) {
+                                                JSONObject field = objKanal.getJSONObject(j);
+                                                String channel_title = field.getString("channel_title");
+                                                String id = field.getString("id");
+                                                String channel_id = field.getString("channel_id");
+                                                String level = field.getString("level");
+                                                String title = field.getString("title");
+                                                String kanal = field.getString("kanal");
+                                                String image_url = field.getString("image_url");
+                                                featuredNewsArrayList.add(new FeaturedNews(channel_title, id,
+                                                        channel_id, level, title, kanal, image_url));
+                                                Log.i(Constant.TAG, "Channel Title : " + featuredNewsArrayList.get(i).getChannel_title());
+                                            }
+                                        }
+                                    }
+                                    if(featuredNewsArrayList.size() > 0 || !featuredNewsArrayList.isEmpty()) {
+                                        swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(
+                                                new FeaturedNewsAdapter(getActivity(), featuredNewsArrayList));
+                                        swingBottomInAnimationAdapter.setAbsListView(gridNews);
+                                        assert swingBottomInAnimationAdapter.getViewAnimator() != null;
+                                        swingBottomInAnimationAdapter.getViewAnimator().setInitialDelayMillis(0000);
+                                        gridNews.setAdapter(swingBottomInAnimationAdapter);
+                                        loading_layout.setVisibility(View.GONE);
+                                    }
+                                } catch (Exception e) {
+                                    e.getMessage();
+                                }
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError volleyError) {
+                                volleyError.getMessage();
+                                loading_layout.setVisibility(View.GONE);
+                                rippleView.setVisibility(View.VISIBLE);
+                            }
+                        });
+                request.setShouldCache(true);
+                request.setRetryPolicy(new DefaultRetryPolicy(
+                        Constant.TIME_OUT,
+                        0,
+                        DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+                VivaApp.getInstance().getRequestQueue().getCache().invalidate(Constant.URL_KANAL_NEWS, true);
+                VivaApp.getInstance().getRequestQueue().getCache().get(Constant.URL_KANAL_NEWS);
+                VivaApp.getInstance().addToRequestQueue(request, Constant.JSON_REQUEST);
+            } else {
+                Toast.makeText(VivaApp.getInstance(), R.string.title_no_connection, Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
 }

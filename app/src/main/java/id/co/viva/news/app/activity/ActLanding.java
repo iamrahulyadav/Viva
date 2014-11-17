@@ -14,8 +14,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -70,7 +72,7 @@ public class ActLanding extends FragmentActivity {
 
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
-        getActionBar().setIcon(R.drawable.logo_viva_coid);
+        getActionBar().setIcon(R.drawable.logo_viva_coid_second);
         getActionBar().setDisplayShowTitleEnabled(false);
 
         mDrawerToggle = new ActionBarDrawerToggle(this,
@@ -164,12 +166,17 @@ public class ActLanding extends FragmentActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_frag_default, menu);
+
         SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView =
                 (SearchView) menu.findItem(R.id.action_search).getActionView();
         searchView.setSearchableInfo(
                 searchManager.getSearchableInfo(getComponentName()));
+
+        int searchTextViewId = searchView.getContext().getResources().getIdentifier("android:id/search_src_text", null, null);
+        TextView searchTextView = (TextView) searchView.findViewById(searchTextViewId);
+        searchTextView.setHintTextColor(getResources().getColor(R.color.white));
         return true;
     }
 

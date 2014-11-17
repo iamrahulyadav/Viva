@@ -17,6 +17,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.andexert.library.RippleView;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -45,7 +46,7 @@ import id.co.viva.news.app.model.News;
 /**
  * Created by root on 09/10/14.
  */
-public class TerbaruFragment extends Fragment implements AdapterView.OnItemClickListener, OnLoadMoreListener {
+public class TerbaruFragment extends Fragment implements AdapterView.OnItemClickListener, OnLoadMoreListener, View.OnClickListener {
 
     final private static String NEWS = "terbaru";
     public static ArrayList<News> newsArrayList;
@@ -63,6 +64,7 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
     private TextView labelText;
     private SimpleDateFormat date, time;
     private Analytics analytics;
+    private RippleView rippleView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -74,9 +76,9 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         ColorDrawable colorDrawable = new ColorDrawable();
-        colorDrawable.setColor(getResources().getColor(R.color.header_headline_terbaru));
+        colorDrawable.setColor(getResources().getColor(R.color.header_headline_terbaru_new));
         activity.getActionBar().setBackgroundDrawable(colorDrawable);
-        activity.getActionBar().setIcon(R.drawable.logo_viva_coid);
+        activity.getActionBar().setIcon(R.drawable.logo_viva_coid_second);
     }
 
     private Drawable getProgressDrawable() {
@@ -98,6 +100,10 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
 
         labelLoadData.setVisibility(View.VISIBLE);
         loading_layout.setVisibility(View.VISIBLE);
+
+        rippleView = (RippleView) rootView.findViewById(R.id.layout_ripple_view_headline_terbaru);
+        rippleView.setVisibility(View.GONE);
+        rippleView.setOnClickListener(this);
 
         analytics = new Analytics();
         analytics.getAnalyticByATInternet(Constant.TERBARU_PAGE);
@@ -211,6 +217,10 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
                             }
 
                             lastUpdate.setText(R.string.label_content_not_update);
+                        } else {
+                            loading_layout.setVisibility(View.GONE);
+                            labelLoadData.setVisibility(View.GONE);
+                            rippleView.setVisibility(View.VISIBLE);
                         }
                     } catch (Exception e) {
                         e.getMessage();
@@ -264,6 +274,10 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
                     }
 
                     lastUpdate.setText(R.string.label_content_not_update);
+                } else {
+                    loading_layout.setVisibility(View.GONE);
+                    labelLoadData.setVisibility(View.GONE);
+                    rippleView.setVisibility(View.VISIBLE);
                 }
             } catch (Exception e) {
                 e.getMessage();
@@ -345,6 +359,128 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
                 VivaApp.getInstance().getRequestQueue().getCache().invalidate(Constant.URL_HOMEPAGE + data, true);
                 VivaApp.getInstance().getRequestQueue().getCache().get(Constant.URL_HOMEPAGE + data);
                 VivaApp.getInstance().addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
+        }
+    }
+
+    @Override
+    public void onClick(View view) {
+        if(view.getId() == R.id.layout_ripple_view_headline_terbaru) {
+            if(isInternetPresent) {
+                loading_layout.setVisibility(View.VISIBLE);
+                labelLoadData.setVisibility(View.VISIBLE);
+                rippleView.setVisibility(View.GONE);
+                StringRequest stringRequest = new StringRequest(Request.Method.GET, Constant.URL_HOMEPAGE,
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String volleyResponse) {
+                                Log.i(Constant.TAG, volleyResponse);
+                                try {
+                                    JSONObject jsonObject = new JSONObject(volleyResponse);
+                                    jsonArrayResponses = jsonObject.getJSONArray(Constant.response);
+                                    if(jsonArrayResponses != null) {
+                                        JSONObject objTerbaru = jsonArrayResponses.getJSONObject(1);
+                                        if(objTerbaru !=  null) {
+                                            jsonArraySegmentNews = objTerbaru.getJSONArray(NEWS);
+                                            for(int i=0; i<jsonArraySegmentNews.length(); i++) {
+                                                JSONObject jsonTerbaru = jsonArraySegmentNews.getJSONObject(i);
+                                                String id = jsonTerbaru.getString(Constant.id);
+                                                String title = jsonTerbaru.getString(Constant.title);
+                                                String slug = jsonTerbaru.getString(Constant.slug);
+                                                String kanal = jsonTerbaru.getString(Constant.kanal);
+                                                String url = jsonTerbaru.getString(Constant.url);
+                                                String image_url = jsonTerbaru.getString(Constant.image_url);
+                                                String date_publish = jsonTerbaru.getString(Constant.date_publish);
+                                                newsArrayList.add(new News(id, title, slug, kanal, url,
+                                                        image_url, date_publish));
+                                                Log.i(Constant.TAG, "NEWS : " + newsArrayList.get(i).getTitle());
+                                            }
+                                        }
+                                    }
+
+                                    if(newsArrayList.size() > 0 || !newsArrayList.isEmpty()) {
+                                        swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(terbaruAdapter);
+                                        swingBottomInAnimationAdapter.setAbsListView(listView);
+                                        assert swingBottomInAnimationAdapter.getViewAnimator() != null;
+                                        swingBottomInAnimationAdapter.getViewAnimator().setInitialDelayMillis(1000);
+                                        listView.setAdapter(swingBottomInAnimationAdapter);
+                                        terbaruAdapter.notifyDataSetChanged();
+                                        loading_layout.setVisibility(View.GONE);
+                                        labelLoadData.setVisibility(View.GONE);
+                                        rippleView.setVisibility(View.GONE);
+                                    }
+
+                                    Calendar cal=Calendar.getInstance();
+                                    date = new SimpleDateFormat("dd MMM yyyy");
+                                    time = new SimpleDateFormat("HH:mm");
+                                    String date_name = date.format(cal.getTime());
+                                    String time_name = time.format(cal.getTime());
+                                    lastUpdate.setText(date_name + " | " + time_name);
+                                } catch (Exception e) {
+                                    e.getMessage();
+                                }
+                            }
+                        }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+                        try {
+                            if(VivaApp.getInstance().getRequestQueue().getCache().get(Constant.URL_HOMEPAGE) != null) {
+                                String cachedResponse = new String(VivaApp.getInstance().getRequestQueue().getCache().get(Constant.URL_HOMEPAGE).data);
+                                Log.i(Constant.TAG, "From Cached : " + cachedResponse);
+                                JSONObject jsonObject = new JSONObject(cachedResponse);
+                                jsonArrayResponses = jsonObject.getJSONArray(Constant.response);
+                                if(jsonArrayResponses != null) {
+                                    JSONObject objTerbaru = jsonArrayResponses.getJSONObject(1);
+                                    if(objTerbaru !=  null) {
+                                        jsonArraySegmentNews = objTerbaru.getJSONArray(NEWS);
+                                        for(int i=0; i<jsonArraySegmentNews.length(); i++) {
+                                            JSONObject jsonTerbaru = jsonArraySegmentNews.getJSONObject(i);
+                                            String id = jsonTerbaru.getString(Constant.id);
+                                            String title = jsonTerbaru.getString(Constant.title);
+                                            String slug = jsonTerbaru.getString(Constant.slug);
+                                            String kanal = jsonTerbaru.getString(Constant.kanal);
+                                            String url = jsonTerbaru.getString(Constant.url);
+                                            String image_url = jsonTerbaru.getString(Constant.image_url);
+                                            String date_publish = jsonTerbaru.getString(Constant.date_publish);
+                                            newsArrayList.add(new News(id, title, slug, kanal, url,
+                                                    image_url, date_publish));
+                                            Log.i(Constant.TAG, "NEWS CACHED : " + newsArrayList.get(i).getTitle());
+                                        }
+                                    }
+                                }
+
+                                if(newsArrayList.size() > 0 || !newsArrayList.isEmpty()) {
+                                    swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(terbaruAdapter);
+                                    swingBottomInAnimationAdapter.setAbsListView(listView);
+                                    assert swingBottomInAnimationAdapter.getViewAnimator() != null;
+                                    swingBottomInAnimationAdapter.getViewAnimator().setInitialDelayMillis(1000);
+                                    listView.setAdapter(swingBottomInAnimationAdapter);
+                                    terbaruAdapter.notifyDataSetChanged();
+                                    loading_layout.setVisibility(View.GONE);
+                                    labelLoadData.setVisibility(View.GONE);
+                                }
+
+                                lastUpdate.setText(R.string.label_content_not_update);
+                            } else {
+                                loading_layout.setVisibility(View.GONE);
+                                labelLoadData.setVisibility(View.GONE);
+                                rippleView.setVisibility(View.VISIBLE);
+                            }
+                        } catch (Exception e) {
+                            e.getMessage();
+                        }
+                    }
+                });
+                stringRequest.setShouldCache(true);
+                stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                        Constant.TIME_OUT,
+                        DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                        DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+                VivaApp.getInstance().getRequestQueue().getCache().invalidate(Constant.URL_HOMEPAGE, true);
+                VivaApp.getInstance().getRequestQueue().getCache().get(Constant.URL_HOMEPAGE);
+                VivaApp.getInstance().addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
+            } else {
+                Toast.makeText(VivaApp.getInstance(), R.string.title_no_connection, Toast.LENGTH_SHORT).show();
+            }
         }
     }
 

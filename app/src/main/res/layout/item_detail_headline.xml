@@ -78,7 +78,7 @@
                 android:layout_marginTop="5dp"
                 android:id="@+id/header_related_article_headline"
                 android:layout_below="@id/image_content"
-                android:background="@color/header_grey">
+                android:background="@color/header_headline_terbaru_new">
                 <id.co.viva.news.app.component.BounvenoTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

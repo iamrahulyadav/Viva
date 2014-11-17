@@ -1,7 +1,6 @@
 package id.co.viva.news.app.fragment;
 
 import android.app.Activity;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -20,7 +19,7 @@ public class AboutFragment extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        activity.getActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#80000000")));
+        activity.getActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.header_headline_terbaru_new)));
         activity.getActionBar().setIcon(R.drawable.logo_viva_coid_second);
     }
 

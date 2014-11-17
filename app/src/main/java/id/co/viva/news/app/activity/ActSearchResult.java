@@ -51,6 +51,7 @@ public class ActSearchResult extends ActBase implements AdapterView.OnItemClickL
     private TextView tvNoResult;
     private AnimationAdapter mAnimAdapter;
     private Analytics analytics;
+    private Menu mMenu;
 
     private String id ;
     private String kanal ;
@@ -71,7 +72,8 @@ public class ActSearchResult extends ActBase implements AdapterView.OnItemClickL
 
         getActionBar().setTitle("Pencarian");
 
-        isInternetPresent = VivaApp.getInstance().getConnectionStatus().isConnectingToInternet();
+        isInternetPresent = VivaApp.getInstance().
+                getConnectionStatus().isConnectingToInternet();
 
         tvSearchResult = (TextView)findViewById(R.id.text_search_result);
         listSearchResult = (ListView)findViewById(R.id.list_search_result);
@@ -147,13 +149,16 @@ public class ActSearchResult extends ActBase implements AdapterView.OnItemClickL
                 @Override
                 public void onErrorResponse(VolleyError volleyError) {
                     volleyError.getMessage();
+                    loading_layout.setVisibility(View.GONE);
+                    SearchView searchView =
+                            (SearchView) mMenu.findItem(R.id.action_search).getActionView();
+                    searchView.setIconified(false);
                 }
             });
-
             stringRequest.setShouldCache(true);
             stringRequest.setRetryPolicy(new DefaultRetryPolicy(
                     Constant.TIME_OUT,
-                    DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                    0,
                     DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
             VivaApp.getInstance().getRequestQueue().getCache().invalidate(Constant.URL_SEARCH + query, true);
             VivaApp.getInstance().getRequestQueue().getCache().get(Constant.URL_SEARCH + query);
@@ -180,14 +185,20 @@ public class ActSearchResult extends ActBase implements AdapterView.OnItemClickL
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        mMenu = menu;
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_frag_default, menu);
+
         SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView =
                 (SearchView) menu.findItem(R.id.action_search).getActionView();
         searchView.setSearchableInfo(
                 searchManager.getSearchableInfo(getComponentName()));
+
+        int searchTextViewId = searchView.getContext().getResources().getIdentifier("android:id/search_src_text", null, null);
+        TextView searchTextView = (TextView) searchView.findViewById(searchTextViewId);
+        searchTextView.setHintTextColor(getResources().getColor(R.color.white));
         return true;
     }
 
