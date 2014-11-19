@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -23,6 +24,7 @@ import android.widget.ShareActionProvider;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.andexert.library.RippleView;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -50,7 +52,8 @@ import id.co.viva.news.app.model.RelatedArticle;
 /**
  * Created by reza on 24/10/14.
  */
-public class DetailIndexContent extends Fragment implements AdapterView.OnItemClickListener {
+public class DetailIndexContent extends Fragment implements
+        AdapterView.OnItemClickListener, View.OnClickListener {
 
     private String id;
     private String kanals;
@@ -65,6 +68,14 @@ public class DetailIndexContent extends Fragment implements AdapterView.OnItemCl
     private ListView listView;
     private View imageContentLayout;
     private Analytics analytics;
+    private RippleView rippleView;
+
+    private TextView tvTitleDetail;
+    private TextView tvDateDetail;
+    private TextView tvReporterDetail;
+    private TextView tvContentDetail;
+    private ImageView ivThumbDetail;
+    private Button btnRetry;
 
     private String title;
     private String image_url;
@@ -114,6 +125,12 @@ public class DetailIndexContent extends Fragment implements AdapterView.OnItemCl
         headerRelated = (RelativeLayout) view.findViewById(R.id.header_related_article);
         headerRelated.setVisibility(View.GONE);
 
+        rippleView = (RippleView) view.findViewById(R.id.layout_ripple_view_detail_subkanal);
+        rippleView.setVisibility(View.GONE);
+        rippleView.setOnClickListener(this);
+
+        btnRetry = (Button) view.findViewById(R.id.btn_retry);
+
         tvNoResult = (TextView) view.findViewById(R.id.text_no_result_detail_content);
         tvNoResult.setVisibility(View.GONE);
 
@@ -123,12 +140,12 @@ public class DetailIndexContent extends Fragment implements AdapterView.OnItemCl
 
         imageContentLayout = view.findViewById(R.id.image_content);
 
-        final TextView tvTitleDetail = (TextView) view.findViewById(R.id.title_detail_content);
-        final TextView tvDateDetail = (TextView) view.findViewById(R.id.date_detail_content);
-        final TextView tvReporterDetail = (TextView) view.findViewById(R.id.reporter_detail_content);
-        final TextView tvContentDetail = (TextView) view.findViewById(R.id.content_detail_content);
+        tvTitleDetail = (TextView) view.findViewById(R.id.title_detail_content);
+        tvDateDetail = (TextView) view.findViewById(R.id.date_detail_content);
+        tvReporterDetail = (TextView) view.findViewById(R.id.reporter_detail_content);
+        tvContentDetail = (TextView) view.findViewById(R.id.content_detail_content);
 
-        final ImageView ivThumbDetail = (ImageView) view.findViewById(R.id.thumb_detail_content);
+        ivThumbDetail = (ImageView) view.findViewById(R.id.thumb_detail_content);
         ivThumbDetail.setFocusable(true);
         ivThumbDetail.setFocusableInTouchMode(true);
         ivThumbDetail.requestFocus();
@@ -377,14 +394,23 @@ public class DetailIndexContent extends Fragment implements AdapterView.OnItemCl
                                     }
                                 } else {
                                     loading_layout.setVisibility(View.GONE);
-                                    tvNoResult.setVisibility(View.VISIBLE);
+                                    rippleView.setVisibility(View.VISIBLE);
+                                    if(kanals != null) {
+                                        if(kanals.equalsIgnoreCase("bola")) {
+                                            btnRetry.setBackgroundResource(R.drawable.shadow_button_bola);
+                                        } else if(kanals.equalsIgnoreCase("vivalife")) {
+                                            btnRetry.setBackgroundResource(R.drawable.shadow_button_life);
+                                        } else {
+                                            btnRetry.setBackgroundResource(R.drawable.shadow_button_news);
+                                        }
+                                    }
                                 }
                             }
                         });
                 request.setShouldCache(true);
                 request.setRetryPolicy(new DefaultRetryPolicy(
                         Constant.TIME_OUT,
-                        DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                        0,
                         DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
                 VivaApp.getInstance().getRequestQueue().getCache().invalidate(Constant.URL_DETAIL + id, true);
                 VivaApp.getInstance().getRequestQueue().getCache().get(Constant.URL_DETAIL + id);
@@ -426,6 +452,124 @@ public class DetailIndexContent extends Fragment implements AdapterView.OnItemCl
         myIntent.setType("text/plain");
         myShareActionProvider.setShareIntent(myIntent);
         super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public void onClick(View view) {
+        if(view.getId() == R.id.layout_ripple_view_detail_subkanal) {
+            if(isInternetPresent) {
+                rippleView.setVisibility(View.GONE);
+                loading_layout.setVisibility(View.VISIBLE);
+                StringRequest request = new StringRequest(Request.Method.GET, Constant.URL_DETAIL + id,
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String volleyResponse) {
+                                Log.i(Constant.TAG, volleyResponse);
+                                try {
+                                    JSONObject jsonObject = new JSONObject(volleyResponse);
+                                    JSONObject response = jsonObject.getJSONObject(Constant.response);
+                                    JSONObject detail = response.getJSONObject(Constant.detail);
+                                    title = detail.getString(Constant.title);
+                                    image_url = detail.getString(Constant.image_url);
+                                    date_publish = detail.getString(Constant.date_publish);
+                                    content = detail.getString(Constant.content);
+                                    reporter_name = detail.getString(Constant.reporter_name);
+                                    url_shared = detail.getString(Constant.url);
+
+                                    JSONArray related_article = response.getJSONArray(Constant.related_article);
+                                    for(int i=0; i<related_article.length(); i++) {
+                                        JSONObject objRelated = related_article.getJSONObject(i);
+                                        String id = objRelated.getString(Constant.id);
+                                        String article_id = objRelated.getString(Constant.article_id);
+                                        String related_article_id = objRelated.getString(Constant.related_article_id);
+                                        String related_title = objRelated.getString(Constant.related_title);
+                                        String related_channel_level_1_id = objRelated.getString(Constant.related_channel_level_1_id);
+                                        String channel_id = objRelated.getString(Constant.channel_id);
+                                        String related_date_publish = objRelated.getString(Constant.related_date_publish);
+                                        String image = objRelated.getString(Constant.image);
+                                        String kanal = objRelated.getString(Constant.kanal);
+                                        String shared_url = objRelated.getString(Constant.url);
+                                        relatedArticleArrayList.add(new RelatedArticle(id, article_id, related_article_id, related_title,
+                                                related_channel_level_1_id, channel_id, related_date_publish, image, kanal, shared_url));
+                                        Log.i(Constant.TAG, "RELATED ARTICLE : " + relatedArticleArrayList.get(i).getRelated_title());
+                                    }
+
+                                    tvTitleDetail.setText(title);
+                                    tvDateDetail.setText(date_publish);
+                                    tvContentDetail.setText(Html.fromHtml(content).toString());
+                                    tvContentDetail.setMovementMethod(LinkMovementMethod.getInstance());
+
+                                    Document doc = Jsoup.parse(content);
+                                    Elements ele = doc.select("img");
+                                    for (Element el : ele) {
+                                        ImageView imageView = new ImageView(VivaApp.getInstance());
+                                        imageContent = el.attr("src").replaceAll("[|?*<\">+\\[\\]']", "");
+                                        Log.i(Constant.TAG, "IMAGE CONTENT : " + imageContent);
+                                        Picasso.with(VivaApp.getInstance()).load(imageContent).into(imageView);
+                                        imageView.setLayoutParams(new ViewGroup.LayoutParams(
+                                                ViewGroup.LayoutParams.WRAP_CONTENT,
+                                                ViewGroup.LayoutParams.WRAP_CONTENT));
+                                        imageView.setPadding(10, 10, 10, 10);
+                                        ((LinearLayout) imageContentLayout).addView(imageView);
+                                    }
+
+                                    tvReporterDetail.setText(reporter_name);
+                                    Picasso.with(VivaApp.getInstance()).load(image_url).into(ivThumbDetail);
+
+                                    if(relatedArticleArrayList.size() > 0 || !relatedArticleArrayList.isEmpty()) {
+                                        adapter = new RelatedAdapter(getActivity(), relatedArticleArrayList);
+                                        listView.setAdapter(adapter);
+                                        Constant.setListViewHeightBasedOnChildren(listView);
+                                        adapter.notifyDataSetChanged();
+                                        headerRelated.setVisibility(View.VISIBLE);
+                                        if(kanals != null) {
+                                            if(kanals.equalsIgnoreCase("bola")) {
+                                                headerRelated.setBackgroundResource(R.color.color_bola);
+                                            } else if(kanals.equalsIgnoreCase("vivalife")) {
+                                                headerRelated.setBackgroundResource(R.color.color_life);
+                                            } else {
+                                                headerRelated.setBackgroundResource(R.color.color_news);
+                                            }
+                                        }
+                                    }
+
+                                    loading_layout.setVisibility(View.GONE);
+                                } catch (Exception e) {
+                                    e.getMessage();
+                                }
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError volleyError) {
+                                volleyError.getMessage();
+                                loading_layout.setVisibility(View.GONE);
+                                rippleView.setVisibility(View.VISIBLE);
+                                if(kanals != null) {
+                                    if(kanals.equalsIgnoreCase("bola")) {
+                                        btnRetry.setBackgroundResource(R.drawable.shadow_button_bola);
+                                    } else if(kanals.equalsIgnoreCase("vivalife")) {
+                                        btnRetry.setBackgroundResource(R.drawable.shadow_button_life);
+                                    } else {
+                                        btnRetry.setBackgroundResource(R.drawable.shadow_button_news);
+                                    }
+                                }
+                            }
+                        });
+                request.setShouldCache(true);
+                request.setRetryPolicy(new DefaultRetryPolicy(
+                        Constant.TIME_OUT,
+                        0,
+                        DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+                VivaApp.getInstance().getRequestQueue().getCache().invalidate(Constant.URL_DETAIL + id, true);
+                VivaApp.getInstance().getRequestQueue().getCache().get(Constant.URL_DETAIL + id);
+                VivaApp.getInstance().addToRequestQueue(request, Constant.JSON_REQUEST);
+            } else {
+                Toast.makeText(VivaApp.getInstance(), R.string.title_no_connection, Toast.LENGTH_SHORT).show();
+                loading_layout.setVisibility(View.GONE);
+                tvNoResult.setVisibility(View.VISIBLE);
+            }
+        }
     }
 
 }

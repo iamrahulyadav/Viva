@@ -7,8 +7,8 @@
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="35dp"
-        android:layout_marginTop="0dp"
-        android:background="@color/user_card_view_border">
+        android:layout_marginTop="10dp"
+        android:background="@color/header_headline_terbaru_new">
         <id.co.viva.news.app.component.BounvenoTextView
             android:id="@+id/list_item_section_text"
             android:layout_width="wrap_content"

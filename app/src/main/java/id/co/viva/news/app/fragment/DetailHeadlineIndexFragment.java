@@ -22,6 +22,7 @@ import android.widget.ShareActionProvider;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.andexert.library.RippleView;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -49,7 +50,7 @@ import id.co.viva.news.app.model.RelatedArticle;
 /**
  * Created by root on 07/10/14.
  */
-public class DetailHeadlineIndexFragment extends Fragment {
+public class DetailHeadlineIndexFragment extends Fragment implements View.OnClickListener {
 
     private String id;
     private String imageContent;
@@ -63,6 +64,13 @@ public class DetailHeadlineIndexFragment extends Fragment {
     private RelatedAdapter adapter;
     private ListView listView;
     private Analytics analytics;
+    private RippleView rippleView;
+
+    private TextView tvTitleHeadlineDetail;
+    private TextView tvDateHeadlineDetail;
+    private TextView tvReporterHeadlineDetail;
+    private TextView tvContentHeadlineDetail;
+    private ImageView ivThumbDetailHeadline;
 
     private String title;
     private String image_url;
@@ -102,6 +110,10 @@ public class DetailHeadlineIndexFragment extends Fragment {
         tvNoResult = (TextView) view.findViewById(R.id.text_no_result_detail_headline);
         tvNoResult.setVisibility(View.GONE);
 
+        rippleView = (RippleView) view.findViewById(R.id.layout_ripple_view_headline_terbaru);
+        rippleView.setVisibility(View.GONE);
+        rippleView.setOnClickListener(this);
+
         imageContentLayout = view.findViewById(R.id.image_content);
 
         listView = (ListView) view.findViewById(R.id.list_related_article_headline);
@@ -125,12 +137,12 @@ public class DetailHeadlineIndexFragment extends Fragment {
 
         relatedArticleArrayList = new ArrayList<RelatedArticle>();
 
-        final TextView tvTitleHeadlineDetail = (TextView) view.findViewById(R.id.title_detail_headline);
-        final TextView tvDateHeadlineDetail = (TextView) view.findViewById(R.id.date_detail_headline);
-        final TextView tvReporterHeadlineDetail = (TextView) view.findViewById(R.id.reporter_detail_headline);
-        final TextView tvContentHeadlineDetail = (TextView) view.findViewById(R.id.content_detail_headline);
+        tvTitleHeadlineDetail = (TextView) view.findViewById(R.id.title_detail_headline);
+        tvDateHeadlineDetail = (TextView) view.findViewById(R.id.date_detail_headline);
+        tvReporterHeadlineDetail = (TextView) view.findViewById(R.id.reporter_detail_headline);
+        tvContentHeadlineDetail = (TextView) view.findViewById(R.id.content_detail_headline);
 
-        final ImageView ivThumbDetailHeadline = (ImageView) view.findViewById(R.id.thumb_detail_headline);
+        ivThumbDetailHeadline = (ImageView) view.findViewById(R.id.thumb_detail_headline);
         ivThumbDetailHeadline.setFocusable(true);
         ivThumbDetailHeadline.setFocusableInTouchMode(true);
         ivThumbDetailHeadline.requestFocus();
@@ -348,14 +360,14 @@ public class DetailHeadlineIndexFragment extends Fragment {
                                     }
                                 } else {
                                     loading_layout.setVisibility(View.GONE);
-                                    tvNoResult.setVisibility(View.VISIBLE);
+                                    rippleView.setVisibility(View.VISIBLE);
                                 }
                             }
                         });
                 request.setShouldCache(true);
                 request.setRetryPolicy(new DefaultRetryPolicy(
                         Constant.TIME_OUT,
-                        DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                        0,
                         DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
                 VivaApp.getInstance().getRequestQueue().getCache().invalidate(Constant.URL_DETAIL + id, true);
                 VivaApp.getInstance().getRequestQueue().getCache().get(Constant.URL_DETAIL + id);
@@ -381,6 +393,106 @@ public class DetailHeadlineIndexFragment extends Fragment {
         myIntent.setType("text/plain");
         myShareActionProvider.setShareIntent(myIntent);
         super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public void onClick(View view) {
+        if(view.getId() == R.id.layout_ripple_view_headline_terbaru) {
+            if(isInternetPresent) {
+                rippleView.setVisibility(View.GONE);
+                loading_layout.setVisibility(View.VISIBLE);
+                StringRequest request = new StringRequest(Request.Method.GET, Constant.URL_DETAIL + id,
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String volleyResponse) {
+                                Log.i(Constant.TAG, volleyResponse);
+                                try {
+                                    JSONObject jsonObject = new JSONObject(volleyResponse);
+                                    JSONObject response = jsonObject.getJSONObject(Constant.response);
+                                    JSONObject detail = response.getJSONObject(Constant.detail);
+                                    title = detail.getString(Constant.title);
+                                    image_url = detail.getString(Constant.image_url);
+                                    date_publish = detail.getString(Constant.date_publish);
+                                    content = detail.getString(Constant.content);
+                                    reporter_name = detail.getString(Constant.reporter_name);
+                                    url_shared = detail.getString(Constant.url);
+
+                                    JSONArray related_article = response.getJSONArray(Constant.related_article);
+                                    for(int i=0; i<related_article.length(); i++) {
+                                        JSONObject objRelated = related_article.getJSONObject(i);
+                                        String id = objRelated.getString(Constant.id);
+                                        String article_id = objRelated.getString(Constant.article_id);
+                                        String related_article_id = objRelated.getString(Constant.related_article_id);
+                                        String related_title = objRelated.getString(Constant.related_title);
+                                        String related_channel_level_1_id = objRelated.getString(Constant.related_channel_level_1_id);
+                                        String channel_id = objRelated.getString(Constant.channel_id);
+                                        String related_date_publish = objRelated.getString(Constant.related_date_publish);
+                                        String image = objRelated.getString(Constant.image);
+                                        String kanal = objRelated.getString(Constant.kanal);
+                                        String shared_url = objRelated.getString(Constant.url);
+                                        relatedArticleArrayList.add(new RelatedArticle(id, article_id, related_article_id, related_title,
+                                                related_channel_level_1_id, channel_id, related_date_publish, image, kanal, shared_url));
+                                        Log.i(Constant.TAG, "RELATED ARTICLE HEADLNE : " + relatedArticleArrayList.get(i).getRelated_title());
+                                    }
+
+                                    tvTitleHeadlineDetail.setText(title);
+                                    tvDateHeadlineDetail.setText(date_publish);
+                                    tvContentHeadlineDetail.setText(Html.fromHtml(content).toString());
+                                    tvContentHeadlineDetail.setMovementMethod(LinkMovementMethod.getInstance());
+
+                                    Document doc = Jsoup.parse(content);
+                                    Elements ele = doc.select("img");
+                                    for (Element el : ele) {
+                                        ImageView imageView = new ImageView(VivaApp.getInstance());
+                                        imageContent = el.attr("src").replaceAll("[|?*<\">+\\[\\]']", "");
+                                        Log.i(Constant.TAG, "IMAGE CONTENT : " + imageContent);
+                                        Picasso.with(VivaApp.getInstance()).load(imageContent).into(imageView);
+                                        imageView.setLayoutParams(new ViewGroup.LayoutParams(
+                                                ViewGroup.LayoutParams.WRAP_CONTENT,
+                                                ViewGroup.LayoutParams.WRAP_CONTENT));
+                                        imageView.setPadding(10, 10, 10, 10);
+                                        ((LinearLayout) imageContentLayout).addView(imageView);
+                                    }
+
+                                    tvReporterHeadlineDetail.setText(reporter_name);
+                                    Picasso.with(VivaApp.getInstance()).load(image_url).into(ivThumbDetailHeadline);
+
+                                    if(relatedArticleArrayList.size() > 0 || !relatedArticleArrayList.isEmpty()) {
+                                        adapter = new RelatedAdapter(getActivity(), relatedArticleArrayList);
+                                        listView.setAdapter(adapter);
+                                        Constant.setListViewHeightBasedOnChildren(listView);
+                                        adapter.notifyDataSetChanged();
+                                        headerRelated.setVisibility(View.VISIBLE);
+                                    }
+
+                                    loading_layout.setVisibility(View.GONE);
+                                } catch (Exception e) {
+                                    e.getMessage();
+                                }
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError volleyError) {
+                                volleyError.getMessage();
+                                loading_layout.setVisibility(View.GONE);
+                                rippleView.setVisibility(View.VISIBLE);
+                            }
+                        });
+                request.setShouldCache(true);
+                request.setRetryPolicy(new DefaultRetryPolicy(
+                        Constant.TIME_OUT,
+                        0,
+                        DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+                VivaApp.getInstance().getRequestQueue().getCache().invalidate(Constant.URL_DETAIL + id, true);
+                VivaApp.getInstance().getRequestQueue().getCache().get(Constant.URL_DETAIL + id);
+                VivaApp.getInstance().addToRequestQueue(request, Constant.JSON_REQUEST);
+            } else {
+                Toast.makeText(VivaApp.getInstance(), R.string.title_no_connection, Toast.LENGTH_SHORT).show();
+                loading_layout.setVisibility(View.GONE);
+                tvNoResult.setVisibility(View.VISIBLE);
+            }
+        }
     }
 
 }

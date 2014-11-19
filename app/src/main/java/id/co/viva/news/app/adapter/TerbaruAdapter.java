@@ -26,6 +26,10 @@ public class TerbaruAdapter extends BaseAdapter {
 
     private Context context;
     private ArrayList<News> newsArrayList;
+    private ImageView icon_item_news;
+    private ImageView icon_item_viva_news;
+    private TextView title_item_news;
+    private TextView date_item_news;
 
     public TerbaruAdapter(Context context, ArrayList<News> newsArrayList) {
         this.context = context;
@@ -52,12 +56,12 @@ public class TerbaruAdapter extends BaseAdapter {
         View rootView = LayoutInflater.from(context)
                 .inflate(R.layout.item_latest_terbaru, viewGroup, false);
 
-        ImageView icon_item_news = (ImageView) rootView.findViewById(R.id.image_item_news);
-        ImageView icon_item_viva_news = (ImageView) rootView.findViewById(R.id.icon_headline_terbaru);
-        TextView title_item_news = (TextView) rootView.findViewById(R.id.title_item_latest);
-        TextView date_item_news = (TextView) rootView.findViewById(R.id.date_item_news);
+        icon_item_news = (ImageView) rootView.findViewById(R.id.image_item_news);
+        icon_item_viva_news = (ImageView) rootView.findViewById(R.id.icon_headline_terbaru);
+        title_item_news = (TextView) rootView.findViewById(R.id.title_item_latest);
+        date_item_news = (TextView) rootView.findViewById(R.id.date_item_news);
 
-        News news = newsArrayList.get(position);
+        final News news = newsArrayList.get(position);
         if(news.getImage_url().length() > 0) {
             Picasso.with(context).load(news.getImage_url()).into(icon_item_news);
         }

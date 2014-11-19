@@ -26,6 +26,10 @@ public class HeadlineAdapter extends BaseAdapter {
 
     private Context context;
     private ArrayList<Headline> headlineArrayList;
+    private ImageView icon_item_news;
+    private ImageView icon_item_viva_news;
+    private TextView title_item_news;
+    private TextView date_item_news;
 
     public HeadlineAdapter(Context context, ArrayList<Headline> headlineArrayList) {
         this.context = context;
@@ -52,12 +56,12 @@ public class HeadlineAdapter extends BaseAdapter {
         View rootView = LayoutInflater.from(context)
                 .inflate(R.layout.item_latest_terbaru, viewGroup, false);
 
-        ImageView icon_item_news = (ImageView) rootView.findViewById(R.id.image_item_news);
-        ImageView icon_item_viva_news = (ImageView) rootView.findViewById(R.id.icon_headline_terbaru);
-        TextView title_item_news = (TextView) rootView.findViewById(R.id.title_item_latest);
-        TextView date_item_news = (TextView) rootView.findViewById(R.id.date_item_news);
+        icon_item_news = (ImageView) rootView.findViewById(R.id.image_item_news);
+        icon_item_viva_news = (ImageView) rootView.findViewById(R.id.icon_headline_terbaru);
+        title_item_news = (TextView) rootView.findViewById(R.id.title_item_latest);
+        date_item_news = (TextView) rootView.findViewById(R.id.date_item_news);
 
-        Headline headline = headlineArrayList.get(position);
+        final Headline headline = headlineArrayList.get(position);
         if(headline.getImage_url().length() > 0) {
             Picasso.with(context).load(headline.getImage_url()).into(icon_item_news);
         }
