@@ -16,6 +16,10 @@ public class BounvenoTextView extends TextView {
         super(context, as);
     }
 
+    public BounvenoTextView(Context context) {
+        super(context);
+    }
+
     @Override
     public void setTypeface(Typeface tf, int style) {
         try {

@@ -11,6 +11,12 @@
     <string name="label_content_not_update">Gagal memperbaharui konten.</string>
     <string name="label_error">Terjadi kesalahan!</string>
     <string name="label_loading_data">Memuat data...</string>
+    <string name="label_navigation_button">Navigation Button</string>
+    <string name="label_navigation_button_desc">Eksplorasi anda dimulai dari sini.</string>
+    <string name="label_search_button">Search Button</string>
+    <string name="label_search_button_desc">Temukan artikel yang anda cari di sini.</string>
+    <string name="label_share_button">Share Button</string>
+    <string name="label_share_button_desc">Bagikan artikel-artikel hebat dengan ini.</string>
 
     <!-- Title for Viva Menu -->
     <string name="title_viva_bola">Viva Bola</string>
