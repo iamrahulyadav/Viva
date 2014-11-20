@@ -46,7 +46,8 @@ import id.co.viva.news.app.model.News;
 /**
  * Created by root on 09/10/14.
  */
-public class TerbaruFragment extends Fragment implements AdapterView.OnItemClickListener, OnLoadMoreListener, View.OnClickListener {
+public class TerbaruFragment extends Fragment implements AdapterView.OnItemClickListener,
+        OnLoadMoreListener, View.OnClickListener {
 
     final private static String NEWS = "terbaru";
     public static ArrayList<News> newsArrayList;
@@ -230,7 +231,7 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
             stringRequest.setShouldCache(true);
             stringRequest.setRetryPolicy(new DefaultRetryPolicy(
                     Constant.TIME_OUT,
-                    DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                    0,
                     DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
             VivaApp.getInstance().getRequestQueue().getCache().invalidate(Constant.URL_HOMEPAGE, true);
             VivaApp.getInstance().getRequestQueue().getCache().get(Constant.URL_HOMEPAGE);
@@ -354,7 +355,7 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
                 stringRequest.setShouldCache(true);
                 stringRequest.setRetryPolicy(new DefaultRetryPolicy(
                         Constant.TIME_OUT,
-                        DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                        0,
                         DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
                 VivaApp.getInstance().getRequestQueue().getCache().invalidate(Constant.URL_HOMEPAGE + data, true);
                 VivaApp.getInstance().getRequestQueue().getCache().get(Constant.URL_HOMEPAGE + data);
@@ -473,7 +474,7 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
                 stringRequest.setShouldCache(true);
                 stringRequest.setRetryPolicy(new DefaultRetryPolicy(
                         Constant.TIME_OUT,
-                        DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                        0,
                         DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
                 VivaApp.getInstance().getRequestQueue().getCache().invalidate(Constant.URL_HOMEPAGE, true);
                 VivaApp.getInstance().getRequestQueue().getCache().get(Constant.URL_HOMEPAGE);

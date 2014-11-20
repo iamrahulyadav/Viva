@@ -16,7 +16,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -40,7 +39,9 @@ import java.util.Calendar;
 import id.co.viva.news.app.coachmark.CoachmarkBuilder;
 import id.co.viva.news.app.coachmark.CoachmarkView;
 import id.co.viva.news.app.component.GoogleMusicDicesDrawable;
+import id.co.viva.news.app.component.LoadMoreListView;
 import id.co.viva.news.app.interfaces.CoachmarkListener;
+import id.co.viva.news.app.interfaces.OnLoadMoreListener;
 import id.co.viva.news.app.services.Analytics;
 import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.R;
@@ -52,17 +53,18 @@ import id.co.viva.news.app.model.Headline;
 /**
  * Created by reza on 28/10/14.
  */
-public class HeadlineFragment extends Fragment implements AdapterView.OnItemClickListener, View.OnClickListener {
+public class HeadlineFragment extends Fragment implements AdapterView.OnItemClickListener, View.OnClickListener, OnLoadMoreListener {
 
     private static String HEADLINES = "headlines";
     public static ArrayList<Headline> headlineArrayList;
 
+    private int dataSize = 0;
+    private String data;
     private SwingBottomInAnimationAdapter swingBottomInAnimationAdapter;
     private HeadlineAdapter headlineAdapter;
-    private ListView listView;
+    private LoadMoreListView listView;
     private TextView lastUpdate;
     private TextView labelLoadData;
-    private ProgressBar loading_layout;
     private Boolean isInternetPresent = false;
     private JSONArray jsonArrayResponses, jsonArraySegmentHeadline;
     private TextView labelText;
@@ -71,6 +73,7 @@ public class HeadlineFragment extends Fragment implements AdapterView.OnItemClic
     private RippleView rippleView;
     private View coachmarkView, coachmarkViewSearch;
     private CoachmarkView showtips;
+    private ProgressBar loading_layout;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -122,8 +125,9 @@ public class HeadlineFragment extends Fragment implements AdapterView.OnItemClic
         labelText = (TextView) rootView.findViewById(R.id.text_terbaru_headline);
         labelText.setText(getString(R.string.label_headline));
 
-        listView = (ListView) rootView.findViewById(R.id.list_terbaru_headline);
+        listView = (LoadMoreListView) rootView.findViewById(R.id.list_terbaru_headline);
         listView.setOnItemClickListener(this);
+        listView.setOnLoadMoreListener(this);
 
         headlineArrayList = new ArrayList<Headline>();
         parseJson(headlineArrayList);
@@ -457,6 +461,69 @@ public class HeadlineFragment extends Fragment implements AdapterView.OnItemClic
             } else {
                 Toast.makeText(VivaApp.getInstance(), R.string.title_no_connection, Toast.LENGTH_SHORT).show();
             }
+        }
+    }
+
+    @Override
+    public void onLoadMore() {
+        data = String.valueOf(dataSize += 12);
+        Log.i(Constant.TAG, "DATA PAGE : " + data);
+        if(isInternetPresent) {
+            StringRequest stringRequest = new StringRequest(Request.Method.GET, Constant.URL_HOMEPAGE + data,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String volleyResponse) {
+                            Log.i(Constant.TAG, volleyResponse);
+                            try {
+                                JSONObject jsonObject = new JSONObject(volleyResponse);
+                                jsonArrayResponses = jsonObject.getJSONArray(Constant.response);
+                                if(jsonArrayResponses != null) {
+                                    JSONObject objHeadline = jsonArrayResponses.getJSONObject(0);
+                                    if(objHeadline !=  null) {
+                                        jsonArraySegmentHeadline = objHeadline.getJSONArray(HEADLINES);
+                                        for(int i=0; i<jsonArraySegmentHeadline.length(); i++) {
+                                            JSONObject jsonHeadline = jsonArraySegmentHeadline.getJSONObject(i);
+                                            String id = jsonHeadline.getString(Constant.id);
+                                            String title = jsonHeadline.getString(Constant.title);
+                                            String slug = jsonHeadline.getString(Constant.slug);
+                                            String kanal = jsonHeadline.getString(Constant.kanal);
+                                            String url = jsonHeadline.getString(Constant.url);
+                                            String image_url = jsonHeadline.getString(Constant.image_url);
+                                            String date_publish = jsonHeadline.getString(Constant.date_publish);
+                                            String source = jsonHeadline.getString(Constant.source);
+                                            headlineArrayList.add(new Headline(id, title, slug, kanal,
+                                                    image_url, date_publish, source, url));
+                                        }
+                                    }
+                                }
+
+                                if(headlineArrayList.size() > 0 || !headlineArrayList.isEmpty()) {
+                                    swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(headlineAdapter);
+                                    swingBottomInAnimationAdapter.setAbsListView(listView);
+                                    assert swingBottomInAnimationAdapter.getViewAnimator() != null;
+                                    swingBottomInAnimationAdapter.getViewAnimator().setInitialDelayMillis(1000);
+                                    headlineAdapter.notifyDataSetChanged();
+                                    listView.onLoadMoreComplete();
+                                }
+                            } catch (Exception e) {
+                                e.getMessage();
+                            }
+                        }
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError volleyError) {
+                    volleyError.getMessage();
+                    Toast.makeText(VivaApp.getInstance(), R.string.label_error, Toast.LENGTH_SHORT).show();
+                }
+            });
+            stringRequest.setShouldCache(true);
+            stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                    Constant.TIME_OUT,
+                    0,
+                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+            VivaApp.getInstance().getRequestQueue().getCache().invalidate(Constant.URL_HOMEPAGE + data, true);
+            VivaApp.getInstance().getRequestQueue().getCache().get(Constant.URL_HOMEPAGE + data);
+            VivaApp.getInstance().addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
         }
     }
 
