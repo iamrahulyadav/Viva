@@ -41,6 +41,8 @@ import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
+import id.co.viva.news.app.model.Favorites;
 import id.co.viva.news.app.services.Analytics;
 import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.R;
@@ -69,6 +71,8 @@ public class DetailIndexContent extends Fragment implements
     private View imageContentLayout;
     private Analytics analytics;
     private RippleView rippleView;
+    private String favoriteList;
+    private ArrayList<Favorites> favoritesArrayList;
 
     private TextView tvTitleDetail;
     private TextView tvDateDetail;
@@ -77,7 +81,10 @@ public class DetailIndexContent extends Fragment implements
     private ImageView ivThumbDetail;
     private Button btnRetry;
 
+    private String ids;
     private String title;
+    private String channel_id;
+    private String kanal;
     private String image_url;
     private String date_publish;
     private String content;
@@ -158,6 +165,9 @@ public class DetailIndexContent extends Fragment implements
                 JSONObject jsonObject = new JSONObject(cachedResponse);
                 JSONObject response = jsonObject.getJSONObject(Constant.response);
                 JSONObject detail = response.getJSONObject(Constant.detail);
+                ids = detail.getString(Constant.id);
+                channel_id = detail.getString(Constant.channel_id);
+                kanal = detail.getString(Constant.kanal);
                 title = detail.getString(Constant.title);
                 image_url = detail.getString(Constant.image_url);
                 date_publish = detail.getString(Constant.date_publish);
@@ -239,6 +249,9 @@ public class DetailIndexContent extends Fragment implements
                                     JSONObject jsonObject = new JSONObject(volleyResponse);
                                     JSONObject response = jsonObject.getJSONObject(Constant.response);
                                     JSONObject detail = response.getJSONObject(Constant.detail);
+                                    ids = detail.getString(Constant.id);
+                                    channel_id = detail.getString(Constant.channel_id);
+                                    kanal = detail.getString(Constant.kanal);
                                     title = detail.getString(Constant.title);
                                     image_url = detail.getString(Constant.image_url);
                                     date_publish = detail.getString(Constant.date_publish);
@@ -322,6 +335,9 @@ public class DetailIndexContent extends Fragment implements
                                         JSONObject jsonObject = new JSONObject(cachedResponse);
                                         JSONObject response = jsonObject.getJSONObject(Constant.response);
                                         JSONObject detail = response.getJSONObject(Constant.detail);
+                                        ids = detail.getString(Constant.id);
+                                        channel_id = detail.getString(Constant.channel_id);
+                                        kanal = detail.getString(Constant.kanal);
                                         title = detail.getString(Constant.title);
                                         image_url = detail.getString(Constant.image_url);
                                         date_publish = detail.getString(Constant.date_publish);
@@ -426,6 +442,52 @@ public class DetailIndexContent extends Fragment implements
     }
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.subaction_comments:
+                Toast.makeText(VivaApp.getInstance(), "COMING SOON...", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.subaction_favorites:
+                favoriteList = VivaApp.getInstance().getSharedPreferences(getActivity())
+                        .getString(Constant.FAVORITES_LIST, "");
+
+                if(favoriteList == null || favoriteList.length() <= 0) {
+                    favoritesArrayList = VivaApp.getInstance().getFavoritesList();
+                } else {
+                    favoritesArrayList = VivaApp.getInstance().getInstanceGson().
+                            fromJson(favoriteList, VivaApp.getInstance().getType());
+                }
+
+                new SweetAlertDialog(getActivity(), SweetAlertDialog.WARNING_TYPE)
+                        .setTitleText(getResources().getString(R.string.label_favorite_navigation_title))
+                        .setContentText(title)
+                        .setConfirmText(getResources().getString(R.string.label_favorite_ok))
+                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sDialog) {
+                                favoritesArrayList.add(new Favorites(ids, title, channel_id, kanal,
+                                        image_url, date_publish, reporter_name, url_shared, content));
+
+                                String favorite = VivaApp.getInstance().getInstanceGson().toJson(favoritesArrayList);
+                                VivaApp.getInstance().getDefaultEditor().putString(Constant.FAVORITES_LIST, favorite);
+                                VivaApp.getInstance().getDefaultEditor().putInt(Constant.FAVORITES_LIST_SIZE, favoritesArrayList.size());
+                                VivaApp.getInstance().getDefaultEditor().commit();
+
+                                sDialog.setTitleText(getResources().getString(R.string.label_favorite_navigation_title_confirm))
+                                        .setContentText(getResources().getString(R.string.label_favorite_navigation_content))
+                                        .setConfirmText(getResources().getString(R.string.label_favorite_ok))
+                                        .setConfirmClickListener(null)
+                                        .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+                            }
+                        })
+                        .show();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
         if(relatedArticleArrayList.size() > 0) {
             RelatedArticle relatedArticle = relatedArticleArrayList.get(position);
@@ -469,6 +531,9 @@ public class DetailIndexContent extends Fragment implements
                                     JSONObject jsonObject = new JSONObject(volleyResponse);
                                     JSONObject response = jsonObject.getJSONObject(Constant.response);
                                     JSONObject detail = response.getJSONObject(Constant.detail);
+                                    ids = detail.getString(Constant.id);
+                                    channel_id = detail.getString(Constant.channel_id);
+                                    kanal = detail.getString(Constant.kanal);
                                     title = detail.getString(Constant.title);
                                     image_url = detail.getString(Constant.image_url);
                                     date_publish = detail.getString(Constant.date_publish);

@@ -182,7 +182,7 @@ public class HeadlineFragment extends Fragment implements AdapterView.OnItemClic
                                     loading_layout.setVisibility(View.GONE);
                                     labelLoadData.setVisibility(View.GONE);
 
-                                    if(Constant.getSharedPreferences(VivaApp.getInstance()).getBoolean(Constant.FIRST_INSTALL, true)) {
+                                    if(VivaApp.getInstance().getSharedPreferences(VivaApp.getInstance()).getBoolean(Constant.FIRST_INSTALL, true)) {
                                         RelativeLayout relativeLayout = new RelativeLayout(getActivity());
                                         relativeLayout.setLayoutParams(new ViewGroup.LayoutParams(50, 50));
                                         ((RelativeLayout) coachmarkView).addView(relativeLayout);
@@ -207,7 +207,8 @@ public class HeadlineFragment extends Fragment implements AdapterView.OnItemClic
                                                 })
                                                 .build();
                                         showtips.show(getActivity());
-                                        Constant.getSharedPreferences(VivaApp.getInstance()).edit().putBoolean(Constant.FIRST_INSTALL, false).commit();
+                                        VivaApp.getInstance().getSharedPreferences(VivaApp.getInstance()).
+                                                edit().putBoolean(Constant.FIRST_INSTALL, false).commit();
                                     }
                                 }
 
@@ -402,7 +403,7 @@ public class HeadlineFragment extends Fragment implements AdapterView.OnItemClic
                                         labelLoadData.setVisibility(View.GONE);
                                         rippleView.setVisibility(View.GONE);
 
-                                        if(Constant.getSharedPreferences(VivaApp.getInstance()).getBoolean(Constant.FIRST_INSTALL, true)) {
+                                        if(VivaApp.getInstance().getSharedPreferences(VivaApp.getInstance()).getBoolean(Constant.FIRST_INSTALL, true)) {
                                             RelativeLayout relativeLayout = new RelativeLayout(getActivity());
                                             relativeLayout.setLayoutParams(new ViewGroup.LayoutParams(50, 50));
                                             ((RelativeLayout) coachmarkView).addView(relativeLayout);
@@ -427,7 +428,8 @@ public class HeadlineFragment extends Fragment implements AdapterView.OnItemClic
                                                     })
                                                     .build();
                                             showtips.show(getActivity());
-                                            Constant.getSharedPreferences(VivaApp.getInstance()).edit().putBoolean(Constant.FIRST_INSTALL, false).commit();
+                                            VivaApp.getInstance().getSharedPreferences(VivaApp.getInstance()).
+                                                    edit().putBoolean(Constant.FIRST_INSTALL, false).commit();
                                         }
                                     }
 

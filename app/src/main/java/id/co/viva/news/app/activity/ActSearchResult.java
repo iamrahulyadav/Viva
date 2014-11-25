@@ -4,8 +4,8 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
@@ -39,7 +39,8 @@ import id.co.viva.news.app.model.SearchResult;
 /**
  * Created by reza on 13/10/14.
  */
-public class ActSearchResult extends ActBase implements AdapterView.OnItemClickListener {
+public class ActSearchResult extends FragmentActivity implements
+        AdapterView.OnItemClickListener {
 
     private TextView tvSearchResult;
     private ListView listSearchResult;
@@ -64,11 +65,7 @@ public class ActSearchResult extends ActBase implements AdapterView.OnItemClickL
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        LayoutInflater inflater = (LayoutInflater)
-                getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View contentView = inflater.inflate(R.layout.act_search_result, null, false);
-        mDrawerLayout.addView(contentView, 0);
+        setContentView(R.layout.act_search_result);
 
         getActionBar().setTitle("Pencarian");
 

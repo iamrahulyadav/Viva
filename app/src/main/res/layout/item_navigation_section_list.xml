@@ -3,12 +3,12 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
+    android:layout_marginTop="0dp"
+    android:background="@color/header_headline_terbaru_new"
     android:orientation="vertical">
     <RelativeLayout
         android:layout_width="fill_parent"
-        android:layout_height="35dp"
-        android:layout_marginTop="10dp"
-        android:background="@color/header_headline_terbaru_new">
+        android:layout_height="35dp">
         <id.co.viva.news.app.component.BounvenoTextView
             android:id="@+id/list_item_section_text"
             android:layout_width="wrap_content"
@@ -16,7 +16,7 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="5dp"
             android:textStyle="bold"
-            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textSize="20sp"
             android:textColor="@color/white"/>
     </RelativeLayout>
 </LinearLayout>

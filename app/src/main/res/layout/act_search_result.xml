@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:ripple="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <id.co.viva.news.app.component.BounvenoTextView
@@ -9,7 +8,7 @@
         android:text="@string/abc_searchview_description_search"
         android:layout_height="wrap_content"
         android:textStyle="bold"
-        android:textColor="@color/header_grey"
+        android:textColor="@color/header_headline_terbaru_new"
         android:textSize="18sp"
         android:layout_margin="10dp"
         android:id="@+id/text_search_result"/>

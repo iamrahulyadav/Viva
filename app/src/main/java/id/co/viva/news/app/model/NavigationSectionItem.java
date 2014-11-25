@@ -22,4 +22,9 @@ public class NavigationSectionItem implements Item {
         return true;
     }
 
+    @Override
+    public boolean isUserProfile() {
+        return false;
+    }
+
 }

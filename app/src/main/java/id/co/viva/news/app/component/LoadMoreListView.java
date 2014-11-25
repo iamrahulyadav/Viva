@@ -48,6 +48,8 @@ public class LoadMoreListView extends ListView implements AbsListView.OnScrollLi
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mFooterView = (RelativeLayout) mInflater.inflate(
                 R.layout.load_more_footer, this, false);
+        mFooterView.setOnClickListener(null);
+        mFooterView.setOnLongClickListener(null);
         mProgressBarLoadMore = (ProgressBar) mFooterView
                 .findViewById(R.id.load_more_progressBar);
         addFooterView(mFooterView);

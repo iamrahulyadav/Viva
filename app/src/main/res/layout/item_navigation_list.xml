@@ -1,25 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="48dp"
-    android:background="@drawable/list_selector"
-    android:gravity="center_vertical">
+    android:layout_height="40dp"
+    android:background="@drawable/list_selector">
     <ImageView
         android:id="@+id/list_item_entry_drawable"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:src="@android:drawable/ic_menu_preferences"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_centerVertical="true"
         android:layout_marginRight="5dp"
         android:layout_marginLeft="5dp"/>
     <RelativeLayout
         android:layout_width="wrap_content"
-        android:layout_height="48dp">
-        <id.co.viva.news.app.component.BounvenoTextView android:id="@+id/text_navigation_list"
+        android:layout_height="40dp"
+        android:layout_toRightOf="@id/list_item_entry_drawable">
+        <id.co.viva.news.app.component.BounvenoTextView
+            android:id="@+id/text_navigation_list"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:textColor="@color/black"
+            android:textSize="18dp"
+            android:text="@string/abc_action_bar_home_description"
+            android:textColor="@color/header_headline_terbaru_new"
             android:singleLine="true"
-            android:textAppearance="?android:attr/textAppearanceMedium"/>
+            />
     </RelativeLayout>
-</LinearLayout>
+</RelativeLayout>

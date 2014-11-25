@@ -41,4 +41,9 @@ public class NavigationItem implements Item {
         return false;
     }
 
+    @Override
+    public boolean isUserProfile() {
+        return false;
+    }
+
 }

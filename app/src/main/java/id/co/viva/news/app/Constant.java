@@ -19,6 +19,9 @@ public class Constant {
     public static final String fragment_headline = "class id.co.viva.news.app.fragment.HeadlineFragment";
     public static final String FIRST_INSTALL = "first_install";
 
+    public static final String FAVORITES_LIST = "favorites_list";
+    public static final String FAVORITES_LIST_SIZE = "favorites_list_size";
+
     public static final String GCM_SENDER_ID = "246836504311";
     public static final String GCM_URL_BACKEND_SERVER = "http://apps.vivall.tv/gcm_registration.php";
 
@@ -130,10 +133,6 @@ public class Constant {
         } else {
             return diff / DAY_MILLIS + " hari yang lalu";
         }
-    }
-
-    public static SharedPreferences getSharedPreferences(Context context) {
-        return context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE);
     }
 
 }

@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.interfaces.Item;
 import id.co.viva.news.app.model.NavigationItem;
+import id.co.viva.news.app.model.NavigationProfileItem;
 import id.co.viva.news.app.model.NavigationSectionItem;
 
 /**
@@ -54,17 +55,25 @@ public class NavigationAdapter extends ArrayAdapter<Item> {
                 v.setLongClickable(false);
                 TextView sectionView = (TextView) v.findViewById(R.id.list_item_section_text);
                 sectionView.setText(navigationSectionItem.getTitle());
+            } else if(item.isUserProfile()) {
+                NavigationProfileItem navigationProfileItem = (NavigationProfileItem) item;
+                v = vi.inflate(R.layout.item_navigation_profile_list, null);
+                v.setOnLongClickListener(null);
+                v.setLongClickable(false);
+                TextView username = (TextView) v.findViewById(R.id.tv_username);
+                TextView email = (TextView) v.findViewById(R.id.tv_user_email);
+                username.setText(navigationProfileItem.getUsername());
+                email.setText(navigationProfileItem.getEmail());
             } else {
-                NavigationItem ei = (NavigationItem)item;
+                NavigationItem ei = (NavigationItem) item;
                 v = vi.inflate(R.layout.item_navigation_list, null);
-                final TextView title = (TextView)v.findViewById(R.id.text_navigation_list);
-                final ImageView image = (ImageView)v.findViewById(R.id.list_item_entry_drawable);
+                TextView title = (TextView) v.findViewById(R.id.text_navigation_list);
+                ImageView image = (ImageView) v.findViewById(R.id.list_item_entry_drawable);
                 if(title != null)
                     title.setText(ei.getTitle());
                 if(image != null)
                     image.setImageResource(ei.getIcon());
             }
-
         }
         return v;
     }

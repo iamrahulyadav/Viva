@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <id.co.viva.news.app.component.BounvenoTextView
+        android:layout_width="wrap_content"
+        android:text="@string/label_favorites"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textColor="@color/header_headline_terbaru_new"
+        android:textSize="18sp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:id="@+id/text_label_favorite"/>
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/text_label_favorite"
+        android:divider="@color/list_divider"
+        android:dividerHeight="0dp"
+        android:id="@+id/list_favorites"/>
+    <id.co.viva.news.app.component.BounvenoTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:layout_centerInParent="true"
+        android:text="@string/label_no_results_favorite"
+        android:textColor="@color/header_grey"
+        android:id="@+id/text_no_result_detail_content_favorite"/>
+</RelativeLayout>

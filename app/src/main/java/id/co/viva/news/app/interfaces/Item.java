@@ -5,4 +5,5 @@ package id.co.viva.news.app.interfaces;
  */
 public interface Item {
     public boolean isSection();
+    public boolean isUserProfile();
 }
