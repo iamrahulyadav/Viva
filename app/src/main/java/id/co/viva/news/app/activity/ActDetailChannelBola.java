@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.RelativeLayout;
 import android.widget.SearchView;
@@ -23,6 +24,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.melnykov.fab.FloatingActionButton;
 import com.nhaarman.listviewanimations.appearance.AnimationAdapter;
 import com.nhaarman.listviewanimations.appearance.simple.ScaleInAnimationAdapter;
 
@@ -62,6 +64,7 @@ public class ActDetailChannelBola extends ActBase implements
     private int dataSize = 0;
     private String data;
     private RippleView rippleView;
+    private FloatingActionButton floatingActionButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,6 +111,22 @@ public class ActDetailChannelBola extends ActBase implements
         listView = (LoadMoreListView) findViewById(R.id.list_channel_bola);
         listView.setOnItemClickListener(this);
         listView.setOnLoadMoreListener(this);
+
+        floatingActionButton = (FloatingActionButton) findViewById(R.id.fab);
+        floatingActionButton.setVisibility(View.GONE);
+        floatingActionButton.attachToListView(listView, new FloatingActionButton.FabOnScrollListener() {
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                super.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
+                int firstIndex = listView.getFirstVisiblePosition();
+                if(firstIndex > Constant.NUMBER_OF_TOP_LIST_ITEMS) {
+                    floatingActionButton.setVisibility(View.VISIBLE);
+                } else {
+                    floatingActionButton.setVisibility(View.GONE);
+                }
+            }
+        });
+        floatingActionButton.setOnClickListener(this);
 
         if(isInternetPresent) {
             StringRequest stringRequest = new StringRequest(Request.Method.GET, Constant.URL_KANAL_DETAIL + id + "/2/0/10",
@@ -367,6 +386,8 @@ public class ActDetailChannelBola extends ActBase implements
                 VivaApp.getInstance().getRequestQueue().getCache().get(Constant.URL_KANAL_DETAIL + id + "/2/0/10");
                 VivaApp.getInstance().addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
             }
+        } else if(view.getId() == R.id.fab) {
+            listView.setSelection(0);
         }
     }
 

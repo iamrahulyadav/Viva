@@ -15,6 +15,7 @@ import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -27,6 +28,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.melnykov.fab.FloatingActionButton;
 import com.nhaarman.listviewanimations.appearance.simple.SwingBottomInAnimationAdapter;
 
 import org.json.JSONArray;
@@ -53,7 +55,8 @@ import id.co.viva.news.app.model.Headline;
 /**
  * Created by reza on 28/10/14.
  */
-public class HeadlineFragment extends Fragment implements AdapterView.OnItemClickListener, View.OnClickListener, OnLoadMoreListener {
+public class HeadlineFragment extends Fragment implements
+        AdapterView.OnItemClickListener, View.OnClickListener, OnLoadMoreListener {
 
     private static String HEADLINES = "headlines";
     public static ArrayList<Headline> headlineArrayList;
@@ -74,6 +77,7 @@ public class HeadlineFragment extends Fragment implements AdapterView.OnItemClic
     private View coachmarkView, coachmarkViewSearch;
     private CoachmarkView showtips;
     private ProgressBar loading_layout;
+    private FloatingActionButton floatingActionButton;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -128,6 +132,22 @@ public class HeadlineFragment extends Fragment implements AdapterView.OnItemClic
         listView = (LoadMoreListView) rootView.findViewById(R.id.list_terbaru_headline);
         listView.setOnItemClickListener(this);
         listView.setOnLoadMoreListener(this);
+
+        floatingActionButton = (FloatingActionButton) rootView.findViewById(R.id.fab);
+        floatingActionButton.setVisibility(View.GONE);
+        floatingActionButton.attachToListView(listView, new FloatingActionButton.FabOnScrollListener() {
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                super.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
+                int firstIndex = listView.getFirstVisiblePosition();
+                if(firstIndex > Constant.NUMBER_OF_TOP_LIST_ITEMS) {
+                    floatingActionButton.setVisibility(View.VISIBLE);
+                } else {
+                    floatingActionButton.setVisibility(View.GONE);
+                }
+            }
+        });
+        floatingActionButton.setOnClickListener(this);
 
         headlineArrayList = new ArrayList<Headline>();
         parseJson(headlineArrayList);
@@ -463,6 +483,8 @@ public class HeadlineFragment extends Fragment implements AdapterView.OnItemClic
             } else {
                 Toast.makeText(VivaApp.getInstance(), R.string.title_no_connection, Toast.LENGTH_SHORT).show();
             }
+        } else if(view.getId() == R.id.fab) {
+            listView.setSelection(0);
         }
     }
 

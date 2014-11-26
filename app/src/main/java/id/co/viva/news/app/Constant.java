@@ -15,6 +15,7 @@ public class Constant {
 
     public static final int TIME_OUT = 3000;
     public final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+    public final static int NUMBER_OF_TOP_LIST_ITEMS = 4;
 
     public static final String fragment_headline = "class id.co.viva.news.app.fragment.HeadlineFragment";
     public static final String FIRST_INSTALL = "first_install";

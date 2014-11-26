@@ -49,6 +49,10 @@
             android:theme="@style/AppTheme"/>
 
         <activity
+            android:name=".activity.ActDetailFavorite"
+            android:theme="@style/AppTheme"/>
+
+        <activity
             android:name=".activity.ActDetailContentDefault"
             android:theme="@style/AppTheme"/>
 
