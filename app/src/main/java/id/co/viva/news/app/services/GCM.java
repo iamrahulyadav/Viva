@@ -150,7 +150,7 @@ public class GCM {
         jsonObjectRequest.setShouldCache(true);
         jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(
                 Constant.TIME_OUT,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                0,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         VivaApp.getInstance().addToRequestQueue(jsonObjectRequest, Constant.JSON_REQUEST);
     }

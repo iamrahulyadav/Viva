@@ -8,8 +8,8 @@ android {
         applicationId "id.co.viva.news.app"
         minSdkVersion 14
         targetSdkVersion 20
-        versionCode 11
-        versionName "2.0"
+        versionCode 12
+        versionName "2.0.1"
     }
 
     buildTypes {
@@ -42,4 +42,9 @@ dependencies {
     compile files('libs/libGoogleAnalyticsServices.jar')
     compile files('libs/ATInternet.jar')
     compile 'com.github.traex.rippleeffect:library:1.2.2'
+    compile 'cn.pedant.sweetalert:library:1.1'
+    compile 'com.google.code.gson:gson:2.3'
+    compile 'com.melnykov:floatingactionbutton:1.0.7'
+    compile 'com.github.dmytrodanylyk.android-process-button:library:1.0.2'
+    compile 'com.github.dmytrodanylyk.circular-progress-button:library:1.1.3'
 }

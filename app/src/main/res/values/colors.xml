@@ -23,4 +23,11 @@
     <color name="color_auto">#231f20</color>
     <color name="color_log">#a9328c</color>
 
+    <color name="purple_plum">#913D88</color>
+    <color name="red_thunderbird">#EF4836</color>
+    <color name="green">#26A65B</color>
+    <color name="blue">#3498DB</color>
+    <color name="yellow">#F4D03F</color>
+    <color name="lynch">#6C7A89</color>
+    <color name="light_white">#DCDCDC</color>
 </resources>

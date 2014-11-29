@@ -13,7 +13,7 @@
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
         android:id="@+id/text_label_favorite"/>
-    <ListView
+    <com.nhaarman.listviewanimations.itemmanipulation.DynamicListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/text_label_favorite"

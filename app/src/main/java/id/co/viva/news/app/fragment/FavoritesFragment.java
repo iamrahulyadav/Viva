@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -11,10 +12,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.nhaarman.listviewanimations.appearance.simple.ScaleInAnimationAdapter;
+import com.nhaarman.listviewanimations.itemmanipulation.DynamicListView;
+import com.nhaarman.listviewanimations.itemmanipulation.swipedismiss.OnDismissCallback;
+import com.nhaarman.listviewanimations.itemmanipulation.swipedismiss.undo.SimpleSwipeUndoAdapter;
 
 import java.util.ArrayList;
 
@@ -35,8 +38,9 @@ public class FavoritesFragment extends Fragment implements AdapterView.OnItemCli
     private int favoriteListSize;
     private FavoriteAdapter favoriteAdapter;
     private ScaleInAnimationAdapter scaleInAnimationAdapter;
-    private ListView listFavorite;
+    private DynamicListView listFavorite;
     private TextView textNoResult;
+    private SimpleSwipeUndoAdapter simpleSwipeUndoAdapter;
 
     @Override
     public void onAttach(Activity activity) {
@@ -53,7 +57,7 @@ public class FavoritesFragment extends Fragment implements AdapterView.OnItemCli
         textNoResult = (TextView) rootView.findViewById(R.id.text_no_result_detail_content_favorite);
         textNoResult.setVisibility(View.GONE);
 
-        listFavorite = (ListView) rootView.findViewById(R.id.list_favorites);
+        listFavorite = (DynamicListView) rootView.findViewById(R.id.list_favorites);
         listFavorite.setOnItemClickListener(this);
 
         VivaApp.getInstance().getSharedPreferences(VivaApp.getInstance());
@@ -66,21 +70,44 @@ public class FavoritesFragment extends Fragment implements AdapterView.OnItemCli
 
         favoritesArrayList = VivaApp.getInstance().getInstanceGson().
                 fromJson(favoriteList, VivaApp.getInstance().getType());
-
         favoriteAdapter = new FavoriteAdapter(VivaApp.getInstance(), favoritesArrayList);
 
-        for(int i=0; i<favoriteListSize; i++) {
-            Log.i(Constant.TAG, "TITLE FAVORITES : " + favoritesArrayList.get(i).getTitle());
+        if(favoriteListSize > 0) {
+            for(int i=0; i<favoriteListSize; i++) {
+                Log.i(Constant.TAG, "TITLE FAVORITES : " + favoritesArrayList.get(i).getTitle());
+            }
+        } else {
+            textNoResult.setVisibility(View.VISIBLE);
         }
         VivaApp.getInstance().getDefaultEditor().commit();
+
+        simpleSwipeUndoAdapter = new SimpleSwipeUndoAdapter(favoriteAdapter, VivaApp.getInstance(),
+                new OnDismissCallback() {
+                    @Override
+                    public void onDismiss(@NonNull ViewGroup viewGroup, @NonNull int[] reverseSortedPositions) {
+                        for (int position : reverseSortedPositions) {
+                            favoriteAdapter.removeItem(position);
+                            favoriteAdapter.notifyDataSetChanged();
+                            String favorite = VivaApp.getInstance().getInstanceGson().toJson(favoritesArrayList);
+                            VivaApp.getInstance().getDefaultEditor().putString(Constant.FAVORITES_LIST, favorite);
+                            VivaApp.getInstance().getDefaultEditor().putInt(Constant.FAVORITES_LIST_SIZE, favoritesArrayList.size());
+                            VivaApp.getInstance().getDefaultEditor().commit();
+                            if(favoritesArrayList.size() <= 0) {
+                                textNoResult.setVisibility(View.VISIBLE);
+                            }
+                        }
+                    }
+                });
 
         if(favoriteListSize > 0 || favoritesArrayList != null) {
             scaleInAnimationAdapter = new ScaleInAnimationAdapter(favoriteAdapter);
             scaleInAnimationAdapter.setAbsListView(listFavorite);
             listFavorite.setAdapter(scaleInAnimationAdapter);
             scaleInAnimationAdapter.notifyDataSetChanged();
-        } else {
-            textNoResult.setVisibility(View.VISIBLE);
+            //Undo Adapter
+            simpleSwipeUndoAdapter.setAbsListView(listFavorite);
+            listFavorite.setAdapter(simpleSwipeUndoAdapter);
+            listFavorite.enableSimpleSwipeUndo();
         }
 
         return rootView;

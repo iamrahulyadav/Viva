@@ -19,6 +19,9 @@
     <string name="label_share_button">Share Button</string>
     <string name="label_share_button_desc">Bagikan artikel-artikel hebat dengan ini.</string>
     <string name="label_favorites">FAVORITES</string>
+    <string name="label_login_with">LOGIN WITH</string>
+    <string name="label_swipe_undo">Batal Menghapus</string>
+    <string name="label_swipe_delete">Geser Untuk Menghapus</string>
 
     <!-- Favorite Label -->
     <string name="label_favorite_ok">OK</string>
@@ -36,6 +39,7 @@
     <string name="label_item_navigation_about">About</string>
     <string name="label_section_navigation_channel">CHANNELS</string>
     <string name="label_section_navigation_preferences">PREFERENCES</string>
+    <string name="label_loading">Loading...</string>
 
     <!-- Title for Viva Menu -->
     <string name="title_viva_bola">Viva Bola</string>
@@ -44,6 +48,12 @@
     <string name="title_viva_life">Viva Life</string>
     <string name="title_viva_log">Viva Log</string>
     <string name="title_viva_news">Viva News</string>
+
+    <string name="label_hint_email">Email</string>
+    <string name="label_hint_password">Password</string>
+    <string name="label_login">Login</string>
+    <string name="label_register">Register</string>
+    <string name="label_forgot_password"><u>Forgot Password</u></string>
 
     <string name="title_copyright">Copyright © 2008 - 2014 PT. Viva Media Baru</string>
     <string name="wording_about_eng">VIVA.co.id mobile application for Android devices so users can enjoy a variety of quality contents of VIVA.co.id with ease of navigation and a wealth of features. Contents in the form of texts, photos and videos are continuously updated and presented creatively to enrich the user experience.</string>

@@ -1,12 +1,16 @@
 package id.co.viva.news.app.adapter;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.nhaarman.listviewanimations.itemmanipulation.swipedismiss.undo.UndoAdapter;
 
 import java.util.ArrayList;
 
@@ -16,15 +20,18 @@ import id.co.viva.news.app.model.Favorites;
 /**
  * Created by reza on 22/11/14.
  */
-public class FavoriteAdapter extends BaseAdapter {
+public class FavoriteAdapter extends BaseAdapter implements UndoAdapter {
 
     private Context context;
-    private String id;
     private ArrayList<Favorites> favoritesArrayList;
 
     public FavoriteAdapter(Context context, ArrayList<Favorites> favoritesArrayList) {
         this.favoritesArrayList = favoritesArrayList;
         this.context = context;
+    }
+
+    public Object removeItem(int position) {
+        return favoritesArrayList.remove(position);
     }
 
     @Override
@@ -63,6 +70,22 @@ public class FavoriteAdapter extends BaseAdapter {
         }
 
         return rootView;
+    }
+
+    @NonNull
+    @Override
+    public View getUndoView(int i, @Nullable View convertView, @NonNull ViewGroup viewGroup) {
+        View views = convertView;
+        if (views == null) {
+            views = LayoutInflater.from(context).inflate(R.layout.item_undo, viewGroup, false);
+        }
+        return views;
+    }
+
+    @NonNull
+    @Override
+    public View getUndoClickView(@NonNull View view) {
+        return view.findViewById(R.id.undo_row_undobutton);
     }
 
 }

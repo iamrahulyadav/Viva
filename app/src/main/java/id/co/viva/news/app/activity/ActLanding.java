@@ -27,6 +27,7 @@ import id.co.viva.news.app.fragment.AboutFragment;
 import id.co.viva.news.app.fragment.BolaFragment;
 import id.co.viva.news.app.fragment.FavoritesFragment;
 import id.co.viva.news.app.fragment.HeadlineFragment;
+import id.co.viva.news.app.fragment.LoginFragment;
 import id.co.viva.news.app.fragment.TerbaruFragment;
 import id.co.viva.news.app.fragment.LifeFragment;
 import id.co.viva.news.app.fragment.NewsFragment;
@@ -106,6 +107,9 @@ public class ActLanding extends FragmentActivity {
 
     private void displayView(int position) {
         switch (position) {
+            case 0:
+                fragment = new LoginFragment();
+                break;
             case 1:
                 fragment = new HeadlineFragment();
                 break;
