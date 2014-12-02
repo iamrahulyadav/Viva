@@ -1,8 +1,6 @@
 package id.co.viva.news.app;
 
 import android.app.ActionBar;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListAdapter;
@@ -22,6 +20,9 @@ public class Constant {
 
     public static final String FAVORITES_LIST = "favorites_list";
     public static final String FAVORITES_LIST_SIZE = "favorites_list_size";
+    public static final String LOGIN_STATES_EMAIL = "login_states_email";
+    public static final String LOGIN_STATES_FULLNAME = "login_states_fullname";
+    public static final String LOGIN_STATES_ISLOGIN = "isLogin";
 
     public static final String GCM_SENDER_ID = "246836504311";
     public static final String GCM_URL_BACKEND_SERVER = "http://apps.vivall.tv/gcm_registration.php";
@@ -37,6 +38,21 @@ public class Constant {
     public static String URL_KANAL_DETAIL = BASE_URL + "kanal/";
     public static String URL_DETAIL = BASE_URL + "detail/";
     public static String URL_SEARCH = BASE_URL + "search/";
+
+    private static String BASE_URL_NEW = "http://api.viva.co.id/app/";
+    public static String NEW_HEADLINE = BASE_URL_NEW + "headlinelist/";
+    public static String NEW_TERBARU = BASE_URL_NEW + "terbarulist/";
+    public static String NEW_NEWS = BASE_URL_NEW + "knews";
+    public static String NEW_LIFE = BASE_URL_NEW + "klife";
+    public static String NEW_BOLA = BASE_URL_NEW + "kbola";
+    public static String NEW_SEARCH = BASE_URL_NEW + "search/";
+    public static String NEW_KANAL = BASE_URL_NEW + "kanal/";
+    public static String NEW_DETAIL = BASE_URL_NEW + "detail/";
+    public static String NEW_LOGIN = BASE_URL_NEW + "login";
+    public static String NEW_REGISTER = BASE_URL_NEW + "register";
+    public static String NEW_COMMENTS = BASE_URL_NEW + "sendcomment/";
+    public static String NEW_RATES = BASE_URL_NEW + "sendrate/";
+
     public static final String JSON_REQUEST = "json_obj_req";
 
     public static final String response = "response";

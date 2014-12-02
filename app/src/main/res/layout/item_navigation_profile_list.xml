@@ -22,8 +22,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/white"
-                android:textSize="16sp"
-                android:text="Username"
+                android:textSize="18sp"
                 android:textStyle="bold"
                 android:id="@+id/tv_username"/>
             <id.co.viva.news.app.component.BounvenoTextView
@@ -32,7 +31,6 @@
                 android:layout_below="@id/tv_username"
                 android:textColor="@color/white"
                 android:textSize="14sp"
-                android:text="Email"
                 android:textStyle="bold"
                 android:id="@+id/tv_user_email"/>
         </RelativeLayout>

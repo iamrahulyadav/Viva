@@ -20,7 +20,6 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 
 import id.co.viva.news.app.R;
-import id.co.viva.news.app.interfaces.OnFloatingLableFocusChangeListener;
 
 /**
  * Created by reza on 27/11/14.
@@ -32,7 +31,6 @@ public class FloatingLabelView extends LinearLayout implements OnFocusChangeList
     private LinearLayout.LayoutParams inpuTextParams;
     private LinearLayout.LayoutParams displayTextParams;
     private Animation bottomUp, bottomDown;
-    private OnFloatingLableFocusChangeListener focusChangeListener;
 
     public FloatingLabelView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
@@ -268,16 +266,9 @@ public class FloatingLabelView extends LinearLayout implements OnFocusChangeList
         return input.getText().toString();
     }
 
-    public EditText getEditText() {
-        return input;
-    }
-
     @Override
     public void onFocusChange(View view, boolean hasFocus) {
         display.setSelected(hasFocus);
-        if (focusChangeListener != null) {
-            focusChangeListener.onFocusChange(this, hasFocus);
-        }
     }
 
 }

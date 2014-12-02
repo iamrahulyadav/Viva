@@ -17,11 +17,13 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
 import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.R;
+import id.co.viva.news.app.VivaApp;
 import id.co.viva.news.app.adapter.NavigationAdapter;
 import id.co.viva.news.app.fragment.AboutFragment;
 import id.co.viva.news.app.fragment.BolaFragment;
@@ -47,6 +49,8 @@ public class ActBase extends FragmentActivity {
     private CharSequence mDrawerTitle;
     private android.support.v4.app.Fragment fragment = null;
     private android.support.v4.app.FragmentManager fragmentManager;
+    private String fullname;
+    private String email;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,8 +62,18 @@ public class ActBase extends FragmentActivity {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (ListView) findViewById(R.id.list_slidermenu);
 
+        VivaApp.getInstance().getDefaultEditor();
+        fullname = VivaApp.getInstance().getSharedPreferences(VivaApp.getInstance())
+                .getString(Constant.LOGIN_STATES_FULLNAME, "");
+        email = VivaApp.getInstance().getSharedPreferences(VivaApp.getInstance())
+                .getString(Constant.LOGIN_STATES_EMAIL, "");
+
         navDrawerItems = new ArrayList<Item>();
-        navDrawerItems.add(new NavigationProfileItem("Your Username", "Your Email"));
+        if(fullname.length() > 0 && email.length() > 0) {
+            navDrawerItems.add(new NavigationProfileItem(fullname, email));
+        } else {
+            navDrawerItems.add(new NavigationProfileItem("Username", "Email"));
+        }
         navDrawerItems.add(new NavigationItem(getResources().getString(R.string.label_item_navigation_headline), R.drawable.icon_terbaru));
         navDrawerItems.add(new NavigationItem(getResources().getString(R.string.label_item_navigation_terbaru), R.drawable.icon_headline));
         navDrawerItems.add(new NavigationItem(getResources().getString(R.string.label_item_navigation_favorites), R.drawable.icon_favorites));
@@ -103,7 +117,11 @@ public class ActBase extends FragmentActivity {
     private void displayView(int position) {
         switch (position) {
             case 0:
-                fragment = new LoginFragment();
+                if(fullname.length() > 0 && email.length() > 0) {
+                    Toast.makeText(this, fullname, Toast.LENGTH_SHORT).show();
+                } else {
+                    fragment = new LoginFragment();
+                }
                 break;
             case 1:
                 fragment = new HeadlineFragment();
