@@ -53,6 +53,10 @@
             android:theme="@style/AppTheme"/>
 
         <activity
+            android:name=".activity.ActComment"
+            android:theme="@style/AppTheme"/>
+
+        <activity
             android:name=".activity.ActDetailFavorite"
             android:theme="@style/AppTheme"/>
 

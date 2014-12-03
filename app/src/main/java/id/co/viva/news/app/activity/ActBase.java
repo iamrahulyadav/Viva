@@ -33,6 +33,7 @@ import id.co.viva.news.app.fragment.LoginFragment;
 import id.co.viva.news.app.fragment.TerbaruFragment;
 import id.co.viva.news.app.fragment.LifeFragment;
 import id.co.viva.news.app.fragment.NewsFragment;
+import id.co.viva.news.app.fragment.UserProfileFragment;
 import id.co.viva.news.app.interfaces.Item;
 import id.co.viva.news.app.model.NavigationItem;
 import id.co.viva.news.app.model.NavigationProfileItem;
@@ -118,7 +119,7 @@ public class ActBase extends FragmentActivity {
         switch (position) {
             case 0:
                 if(fullname.length() > 0 && email.length() > 0) {
-                    Toast.makeText(this, fullname, Toast.LENGTH_SHORT).show();
+                    fragment = new UserProfileFragment();
                 } else {
                     fragment = new LoginFragment();
                 }

@@ -6,4 +6,5 @@ package id.co.viva.news.app.interfaces;
 public interface OnCompleteListener {
     public void onComplete();
     public void onFailed();
+    public void onError();
 }

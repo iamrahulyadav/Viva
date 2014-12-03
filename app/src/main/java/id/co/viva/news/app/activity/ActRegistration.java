@@ -163,4 +163,9 @@ public class ActRegistration extends FragmentActivity
                 R.string.label_validation_failed_register, Toast.LENGTH_SHORT).show();
     }
 
+    @Override
+    public void onError() {
+
+    }
+
 }

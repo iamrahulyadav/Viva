@@ -39,6 +39,13 @@ public class LoginFragment extends Fragment implements OnCompleteListener, View.
     private ImageView iconGPlus;
     private Validation validation;
     private UserAccount userAccount;
+    private Boolean isInternetPresent = false;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        isInternetPresent = VivaApp.getInstance().getConnectionStatus().isConnectingToInternet();
+    }
 
     @Override
     public void onAttach(Activity activity) {
@@ -49,7 +56,8 @@ public class LoginFragment extends Fragment implements OnCompleteListener, View.
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.frag_login, container, false);
 
         validation = new Validation();
@@ -87,7 +95,13 @@ public class LoginFragment extends Fragment implements OnCompleteListener, View.
         btnSign.setProgress(0);
         enableWhenPressed();
         Toast.makeText(VivaApp.getInstance(),
-                R.string.label_validation_failed_login, Toast.LENGTH_SHORT).show();
+                R.string.label_validation_failed_login,
+                Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onError() {
+
     }
 
     @Override
@@ -95,17 +109,21 @@ public class LoginFragment extends Fragment implements OnCompleteListener, View.
         if(view.getId() == R.id.btn_log_in) {
             String email = mEmail.getText();
             String password = mPassword.getText();
-            if(validation.isEmailValid(email) && validation.isLengthValid(password)) {
-                userAccount = new UserAccount(email, password, this);
-                disableWhenPressed();
-                btnSign.setProgress(1);
-                userAccount.signIn();
-            } else if(!validation.isEmailValid(email) && validation.isLengthValid(password)) {
-                Toast.makeText(VivaApp.getInstance(), R.string.label_validation_email, Toast.LENGTH_SHORT).show();
-            } else if(validation.isEmailValid(email) && !validation.isLengthValid(password)) {
-                Toast.makeText(VivaApp.getInstance(), R.string.label_validation_password_length, Toast.LENGTH_SHORT).show();
+            if(isInternetPresent) {
+                if(validation.isEmailValid(email) && validation.isLengthValid(password)) {
+                    userAccount = new UserAccount(email, password, this);
+                    disableWhenPressed();
+                    btnSign.setProgress(1);
+                    userAccount.signIn();
+                } else if(!validation.isEmailValid(email) && validation.isLengthValid(password)) {
+                    Toast.makeText(VivaApp.getInstance(), R.string.label_validation_email, Toast.LENGTH_SHORT).show();
+                } else if(validation.isEmailValid(email) && !validation.isLengthValid(password)) {
+                    Toast.makeText(VivaApp.getInstance(), R.string.label_validation_password_length, Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(VivaApp.getInstance(), R.string.label_validation_both, Toast.LENGTH_SHORT).show();
+                }
             } else {
-                Toast.makeText(VivaApp.getInstance(), R.string.label_validation_both, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), R.string.title_no_connection, Toast.LENGTH_SHORT).show();
             }
         } else if(view.getId() == R.id.btn_register) {
             Intent intent = new Intent(getActivity(), ActRegistration.class);

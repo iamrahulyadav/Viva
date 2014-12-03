@@ -31,6 +31,9 @@ public class UserAccount {
     private static final String FULLNAME = "fullname";
     private static final String STATUS = "status";
 
+    private String article_id;
+    private String comment_text;
+    private String app_id;
     private String mEmail;
     private String mPassword;
     private String mUsername;
@@ -39,6 +42,17 @@ public class UserAccount {
     private String mGender;
     private String mBirthDate;
     private String mPhone;
+
+    public UserAccount() {}
+
+    public UserAccount(String article_id, String mEmail, String mUsername, String comment_text,
+                       String app_id) {
+        this.article_id = article_id;
+        this.mEmail = mEmail;
+        this.mUsername = mUsername;
+        this.comment_text = comment_text;
+        this.app_id = app_id;
+    }
 
     public UserAccount(String mEmail, String mPassword, OnCompleteListener mListener) {
         this.mEmail = mEmail;
@@ -58,6 +72,52 @@ public class UserAccount {
         this.mBirthDate = mBirthDate;
         this.mPhone = mPhone;
         this.mListener = mListener;
+    }
+
+    public void sendComment() {
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, Constant.NEW_COMMENTS,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String s) {
+                        Log.i(Constant.TAG, "Response Comment : " + s);
+                        try {
+                            JSONObject jsonObject = new JSONObject(s);
+                            int status = jsonObject.getInt(STATUS);
+                            if(status == STATUS_SUCCESS) {
+                                mListener.onComplete();
+                            } else if(status == STATUS_FAILED) {
+                                mListener.onFailed();
+                            }
+                        } catch (Exception e) {
+                            e.getMessage();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+                        volleyError.getMessage();
+                        mListener.onError();
+                    }
+                })
+        {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("article_id", article_id);
+                params.put("email", mEmail);
+                params.put("username", mUsername);
+                params.put("comment_text", comment_text);
+                params.put("app_id", "Android");
+                return params;
+            }
+        };
+        stringRequest.setShouldCache(false);
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                Constant.TIME_OUT,
+                0,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        VivaApp.getInstance().addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
     }
 
     public void signIn() {
@@ -86,6 +146,7 @@ public class UserAccount {
                     @Override
                     public void onErrorResponse(VolleyError volleyError) {
                         volleyError.getMessage();
+                        mListener.onError();
                     }
                 })
         {
@@ -130,6 +191,7 @@ public class UserAccount {
                     @Override
                     public void onErrorResponse(VolleyError volleyError) {
                         volleyError.getMessage();
+                        mListener.onError();
                     }
                 })
         {

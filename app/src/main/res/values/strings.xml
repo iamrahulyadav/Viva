@@ -20,6 +20,7 @@
     <string name="label_share_button_desc">Bagikan artikel-artikel hebat dengan ini.</string>
     <string name="label_favorites">FAVORITES</string>
     <string name="label_login_with">LOGIN WITH</string>
+    <string name="label_user_profile">USER PROFILE</string>
     <string name="label_swipe_undo">Batal Menghapus</string>
     <string name="label_swipe_delete">Geser Untuk Menghapus</string>
     <string name="label_validation_email">Email yang anda masukkan salah!</string>
@@ -79,6 +80,15 @@
     <string name="label_login">Login</string>
     <string name="label_register">Register</string>
     <string name="label_forgot_password"><u>Forgot Password</u></string>
+    <string name="label_logout">Logout</string>
+    <string name="label_logout_failed">Gagal Logout!</string>
+    <string name="label_logout_complete">Berhasil Logout!</string>
+    <string name="label_amount_comments">Komentar</string>
+    <string name="label_hint_comment">Komentar Anda</string>
+    <string name="label_validation_for_comment">Anda harus login terlebih dahulu!</string>
+    <string name="label_validation_for_comment_length">Komentar anda kosong!</string>
+    <string name="label_success_post_comment">Komentar berhasil dikirim!</string>
+    <string name="label_failed_post_comment">Komentar gagal dikirim!</string>
 
     <string name="title_copyright">Copyright © 2008 - 2014 PT. Viva Media Baru</string>
     <string name="wording_about_eng">VIVA.co.id mobile application for Android devices so users can enjoy a variety of quality contents of VIVA.co.id with ease of navigation and a wealth of features. Contents in the form of texts, photos and videos are continuously updated and presented creatively to enrich the user experience.</string>
