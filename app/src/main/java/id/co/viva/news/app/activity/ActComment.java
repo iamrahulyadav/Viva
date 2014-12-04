@@ -50,6 +50,8 @@ public class ActComment extends FragmentActivity implements View.OnClickListener
         setHeader();
         getStateUser();
 
+        isInternetPresent = VivaApp.getInstance().getConnectionStatus().isConnectingToInternet();
+
         text_title = (TextView)findViewById(R.id.text_title_content_coment);
         image_content = (ImageView)findViewById(R.id.img_thumb_content_comment);
         etComment = (EditText)findViewById(R.id.et_comment_user);
@@ -103,7 +105,7 @@ public class ActComment extends FragmentActivity implements View.OnClickListener
                 Toast.makeText(VivaApp.getInstance(), R.string.label_validation_for_comment_length, Toast.LENGTH_SHORT).show();
             } else {
                 if(isInternetPresent) {
-                    userAccount = new UserAccount(mIds, email, fullname, comments, "Android");
+                    userAccount = new UserAccount(mIds, email, fullname, comments, "Android", this);
                     userAccount.sendComment();
                 }
             }
@@ -128,7 +130,7 @@ public class ActComment extends FragmentActivity implements View.OnClickListener
 
     @Override
     public void onError() {
-
+        Toast.makeText(this, R.string.label_error_post_comment, Toast.LENGTH_SHORT).show();
     }
 
 }

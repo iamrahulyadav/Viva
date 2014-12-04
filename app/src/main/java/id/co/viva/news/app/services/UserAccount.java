@@ -46,12 +46,13 @@ public class UserAccount {
     public UserAccount() {}
 
     public UserAccount(String article_id, String mEmail, String mUsername, String comment_text,
-                       String app_id) {
+                       String app_id, OnCompleteListener mListener) {
         this.article_id = article_id;
         this.mEmail = mEmail;
         this.mUsername = mUsername;
         this.comment_text = comment_text;
         this.app_id = app_id;
+        this.mListener = mListener;
     }
 
     public UserAccount(String mEmail, String mPassword, OnCompleteListener mListener) {
