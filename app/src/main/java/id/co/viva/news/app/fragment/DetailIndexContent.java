@@ -42,6 +42,8 @@ import org.jsoup.select.Elements;
 import java.util.ArrayList;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
+import id.co.viva.news.app.activity.ActComment;
+import id.co.viva.news.app.activity.ActRating;
 import id.co.viva.news.app.model.Favorites;
 import id.co.viva.news.app.services.Analytics;
 import id.co.viva.news.app.Constant;
@@ -444,8 +446,27 @@ public class DetailIndexContent extends Fragment implements
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.subaction_rate:
+                Bundle bundles = new Bundle();
+                bundles.putString("imageurl", image_url);
+                bundles.putString("title", title);
+                bundles.putString("article_id", ids);
+                bundles.putString("type_kanal", kanal);
+                Intent intents = new Intent(VivaApp.getInstance(), ActRating.class);
+                intents.putExtras(bundles);
+                startActivity(intents);
+                getActivity().overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+                return true;
             case R.id.subaction_comments:
-                Toast.makeText(VivaApp.getInstance(), "COMING SOON...", Toast.LENGTH_SHORT).show();
+                Bundle bundle = new Bundle();
+                bundle.putString("imageurl", image_url);
+                bundle.putString("title", title);
+                bundle.putString("article_id", ids);
+                bundle.putString("type_kanal", kanal);
+                Intent intent = new Intent(VivaApp.getInstance(), ActComment.class);
+                intent.putExtras(bundle);
+                startActivity(intent);
+                getActivity().overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
                 return true;
             case R.id.subaction_favorites:
                 favoriteList = VivaApp.getInstance().getSharedPreferences(getActivity())

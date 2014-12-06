@@ -12,6 +12,7 @@ import android.widget.ListView;
 public class Constant {
 
     public static final int TIME_OUT = 3000;
+    public static final int TIME_OUT_LONG = 6000;
     public final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     public final static int NUMBER_OF_TOP_LIST_ITEMS = 4;
 

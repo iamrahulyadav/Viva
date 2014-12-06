@@ -85,10 +85,10 @@
             android:text="@string/label_register"
             android:textColor="@android:color/white"
             android:textSize="16sp"
-            custom:pb_colorComplete="@color/green"
+            custom:pb_colorComplete="@color/blue"
             custom:pb_colorNormal="@color/lynch"
-            custom:pb_colorPressed="@color/nav_drawer_group_grey"
-            custom:pb_colorProgress="@color/purple_plum"
+            custom:pb_colorPressed="@color/transparent"
+            custom:pb_colorProgress="@color/light_white"
             custom:pb_textComplete="@string/label_favorite_navigation_title_confirm"
             custom:pb_textProgress="@string/label_loading"/>
     </LinearLayout>

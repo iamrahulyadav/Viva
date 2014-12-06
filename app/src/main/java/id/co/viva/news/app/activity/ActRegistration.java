@@ -6,11 +6,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.dd.processbutton.iml.ActionProcessButton;
 import com.doomonafireball.betterpickers.datepicker.DatePickerBuilder;
 import com.doomonafireball.betterpickers.datepicker.DatePickerDialogFragment;
 
@@ -34,10 +34,10 @@ public class ActRegistration extends FragmentActivity
     private EditText etPassword;
     private EditText etAddress;
     private EditText etCity;
-    private Spinner etGender;
+    private Spinner spinGender;
     private EditText etBirth;
     private EditText etTlp;
-    private Button btnRegist;
+    private ActionProcessButton btnRegist;
 
     private String genderSelected;
 
@@ -58,14 +58,15 @@ public class ActRegistration extends FragmentActivity
         etPassword = (EditText) findViewById(R.id.form_regist_password);
         etCity = (EditText) findViewById(R.id.form_regist_city);
         etAddress = (EditText) findViewById(R.id.form_regist_address);
-        etGender = (Spinner) findViewById(R.id.form_regist_gender);
+        spinGender = (Spinner) findViewById(R.id.form_regist_gender);
         etBirth = (EditText) findViewById(R.id.form_regist_birthdate);
         etTlp = (EditText) findViewById(R.id.form_regist_phone);
-        btnRegist = (Button) findViewById(R.id.btn_daftar);
+        btnRegist = (ActionProcessButton) findViewById(R.id.btn_daftar);
 
-        etGender.setOnItemSelectedListener(this);
+        spinGender.setOnItemSelectedListener(this);
         etBirth.setOnClickListener(this);
         btnRegist.setOnClickListener(this);
+        btnRegist.setMode(ActionProcessButton.Mode.ENDLESS);
 
         populateDataGender();
     }
@@ -94,7 +95,7 @@ public class ActRegistration extends FragmentActivity
         ArrayAdapter<String> genderAdapter = new ArrayAdapter<String>(
                 this, android.R.layout.simple_spinner_item, genderList);
         genderAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        etGender.setAdapter(genderAdapter);
+        spinGender.setAdapter(genderAdapter);
     }
 
     @Override
@@ -130,6 +131,8 @@ public class ActRegistration extends FragmentActivity
             } else {
                 userAccount = new UserAccount(email, password, username, address,
                         city, genderSelected, birthdate, phone, this);
+                disableView();
+                btnRegist.setProgress(1);
                 userAccount.signUp();
             }
         }
@@ -152,6 +155,7 @@ public class ActRegistration extends FragmentActivity
 
     @Override
     public void onComplete() {
+        btnRegist.setProgress(100);
         Toast.makeText(VivaApp.getInstance(),
                 R.string.label_validation_success_register, Toast.LENGTH_SHORT).show();
         finish();
@@ -159,13 +163,42 @@ public class ActRegistration extends FragmentActivity
 
     @Override
     public void onFailed() {
+        btnRegist.setProgress(0);
+        enableView();
         Toast.makeText(VivaApp.getInstance(),
                 R.string.label_validation_failed_register, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onError() {
+        btnRegist.setProgress(0);
+        enableView();
+        Toast.makeText(VivaApp.getInstance(),
+                R.string.label_error, Toast.LENGTH_SHORT).show();
+    }
 
+    private void disableView() {
+        etUsername.setEnabled(false);
+        etEmail.setEnabled(false);
+        etPassword.setEnabled(false);
+        etCity.setEnabled(false);
+        etAddress.setEnabled(false);
+        spinGender.setEnabled(false);
+        etBirth.setEnabled(false);
+        etTlp.setEnabled(false);
+        btnRegist.setEnabled(false);
+    }
+
+    private void enableView() {
+        etUsername.setEnabled(true);
+        etEmail.setEnabled(true);
+        etPassword.setEnabled(true);
+        etCity.setEnabled(true);
+        etAddress.setEnabled(true);
+        spinGender.setEnabled(true);
+        etBirth.setEnabled(true);
+        etTlp.setEnabled(true);
+        btnRegist.setEnabled(true);
     }
 
 }

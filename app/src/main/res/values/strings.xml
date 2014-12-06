@@ -2,6 +2,7 @@
 <resources>
 
     <string name="app_name">Viva</string>
+    <string name="title_validate_rate">Anda belum melakukan rate artikel!</string>
     <string name="title_no_connection">Terjadi kesalahan pada koneksi anda!</string>
     <string name="search_hint">Pencarian</string>
     <string name="label_no_results">Tidak ada hasil.</string>
@@ -75,6 +76,7 @@
     <string name="title_viva_log">Viva Log</string>
     <string name="title_viva_news">Viva News</string>
 
+    <string name="label_amount_rating">Jumlah Rating</string>
     <string name="label_hint_email">Email</string>
     <string name="label_hint_password">Password</string>
     <string name="label_login">Login</string>
@@ -90,6 +92,8 @@
     <string name="label_success_post_comment">Komentar berhasil dikirim!</string>
     <string name="label_failed_post_comment">Komentar gagal dikirim!</string>
     <string name="label_error_post_comment">Terjadi kesalahan!</string>
+    <string name="label_success_post_rate">Artikel berhasil di rate!</string>
+    <string name="label_failed_post_rate">Rate artikel gagal!</string>
 
     <string name="title_copyright">Copyright © 2008 - 2014 PT. Viva Media Baru</string>
     <string name="wording_about_eng">VIVA.co.id mobile application for Android devices so users can enjoy a variety of quality contents of VIVA.co.id with ease of navigation and a wealth of features. Contents in the form of texts, photos and videos are continuously updated and presented creatively to enrich the user experience.</string>

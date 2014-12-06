@@ -27,7 +27,8 @@ import id.co.viva.news.app.services.Validation;
 /**
  * Created by reza on 27/11/14.
  */
-public class LoginFragment extends Fragment implements OnCompleteListener, View.OnClickListener {
+public class LoginFragment extends Fragment implements OnCompleteListener,
+        View.OnClickListener {
 
     private ActionProcessButton btnRegister;
     private ActionProcessButton btnSign;
@@ -101,7 +102,10 @@ public class LoginFragment extends Fragment implements OnCompleteListener, View.
 
     @Override
     public void onError() {
-
+        btnSign.setProgress(0);
+        enableWhenPressed();
+        Toast.makeText(VivaApp.getInstance(),
+                R.string.label_error, Toast.LENGTH_SHORT).show();
     }
 
     @Override

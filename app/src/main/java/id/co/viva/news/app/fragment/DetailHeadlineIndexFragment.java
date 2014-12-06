@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.activity.ActComment;
+import id.co.viva.news.app.activity.ActRating;
 import id.co.viva.news.app.model.Favorites;
 import id.co.viva.news.app.services.Analytics;
 import id.co.viva.news.app.Constant;
@@ -415,6 +416,16 @@ public class DetailHeadlineIndexFragment extends Fragment implements View.OnClic
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.subaction_rate:
+                Bundle bundles = new Bundle();
+                bundles.putString("imageurl", image_url);
+                bundles.putString("title", title);
+                bundles.putString("article_id", ids);
+                Intent intents = new Intent(VivaApp.getInstance(), ActRating.class);
+                intents.putExtras(bundles);
+                startActivity(intents);
+                getActivity().overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+                return true;
             case R.id.subaction_comments:
                 Bundle bundle = new Bundle();
                 bundle.putString("imageurl", image_url);

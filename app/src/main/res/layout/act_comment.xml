@@ -4,6 +4,7 @@
     android:layout_height="fill_parent">
     <LinearLayout
         android:orientation="vertical"
+        xmlns:custom="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <LinearLayout
@@ -32,8 +33,7 @@
             android:id="@+id/background_label_comment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:background="@color/header_headline_terbaru_new">
+            android:orientation="horizontal">
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="30dp"
@@ -64,16 +64,20 @@
                 android:textSize="14sp"
                 android:hint="@string/label_hint_comment"
                 android:layout_margin="10dp"/>
-            <Button
+            <com.dd.processbutton.iml.ActionProcessButton
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/btn_send_comment"
+                android:text="Submit"
                 android:textSize="14sp"
                 android:layout_gravity="right"
                 android:layout_marginRight="10dp"
                 android:textColor="@color/white"
-                android:text="Submit"
-                android:background="@color/header_headline_terbaru_new"/>
+                custom:pb_colorComplete="@color/blue"
+                custom:pb_colorPressed="@color/transparent"
+                custom:pb_colorProgress="@color/light_white"
+                custom:pb_textComplete="Terkirim!"
+                custom:pb_textProgress="@string/label_loading"/>
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

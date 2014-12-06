@@ -42,6 +42,7 @@ public class UserAccount {
     private String mGender;
     private String mBirthDate;
     private String mPhone;
+    private String mRate;
 
     public UserAccount() {}
 
@@ -61,6 +62,14 @@ public class UserAccount {
         this.mListener = mListener;
     }
 
+    public UserAccount(String mUsername, String mEmail, String article_id, String mRate, OnCompleteListener mListener) {
+        this.article_id = article_id;
+        this.mEmail = mEmail;
+        this.mUsername = mUsername;
+        this.mRate = mRate;
+        this.mListener = mListener;
+    }
+
     public UserAccount(String mUsername, String mEmail, String mPassword, String mAlamat,
                        String mKota, String mGender, String mBirthDate, String mPhone,
                        OnCompleteListener mListener) {
@@ -73,6 +82,51 @@ public class UserAccount {
         this.mBirthDate = mBirthDate;
         this.mPhone = mPhone;
         this.mListener = mListener;
+    }
+
+    public void sendRating() {
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, Constant.NEW_RATES,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String s) {
+                        Log.i(Constant.TAG, "Response Rates : " + s);
+                        try {
+                            JSONObject jsonObject = new JSONObject(s);
+                            int status = jsonObject.getInt(STATUS);
+                            if(status == STATUS_SUCCESS) {
+                                mListener.onComplete();
+                            } else if(status == STATUS_FAILED) {
+                                mListener.onFailed();
+                            }
+                        } catch (Exception e) {
+                            e.getMessage();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+                        volleyError.getMessage();
+                        mListener.onError();
+                    }
+                })
+        {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("article_id", article_id);
+                params.put("email", mEmail);
+                params.put("username", mUsername);
+                params.put("rate", mRate);
+                return params;
+            }
+        };
+        stringRequest.setShouldCache(false);
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                Constant.TIME_OUT_LONG,
+                0,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        VivaApp.getInstance().addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
     }
 
     public void sendComment() {
@@ -115,7 +169,7 @@ public class UserAccount {
         };
         stringRequest.setShouldCache(false);
         stringRequest.setRetryPolicy(new DefaultRetryPolicy(
-                Constant.TIME_OUT,
+                Constant.TIME_OUT_LONG,
                 0,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         VivaApp.getInstance().addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
@@ -163,7 +217,7 @@ public class UserAccount {
         };
         stringRequest.setShouldCache(false);
         stringRequest.setRetryPolicy(new DefaultRetryPolicy(
-                Constant.TIME_OUT,
+                Constant.TIME_OUT_LONG,
                 0,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         VivaApp.getInstance().addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
@@ -192,6 +246,7 @@ public class UserAccount {
                     @Override
                     public void onErrorResponse(VolleyError volleyError) {
                         volleyError.getMessage();
+                        Log.e(Constant.TAG, volleyError.toString());
                         mListener.onError();
                     }
                 })
@@ -212,7 +267,7 @@ public class UserAccount {
         };
         stringRequest.setShouldCache(false);
         stringRequest.setRetryPolicy(new DefaultRetryPolicy(
-                Constant.TIME_OUT,
+                Constant.TIME_OUT_LONG,
                 0,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         VivaApp.getInstance().addToRequestQueue(stringRequest, Constant.JSON_REQUEST);

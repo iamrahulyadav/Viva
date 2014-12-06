@@ -130,7 +130,7 @@ public class ActDetailContentDefault extends FragmentActivity
                 getActionBar().setBackgroundDrawable(colorDrawable);
             }
         } else {
-            colorDrawable.setColor(getResources().getColor(R.color.header_grey));
+            colorDrawable.setColor(getResources().getColor(R.color.header_headline_terbaru_new));
             getActionBar().setBackgroundDrawable(colorDrawable);
         }
 
@@ -354,8 +354,27 @@ public class ActDetailContentDefault extends FragmentActivity
             case android.R.id.home:
                 finish();
                 return true;
+            case R.id.subaction_rate:
+                Bundle bundles = new Bundle();
+                bundles.putString("imageurl", image_url);
+                bundles.putString("title", title);
+                bundles.putString("article_id", ids);
+                bundles.putString("type_kanal", kanal);
+                Intent intents = new Intent(VivaApp.getInstance(), ActRating.class);
+                intents.putExtras(bundles);
+                startActivity(intents);
+                overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+                return true;
             case R.id.subaction_comments:
-                Toast.makeText(VivaApp.getInstance(), "COMING SOON...", Toast.LENGTH_SHORT).show();
+                Bundle bundle = new Bundle();
+                bundle.putString("imageurl", image_url);
+                bundle.putString("title", title);
+                bundle.putString("article_id", ids);
+                bundle.putString("type_kanal", kanal);
+                Intent intent = new Intent(VivaApp.getInstance(), ActComment.class);
+                intent.putExtras(bundle);
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
                 return true;
             case R.id.subaction_favorites:
                 favoriteList = VivaApp.getInstance().getSharedPreferences(this)

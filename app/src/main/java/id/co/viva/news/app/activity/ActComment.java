@@ -1,16 +1,18 @@
 package id.co.viva.news.app.activity;
 
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.dd.processbutton.iml.ActionProcessButton;
 import com.squareup.picasso.Picasso;
 
 import id.co.viva.news.app.Constant;
@@ -29,12 +31,14 @@ public class ActComment extends FragmentActivity implements View.OnClickListener
     private String mIds;
     private TextView text_title;
     private ImageView image_content;
-    private Button btnSubmit;
+    private ActionProcessButton btnSubmit;
     private ListView listComment;
     private EditText etComment;
     private String fullname;
     private String email;
+    private String mFromKanal;
     private UserAccount userAccount;
+    private LinearLayout mLayout;
     private boolean isInternetPresent = false;
 
     @Override
@@ -44,19 +48,23 @@ public class ActComment extends FragmentActivity implements View.OnClickListener
         mIds = bundle.getString("article_id");
         mImageUrl = bundle.getString("imageurl");
         mTitle = bundle.getString("title");
+        mFromKanal = bundle.getString("type_kanal");
 
         setContentView(R.layout.act_comment);
 
-        setHeader();
         getStateUser();
 
         isInternetPresent = VivaApp.getInstance().getConnectionStatus().isConnectingToInternet();
 
+        mLayout = (LinearLayout)findViewById(R.id.background_label_comment);
         text_title = (TextView)findViewById(R.id.text_title_content_coment);
         image_content = (ImageView)findViewById(R.id.img_thumb_content_comment);
         etComment = (EditText)findViewById(R.id.et_comment_user);
         listComment = (ListView)findViewById(R.id.list_comments);
-        btnSubmit = (Button)findViewById(R.id.btn_send_comment);
+        btnSubmit = (ActionProcessButton)findViewById(R.id.btn_send_comment);
+        btnSubmit.setMode(ActionProcessButton.Mode.ENDLESS);
+
+        setThemes(mFromKanal);
 
         etComment.setOnClickListener(this);
         btnSubmit.setOnClickListener(this);
@@ -80,11 +88,32 @@ public class ActComment extends FragmentActivity implements View.OnClickListener
         return super.onOptionsItemSelected(item);
     }
 
-    private void setHeader() {
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
-        getActionBar().setDisplayShowTitleEnabled(true);
-        getActionBar().setTitle("Komentar");
+    private void setThemes(String kanal) {
+        ColorDrawable colorDrawable = new ColorDrawable();
+        if(kanal != null) {
+            if(kanal.equalsIgnoreCase("bola")) {
+                colorDrawable.setColor(getResources().getColor(R.color.color_bola));
+                getActionBar().setBackgroundDrawable(colorDrawable);
+                mLayout.setBackgroundResource(R.color.color_bola);
+                btnSubmit.setBackgroundResource(R.color.color_bola);
+            } else if(kanal.equalsIgnoreCase("vivalife")) {
+                colorDrawable.setColor(getResources().getColor(R.color.color_life));
+                getActionBar().setBackgroundDrawable(colorDrawable);
+                mLayout.setBackgroundResource(R.color.color_life);
+                btnSubmit.setBackgroundResource(R.color.color_life);
+            } else {
+                colorDrawable.setColor(getResources().getColor(R.color.color_news));
+                getActionBar().setBackgroundDrawable(colorDrawable);
+                mLayout.setBackgroundResource(R.color.color_news);
+                btnSubmit.setBackgroundResource(R.color.color_news);
+            }
+        } else {
+            colorDrawable.setColor(getResources().getColor(R.color.header_headline_terbaru_new));
+            getActionBar().setBackgroundDrawable(colorDrawable);
+            mLayout.setBackgroundResource(R.color.header_headline_terbaru_new);
+            btnSubmit.setBackgroundResource(R.color.header_headline_terbaru_new);
+        }
+        getHeaderActionBar();
     }
 
     private void getStateUser() {
@@ -106,6 +135,8 @@ public class ActComment extends FragmentActivity implements View.OnClickListener
             } else {
                 if(isInternetPresent) {
                     userAccount = new UserAccount(mIds, email, fullname, comments, "Android", this);
+                    disableView();
+                    btnSubmit.setProgress(1);
                     userAccount.sendComment();
                 }
             }
@@ -116,8 +147,28 @@ public class ActComment extends FragmentActivity implements View.OnClickListener
         }
     }
 
+    private void disableView() {
+        btnSubmit.setEnabled(false);
+        etComment.setEnabled(false);
+    }
+
+    private void enableView() {
+        btnSubmit.setEnabled(true);
+        etComment.setEnabled(true);
+    }
+
+    private void getHeaderActionBar() {
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setHomeButtonEnabled(true);
+        getActionBar().setDisplayShowTitleEnabled(true);
+        getActionBar().setIcon(new ColorDrawable(getResources().
+                getColor(android.R.color.transparent)));
+        getActionBar().setTitle("Komentar");
+    }
+
     @Override
     public void onComplete() {
+        btnSubmit.setProgress(100);
         Toast.makeText(this, R.string.label_success_post_comment, Toast.LENGTH_SHORT).show();
         finish();
         startActivity(getIntent());
@@ -125,11 +176,15 @@ public class ActComment extends FragmentActivity implements View.OnClickListener
 
     @Override
     public void onFailed() {
+        btnSubmit.setProgress(0);
+        enableView();
         Toast.makeText(this, R.string.label_failed_post_comment, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onError() {
+        btnSubmit.setProgress(0);
+        enableView();
         Toast.makeText(this, R.string.label_error_post_comment, Toast.LENGTH_SHORT).show();
     }
 
