@@ -17,22 +17,21 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
 import id.co.viva.news.app.Constant;
+import id.co.viva.news.app.Global;
 import id.co.viva.news.app.R;
-import id.co.viva.news.app.VivaApp;
 import id.co.viva.news.app.adapter.NavigationAdapter;
 import id.co.viva.news.app.fragment.AboutFragment;
 import id.co.viva.news.app.fragment.BolaFragment;
 import id.co.viva.news.app.fragment.FavoritesFragment;
 import id.co.viva.news.app.fragment.HeadlineFragment;
-import id.co.viva.news.app.fragment.LoginFragment;
-import id.co.viva.news.app.fragment.TerbaruFragment;
 import id.co.viva.news.app.fragment.LifeFragment;
+import id.co.viva.news.app.fragment.LoginFragment;
 import id.co.viva.news.app.fragment.NewsFragment;
+import id.co.viva.news.app.fragment.TerbaruFragment;
 import id.co.viva.news.app.fragment.UserProfileFragment;
 import id.co.viva.news.app.interfaces.Item;
 import id.co.viva.news.app.model.NavigationItem;
@@ -52,6 +51,7 @@ public class ActLanding extends FragmentActivity {
     private android.support.v4.app.FragmentManager fragmentManager;
     private String fullname;
     private String email;
+    private String photourl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,15 +63,13 @@ public class ActLanding extends FragmentActivity {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (ListView) findViewById(R.id.list_slidermenu);
 
-        VivaApp.getInstance().getDefaultEditor();
-        fullname = VivaApp.getInstance().getSharedPreferences(VivaApp.getInstance())
-                .getString(Constant.LOGIN_STATES_FULLNAME, "");
-        email = VivaApp.getInstance().getSharedPreferences(VivaApp.getInstance())
-                .getString(Constant.LOGIN_STATES_EMAIL, "");
+        getProfile();
 
         navDrawerItems = new ArrayList<Item>();
         if(fullname.length() > 0 && email.length() > 0) {
             navDrawerItems.add(new NavigationProfileItem(fullname, email));
+        } else if(fullname.length() > 0 && email.length() > 0 && photourl.length() > 0) {
+            navDrawerItems.add(new NavigationProfileItem(fullname, email, photourl));
         } else {
             navDrawerItems.add(new NavigationProfileItem("Username", "Email"));
         }
@@ -171,6 +169,16 @@ public class ActLanding extends FragmentActivity {
         public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
             displayView(position);
         }
+    }
+
+    private void getProfile() {
+        Global.getInstance(this).getDefaultEditor();
+        fullname = Global.getInstance(this).getSharedPreferences(this)
+                .getString(Constant.LOGIN_STATES_FULLNAME, "");
+        email = Global.getInstance(this).getSharedPreferences(this)
+                .getString(Constant.LOGIN_STATES_EMAIL, "");
+        photourl = Global.getInstance(this).getSharedPreferences(this)
+                .getString(Constant.LOGIN_STATES_URL_PHOTO, "");
     }
 
     @Override

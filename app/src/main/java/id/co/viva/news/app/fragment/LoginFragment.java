@@ -2,6 +2,7 @@ package id.co.viva.news.app.fragment;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -15,9 +16,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dd.processbutton.iml.ActionProcessButton;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.plus.Plus;
+import com.google.android.gms.plus.model.people.Person;
 
+import id.co.viva.news.app.Global;
 import id.co.viva.news.app.R;
-import id.co.viva.news.app.VivaApp;
 import id.co.viva.news.app.activity.ActRegistration;
 import id.co.viva.news.app.component.FloatingLabelView;
 import id.co.viva.news.app.interfaces.OnCompleteListener;
@@ -28,7 +34,14 @@ import id.co.viva.news.app.services.Validation;
  * Created by reza on 27/11/14.
  */
 public class LoginFragment extends Fragment implements OnCompleteListener,
-        View.OnClickListener {
+        View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+
+    //Google Sign In Variables
+    public static GoogleApiClient mGoogleApiClient;
+    private static final int RC_SIGN_IN = 0;
+    private boolean mIntentInProgress;
+    private boolean mSignInClicked;
+    private ConnectionResult mConnectionResult;
 
     private ActionProcessButton btnRegister;
     private ActionProcessButton btnSign;
@@ -45,7 +58,7 @@ public class LoginFragment extends Fragment implements OnCompleteListener,
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        isInternetPresent = VivaApp.getInstance().getConnectionStatus().isConnectingToInternet();
+        isInternetPresent = Global.getInstance(getActivity()).getConnectionStatus().isConnectingToInternet();
     }
 
     @Override
@@ -79,13 +92,45 @@ public class LoginFragment extends Fragment implements OnCompleteListener,
         btnSign.setMode(ActionProcessButton.Mode.ENDLESS);
         btnRegister.setMode(ActionProcessButton.Mode.ENDLESS);
 
+        getGoogleClient();
+
         return rootView;
+    }
+
+    private void resolveSignInError() {
+        if (mConnectionResult.hasResolution()) {
+            try {
+                mIntentInProgress = true;
+                mConnectionResult.startResolutionForResult(getActivity(), RC_SIGN_IN);
+            } catch (IntentSender.SendIntentException e) {
+                mIntentInProgress = false;
+                mGoogleApiClient.connect();
+            }
+        }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if(mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.disconnect();
+        } else {
+            mGoogleApiClient.connect();
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.disconnect();
+        }
     }
 
     @Override
     public void onComplete() {
         btnSign.setProgress(100);
-        Toast.makeText(VivaApp.getInstance(),
+        Toast.makeText(getActivity(),
                 R.string.label_validation_success_login, Toast.LENGTH_SHORT).show();
         getActivity().finish();
         startActivity(getActivity().getIntent());
@@ -95,7 +140,7 @@ public class LoginFragment extends Fragment implements OnCompleteListener,
     public void onFailed() {
         btnSign.setProgress(0);
         enableWhenPressed();
-        Toast.makeText(VivaApp.getInstance(),
+        Toast.makeText(getActivity(),
                 R.string.label_validation_failed_login,
                 Toast.LENGTH_SHORT).show();
     }
@@ -104,7 +149,7 @@ public class LoginFragment extends Fragment implements OnCompleteListener,
     public void onError() {
         btnSign.setProgress(0);
         enableWhenPressed();
-        Toast.makeText(VivaApp.getInstance(),
+        Toast.makeText(getActivity(),
                 R.string.label_error, Toast.LENGTH_SHORT).show();
     }
 
@@ -115,16 +160,16 @@ public class LoginFragment extends Fragment implements OnCompleteListener,
             String password = mPassword.getText();
             if(isInternetPresent) {
                 if(validation.isEmailValid(email) && validation.isLengthValid(password)) {
-                    userAccount = new UserAccount(email, password, this);
+                    userAccount = new UserAccount(email, password, this, getActivity());
                     disableWhenPressed();
                     btnSign.setProgress(1);
                     userAccount.signIn();
                 } else if(!validation.isEmailValid(email) && validation.isLengthValid(password)) {
-                    Toast.makeText(VivaApp.getInstance(), R.string.label_validation_email, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), R.string.label_validation_email, Toast.LENGTH_SHORT).show();
                 } else if(validation.isEmailValid(email) && !validation.isLengthValid(password)) {
-                    Toast.makeText(VivaApp.getInstance(), R.string.label_validation_password_length, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), R.string.label_validation_password_length, Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(VivaApp.getInstance(), R.string.label_validation_both, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), R.string.label_validation_both, Toast.LENGTH_SHORT).show();
                 }
             } else {
                 Toast.makeText(getActivity(), R.string.title_no_connection, Toast.LENGTH_SHORT).show();
@@ -133,13 +178,14 @@ public class LoginFragment extends Fragment implements OnCompleteListener,
             Intent intent = new Intent(getActivity(), ActRegistration.class);
             startActivity(intent);
         } else if(view.getId() == R.id.img_path) {
-            Toast.makeText(VivaApp.getInstance(), "PATH", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "PATH", Toast.LENGTH_SHORT).show();
         } else if(view.getId() == R.id.img_gplus) {
-            Toast.makeText(VivaApp.getInstance(), "GPLUS", Toast.LENGTH_SHORT).show();
+            disableWhenPressed();
+            signInWithGplus();
         } else if(view.getId() == R.id.img_fb) {
-            Toast.makeText(VivaApp.getInstance(), "FB", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "FB", Toast.LENGTH_SHORT).show();
         } else if(view.getId() == R.id.tv_forgot_password) {
-            Toast.makeText(VivaApp.getInstance(), "FORGOT PASSWORD", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "FORGOT PASSWORD", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -181,6 +227,77 @@ public class LoginFragment extends Fragment implements OnCompleteListener,
         tvForgotPassword.setEnabled(true);
         enableParentView(mEmail);
         enableParentView(mPassword);
+    }
+
+    private void getGoogleClient() {
+        mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this).addApi(Plus.API)
+                .addScope(Plus.SCOPE_PLUS_LOGIN).build();
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        mSignInClicked = false;
+        getProfileInfoFromGPlus();
+        Toast.makeText(getActivity(), R.string.label_successful_gplus_connected, Toast.LENGTH_LONG).show();
+        getActivity().finish();
+        startActivity(getActivity().getIntent());
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        mGoogleApiClient.connect();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int responseCode, Intent intent) {
+        if (requestCode == RC_SIGN_IN) {
+            if (responseCode != getActivity().RESULT_OK) {
+                mSignInClicked = false;
+            }
+            mIntentInProgress = false;
+            if (!mGoogleApiClient.isConnecting()) {
+                mGoogleApiClient.connect();
+            }
+        }
+    }
+
+    private void signInWithGplus() {
+        if (!mGoogleApiClient.isConnecting()) {
+            mSignInClicked = true;
+            resolveSignInError();
+        }
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult result) {
+        if (!result.hasResolution()) {
+            GooglePlayServicesUtil.getErrorDialog(result.getErrorCode(), getActivity(), 0).show();
+            return;
+        }
+        if (!mIntentInProgress) {
+            mConnectionResult = result;
+            if (mSignInClicked) {
+                resolveSignInError();
+            }
+        }
+    }
+
+    private void getProfileInfoFromGPlus() {
+        try {
+            if(Plus.PeopleApi.getCurrentPerson(mGoogleApiClient) != null) {
+                Person currentPerson = Plus.PeopleApi
+                        .getCurrentPerson(mGoogleApiClient);
+                String personName = currentPerson.getDisplayName();
+                String personPhotoUrl = currentPerson.getImage().getUrl();
+                String email = Plus.AccountApi.getAccountName(mGoogleApiClient);
+                userAccount = new UserAccount(getActivity());
+                userAccount.saveLoginStatesGPlus(email, personName, personPhotoUrl);
+            }
+        } catch (Exception e) {
+            e.getMessage();
+        }
     }
 
 }

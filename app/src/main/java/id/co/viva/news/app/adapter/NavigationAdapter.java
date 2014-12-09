@@ -8,8 +8,11 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.ArrayList;
 
+import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.interfaces.Item;
 import id.co.viva.news.app.model.NavigationItem;
@@ -46,6 +49,7 @@ public class NavigationAdapter extends ArrayAdapter<Item> {
     public View getView(int position, View view, ViewGroup viewGroup) {
         View v = view;
         Item item = navItems.get(position);
+        String photourl;
         if(item != null) {
             if(item.isSection()) {
                 NavigationSectionItem navigationSectionItem = (NavigationSectionItem) item;
@@ -62,8 +66,19 @@ public class NavigationAdapter extends ArrayAdapter<Item> {
                 v.setLongClickable(false);
                 TextView username = (TextView) v.findViewById(R.id.tv_username);
                 TextView email = (TextView) v.findViewById(R.id.tv_user_email);
+                ImageView thumb = (ImageView) v.findViewById(R.id.img_profile);
                 username.setText(navigationProfileItem.getUsername());
                 email.setText(navigationProfileItem.getEmail());
+
+                photourl = navigationProfileItem.getImgProfile();
+                if(photourl != null) {
+                    if(photourl.length() > 0) {
+                        photourl = photourl.substring(0,
+                                photourl.length() - 2)
+                                + Constant.PROFILE_PIC_SIZE;
+                        Picasso.with(context).load(photourl).into(thumb);
+                    }
+                }
             } else {
                 NavigationItem ei = (NavigationItem) item;
                 v = vi.inflate(R.layout.item_navigation_list, null);

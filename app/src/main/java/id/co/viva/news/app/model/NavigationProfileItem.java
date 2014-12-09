@@ -16,6 +16,12 @@ public class NavigationProfileItem implements Item {
         this.email = email;
     }
 
+    public NavigationProfileItem(String username, String email, String imgProfile) {
+        this.username = username;
+        this.email = email;
+        this.imgProfile = imgProfile;
+    }
+
     public String getEmail() {
         return email;
     }

@@ -34,13 +34,13 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import id.co.viva.news.app.Global;
 import id.co.viva.news.app.component.GoogleMusicDicesDrawable;
 import id.co.viva.news.app.component.LoadMoreListView;
 import id.co.viva.news.app.interfaces.OnLoadMoreListener;
 import id.co.viva.news.app.services.Analytics;
 import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.R;
-import id.co.viva.news.app.VivaApp;
 import id.co.viva.news.app.activity.ActDetailTerbaru;
 import id.co.viva.news.app.adapter.TerbaruAdapter;
 import id.co.viva.news.app.model.News;
@@ -73,7 +73,7 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        isInternetPresent = VivaApp.getInstance().getConnectionStatus().isConnectingToInternet();
+        isInternetPresent = Global.getInstance(getActivity()).getConnectionStatus().isConnectingToInternet();
     }
 
     @Override
@@ -109,7 +109,7 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
         rippleView.setVisibility(View.GONE);
         rippleView.setOnClickListener(this);
 
-        analytics = new Analytics();
+        analytics = new Analytics(getActivity());
         analytics.getAnalyticByATInternet(Constant.TERBARU_PAGE);
         analytics.getAnalyticByGoogleAnalytic(Constant.TERBARU_PAGE);
 
@@ -200,8 +200,8 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
                 @Override
                 public void onErrorResponse(VolleyError volleyError) {
                     try {
-                        if(VivaApp.getInstance().getRequestQueue().getCache().get(Constant.URL_HOMEPAGE) != null) {
-                            String cachedResponse = new String(VivaApp.getInstance().getRequestQueue().getCache().get(Constant.URL_HOMEPAGE).data);
+                        if(Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.URL_HOMEPAGE) != null) {
+                            String cachedResponse = new String(Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.URL_HOMEPAGE).data);
                             Log.i(Constant.TAG, "From Cached : " + cachedResponse);
                             JSONObject jsonObject = new JSONObject(cachedResponse);
                             jsonArrayResponses = jsonObject.getJSONArray(Constant.response);
@@ -252,13 +252,13 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
                     Constant.TIME_OUT,
                     0,
                     DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-            VivaApp.getInstance().getRequestQueue().getCache().invalidate(Constant.URL_HOMEPAGE, true);
-            VivaApp.getInstance().getRequestQueue().getCache().get(Constant.URL_HOMEPAGE);
-            VivaApp.getInstance().addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
+            Global.getInstance(getActivity()).getRequestQueue().getCache().invalidate(Constant.URL_HOMEPAGE, true);
+            Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.URL_HOMEPAGE);
+            Global.getInstance(getActivity()).addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
         } else {
             try {
-                if(VivaApp.getInstance().getRequestQueue().getCache().get(Constant.URL_HOMEPAGE) != null) {
-                    String cachedResponse = new String(VivaApp.getInstance().getRequestQueue().getCache().get(Constant.URL_HOMEPAGE).data);
+                if(Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.URL_HOMEPAGE) != null) {
+                    String cachedResponse = new String(Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.URL_HOMEPAGE).data);
                     Log.i(Constant.TAG, "From Cached : " + cachedResponse);
                     JSONObject jsonObject = new JSONObject(cachedResponse);
                     jsonArrayResponses = jsonObject.getJSONArray(Constant.response);
@@ -302,7 +302,7 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
             } catch (Exception e) {
                 e.getMessage();
             }
-            Toast.makeText(VivaApp.getInstance(), R.string.title_no_connection, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), R.string.title_no_connection, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -313,7 +313,7 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
             Log.i(Constant.TAG, "ID : " + news.getId());
             Bundle bundle = new Bundle();
             bundle.putString("id", news.getId());
-            Intent intent = new Intent(VivaApp.getInstance(), ActDetailTerbaru.class);
+            Intent intent = new Intent(getActivity(), ActDetailTerbaru.class);
             intent.putExtras(bundle);
             getActivity().startActivity(intent);
             getActivity().overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
@@ -368,7 +368,7 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
                     @Override
                     public void onErrorResponse(VolleyError volleyError) {
                         volleyError.getMessage();
-                        Toast.makeText(VivaApp.getInstance(), R.string.label_error, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), R.string.label_error, Toast.LENGTH_SHORT).show();
                     }
                 });
                 stringRequest.setShouldCache(true);
@@ -376,9 +376,9 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
                         Constant.TIME_OUT,
                         0,
                         DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-                VivaApp.getInstance().getRequestQueue().getCache().invalidate(Constant.URL_HOMEPAGE + data, true);
-                VivaApp.getInstance().getRequestQueue().getCache().get(Constant.URL_HOMEPAGE + data);
-                VivaApp.getInstance().addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
+                Global.getInstance(getActivity()).getRequestQueue().getCache().invalidate(Constant.URL_HOMEPAGE + data, true);
+                Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.URL_HOMEPAGE + data);
+                Global.getInstance(getActivity()).addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
         }
     }
 
@@ -443,8 +443,8 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
                     @Override
                     public void onErrorResponse(VolleyError volleyError) {
                         try {
-                            if(VivaApp.getInstance().getRequestQueue().getCache().get(Constant.URL_HOMEPAGE) != null) {
-                                String cachedResponse = new String(VivaApp.getInstance().getRequestQueue().getCache().get(Constant.URL_HOMEPAGE).data);
+                            if(Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.URL_HOMEPAGE) != null) {
+                                String cachedResponse = new String(Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.URL_HOMEPAGE).data);
                                 Log.i(Constant.TAG, "From Cached : " + cachedResponse);
                                 JSONObject jsonObject = new JSONObject(cachedResponse);
                                 jsonArrayResponses = jsonObject.getJSONArray(Constant.response);
@@ -495,11 +495,11 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
                         Constant.TIME_OUT,
                         0,
                         DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-                VivaApp.getInstance().getRequestQueue().getCache().invalidate(Constant.URL_HOMEPAGE, true);
-                VivaApp.getInstance().getRequestQueue().getCache().get(Constant.URL_HOMEPAGE);
-                VivaApp.getInstance().addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
+                Global.getInstance(getActivity()).getRequestQueue().getCache().invalidate(Constant.URL_HOMEPAGE, true);
+                Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.URL_HOMEPAGE);
+                Global.getInstance(getActivity()).addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
             } else {
-                Toast.makeText(VivaApp.getInstance(), R.string.title_no_connection, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), R.string.title_no_connection, Toast.LENGTH_SHORT).show();
             }
         } else if(view.getId() == R.id.fab) {
             listView.setSelection(0);

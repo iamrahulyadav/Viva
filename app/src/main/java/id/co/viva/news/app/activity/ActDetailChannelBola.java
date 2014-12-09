@@ -33,12 +33,12 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import id.co.viva.news.app.Global;
 import id.co.viva.news.app.component.LoadMoreListView;
 import id.co.viva.news.app.interfaces.OnLoadMoreListener;
 import id.co.viva.news.app.services.Analytics;
 import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.R;
-import id.co.viva.news.app.VivaApp;
 import id.co.viva.news.app.adapter.ChannelBolaAdapter;
 import id.co.viva.news.app.model.ChannelBola;
 
@@ -75,9 +75,9 @@ public class ActDetailChannelBola extends ActBase implements
         View contentView = inflater.inflate(R.layout.item_detail_channel_bola, null, false);
         mDrawerLayout.addView(contentView, 0);
 
-        isInternetPresent = VivaApp.getInstance().getConnectionStatus().isConnectingToInternet();
+        isInternetPresent = Global.getInstance(this).getConnectionStatus().isConnectingToInternet();
 
-        analytics = new Analytics();
+        analytics = new Analytics(this);
         analytics.getAnalyticByATInternet(Constant.SUBKANAL_BOLA_PAGE);
         analytics.getAnalyticByGoogleAnalytic(Constant.SUBKANAL_BOLA_PAGE);
 
@@ -106,7 +106,7 @@ public class ActDetailChannelBola extends ActBase implements
         tvNoResult.setVisibility(View.GONE);
 
         channelBolaArrayList = new ArrayList<ChannelBola>();
-        adapter = new ChannelBolaAdapter(VivaApp.getInstance(), channelBolaArrayList);
+        adapter = new ChannelBolaAdapter(this, channelBolaArrayList);
 
         listView = (LoadMoreListView) findViewById(R.id.list_channel_bola);
         listView.setOnItemClickListener(this);
@@ -180,13 +180,13 @@ public class ActDetailChannelBola extends ActBase implements
                     Constant.TIME_OUT,
                     0,
                     DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-            VivaApp.getInstance().getRequestQueue().getCache().invalidate(Constant.URL_KANAL_DETAIL + id + "/2/0/10", true);
-            VivaApp.getInstance().getRequestQueue().getCache().get(Constant.URL_KANAL_DETAIL + id + "/2/0/10");
-            VivaApp.getInstance().addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
+            Global.getInstance(this).getRequestQueue().getCache().invalidate(Constant.URL_KANAL_DETAIL + id + "/2/0/10", true);
+            Global.getInstance(this).getRequestQueue().getCache().get(Constant.URL_KANAL_DETAIL + id + "/2/0/10");
+            Global.getInstance(this).addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
         } else {
-            Toast.makeText(VivaApp.getInstance(), R.string.title_no_connection, Toast.LENGTH_SHORT).show();
-            if(VivaApp.getInstance().getRequestQueue().getCache().get(Constant.URL_KANAL_DETAIL + id + "/2/0/10") != null) {
-                cachedResponse = new String(VivaApp.getInstance().
+            Toast.makeText(this, R.string.title_no_connection, Toast.LENGTH_SHORT).show();
+            if(Global.getInstance(this).getRequestQueue().getCache().get(Constant.URL_KANAL_DETAIL + id + "/2/0/10") != null) {
+                cachedResponse = new String(Global.getInstance(this).
                         getRequestQueue().getCache().get(Constant.URL_KANAL_DETAIL + id + "/2/0/10").data);
                 Log.i(Constant.TAG, "CHANNEL BOLA CACHED RESPONSE : " + cachedResponse);
                 try{
@@ -302,9 +302,9 @@ public class ActDetailChannelBola extends ActBase implements
                     Constant.TIME_OUT,
                     0,
                     DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-            VivaApp.getInstance().getRequestQueue().getCache().invalidate(Constant.URL_KANAL_DETAIL + id + "/2/" + data + "/10", true);
-            VivaApp.getInstance().getRequestQueue().getCache().get(Constant.URL_KANAL_DETAIL + id + "/2/" + data + "/10");
-            VivaApp.getInstance().addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
+            Global.getInstance(this).getRequestQueue().getCache().invalidate(Constant.URL_KANAL_DETAIL + id + "/2/" + data + "/10", true);
+            Global.getInstance(this).getRequestQueue().getCache().get(Constant.URL_KANAL_DETAIL + id + "/2/" + data + "/10");
+            Global.getInstance(this).addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
         }
     }
 
@@ -315,7 +315,7 @@ public class ActDetailChannelBola extends ActBase implements
             Log.i(Constant.TAG, "ID : " + channelBola.getId());
             Bundle bundle = new Bundle();
             bundle.putString("id", channelBola.getId());
-            Intent intent = new Intent(VivaApp.getInstance(), ActDetailContentBola.class);
+            Intent intent = new Intent(this, ActDetailContentBola.class);
             intent.putExtras(bundle);
             startActivity(intent);
             overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
@@ -382,9 +382,9 @@ public class ActDetailChannelBola extends ActBase implements
                         Constant.TIME_OUT,
                         0,
                         DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-                VivaApp.getInstance().getRequestQueue().getCache().invalidate(Constant.URL_KANAL_DETAIL + id + "/2/0/10", true);
-                VivaApp.getInstance().getRequestQueue().getCache().get(Constant.URL_KANAL_DETAIL + id + "/2/0/10");
-                VivaApp.getInstance().addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
+                Global.getInstance(this).getRequestQueue().getCache().invalidate(Constant.URL_KANAL_DETAIL + id + "/2/0/10", true);
+                Global.getInstance(this).getRequestQueue().getCache().get(Constant.URL_KANAL_DETAIL + id + "/2/0/10");
+                Global.getInstance(this).addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
             }
         } else if(view.getId() == R.id.fab) {
             listView.setSelection(0);

@@ -8,13 +8,15 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.dd.CircularProgressButton;
+import com.squareup.picasso.Picasso;
 
 import id.co.viva.news.app.Constant;
+import id.co.viva.news.app.Global;
 import id.co.viva.news.app.R;
-import id.co.viva.news.app.VivaApp;
 import id.co.viva.news.app.component.ProgressGenerator;
 import id.co.viva.news.app.interfaces.OnProgressDoneListener;
 import id.co.viva.news.app.services.UserAccount;
@@ -27,9 +29,11 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
     private CircularProgressButton btnLogout;
     private TextView mProfileName;
     private TextView mProfileEmail;
+    private ImageView mprofileThumb;
     private UserAccount userAccount;
     private String fullname;
     private String email;
+    private String photourl;
     private ProgressGenerator progressGenerator;
 
     @Override
@@ -46,14 +50,13 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
 
         mProfileName = (TextView) rootView.findViewById(R.id.tv_profile_name);
         mProfileEmail = (TextView) rootView.findViewById(R.id.tv_profile_email);
+        mprofileThumb = (ImageView) rootView.findViewById(R.id.img_thumb_profile);
         btnLogout = (CircularProgressButton) rootView.findViewById(R.id.btn_logout);
-        progressGenerator = new ProgressGenerator(this);
 
-        VivaApp.getInstance().getDefaultEditor();
-        fullname = VivaApp.getInstance().getSharedPreferences(VivaApp.getInstance())
-                .getString(Constant.LOGIN_STATES_FULLNAME, "");
-        email = VivaApp.getInstance().getSharedPreferences(VivaApp.getInstance())
-                .getString(Constant.LOGIN_STATES_EMAIL, "");
+        progressGenerator = new ProgressGenerator(this);
+        btnLogout.setOnClickListener(this);
+
+        getProfile();
 
         if(fullname.length() > 0) {
             mProfileName.setText(fullname);
@@ -61,16 +64,30 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
         if(email.length() > 0) {
             mProfileEmail.setText(email);
         }
-        btnLogout.setOnClickListener(this);
-
+        if(photourl.length() > 0) {
+            photourl = photourl.substring(0,
+                    photourl.length() - 2)
+                    + Constant.PROFILE_PIC_SIZE;
+            Picasso.with(getActivity()).load(photourl).into(mprofileThumb);
+        }
         return rootView;
+    }
+
+    private void getProfile() {
+        Global.getInstance(getActivity()).getDefaultEditor();
+        fullname = Global.getInstance(getActivity()).getSharedPreferences(getActivity())
+                .getString(Constant.LOGIN_STATES_FULLNAME, "");
+        email = Global.getInstance(getActivity()).getSharedPreferences(getActivity())
+                .getString(Constant.LOGIN_STATES_EMAIL, "");
+        photourl = Global.getInstance(getActivity()).getSharedPreferences(getActivity())
+                .getString(Constant.LOGIN_STATES_URL_PHOTO, "");
     }
 
     @Override
     public void onClick(View view) {
         if(view.getId() == R.id.btn_logout) {
             progressGenerator.start(btnLogout);
-            userAccount = new UserAccount();
+            userAccount = new UserAccount(getActivity());
             userAccount.deleteLoginStates();
         }
     }

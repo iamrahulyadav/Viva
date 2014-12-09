@@ -15,8 +15,8 @@ import com.dd.processbutton.iml.ActionProcessButton;
 import com.squareup.picasso.Picasso;
 
 import id.co.viva.news.app.Constant;
+import id.co.viva.news.app.Global;
 import id.co.viva.news.app.R;
-import id.co.viva.news.app.VivaApp;
 import id.co.viva.news.app.interfaces.OnCompleteListener;
 import id.co.viva.news.app.services.UserAccount;
 
@@ -50,7 +50,7 @@ public class ActRating extends FragmentActivity implements OnCompleteListener,
         setContentView(R.layout.act_rating);
         getStateUser();
 
-        isInternetPresent = VivaApp.getInstance().getConnectionStatus().isConnectingToInternet();
+        isInternetPresent = Global.getInstance(this).getConnectionStatus().isConnectingToInternet();
 
         mLayout = (LinearLayout)findViewById(R.id.separator_line);
         text_title = (TextView)findViewById(R.id.text_title_content_rate);
@@ -70,7 +70,7 @@ public class ActRating extends FragmentActivity implements OnCompleteListener,
         }
 
         if(mImageUrl.length() > 0) {
-            Picasso.with(VivaApp.getInstance()).load(mImageUrl).into(image_content);
+            Picasso.with(this).load(mImageUrl).into(image_content);
         }
     }
 
@@ -93,10 +93,10 @@ public class ActRating extends FragmentActivity implements OnCompleteListener,
     }
 
     private void getStateUser() {
-        VivaApp.getInstance().getDefaultEditor();
-        fullname = VivaApp.getInstance().getSharedPreferences(VivaApp.getInstance())
+        Global.getInstance(this).getDefaultEditor();
+        fullname = Global.getInstance(this).getSharedPreferences(this)
                 .getString(Constant.LOGIN_STATES_FULLNAME, "");
-        email = VivaApp.getInstance().getSharedPreferences(VivaApp.getInstance())
+        email = Global.getInstance(this).getSharedPreferences(this)
                 .getString(Constant.LOGIN_STATES_EMAIL, "");
     }
 
@@ -164,7 +164,7 @@ public class ActRating extends FragmentActivity implements OnCompleteListener,
         if(view.getId() == R.id.btn_send_rate) {
             if(isInternetPresent) {
                 if(amountRate != null) {
-                    userAccount = new UserAccount(fullname, email, mIds, amountRate, this);
+                    userAccount = new UserAccount(fullname, email, mIds, amountRate, this, ActRating.this);
                     disableView();
                     btnRate.setProgress(1);
                     userAccount.sendRating();

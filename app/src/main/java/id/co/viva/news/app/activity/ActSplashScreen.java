@@ -9,8 +9,8 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
+import id.co.viva.news.app.Global;
 import id.co.viva.news.app.R;
-import id.co.viva.news.app.VivaApp;
 import id.co.viva.news.app.services.GCM;
 
 /**
@@ -27,7 +27,7 @@ public class ActSplashScreen extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act_splash_screen);
 
-        isInternet = VivaApp.getInstance().getConnectionStatus().isConnectingToInternet();
+        isInternet = Global.getInstance(this).getConnectionStatus().isConnectingToInternet();
         gcm = GCM.getInstance(this);
 
         imageSplash = (ImageView)findViewById(R.id.image_splash);

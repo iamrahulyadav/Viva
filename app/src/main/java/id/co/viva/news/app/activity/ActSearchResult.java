@@ -29,10 +29,11 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import id.co.viva.news.app.Global;
 import id.co.viva.news.app.services.Analytics;
 import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.R;
-import id.co.viva.news.app.VivaApp;
+//import id.co.viva.news.app.VivaApp;
 import id.co.viva.news.app.adapter.SearchResultAdapter;
 import id.co.viva.news.app.model.SearchResult;
 
@@ -69,7 +70,7 @@ public class ActSearchResult extends FragmentActivity implements
 
         getActionBar().setTitle("Pencarian");
 
-        isInternetPresent = VivaApp.getInstance().
+        isInternetPresent = Global.getInstance(this).
                 getConnectionStatus().isConnectingToInternet();
 
         tvSearchResult = (TextView)findViewById(R.id.text_search_result);
@@ -84,7 +85,7 @@ public class ActSearchResult extends FragmentActivity implements
             resultArrayList = new ArrayList<SearchResult>();
             handleIntent(getIntent());
         } else {
-            Toast.makeText(VivaApp.getInstance(), R.string.title_no_connection, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.title_no_connection, Toast.LENGTH_SHORT).show();
             loading_layout.setVisibility(View.GONE);
             tvNoResult.setVisibility(View.VISIBLE);
             tvSearchResult.setVisibility(View.GONE);
@@ -103,7 +104,7 @@ public class ActSearchResult extends FragmentActivity implements
             query = intent.getStringExtra(SearchManager.QUERY);
             tvSearchResult.setText("Hasil Pencarian : " + query);
 
-            analytics = new Analytics();
+            analytics = new Analytics(this);
             analytics.getAnalyticByATInternet(Constant.SEARCH_RESULT_PAGE + query.toUpperCase());
             analytics.getAnalyticByGoogleAnalytic(Constant.SEARCH_RESULT_PAGE + query.toUpperCase());
 
@@ -132,7 +133,7 @@ public class ActSearchResult extends FragmentActivity implements
                                     }
                                 }
                                 if (resultArrayList.size() > 0 || !resultArrayList.isEmpty()) {
-                                    mAnimAdapter = new ScaleInAnimationAdapter(new SearchResultAdapter(VivaApp.getInstance(), resultArrayList));
+                                    mAnimAdapter = new ScaleInAnimationAdapter(new SearchResultAdapter(getApplicationContext(), resultArrayList));
                                     mAnimAdapter.setAbsListView(listSearchResult);
                                     listSearchResult.setAdapter(mAnimAdapter);
                                     mAnimAdapter.notifyDataSetChanged();
@@ -157,9 +158,9 @@ public class ActSearchResult extends FragmentActivity implements
                     Constant.TIME_OUT,
                     0,
                     DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-            VivaApp.getInstance().getRequestQueue().getCache().invalidate(Constant.URL_SEARCH + query, true);
-            VivaApp.getInstance().getRequestQueue().getCache().get(Constant.URL_SEARCH + query);
-            VivaApp.getInstance().addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
+            Global.getInstance(this).getRequestQueue().getCache().invalidate(Constant.URL_SEARCH + query, true);
+            Global.getInstance(this).getRequestQueue().getCache().get(Constant.URL_SEARCH + query);
+            Global.getInstance(this).addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
         }
     }
 
@@ -173,7 +174,7 @@ public class ActSearchResult extends FragmentActivity implements
             bundle.putString("type", "search");
             bundle.putString("kanal", searchResult.getKanal());
             bundle.putString("shared_url", searchResult.getUrl());
-            Intent intent = new Intent(VivaApp.getInstance(), ActDetailContentDefault.class);
+            Intent intent = new Intent(this, ActDetailContentDefault.class);
             intent.putExtras(bundle);
             startActivity(intent);
             overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);

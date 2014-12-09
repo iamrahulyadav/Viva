@@ -6,8 +6,7 @@ import android.util.Log;
 
 import java.util.Set;
 
-import id.co.viva.news.app.Constant;
-import id.co.viva.news.app.VivaApp;
+import id.co.viva.news.app.Global;
 
 /**
  * Created by reza on 03/11/14.
@@ -243,7 +242,7 @@ public class Preferences {
     public static void loadSharedPreferences(Context context) {
         Log.e(TAG, "loadSharedPreferences()");
 
-        SharedPreferences Preferences = VivaApp.getInstance().getSharedPreferences(context);
+        SharedPreferences Preferences = Global.getInstance(context).getSharedPreferences(context);
         gcm_client_id = Preferences.getString(PROPERTY_GCM_CLIENT_ID, "");
         gcm_reg_id = Preferences.getString(PROPERTY_GCM_REG_ID, "");
         gcm_reg_app_version = Preferences.getInt(PROPERTY_GCM_REG_APP_VERSION, 0);
@@ -277,7 +276,7 @@ public class Preferences {
     public static void storeSharedPreferencesGCM(Context context) {
         Log.e(TAG, "storeSharedPreferencesGCM()");
 
-        SharedPreferences Preferences = VivaApp.getInstance().getSharedPreferences(context);
+        SharedPreferences Preferences = Global.getInstance(context).getSharedPreferences(context);
         SharedPreferences.Editor editor = Preferences.edit();
         editor.putString(PROPERTY_GCM_CLIENT_ID, gcm_client_id);
         editor.putString(PROPERTY_GCM_REG_ID, gcm_reg_id);
@@ -295,7 +294,7 @@ public class Preferences {
     public static void storeSharedPreferencesLogin(Context context) {
         Log.e(TAG, "storeSharedPreferencesLogin()");
 
-        SharedPreferences Preferences = VivaApp.getInstance().getSharedPreferences(context);
+        SharedPreferences Preferences = Global.getInstance(context).getSharedPreferences(context);
         SharedPreferences.Editor editor = Preferences.edit();
         editor.putInt(PROPERTY_LOGIN_STATUS, login_status);
         editor.putInt(PROPERTY_LOGIN_TYPE, login_type);
@@ -315,7 +314,7 @@ public class Preferences {
     public static void removeSharedPreferencesLogin(Context context) {
         Log.e(TAG, "removeSharedPreferencesLogin()");
 
-        SharedPreferences Preferences = VivaApp.getInstance().getSharedPreferences(context);
+        SharedPreferences Preferences = Global.getInstance(context).getSharedPreferences(context);
         SharedPreferences.Editor editor = Preferences.edit();
         editor.remove(PROPERTY_LOGIN_STATUS);
         editor.remove(PROPERTY_LOGIN_TYPE);
@@ -335,7 +334,7 @@ public class Preferences {
     public static void storeSharedPreferencesPath(Context context) {
         Log.e(TAG, "storeSharedPreferencesPath()");
 
-        SharedPreferences Preferences = VivaApp.getInstance().getSharedPreferences(context);
+        SharedPreferences Preferences = Global.getInstance(context).getSharedPreferences(context);
         SharedPreferences.Editor editor = Preferences.edit();
         editor.putString(PROPERTY_PATH_ACCESS_TOKEN, path_access_token);
         editor.putString(PROPERTY_PATH_USER_ID, path_user_id);
@@ -353,7 +352,7 @@ public class Preferences {
     public static void removeSharedPreferencesPath(Context context) {
         Log.e(TAG, "removeSharedPreferencesLogin()");
 
-        SharedPreferences Preferences = VivaApp.getInstance().getSharedPreferences(context);
+        SharedPreferences Preferences = Global.getInstance(context).getSharedPreferences(context);
         SharedPreferences.Editor editor = Preferences.edit();
         editor.remove(PROPERTY_PATH_ACCESS_TOKEN);
         editor.remove(PROPERTY_PATH_USER_ID);
@@ -371,7 +370,7 @@ public class Preferences {
     public static void storeSharedPreferencesFacebook(Context context) {
         Log.e(TAG, "storeSharedPreferencesFacebook()");
 
-        SharedPreferences Preferences = VivaApp.getInstance().getSharedPreferences(context);
+        SharedPreferences Preferences = Global.getInstance(context).getSharedPreferences(context);
         SharedPreferences.Editor editor = Preferences.edit();
         editor.putString(PROPERTY_FACEBOOK_USER_ID, facebook_user_id);
         editor.putString(PROPERTY_FACEBOOK_USER_NAME, facebook_user_name);
@@ -387,7 +386,7 @@ public class Preferences {
     public static void removeSharedPreferencesFacebook(Context context) {
         Log.e(TAG, "removeSharedPreferencesLogin()");
 
-        SharedPreferences Preferences = VivaApp.getInstance().getSharedPreferences(context);
+        SharedPreferences Preferences = Global.getInstance(context).getSharedPreferences(context);
         SharedPreferences.Editor editor = Preferences.edit();
         editor.remove(PROPERTY_FACEBOOK_USER_ID);
         editor.remove(PROPERTY_FACEBOOK_USER_NAME);
@@ -403,7 +402,7 @@ public class Preferences {
     public static void storeSharedPreferencesGPlus(Context context) {
         Log.e(TAG, "storeSharedPreferencesGPlus()");
 
-        SharedPreferences Preferences = VivaApp.getInstance().getSharedPreferences(context);
+        SharedPreferences Preferences = Global.getInstance(context).getSharedPreferences(context);
         SharedPreferences.Editor editor = Preferences.edit();
         editor.putString(PROPERTY_GPLUS_USER_NAME, gplus_user_name);
         editor.putString(PROPERTY_GPLUS_USER_EMAIL, gplus_user_email);
@@ -419,7 +418,7 @@ public class Preferences {
     public static void removeSharedPreferencesGPlus(Context context) {
         Log.e(TAG, "removeSharedPreferencesLogin()");
 
-        SharedPreferences Preferences = VivaApp.getInstance().getSharedPreferences(context);
+        SharedPreferences Preferences = Global.getInstance(context).getSharedPreferences(context);
         SharedPreferences.Editor editor = Preferences.edit();
         editor.remove(PROPERTY_GPLUS_USER_NAME);
         editor.remove(PROPERTY_GPLUS_USER_EMAIL);

@@ -2,14 +2,14 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
-    <LinearLayout
-        android:orientation="vertical"
+    <RelativeLayout
         xmlns:custom="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:id="@+id/layout_title_thumb_comment"
             android:orientation="horizontal"
             android:layout_margin="10dp">
             <com.pkmmte.view.CircularImageView
@@ -31,6 +31,7 @@
         </LinearLayout>
         <LinearLayout
             android:id="@+id/background_label_comment"
+            android:layout_below="@id/layout_title_thumb_comment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -50,12 +51,16 @@
         <ListView
             android:layout_width="match_parent"
             android:layout_height="fill_parent"
-            android:layout_margin="10dp"
+            android:layout_below="@id/background_label_comment"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
             android:id="@+id/list_comments">
         </ListView>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingBottom="10dp"
+            android:layout_below="@id/list_comments"
             android:orientation="vertical">
             <EditText
                 android:layout_width="match_parent"
@@ -79,5 +84,5 @@
                 custom:pb_textComplete="Terkirim!"
                 custom:pb_textProgress="@string/label_loading"/>
         </LinearLayout>
-    </LinearLayout>
+    </RelativeLayout>
 </ScrollView>

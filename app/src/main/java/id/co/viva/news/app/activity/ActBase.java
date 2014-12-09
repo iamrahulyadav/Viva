@@ -17,11 +17,11 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
 import id.co.viva.news.app.Constant;
+import id.co.viva.news.app.Global;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.VivaApp;
 import id.co.viva.news.app.adapter.NavigationAdapter;
@@ -52,6 +52,7 @@ public class ActBase extends FragmentActivity {
     private android.support.v4.app.FragmentManager fragmentManager;
     private String fullname;
     private String email;
+    private String photourl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,15 +64,13 @@ public class ActBase extends FragmentActivity {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (ListView) findViewById(R.id.list_slidermenu);
 
-        VivaApp.getInstance().getDefaultEditor();
-        fullname = VivaApp.getInstance().getSharedPreferences(VivaApp.getInstance())
-                .getString(Constant.LOGIN_STATES_FULLNAME, "");
-        email = VivaApp.getInstance().getSharedPreferences(VivaApp.getInstance())
-                .getString(Constant.LOGIN_STATES_EMAIL, "");
+        getProfile();
 
         navDrawerItems = new ArrayList<Item>();
         if(fullname.length() > 0 && email.length() > 0) {
             navDrawerItems.add(new NavigationProfileItem(fullname, email));
+        } else if(fullname.length() > 0 && email.length() > 0 && photourl.length() > 0) {
+            navDrawerItems.add(new NavigationProfileItem(fullname, email, photourl));
         } else {
             navDrawerItems.add(new NavigationProfileItem("Username", "Email"));
         }
@@ -167,6 +166,16 @@ public class ActBase extends FragmentActivity {
         public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
             displayView(position);
         }
+    }
+
+    private void getProfile() {
+        Global.getInstance(this).getDefaultEditor();
+        fullname = Global.getInstance(this).getSharedPreferences(this)
+                .getString(Constant.LOGIN_STATES_FULLNAME, "");
+        email = Global.getInstance(this).getSharedPreferences(this)
+                .getString(Constant.LOGIN_STATES_EMAIL, "");
+        photourl = Global.getInstance(this).getSharedPreferences(this)
+                .getString(Constant.LOGIN_STATES_URL_PHOTO, "");
     }
 
     @Override

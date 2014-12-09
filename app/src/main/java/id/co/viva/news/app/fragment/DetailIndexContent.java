@@ -42,16 +42,16 @@ import org.jsoup.select.Elements;
 import java.util.ArrayList;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
-import id.co.viva.news.app.activity.ActComment;
-import id.co.viva.news.app.activity.ActRating;
-import id.co.viva.news.app.model.Favorites;
-import id.co.viva.news.app.services.Analytics;
 import id.co.viva.news.app.Constant;
+import id.co.viva.news.app.Global;
 import id.co.viva.news.app.R;
-import id.co.viva.news.app.VivaApp;
+import id.co.viva.news.app.activity.ActComment;
 import id.co.viva.news.app.activity.ActDetailContentDefault;
+import id.co.viva.news.app.activity.ActRating;
 import id.co.viva.news.app.adapter.RelatedAdapter;
+import id.co.viva.news.app.model.Favorites;
 import id.co.viva.news.app.model.RelatedArticle;
+import id.co.viva.news.app.services.Analytics;
 
 /**
  * Created by reza on 24/10/14.
@@ -107,8 +107,8 @@ public class DetailIndexContent extends Fragment implements
         super.onCreate(savedInstanceState);
         id = getArguments().getString("id");
         kanals = getArguments().getString("kanals");
-        analytics = new Analytics();
-        isInternetPresent = VivaApp.getInstance().getConnectionStatus().isConnectingToInternet();
+        analytics = new Analytics(getActivity());
+        isInternetPresent = Global.getInstance(getActivity()).getConnectionStatus().isConnectingToInternet();
     }
 
     @Override
@@ -159,8 +159,8 @@ public class DetailIndexContent extends Fragment implements
         ivThumbDetail.setFocusableInTouchMode(true);
         ivThumbDetail.requestFocus();
 
-        if(VivaApp.getInstance().getRequestQueue().getCache().get(Constant.URL_DETAIL + id) != null) {
-            cachedResponse = new String(VivaApp.getInstance().
+        if(Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.URL_DETAIL + id) != null) {
+            cachedResponse = new String(Global.getInstance(getActivity()).
                     getRequestQueue().getCache().get(Constant.URL_DETAIL + id).data);
             Log.i(Constant.TAG, "CONTENT DETAIL CACHED : " + cachedResponse);
             try {
@@ -203,10 +203,10 @@ public class DetailIndexContent extends Fragment implements
                 Document doc = Jsoup.parse(content);
                 Elements ele = doc.select("img");
                 for (Element el : ele) {
-                    ImageView imageView = new ImageView(VivaApp.getInstance());
+                    ImageView imageView = new ImageView(getActivity());
                     imageContent = el.attr("src").replaceAll("[|?*<\">+\\[\\]']", "");
                     Log.i(Constant.TAG, "IMAGE CONTENT : " + imageContent);
-                    Picasso.with(VivaApp.getInstance()).load(imageContent).into(imageView);
+                    Picasso.with(getActivity()).load(imageContent).into(imageView);
                     LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                             ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                     params.gravity = Gravity.CENTER_HORIZONTAL;
@@ -216,7 +216,7 @@ public class DetailIndexContent extends Fragment implements
                 }
 
                 tvReporterDetail.setText(reporter_name);
-                Picasso.with(VivaApp.getInstance()).load(image_url).into(ivThumbDetail);
+                Picasso.with(getActivity()).load(image_url).into(ivThumbDetail);
 
                 if(relatedArticleArrayList.size() > 0 || !relatedArticleArrayList.isEmpty()) {
                     adapter = new RelatedAdapter(getActivity(), relatedArticleArrayList);
@@ -287,10 +287,10 @@ public class DetailIndexContent extends Fragment implements
                                     Document doc = Jsoup.parse(content);
                                     Elements ele = doc.select("img");
                                     for (Element el : ele) {
-                                        ImageView imageView = new ImageView(VivaApp.getInstance());
+                                        ImageView imageView = new ImageView(getActivity());
                                         imageContent = el.attr("src").replaceAll("[|?*<\">+\\[\\]']", "");
                                         Log.i(Constant.TAG, "IMAGE CONTENT : " + imageContent);
-                                        Picasso.with(VivaApp.getInstance()).load(imageContent).into(imageView);
+                                        Picasso.with(getActivity()).load(imageContent).into(imageView);
                                         imageView.setLayoutParams(new ViewGroup.LayoutParams(
                                                 ViewGroup.LayoutParams.WRAP_CONTENT,
                                                 ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -299,7 +299,7 @@ public class DetailIndexContent extends Fragment implements
                                     }
 
                                     tvReporterDetail.setText(reporter_name);
-                                    Picasso.with(VivaApp.getInstance()).load(image_url).into(ivThumbDetail);
+                                    Picasso.with(getActivity()).load(image_url).into(ivThumbDetail);
 
                                     if(relatedArticleArrayList.size() > 0 || !relatedArticleArrayList.isEmpty()) {
                                         adapter = new RelatedAdapter(getActivity(), relatedArticleArrayList);
@@ -329,8 +329,8 @@ public class DetailIndexContent extends Fragment implements
                             public void onErrorResponse(VolleyError volleyError) {
                                 volleyError.getMessage();
 
-                                if(VivaApp.getInstance().getRequestQueue().getCache().get(Constant.URL_DETAIL + id) != null) {
-                                    cachedResponse = new String(VivaApp.getInstance().
+                                if(Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.URL_DETAIL + id) != null) {
+                                    cachedResponse = new String(Global.getInstance(getActivity()).
                                             getRequestQueue().getCache().get(Constant.URL_DETAIL + id).data);
                                     Log.i(Constant.TAG, "CONTENT DETAIL CACHED : " + cachedResponse);
                                     try {
@@ -373,10 +373,10 @@ public class DetailIndexContent extends Fragment implements
                                         Document doc = Jsoup.parse(content);
                                         Elements ele = doc.select("img");
                                         for (Element el : ele) {
-                                            ImageView imageView = new ImageView(VivaApp.getInstance());
+                                            ImageView imageView = new ImageView(getActivity());
                                             imageContent = el.attr("src").replaceAll("[|?*<\">+\\[\\]']", "");
                                             Log.i(Constant.TAG, "IMAGE CONTENT : " + imageContent);
-                                            Picasso.with(VivaApp.getInstance()).load(imageContent).into(imageView);
+                                            Picasso.with(getActivity()).load(imageContent).into(imageView);
                                             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                                                     ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                                             params.gravity = Gravity.CENTER_HORIZONTAL;
@@ -386,7 +386,7 @@ public class DetailIndexContent extends Fragment implements
                                         }
 
                                         tvReporterDetail.setText(reporter_name);
-                                        Picasso.with(VivaApp.getInstance()).load(image_url).into(ivThumbDetail);
+                                        Picasso.with(getActivity()).load(image_url).into(ivThumbDetail);
 
                                         if(relatedArticleArrayList.size() > 0 || !relatedArticleArrayList.isEmpty()) {
                                             adapter = new RelatedAdapter(getActivity(), relatedArticleArrayList);
@@ -430,11 +430,11 @@ public class DetailIndexContent extends Fragment implements
                         Constant.TIME_OUT,
                         0,
                         DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-                VivaApp.getInstance().getRequestQueue().getCache().invalidate(Constant.URL_DETAIL + id, true);
-                VivaApp.getInstance().getRequestQueue().getCache().get(Constant.URL_DETAIL + id);
-                VivaApp.getInstance().addToRequestQueue(request, Constant.JSON_REQUEST);
+                Global.getInstance(getActivity()).getRequestQueue().getCache().invalidate(Constant.URL_DETAIL + id, true);
+                Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.URL_DETAIL + id);
+                Global.getInstance(getActivity()).addToRequestQueue(request, Constant.JSON_REQUEST);
             } else {
-                Toast.makeText(VivaApp.getInstance(), R.string.title_no_connection, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), R.string.title_no_connection, Toast.LENGTH_SHORT).show();
                 loading_layout.setVisibility(View.GONE);
                 tvNoResult.setVisibility(View.VISIBLE);
             }
@@ -452,7 +452,7 @@ public class DetailIndexContent extends Fragment implements
                 bundles.putString("title", title);
                 bundles.putString("article_id", ids);
                 bundles.putString("type_kanal", kanal);
-                Intent intents = new Intent(VivaApp.getInstance(), ActRating.class);
+                Intent intents = new Intent(getActivity(), ActRating.class);
                 intents.putExtras(bundles);
                 startActivity(intents);
                 getActivity().overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
@@ -463,20 +463,20 @@ public class DetailIndexContent extends Fragment implements
                 bundle.putString("title", title);
                 bundle.putString("article_id", ids);
                 bundle.putString("type_kanal", kanal);
-                Intent intent = new Intent(VivaApp.getInstance(), ActComment.class);
+                Intent intent = new Intent(getActivity(), ActComment.class);
                 intent.putExtras(bundle);
                 startActivity(intent);
                 getActivity().overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
                 return true;
             case R.id.subaction_favorites:
-                favoriteList = VivaApp.getInstance().getSharedPreferences(getActivity())
+                favoriteList = Global.getInstance(getActivity()).getSharedPreferences(getActivity())
                         .getString(Constant.FAVORITES_LIST, "");
 
                 if(favoriteList == null || favoriteList.length() <= 0) {
-                    favoritesArrayList = VivaApp.getInstance().getFavoritesList();
+                    favoritesArrayList = Global.getInstance(getActivity()).getFavoritesList();
                 } else {
-                    favoritesArrayList = VivaApp.getInstance().getInstanceGson().
-                            fromJson(favoriteList, VivaApp.getInstance().getType());
+                    favoritesArrayList = Global.getInstance(getActivity()).getInstanceGson().
+                            fromJson(favoriteList, Global.getInstance(getActivity()).getType());
                 }
 
                 new SweetAlertDialog(getActivity(), SweetAlertDialog.WARNING_TYPE)
@@ -489,10 +489,10 @@ public class DetailIndexContent extends Fragment implements
                                 favoritesArrayList.add(new Favorites(ids, title, channel_id, kanal,
                                         image_url, date_publish, reporter_name, url_shared, content));
 
-                                String favorite = VivaApp.getInstance().getInstanceGson().toJson(favoritesArrayList);
-                                VivaApp.getInstance().getDefaultEditor().putString(Constant.FAVORITES_LIST, favorite);
-                                VivaApp.getInstance().getDefaultEditor().putInt(Constant.FAVORITES_LIST_SIZE, favoritesArrayList.size());
-                                VivaApp.getInstance().getDefaultEditor().commit();
+                                String favorite = Global.getInstance(getActivity()).getInstanceGson().toJson(favoritesArrayList);
+                                Global.getInstance(getActivity()).getDefaultEditor().putString(Constant.FAVORITES_LIST, favorite);
+                                Global.getInstance(getActivity()).getDefaultEditor().putInt(Constant.FAVORITES_LIST_SIZE, favoritesArrayList.size());
+                                Global.getInstance(getActivity()).getDefaultEditor().commit();
 
                                 sDialog.setTitleText(getResources().getString(R.string.label_favorite_navigation_title_confirm))
                                         .setContentText(getResources().getString(R.string.label_favorite_navigation_content))
@@ -517,7 +517,7 @@ public class DetailIndexContent extends Fragment implements
             bundle.putString("id", relatedArticle.getRelated_article_id());
             bundle.putString("kanal", relatedArticle.getKanal());
             bundle.putString("shared_url", relatedArticle.getShared_url());
-            Intent intent = new Intent(VivaApp.getInstance(), ActDetailContentDefault.class);
+            Intent intent = new Intent(getActivity(), ActDetailContentDefault.class);
             intent.putExtras(bundle);
             startActivity(intent);
             getActivity().overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
@@ -588,10 +588,10 @@ public class DetailIndexContent extends Fragment implements
                                     Document doc = Jsoup.parse(content);
                                     Elements ele = doc.select("img");
                                     for (Element el : ele) {
-                                        ImageView imageView = new ImageView(VivaApp.getInstance());
+                                        ImageView imageView = new ImageView(getActivity());
                                         imageContent = el.attr("src").replaceAll("[|?*<\">+\\[\\]']", "");
                                         Log.i(Constant.TAG, "IMAGE CONTENT : " + imageContent);
-                                        Picasso.with(VivaApp.getInstance()).load(imageContent).into(imageView);
+                                        Picasso.with(getActivity()).load(imageContent).into(imageView);
                                         imageView.setLayoutParams(new ViewGroup.LayoutParams(
                                                 ViewGroup.LayoutParams.WRAP_CONTENT,
                                                 ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -600,7 +600,7 @@ public class DetailIndexContent extends Fragment implements
                                     }
 
                                     tvReporterDetail.setText(reporter_name);
-                                    Picasso.with(VivaApp.getInstance()).load(image_url).into(ivThumbDetail);
+                                    Picasso.with(getActivity()).load(image_url).into(ivThumbDetail);
 
                                     if(relatedArticleArrayList.size() > 0 || !relatedArticleArrayList.isEmpty()) {
                                         adapter = new RelatedAdapter(getActivity(), relatedArticleArrayList);
@@ -647,11 +647,11 @@ public class DetailIndexContent extends Fragment implements
                         Constant.TIME_OUT,
                         0,
                         DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-                VivaApp.getInstance().getRequestQueue().getCache().invalidate(Constant.URL_DETAIL + id, true);
-                VivaApp.getInstance().getRequestQueue().getCache().get(Constant.URL_DETAIL + id);
-                VivaApp.getInstance().addToRequestQueue(request, Constant.JSON_REQUEST);
+                Global.getInstance(getActivity()).getRequestQueue().getCache().invalidate(Constant.URL_DETAIL + id, true);
+                Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.URL_DETAIL + id);
+                Global.getInstance(getActivity()).addToRequestQueue(request, Constant.JSON_REQUEST);
             } else {
-                Toast.makeText(VivaApp.getInstance(), R.string.title_no_connection, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), R.string.title_no_connection, Toast.LENGTH_SHORT).show();
                 loading_layout.setVisibility(View.GONE);
                 tvNoResult.setVisibility(View.VISIBLE);
             }

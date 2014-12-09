@@ -29,10 +29,10 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import id.co.viva.news.app.Global;
 import id.co.viva.news.app.services.Analytics;
 import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.R;
-import id.co.viva.news.app.VivaApp;
 import id.co.viva.news.app.activity.ActDetailChannelNews;
 import id.co.viva.news.app.adapter.FeaturedNewsAdapter;
 import id.co.viva.news.app.model.FeaturedNews;
@@ -55,7 +55,7 @@ public class NewsFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        isInternetPresent = VivaApp.getInstance().getConnectionStatus().isConnectingToInternet();
+        isInternetPresent = Global.getInstance(getActivity()).getConnectionStatus().isConnectingToInternet();
     }
 
     @Override
@@ -71,7 +71,7 @@ public class NewsFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.frag_news, container, false);
 
-        analytics = new Analytics();
+        analytics = new Analytics(getActivity());
         analytics.getAnalyticByATInternet(Constant.KANAL_NEWS_PAGE);
         analytics.getAnalyticByGoogleAnalytic(Constant.KANAL_NEWS_PAGE);
 
@@ -95,7 +95,7 @@ public class NewsFragment extends Fragment implements View.OnClickListener {
                     Bundle bundle = new Bundle();
                     bundle.putString("id", featuredNews.getChannel_id());
                     bundle.putString("channel_title", featuredNews.getChannel_title());
-                    Intent intent = new Intent(VivaApp.getInstance(), ActDetailChannelNews.class);
+                    Intent intent = new Intent(getActivity(), ActDetailChannelNews.class);
                     intent.putExtras(bundle);
                     getActivity().startActivity(intent);
                     getActivity().overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
@@ -160,13 +160,13 @@ public class NewsFragment extends Fragment implements View.OnClickListener {
                     Constant.TIME_OUT,
                     0,
                     DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-            VivaApp.getInstance().getRequestQueue().getCache().invalidate(Constant.URL_KANAL_NEWS, true);
-            VivaApp.getInstance().getRequestQueue().getCache().get(Constant.URL_KANAL_NEWS);
-            VivaApp.getInstance().addToRequestQueue(request, Constant.JSON_REQUEST);
+            Global.getInstance(getActivity()).getRequestQueue().getCache().invalidate(Constant.URL_KANAL_NEWS, true);
+            Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.URL_KANAL_NEWS);
+            Global.getInstance(getActivity()).addToRequestQueue(request, Constant.JSON_REQUEST);
         } else {
-            Toast.makeText(VivaApp.getInstance(), R.string.title_no_connection, Toast.LENGTH_SHORT).show();
-            if(VivaApp.getInstance().getRequestQueue().getCache().get(Constant.URL_KANAL_NEWS) != null) {
-                cachedResponse = new String(VivaApp.getInstance().
+            Toast.makeText(getActivity(), R.string.title_no_connection, Toast.LENGTH_SHORT).show();
+            if(Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.URL_KANAL_NEWS) != null) {
+                cachedResponse = new String(Global.getInstance(getActivity()).
                         getRequestQueue().getCache().get(Constant.URL_KANAL_NEWS).data);
                 Log.i(Constant.TAG, "KANAL NEWS CACHED : " + cachedResponse);
                 try {
@@ -206,7 +206,7 @@ public class NewsFragment extends Fragment implements View.OnClickListener {
             } else {
                 loading_layout.setVisibility(View.GONE);
                 tvNoResult.setVisibility(View.VISIBLE);
-                Toast.makeText(VivaApp.getInstance(), R.string.title_no_connection, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), R.string.title_no_connection, Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -273,11 +273,11 @@ public class NewsFragment extends Fragment implements View.OnClickListener {
                         Constant.TIME_OUT,
                         0,
                         DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-                VivaApp.getInstance().getRequestQueue().getCache().invalidate(Constant.URL_KANAL_NEWS, true);
-                VivaApp.getInstance().getRequestQueue().getCache().get(Constant.URL_KANAL_NEWS);
-                VivaApp.getInstance().addToRequestQueue(request, Constant.JSON_REQUEST);
+                Global.getInstance(getActivity()).getRequestQueue().getCache().invalidate(Constant.URL_KANAL_NEWS, true);
+                Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.URL_KANAL_NEWS);
+                Global.getInstance(getActivity()).addToRequestQueue(request, Constant.JSON_REQUEST);
             } else {
-                Toast.makeText(VivaApp.getInstance(), R.string.title_no_connection, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), R.string.title_no_connection, Toast.LENGTH_SHORT).show();
             }
         }
     }

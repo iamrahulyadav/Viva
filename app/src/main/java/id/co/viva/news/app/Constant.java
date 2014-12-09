@@ -15,6 +15,7 @@ public class Constant {
     public static final int TIME_OUT_LONG = 6000;
     public final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     public final static int NUMBER_OF_TOP_LIST_ITEMS = 4;
+    public static final int PROFILE_PIC_SIZE = 400;
 
     public static final String fragment_headline = "class id.co.viva.news.app.fragment.HeadlineFragment";
     public static final String FIRST_INSTALL = "first_install";
@@ -23,6 +24,7 @@ public class Constant {
     public static final String FAVORITES_LIST_SIZE = "favorites_list_size";
     public static final String LOGIN_STATES_EMAIL = "login_states_email";
     public static final String LOGIN_STATES_FULLNAME = "login_states_fullname";
+    public static final String LOGIN_STATES_URL_PHOTO = "login_states_url_photo";
     public static final String LOGIN_STATES_ISLOGIN = "isLogin";
 
     public static final String GCM_SENDER_ID = "246836504311";
@@ -53,6 +55,7 @@ public class Constant {
     public static String NEW_REGISTER = BASE_URL_NEW + "register";
     public static String NEW_COMMENTS = BASE_URL_NEW + "sendcomment/";
     public static String NEW_RATES = BASE_URL_NEW + "sendrate/";
+    public static String NEW_LIST_COMMENT = BASE_URL_NEW + "commentlist";
 
     public static final String JSON_REQUEST = "json_obj_req";
 
@@ -71,6 +74,13 @@ public class Constant {
     public static final String source = "source";
     public static final String reporter_name = "reporter_name";
     public static final String content = "content";
+
+    public static final String name = "name";
+    public static final String parent_id = "parent_id";
+    public static final String comment_text = "comment_text";
+    public static final String app_id = "app_id";
+    public static final String submitted_date = "submitted_date";
+    public static final String status = "status";
 
     public static final String article_id = "article_id";
     public static final String related_article_id = "related_article_id";

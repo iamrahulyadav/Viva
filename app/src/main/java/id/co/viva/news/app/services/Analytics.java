@@ -1,8 +1,11 @@
 package id.co.viva.news.app.services;
 
+import android.content.Context;
+
 import com.google.analytics.tracking.android.Fields;
 import com.google.analytics.tracking.android.MapBuilder;
 
+import id.co.viva.news.app.Global;
 import id.co.viva.news.app.VivaApp;
 
 /**
@@ -10,18 +13,22 @@ import id.co.viva.news.app.VivaApp;
  */
 public class Analytics {
 
-    public Analytics() {}
+    private Context mContext;
+
+    public Analytics(Context context) {
+        mContext = context;
+    }
 
     public void getAnalyticByATInternet(String page) {
-        VivaApp.getInstance().getAtParams().setPage(page);
-        VivaApp.getInstance().getAtParams().xt_sendTag();
+        Global.getInstance(mContext).getAtParams().setPage(page);
+        Global.getInstance(mContext).getAtParams().xt_sendTag();
     }
 
     public void getAnalyticByGoogleAnalytic(String page) {
-        VivaApp.getInstance().getEasyTracker().set(Fields.SCREEN_NAME, page);
-        VivaApp.getInstance().getEasyTracker().set(Fields.APP_VERSION,
-                VivaApp.getInstance().getEasyTracker().get(Fields.APP_VERSION));
-        VivaApp.getInstance().getEasyTracker().send(MapBuilder.createAppView().build());
+        Global.getInstance(mContext).getEasyTracker().set(Fields.SCREEN_NAME, page);
+        Global.getInstance(mContext).getEasyTracker().set(Fields.APP_VERSION,
+                Global.getInstance(mContext).getEasyTracker().get(Fields.APP_VERSION));
+        Global.getInstance(mContext).getEasyTracker().send(MapBuilder.createAppView().build());
     }
 
 }

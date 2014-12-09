@@ -17,7 +17,6 @@ import com.doomonafireball.betterpickers.datepicker.DatePickerDialogFragment;
 import java.util.ArrayList;
 
 import id.co.viva.news.app.R;
-import id.co.viva.news.app.VivaApp;
 import id.co.viva.news.app.interfaces.OnCompleteListener;
 import id.co.viva.news.app.services.UserAccount;
 import id.co.viva.news.app.services.Validation;
@@ -130,7 +129,7 @@ public class ActRegistration extends FragmentActivity
                 etCity.setError(getResources().getString(R.string.label_registrasi_city_validation));
             } else {
                 userAccount = new UserAccount(email, password, username, address,
-                        city, genderSelected, birthdate, phone, this);
+                        city, genderSelected, birthdate, phone, this, ActRegistration.this);
                 disableView();
                 btnRegist.setProgress(1);
                 userAccount.signUp();
@@ -156,7 +155,7 @@ public class ActRegistration extends FragmentActivity
     @Override
     public void onComplete() {
         btnRegist.setProgress(100);
-        Toast.makeText(VivaApp.getInstance(),
+        Toast.makeText(this,
                 R.string.label_validation_success_register, Toast.LENGTH_SHORT).show();
         finish();
     }
@@ -165,7 +164,7 @@ public class ActRegistration extends FragmentActivity
     public void onFailed() {
         btnRegist.setProgress(0);
         enableView();
-        Toast.makeText(VivaApp.getInstance(),
+        Toast.makeText(this,
                 R.string.label_validation_failed_register, Toast.LENGTH_SHORT).show();
     }
 
@@ -173,7 +172,7 @@ public class ActRegistration extends FragmentActivity
     public void onError() {
         btnRegist.setProgress(0);
         enableView();
-        Toast.makeText(VivaApp.getInstance(),
+        Toast.makeText(this,
                 R.string.label_error, Toast.LENGTH_SHORT).show();
     }
 

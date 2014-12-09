@@ -38,19 +38,19 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import id.co.viva.news.app.Constant;
+import id.co.viva.news.app.Global;
+import id.co.viva.news.app.R;
+import id.co.viva.news.app.activity.ActDetailHeadline;
+import id.co.viva.news.app.adapter.HeadlineAdapter;
 import id.co.viva.news.app.coachmark.CoachmarkBuilder;
 import id.co.viva.news.app.coachmark.CoachmarkView;
 import id.co.viva.news.app.component.GoogleMusicDicesDrawable;
 import id.co.viva.news.app.component.LoadMoreListView;
 import id.co.viva.news.app.interfaces.CoachmarkListener;
 import id.co.viva.news.app.interfaces.OnLoadMoreListener;
-import id.co.viva.news.app.services.Analytics;
-import id.co.viva.news.app.Constant;
-import id.co.viva.news.app.R;
-import id.co.viva.news.app.VivaApp;
-import id.co.viva.news.app.activity.ActDetailHeadline;
-import id.co.viva.news.app.adapter.HeadlineAdapter;
 import id.co.viva.news.app.model.Headline;
+import id.co.viva.news.app.services.Analytics;
 
 /**
  * Created by reza on 28/10/14.
@@ -82,7 +82,7 @@ public class HeadlineFragment extends Fragment implements
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        isInternetPresent = VivaApp.getInstance().getConnectionStatus().isConnectingToInternet();
+        isInternetPresent = Global.getInstance(getActivity()).getConnectionStatus().isConnectingToInternet();
     }
 
     @Override
@@ -121,7 +121,7 @@ public class HeadlineFragment extends Fragment implements
         rippleView.setVisibility(View.GONE);
         rippleView.setOnClickListener(this);
 
-        analytics = new Analytics();
+        analytics = new Analytics(getActivity());
         analytics.getAnalyticByATInternet(Constant.HEADLINE_PAGE);
         analytics.getAnalyticByGoogleAnalytic(Constant.HEADLINE_PAGE);
 
@@ -202,7 +202,7 @@ public class HeadlineFragment extends Fragment implements
                                     loading_layout.setVisibility(View.GONE);
                                     labelLoadData.setVisibility(View.GONE);
 
-                                    if(VivaApp.getInstance().getSharedPreferences(VivaApp.getInstance()).getBoolean(Constant.FIRST_INSTALL, true)) {
+                                    if(Global.getInstance(getActivity()).getSharedPreferences(getActivity()).getBoolean(Constant.FIRST_INSTALL, true)) {
                                         RelativeLayout relativeLayout = new RelativeLayout(getActivity());
                                         relativeLayout.setLayoutParams(new ViewGroup.LayoutParams(50, 50));
                                         ((RelativeLayout) coachmarkView).addView(relativeLayout);
@@ -227,7 +227,7 @@ public class HeadlineFragment extends Fragment implements
                                                 })
                                                 .build();
                                         showtips.show(getActivity());
-                                        VivaApp.getInstance().getSharedPreferences(VivaApp.getInstance()).
+                                        Global.getInstance(getActivity()).getSharedPreferences(getActivity()).
                                                 edit().putBoolean(Constant.FIRST_INSTALL, false).commit();
                                     }
                                 }
@@ -246,8 +246,8 @@ public class HeadlineFragment extends Fragment implements
                 @Override
                 public void onErrorResponse(VolleyError volleyError) {
                     try {
-                        if(VivaApp.getInstance().getRequestQueue().getCache().get(Constant.URL_HOMEPAGE) != null) {
-                            String cachedResponse = new String(VivaApp.getInstance().getRequestQueue().getCache().get(Constant.URL_HOMEPAGE).data);
+                        if(Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.URL_HOMEPAGE) != null) {
+                            String cachedResponse = new String(Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.URL_HOMEPAGE).data);
                             Log.i(Constant.TAG, "From Cached : " + cachedResponse);
                             JSONObject jsonObject = new JSONObject(cachedResponse);
                             jsonArrayResponses = jsonObject.getJSONArray(Constant.response);
@@ -300,13 +300,13 @@ public class HeadlineFragment extends Fragment implements
                     Constant.TIME_OUT,
                     0,
                     DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-            VivaApp.getInstance().getRequestQueue().getCache().invalidate(Constant.URL_HOMEPAGE, true);
-            VivaApp.getInstance().getRequestQueue().getCache().get(Constant.URL_HOMEPAGE);
-            VivaApp.getInstance().addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
+            Global.getInstance(getActivity()).getRequestQueue().getCache().invalidate(Constant.URL_HOMEPAGE, true);
+            Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.URL_HOMEPAGE);
+            Global.getInstance(getActivity()).addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
         } else {
             try {
-                if(VivaApp.getInstance().getRequestQueue().getCache().get(Constant.URL_HOMEPAGE) != null) {
-                    String cachedResponse = new String(VivaApp.getInstance().getRequestQueue().getCache().get(Constant.URL_HOMEPAGE).data);
+                if(Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.URL_HOMEPAGE) != null) {
+                    String cachedResponse = new String(Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.URL_HOMEPAGE).data);
                     Log.i(Constant.TAG, "From Cached : " + cachedResponse);
                     JSONObject jsonObject = new JSONObject(cachedResponse);
                     jsonArrayResponses = jsonObject.getJSONArray(Constant.response);
@@ -352,7 +352,7 @@ public class HeadlineFragment extends Fragment implements
             } catch (Exception e) {
                 e.getMessage();
             }
-            Toast.makeText(VivaApp.getInstance(), R.string.title_no_connection, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), R.string.title_no_connection, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -363,7 +363,7 @@ public class HeadlineFragment extends Fragment implements
             Log.i(Constant.TAG, "ID : " + headline.getId());
             Bundle bundle = new Bundle();
             bundle.putString("id", headline.getId());
-            Intent intent = new Intent(VivaApp.getInstance(), ActDetailHeadline.class);
+            Intent intent = new Intent(getActivity(), ActDetailHeadline.class);
             intent.putExtras(bundle);
             getActivity().startActivity(intent);
             getActivity().overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
@@ -423,7 +423,7 @@ public class HeadlineFragment extends Fragment implements
                                         labelLoadData.setVisibility(View.GONE);
                                         rippleView.setVisibility(View.GONE);
 
-                                        if(VivaApp.getInstance().getSharedPreferences(VivaApp.getInstance()).getBoolean(Constant.FIRST_INSTALL, true)) {
+                                        if(Global.getInstance(getActivity()).getSharedPreferences(getActivity()).getBoolean(Constant.FIRST_INSTALL, true)) {
                                             RelativeLayout relativeLayout = new RelativeLayout(getActivity());
                                             relativeLayout.setLayoutParams(new ViewGroup.LayoutParams(50, 50));
                                             ((RelativeLayout) coachmarkView).addView(relativeLayout);
@@ -448,7 +448,7 @@ public class HeadlineFragment extends Fragment implements
                                                     })
                                                     .build();
                                             showtips.show(getActivity());
-                                            VivaApp.getInstance().getSharedPreferences(VivaApp.getInstance()).
+                                            Global.getInstance(getActivity()).getSharedPreferences(getActivity()).
                                                     edit().putBoolean(Constant.FIRST_INSTALL, false).commit();
                                         }
                                     }
@@ -477,11 +477,11 @@ public class HeadlineFragment extends Fragment implements
                         Constant.TIME_OUT,
                         0,
                         DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-                VivaApp.getInstance().getRequestQueue().getCache().invalidate(Constant.URL_HOMEPAGE, true);
-                VivaApp.getInstance().getRequestQueue().getCache().get(Constant.URL_HOMEPAGE);
-                VivaApp.getInstance().addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
+                Global.getInstance(getActivity()).getRequestQueue().getCache().invalidate(Constant.URL_HOMEPAGE, true);
+                Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.URL_HOMEPAGE);
+                Global.getInstance(getActivity()).addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
             } else {
-                Toast.makeText(VivaApp.getInstance(), R.string.title_no_connection, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), R.string.title_no_connection, Toast.LENGTH_SHORT).show();
             }
         } else if(view.getId() == R.id.fab) {
             listView.setSelection(0);
@@ -537,7 +537,7 @@ public class HeadlineFragment extends Fragment implements
                 @Override
                 public void onErrorResponse(VolleyError volleyError) {
                     volleyError.getMessage();
-                    Toast.makeText(VivaApp.getInstance(), R.string.label_error, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), R.string.label_error, Toast.LENGTH_SHORT).show();
                 }
             });
             stringRequest.setShouldCache(true);
@@ -545,9 +545,9 @@ public class HeadlineFragment extends Fragment implements
                     Constant.TIME_OUT,
                     0,
                     DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-            VivaApp.getInstance().getRequestQueue().getCache().invalidate(Constant.URL_HOMEPAGE + data, true);
-            VivaApp.getInstance().getRequestQueue().getCache().get(Constant.URL_HOMEPAGE + data);
-            VivaApp.getInstance().addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
+            Global.getInstance(getActivity()).getRequestQueue().getCache().invalidate(Constant.URL_HOMEPAGE + data, true);
+            Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.URL_HOMEPAGE + data);
+            Global.getInstance(getActivity()).addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
         }
     }
 

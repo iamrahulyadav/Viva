@@ -19,8 +19,9 @@
         android:orientation="horizontal"
         android:layout_weight="1">
         <com.pkmmte.view.CircularImageView
-            android:layout_width="120dp"
-            android:layout_height="120dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginLeft="10dp"
             android:layout_gravity="center_vertical"
             android:background="@drawable/icon_profile"
             android:id="@+id/img_thumb_profile"/>
@@ -35,7 +36,6 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
             android:layout_gravity="center_vertical"
             android:orientation="vertical">
             <id.co.viva.news.app.component.BounvenoTextView

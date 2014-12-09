@@ -15,21 +15,31 @@ import android.widget.Toast;
 import com.dd.processbutton.iml.ActionProcessButton;
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+
 import id.co.viva.news.app.Constant;
+import id.co.viva.news.app.Global;
 import id.co.viva.news.app.R;
-import id.co.viva.news.app.VivaApp;
+import id.co.viva.news.app.adapter.CommentAdapter;
 import id.co.viva.news.app.interfaces.OnCompleteListener;
+import id.co.viva.news.app.interfaces.OnDoneListener;
+import id.co.viva.news.app.model.Comment;
 import id.co.viva.news.app.services.UserAccount;
 
 /**
  * Created by reza on 03/12/14.
  */
-public class ActComment extends FragmentActivity implements View.OnClickListener, OnCompleteListener {
+public class ActComment extends FragmentActivity implements View.OnClickListener,
+        OnCompleteListener, OnDoneListener {
 
     private String mImageUrl;
     private String mTitle;
     private String mIds;
     private TextView text_title;
+    private TextView text_label_comment;
     private ImageView image_content;
     private ActionProcessButton btnSubmit;
     private ListView listComment;
@@ -40,6 +50,8 @@ public class ActComment extends FragmentActivity implements View.OnClickListener
     private UserAccount userAccount;
     private LinearLayout mLayout;
     private boolean isInternetPresent = false;
+    private ArrayList<Comment> commentArrayList;
+    private CommentAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,10 +66,12 @@ public class ActComment extends FragmentActivity implements View.OnClickListener
 
         getStateUser();
 
-        isInternetPresent = VivaApp.getInstance().getConnectionStatus().isConnectingToInternet();
+        isInternetPresent = Global.getInstance(this).getConnectionStatus().isConnectingToInternet();
 
+        commentArrayList = new ArrayList<Comment>();
         mLayout = (LinearLayout)findViewById(R.id.background_label_comment);
         text_title = (TextView)findViewById(R.id.text_title_content_coment);
+        text_label_comment = (TextView)findViewById(R.id.text_label_comment);
         image_content = (ImageView)findViewById(R.id.img_thumb_content_comment);
         etComment = (EditText)findViewById(R.id.et_comment_user);
         listComment = (ListView)findViewById(R.id.list_comments);
@@ -74,7 +88,18 @@ public class ActComment extends FragmentActivity implements View.OnClickListener
         }
 
         if(mImageUrl.length() > 0) {
-            Picasso.with(VivaApp.getInstance()).load(mImageUrl).into(image_content);
+            Picasso.with(this).load(mImageUrl).into(image_content);
+        }
+
+        if(isInternetPresent) {
+            getCommentList();
+        }
+    }
+
+    private void getCommentList() {
+        if(isInternetPresent) {
+            userAccount = new UserAccount(this);
+            userAccount.getCommentList(fullname, mIds, this);
         }
     }
 
@@ -117,10 +142,10 @@ public class ActComment extends FragmentActivity implements View.OnClickListener
     }
 
     private void getStateUser() {
-        VivaApp.getInstance().getDefaultEditor();
-        fullname = VivaApp.getInstance().getSharedPreferences(VivaApp.getInstance())
+        Global.getInstance(this).getDefaultEditor();
+        fullname = Global.getInstance(this).getSharedPreferences(this)
                 .getString(Constant.LOGIN_STATES_FULLNAME, "");
-        email = VivaApp.getInstance().getSharedPreferences(VivaApp.getInstance())
+        email = Global.getInstance(this).getSharedPreferences(this)
                 .getString(Constant.LOGIN_STATES_EMAIL, "");
     }
 
@@ -129,12 +154,12 @@ public class ActComment extends FragmentActivity implements View.OnClickListener
         if(view.getId() == R.id.btn_send_comment) {
             String comments = etComment.getText().toString();
             if((fullname.length() == 0 && email.length() == 0) || (fullname.length() == 0) || (email.length() == 0)) {
-                Toast.makeText(VivaApp.getInstance(), R.string.label_validation_for_comment, Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.label_validation_for_comment, Toast.LENGTH_SHORT).show();
             } else if(comments.length() < 1) {
-                Toast.makeText(VivaApp.getInstance(), R.string.label_validation_for_comment_length, Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.label_validation_for_comment_length, Toast.LENGTH_SHORT).show();
             } else {
                 if(isInternetPresent) {
-                    userAccount = new UserAccount(mIds, email, fullname, comments, "Android", this);
+                    userAccount = new UserAccount(mIds, email, fullname, comments, "Android", this, ActComment.this);
                     disableView();
                     btnSubmit.setProgress(1);
                     userAccount.sendComment();
@@ -142,7 +167,7 @@ public class ActComment extends FragmentActivity implements View.OnClickListener
             }
         } else if(view.getId() == R.id.et_comment_user) {
             if(fullname.length() == 0 && email.length() == 0) {
-                Toast.makeText(VivaApp.getInstance(), R.string.label_validation_for_comment, Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.label_validation_for_comment, Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -186,6 +211,47 @@ public class ActComment extends FragmentActivity implements View.OnClickListener
         btnSubmit.setProgress(0);
         enableView();
         Toast.makeText(this, R.string.label_error_post_comment, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onCompleteListComment(JSONObject jsonObject) {
+        try {
+            JSONArray jsonArrayResponses = jsonObject.getJSONArray(Constant.response);
+            if (jsonArrayResponses != null) {
+                for(int i=0; i<jsonArrayResponses.length(); i++) {
+                    JSONObject response = jsonArrayResponses.getJSONObject(i);
+                    String id = response.getString(Constant.id);
+                    String article_id = response.getString(Constant.article_id);
+                    String name = response.getString(Constant.name);
+                    String parent_id = response.getString(Constant.parent_id);
+                    String comment_text = response.getString(Constant.comment_text);
+                    String app_id = response.getString(Constant.app_id);
+                    String submitted_date = response.getString(Constant.submitted_date);
+                    String status = response.getString(Constant.status);
+                    commentArrayList.add(new Comment(id, article_id, name, parent_id, comment_text,
+                            app_id, submitted_date, status));
+                }
+            }
+            if (commentArrayList.size() > 0) {
+                text_label_comment.setText(commentArrayList.size() + " " + getResources().getString(R.string.label_amount_comments));
+                adapter = new CommentAdapter(this, commentArrayList);
+                listComment.setAdapter(adapter);
+                Constant.setListViewHeightBasedOnChildren(listComment);
+                adapter.notifyDataSetChanged();
+            }
+        } catch (Exception e) {
+            e.getMessage();
+        }
+    }
+
+    @Override
+    public void onFailedListComment() {
+
+    }
+
+    @Override
+    public void onErrorListComment() {
+
     }
 
 }

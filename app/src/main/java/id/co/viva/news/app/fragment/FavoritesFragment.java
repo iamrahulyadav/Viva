@@ -22,8 +22,8 @@ import com.nhaarman.listviewanimations.itemmanipulation.swipedismiss.undo.Simple
 import java.util.ArrayList;
 
 import id.co.viva.news.app.Constant;
+import id.co.viva.news.app.Global;
 import id.co.viva.news.app.R;
-import id.co.viva.news.app.VivaApp;
 import id.co.viva.news.app.activity.ActDetailFavorite;
 import id.co.viva.news.app.adapter.FavoriteAdapter;
 import id.co.viva.news.app.model.Favorites;
@@ -60,17 +60,17 @@ public class FavoritesFragment extends Fragment implements AdapterView.OnItemCli
         listFavorite = (DynamicListView) rootView.findViewById(R.id.list_favorites);
         listFavorite.setOnItemClickListener(this);
 
-        VivaApp.getInstance().getSharedPreferences(VivaApp.getInstance());
-        VivaApp.getInstance().getDefaultEditor();
+        Global.getInstance(getActivity()).getSharedPreferences(getActivity());
+        Global.getInstance(getActivity()).getDefaultEditor();
 
-        favoriteList = VivaApp.getInstance().getSharedPreferences(VivaApp.getInstance())
+        favoriteList = Global.getInstance(getActivity()).getSharedPreferences(getActivity())
                 .getString(Constant.FAVORITES_LIST, "");
-        favoriteListSize = VivaApp.getInstance().getSharedPreferences(VivaApp.getInstance())
+        favoriteListSize = Global.getInstance(getActivity()).getSharedPreferences(getActivity())
                 .getInt(Constant.FAVORITES_LIST_SIZE, 0);
 
-        favoritesArrayList = VivaApp.getInstance().getInstanceGson().
-                fromJson(favoriteList, VivaApp.getInstance().getType());
-        favoriteAdapter = new FavoriteAdapter(VivaApp.getInstance(), favoritesArrayList);
+        favoritesArrayList = Global.getInstance(getActivity()).getInstanceGson().
+                fromJson(favoriteList, Global.getInstance(getActivity()).getType());
+        favoriteAdapter = new FavoriteAdapter(getActivity(), favoritesArrayList);
 
         if(favoriteListSize > 0) {
             for(int i=0; i<favoriteListSize; i++) {
@@ -79,19 +79,19 @@ public class FavoritesFragment extends Fragment implements AdapterView.OnItemCli
         } else {
             textNoResult.setVisibility(View.VISIBLE);
         }
-        VivaApp.getInstance().getDefaultEditor().commit();
+        Global.getInstance(getActivity()).getDefaultEditor().commit();
 
-        simpleSwipeUndoAdapter = new SimpleSwipeUndoAdapter(favoriteAdapter, VivaApp.getInstance(),
+        simpleSwipeUndoAdapter = new SimpleSwipeUndoAdapter(favoriteAdapter, getActivity(),
                 new OnDismissCallback() {
                     @Override
                     public void onDismiss(@NonNull ViewGroup viewGroup, @NonNull int[] reverseSortedPositions) {
                         for (int position : reverseSortedPositions) {
                             favoriteAdapter.removeItem(position);
                             favoriteAdapter.notifyDataSetChanged();
-                            String favorite = VivaApp.getInstance().getInstanceGson().toJson(favoritesArrayList);
-                            VivaApp.getInstance().getDefaultEditor().putString(Constant.FAVORITES_LIST, favorite);
-                            VivaApp.getInstance().getDefaultEditor().putInt(Constant.FAVORITES_LIST_SIZE, favoritesArrayList.size());
-                            VivaApp.getInstance().getDefaultEditor().commit();
+                            String favorite = Global.getInstance(getActivity()).getInstanceGson().toJson(favoritesArrayList);
+                            Global.getInstance(getActivity()).getDefaultEditor().putString(Constant.FAVORITES_LIST, favorite);
+                            Global.getInstance(getActivity()).getDefaultEditor().putInt(Constant.FAVORITES_LIST_SIZE, favoritesArrayList.size());
+                            Global.getInstance(getActivity()).getDefaultEditor().commit();
                             if(favoritesArrayList.size() <= 0) {
                                 textNoResult.setVisibility(View.VISIBLE);
                             }
@@ -123,7 +123,7 @@ public class FavoritesFragment extends Fragment implements AdapterView.OnItemCli
             bundle.putString("date_publish", favorites.getDate_publish());
             bundle.putString("content", favorites.getContent());
             bundle.putString("reporter_name", favorites.getReporter_name());
-            Intent intent = new Intent(VivaApp.getInstance(), ActDetailFavorite.class);
+            Intent intent = new Intent(getActivity(), ActDetailFavorite.class);
             intent.putExtras(bundle);
             getActivity().startActivity(intent);
             getActivity().overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
