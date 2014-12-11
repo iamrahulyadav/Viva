@@ -13,9 +13,10 @@ public class Constant {
 
     public static final int TIME_OUT = 3000;
     public static final int TIME_OUT_LONG = 6000;
+    public static final int TIME_OUT_REGISTRATION = 15000;
+    public static final int PROFILE_PIC_SIZE = 400;
     public final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     public final static int NUMBER_OF_TOP_LIST_ITEMS = 4;
-    public static final int PROFILE_PIC_SIZE = 400;
 
     public static final String fragment_headline = "class id.co.viva.news.app.fragment.HeadlineFragment";
     public static final String FIRST_INSTALL = "first_install";
@@ -52,7 +53,7 @@ public class Constant {
     public static String NEW_KANAL = BASE_URL_NEW + "kanal/";
     public static String NEW_DETAIL = BASE_URL_NEW + "detail/";
     public static String NEW_LOGIN = BASE_URL_NEW + "login";
-    public static String NEW_REGISTER = BASE_URL_NEW + "register";
+    public static String NEW_REGISTER = BASE_URL_NEW + "register2";
     public static String NEW_COMMENTS = BASE_URL_NEW + "sendcomment/";
     public static String NEW_RATES = BASE_URL_NEW + "sendrate/";
     public static String NEW_LIST_COMMENT = BASE_URL_NEW + "commentlist";
@@ -99,6 +100,18 @@ public class Constant {
     public static final String AT_SUB_DOMAIN = "logw351";
     public static final String AT_SITE_ID = "551156";
     public static final String AT_SUB_SITE = "1";
+
+    public static final String PATH_CLIENT_ID = "b4ae86c36dc20232e66277b8c320778a5d34be09";
+    public static final String PATH_SECRET_ID = "d21eceb45c4a57ad1fd94c53a3e408c3bd89b32f";
+    public static final String PATH_AUTHENTICATE_URL = "https://partner.path.com/oauth2/authenticate";
+    public static final String PATH_ACCESS_TOKEN_URL = "https://partner.path.com/oauth2/access_token";
+    public static final String PATH_USER_INFO_URL = "https://partner.path.com/1/user/self";
+    public static final String CONFIG_PATH_CLIENT_ID = "path_client_id";
+    public static final String CONFIG_PATH_CLIENT_SECRET = "path_client_secret";
+    public static final String CONFIG_PATH_RESPONSE_TYPE = "path_response_type";
+    public static final String CONFIG_PATH_REDIRECT_URL = "path_redirect_url";
+    public static final String ATTRIBUTE_PATH_ACCESS_TOKEN = "access_token";
+    public static final String ATTRIBUTE_PATH_USER_ID = "user_id";
 
     public static final String HEADLINE_PAGE = "HEADLINE_PAGE";
     public static final String HEADLINE_DETAIL_PAGE = "HEADLINE_DETAIL_PAGE_";

@@ -32,8 +32,9 @@
     <string name="label_validation_failed_register">Registrasi Gagal!</string>
     <string name="label_registration">FORM REGISTRASI</string>
     <string name="label_validation_failed_login">Anda belum terdaftar! Silahkan melakukan registrasi.</string>
-
     <string name="label_successful_gplus_connected">Berhasil terkoneksi dengan Google Plus!</string>
+
+    <string name="facebook_app_id">1513095598971069</string>
 
     <string name="label_gender_male">Laki-laki</string>
     <string name="label_gender_female">Perempuan</string>
@@ -87,7 +88,7 @@
     <string name="label_logout">Logout</string>
     <string name="label_logout_failed">Gagal Logout!</string>
     <string name="label_logout_complete">Berhasil Logout!</string>
-    <string name="label_amount_comments">Komentar</string>
+    <string name="label_amount_comments">KOMENTAR</string>
     <string name="label_hint_comment">Komentar Anda</string>
     <string name="label_validation_for_comment">Anda harus login terlebih dahulu!</string>
     <string name="label_validation_for_comment_length">Komentar anda kosong!</string>

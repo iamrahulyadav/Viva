@@ -2,6 +2,7 @@ package id.co.viva.news.app.activity;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -16,6 +17,7 @@ import com.doomonafireball.betterpickers.datepicker.DatePickerDialogFragment;
 
 import java.util.ArrayList;
 
+import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.interfaces.OnCompleteListener;
 import id.co.viva.news.app.services.UserAccount;
@@ -128,7 +130,7 @@ public class ActRegistration extends FragmentActivity
             } else if(city.length() < 3) {
                 etCity.setError(getResources().getString(R.string.label_registrasi_city_validation));
             } else {
-                userAccount = new UserAccount(email, password, username, address,
+                userAccount = new UserAccount(username, email, password, address,
                         city, genderSelected, birthdate, phone, this, ActRegistration.this);
                 disableView();
                 btnRegist.setProgress(1);

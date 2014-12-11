@@ -2,6 +2,7 @@ package id.co.viva.news.app.activity;
 
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -23,17 +24,14 @@ import java.util.ArrayList;
 import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.Global;
 import id.co.viva.news.app.R;
-import id.co.viva.news.app.VivaApp;
 import id.co.viva.news.app.adapter.NavigationAdapter;
 import id.co.viva.news.app.fragment.AboutFragment;
 import id.co.viva.news.app.fragment.BolaFragment;
 import id.co.viva.news.app.fragment.FavoritesFragment;
 import id.co.viva.news.app.fragment.HeadlineFragment;
-import id.co.viva.news.app.fragment.LoginFragment;
 import id.co.viva.news.app.fragment.TerbaruFragment;
 import id.co.viva.news.app.fragment.LifeFragment;
 import id.co.viva.news.app.fragment.NewsFragment;
-import id.co.viva.news.app.fragment.UserProfileFragment;
 import id.co.viva.news.app.interfaces.Item;
 import id.co.viva.news.app.model.NavigationItem;
 import id.co.viva.news.app.model.NavigationProfileItem;
@@ -118,9 +116,13 @@ public class ActBase extends FragmentActivity {
         switch (position) {
             case 0:
                 if(fullname.length() > 0 && email.length() > 0) {
-                    fragment = new UserProfileFragment();
+                    Intent intent = new Intent(this, ActUserProfile.class);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
                 } else {
-                    fragment = new LoginFragment();
+                    Intent intent = new Intent(this, ActLogin.class);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
                 }
                 break;
             case 1:

@@ -1,6 +1,7 @@
 package id.co.viva.news.app.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,7 +50,6 @@ public class NavigationAdapter extends ArrayAdapter<Item> {
     public View getView(int position, View view, ViewGroup viewGroup) {
         View v = view;
         Item item = navItems.get(position);
-        String photourl;
         if(item != null) {
             if(item.isSection()) {
                 NavigationSectionItem navigationSectionItem = (NavigationSectionItem) item;
@@ -69,14 +69,9 @@ public class NavigationAdapter extends ArrayAdapter<Item> {
                 ImageView thumb = (ImageView) v.findViewById(R.id.img_profile);
                 username.setText(navigationProfileItem.getUsername());
                 email.setText(navigationProfileItem.getEmail());
-
-                photourl = navigationProfileItem.getImgProfile();
-                if(photourl != null) {
-                    if(photourl.length() > 0) {
-                        photourl = photourl.substring(0,
-                                photourl.length() - 2)
-                                + Constant.PROFILE_PIC_SIZE;
-                        Picasso.with(context).load(photourl).into(thumb);
+                if(navigationProfileItem.getImgProfile() != null) {
+                    if(navigationProfileItem.getImgProfile().length() > 0) {
+                        Picasso.with(context).load(navigationProfileItem.getImgProfile()).into(thumb);
                     }
                 }
             } else {
