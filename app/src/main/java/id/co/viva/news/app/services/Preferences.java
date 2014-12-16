@@ -16,9 +16,7 @@ public class Preferences {
     private final static String TAG = "VIVA-PREFS";
 
     public static final int LOGIN_STATUS_OUT = 0;
-    public static final int LOGIN_STATUS_IN = 1;
     public static final int LOGIN_TYPE_GUEST = 0;
-    public static final int LOGIN_TYPE_VIVA = 1;
 
     private static final String PROPERTY_GCM_CLIENT_ID = "gcm_client_id";
     private static final String PROPERTY_GCM_REG_ID = "gcm_reg_id";

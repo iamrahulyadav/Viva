@@ -30,6 +30,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import id.co.viva.news.app.Global;
+import id.co.viva.news.app.activity.ActDetailContentDefault;
 import id.co.viva.news.app.services.Analytics;
 import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.R;
@@ -93,12 +94,24 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
                     FeaturedLife featuredLife = featuredNewsArrayList.get(position);
                     Log.i(Constant.TAG, "ID : " + featuredLife.getChannel_id());
                     Bundle bundle = new Bundle();
-                    bundle.putString("id", featuredLife.getChannel_id());
-                    bundle.putString("channel_title", featuredLife.getChannel_title());
-                    Intent intent = new Intent(getActivity(), ActDetailChannelLife.class);
-                    intent.putExtras(bundle);
-                    getActivity().startActivity(intent);
-                    getActivity().overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+                    int lastIndex = featuredNewsArrayList.size() - 1;
+                    if(position == lastIndex) {
+                        Intent intent = new Intent(getActivity(), ActDetailContentDefault.class);
+                        bundle.putString("id", featuredLife.getId());
+                        bundle.putString("kanal", featuredLife.getKanal());
+                        bundle.putString("shared_url", featuredLife.getUrl());
+                        bundle.putString("type", "editor_choice");
+                        intent.putExtras(bundle);
+                        getActivity().startActivity(intent);
+                        getActivity().overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+                    } else {
+                        Intent intent = new Intent(getActivity(), ActDetailChannelLife.class);
+                        bundle.putString("id", featuredLife.getChannel_id());
+                        bundle.putString("channel_title", featuredLife.getChannel_title());
+                        intent.putExtras(bundle);
+                        getActivity().startActivity(intent);
+                        getActivity().overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+                    }
                 }
             }
         });
@@ -106,7 +119,7 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
         featuredNewsArrayList = new ArrayList<FeaturedLife>();
 
         if(isInternetPresent) {
-            StringRequest request = new StringRequest(Request.Method.GET, Constant.URL_KANAL_LIFE,
+            StringRequest request = new StringRequest(Request.Method.GET, Constant.NEW_LIFE,
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String s) {
@@ -127,8 +140,9 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
                                             String title = field.getString("title");
                                             String kanal = field.getString("kanal");
                                             String image_url = field.getString("image_url");
+                                            String url = field.getString("url");
                                             featuredNewsArrayList.add(new FeaturedLife(channel_title, id,
-                                                    channel_id, level, title, kanal, image_url));
+                                                    channel_id, level, title, kanal, image_url, url));
                                             Log.i(Constant.TAG, "Channel Title : " + featuredNewsArrayList.get(i).getChannel_title());
                                         }
                                     }
@@ -160,14 +174,14 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
                     Constant.TIME_OUT,
                     0,
                     DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-            Global.getInstance(getActivity()).getRequestQueue().getCache().invalidate(Constant.URL_KANAL_LIFE, true);
-            Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.URL_KANAL_LIFE);
+            Global.getInstance(getActivity()).getRequestQueue().getCache().invalidate(Constant.NEW_LIFE, true);
+            Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_LIFE);
             Global.getInstance(getActivity()).addToRequestQueue(request, Constant.JSON_REQUEST);
         } else {
             Toast.makeText(getActivity(), R.string.title_no_connection, Toast.LENGTH_SHORT).show();
-            if(Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.URL_KANAL_LIFE) != null) {
+            if(Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_LIFE) != null) {
                 cachedResponse = new String(Global.getInstance(getActivity()).
-                        getRequestQueue().getCache().get(Constant.URL_KANAL_LIFE).data);
+                        getRequestQueue().getCache().get(Constant.NEW_LIFE).data);
                 Log.i(Constant.TAG, "KANAL LIFE CACHED : " + cachedResponse);
                 try {
                     JSONObject jsonObject = new JSONObject(cachedResponse);
@@ -185,8 +199,9 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
                                 String title = field.getString("title");
                                 String kanal = field.getString("kanal");
                                 String image_url = field.getString("image_url");
+                                String url = field.getString("url");
                                 featuredNewsArrayList.add(new FeaturedLife(channel_title, id,
-                                        channel_id, level, title, kanal, image_url));
+                                        channel_id, level, title, kanal, image_url, url));
                                 Log.i(Constant.TAG, "Channel Title : " + featuredNewsArrayList.get(i).getChannel_title());
                             }
                         }
@@ -219,7 +234,7 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
             if(isInternetPresent) {
                 rippleView.setVisibility(View.GONE);
                 loading_layout.setVisibility(View.VISIBLE);
-                StringRequest request = new StringRequest(Request.Method.GET, Constant.URL_KANAL_LIFE,
+                StringRequest request = new StringRequest(Request.Method.GET, Constant.NEW_LIFE,
                         new Response.Listener<String>() {
                             @Override
                             public void onResponse(String s) {
@@ -240,8 +255,9 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
                                                 String title = field.getString("title");
                                                 String kanal = field.getString("kanal");
                                                 String image_url = field.getString("image_url");
+                                                String url = field.getString("url");
                                                 featuredNewsArrayList.add(new FeaturedLife(channel_title, id,
-                                                        channel_id, level, title, kanal, image_url));
+                                                        channel_id, level, title, kanal, image_url, url));
                                                 Log.i(Constant.TAG, "Channel Title : " + featuredNewsArrayList.get(i).getChannel_title());
                                             }
                                         }
@@ -273,8 +289,8 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
                         Constant.TIME_OUT,
                         0,
                         DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-                Global.getInstance(getActivity()).getRequestQueue().getCache().invalidate(Constant.URL_KANAL_LIFE, true);
-                Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.URL_KANAL_LIFE);
+                Global.getInstance(getActivity()).getRequestQueue().getCache().invalidate(Constant.NEW_LIFE, true);
+                Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_LIFE);
                 Global.getInstance(getActivity()).addToRequestQueue(request, Constant.JSON_REQUEST);
             } else {
                 Toast.makeText(getActivity(), R.string.title_no_connection, Toast.LENGTH_SHORT).show();

@@ -26,6 +26,7 @@
     <string name="label_swipe_delete">Geser Untuk Menghapus</string>
     <string name="label_validation_email">Email yang anda masukkan salah!</string>
     <string name="label_validation_password_length">Password anda harus lebih dari 6 karakter!</string>
+    <string name="label_validation_password_length_retype">Password anda tidak cocok!</string>
     <string name="label_validation_both">Kombinasi email dan password anda salah!</string>
     <string name="label_validation_success_login">Login Berhasil!</string>
     <string name="label_validation_success_register">Registrasi Berhasil!</string>
@@ -42,7 +43,7 @@
     <string name="label_registrasi_username">Username</string>
     <string name="label_registrasi_password">Password</string>
     <string name="label_registrasi_email">Email</string>
-    <string name="label_registrasi_address">Alamat</string>
+    <string name="label_registrasi_password_retype">ReType Password</string>
     <string name="label_registrasi_city">Kota</string>
     <string name="label_registrasi_gender">Jenis Kelamin</string>
     <string name="label_registrasi_birthdate">Tanggal Lahir</string>
@@ -84,7 +85,13 @@
     <string name="label_hint_password">Password</string>
     <string name="label_login">Login</string>
     <string name="label_register">Register</string>
+    <string name="label_forgot_password_caps">FORGOT PASSWORD</string>
     <string name="label_forgot_password"><u>Forgot Password</u></string>
+    <string name="label_please_input_email">Masukkan Email Anda :</string>
+    <string name="label_save_data_profile">Simpan</string>
+    <string name="label_hint_picker_date">Double tap untuk memilih tanggal</string>
+    <string name="label_failed_save_data_profile">Gagal menyimpan data!</string>
+    <string name="label_success_save_data_profile">Data berhasil disimpan!</string>
     <string name="label_logout">Logout</string>
     <string name="label_logout_failed">Gagal Logout!</string>
     <string name="label_logout_complete">Berhasil Logout!</string>
@@ -95,8 +102,12 @@
     <string name="label_success_post_comment">Komentar berhasil dikirim!</string>
     <string name="label_failed_post_comment">Komentar gagal dikirim!</string>
     <string name="label_error_post_comment">Terjadi kesalahan!</string>
+    <string name="label_failed_get_path_profile">Gagal mendapatkan info profil!</string>
+    <string name="label_failed_send_email">Gagal mengirim email!</string>
     <string name="label_success_post_rate">Artikel berhasil di rate!</string>
     <string name="label_failed_post_rate">Rate artikel gagal!</string>
+    <string name="label_send_email">Kirim</string>
+    <string name="label_success_send_email">Email telah berhasil dikirim. Silahkan cek email anda untuk melihat password.</string>
 
     <string name="title_copyright">Copyright © 2008 - 2014 PT. Viva Media Baru</string>
     <string name="wording_about_eng">VIVA.co.id mobile application for Android devices so users can enjoy a variety of quality contents of VIVA.co.id with ease of navigation and a wealth of features. Contents in the form of texts, photos and videos are continuously updated and presented creatively to enrich the user experience.</string>

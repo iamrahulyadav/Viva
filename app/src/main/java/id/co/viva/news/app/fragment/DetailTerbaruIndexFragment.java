@@ -157,9 +157,9 @@ public class DetailTerbaruIndexFragment extends Fragment implements View.OnClick
         ivThumbDetailNews.setFocusableInTouchMode(true);
         ivThumbDetailNews.requestFocus();
 
-        if(Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.URL_DETAIL + id) != null) {
+        if(Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + id) != null) {
             cachedResponse = new String(Global.getInstance(getActivity()).
-                    getRequestQueue().getCache().get(Constant.URL_DETAIL + id).data);
+                    getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + id).data);
             Log.i(Constant.TAG, "TERBARU DETAIL CACHED : " + cachedResponse);
             try {
                 JSONObject jsonObject = new JSONObject(cachedResponse);
@@ -229,7 +229,7 @@ public class DetailTerbaruIndexFragment extends Fragment implements View.OnClick
             }
         } else {
             if(isInternetPresent) {
-                StringRequest request = new StringRequest(Request.Method.GET, Constant.URL_DETAIL + id,
+                StringRequest request = new StringRequest(Request.Method.GET, Constant.NEW_DETAIL + "/id/" + id,
                         new Response.Listener<String>() {
                             @Override
                             public void onResponse(String volleyResponse) {
@@ -307,9 +307,9 @@ public class DetailTerbaruIndexFragment extends Fragment implements View.OnClick
                             public void onErrorResponse(VolleyError volleyError) {
                                 volleyError.getMessage();
 
-                                if(Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.URL_DETAIL + id) != null) {
+                                if(Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + id) != null) {
                                     cachedResponse = new String(Global.getInstance(getActivity()).
-                                            getRequestQueue().getCache().get(Constant.URL_DETAIL + id).data);
+                                            getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + id).data);
                                     Log.i(Constant.TAG, "TERBARU DETAIL CACHED : " + cachedResponse);
                                     try {
                                         JSONObject jsonObject = new JSONObject(cachedResponse);
@@ -388,8 +388,8 @@ public class DetailTerbaruIndexFragment extends Fragment implements View.OnClick
                         Constant.TIME_OUT,
                         0,
                         DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-                Global.getInstance(getActivity()).getRequestQueue().getCache().invalidate(Constant.URL_DETAIL + id, true);
-                Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.URL_DETAIL + id);
+                Global.getInstance(getActivity()).getRequestQueue().getCache().invalidate(Constant.NEW_DETAIL + "/id/" + id, true);
+                Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + id);
                 Global.getInstance(getActivity()).addToRequestQueue(request, Constant.JSON_REQUEST);
             } else {
                 Toast.makeText(getActivity(), R.string.title_no_connection, Toast.LENGTH_SHORT).show();
@@ -483,7 +483,7 @@ public class DetailTerbaruIndexFragment extends Fragment implements View.OnClick
             if(isInternetPresent) {
                 rippleView.setVisibility(View.GONE);
                 loading_layout.setVisibility(View.VISIBLE);
-                StringRequest request = new StringRequest(Request.Method.GET, Constant.URL_DETAIL + id,
+                StringRequest request = new StringRequest(Request.Method.GET, Constant.NEW_DETAIL + "/id/" + id,
                         new Response.Listener<String>() {
                             @Override
                             public void onResponse(String volleyResponse) {
@@ -569,8 +569,8 @@ public class DetailTerbaruIndexFragment extends Fragment implements View.OnClick
                         Constant.TIME_OUT,
                         0,
                         DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-                Global.getInstance(getActivity()).getRequestQueue().getCache().invalidate(Constant.URL_DETAIL + id, true);
-                Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.URL_DETAIL + id);
+                Global.getInstance(getActivity()).getRequestQueue().getCache().invalidate(Constant.NEW_DETAIL + "/id/" + id, true);
+                Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + id);
                 Global.getInstance(getActivity()).addToRequestQueue(request, Constant.JSON_REQUEST);
             } else {
                 Toast.makeText(getActivity(), R.string.title_no_connection, Toast.LENGTH_SHORT).show();

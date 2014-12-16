@@ -104,6 +104,9 @@ public class ActDetailContentDefault extends FragmentActivity
             if(typeFrom.equalsIgnoreCase("search")) {
                 analytics.getAnalyticByATInternet(Constant.FROM_SEARCH_RESULT_DETAIL_CONTENT + fromkanal.toUpperCase());
                 analytics.getAnalyticByGoogleAnalytic(Constant.FROM_SEARCH_RESULT_DETAIL_CONTENT + fromkanal.toUpperCase());
+            } else if(typeFrom.equalsIgnoreCase("editor_choice")) {
+                analytics.getAnalyticByATInternet(Constant.FROM_EDITOR_CHOICE + "EDITOR_CHOICE");
+                analytics.getAnalyticByGoogleAnalytic(Constant.FROM_EDITOR_CHOICE + "EDITOR_CHOICE");
             }
         } else {
             analytics.getAnalyticByATInternet(Constant.FROM_RELATED_ARTICLE_DETAIL_CONTENT + "RELATED_ARTICLE");
@@ -156,9 +159,9 @@ public class ActDetailContentDefault extends FragmentActivity
         ivThumbDetail.setFocusableInTouchMode(true);
         ivThumbDetail.requestFocus();
 
-        if(Global.getInstance(this).getRequestQueue().getCache().get(Constant.URL_DETAIL + id) != null) {
+        if(Global.getInstance(this).getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + id) != null) {
             cachedResponse = new String(Global.getInstance(this).
-                    getRequestQueue().getCache().get(Constant.URL_DETAIL + id).data);
+                    getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + id).data);
             Log.i(Constant.TAG, "CONTENT DETAIL CACHED : " + cachedResponse);
             try {
                 JSONObject jsonObject = new JSONObject(cachedResponse);
@@ -240,7 +243,7 @@ public class ActDetailContentDefault extends FragmentActivity
             }
         } else {
             if(isInternetPresent) {
-                StringRequest request = new StringRequest(Request.Method.GET, Constant.URL_DETAIL + id,
+                StringRequest request = new StringRequest(Request.Method.GET, Constant.NEW_DETAIL + "/id/" + id,
                         new Response.Listener<String>() {
                             @Override
                             public void onResponse(String volleyResponse) {
@@ -337,8 +340,8 @@ public class ActDetailContentDefault extends FragmentActivity
                         Constant.TIME_OUT,
                         0,
                         DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-                Global.getInstance(this).getRequestQueue().getCache().invalidate(Constant.URL_DETAIL + id, true);
-                Global.getInstance(this).getRequestQueue().getCache().get(Constant.URL_DETAIL + id);
+                Global.getInstance(this).getRequestQueue().getCache().invalidate(Constant.NEW_DETAIL + "/id/" + id, true);
+                Global.getInstance(this).getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + id);
                 Global.getInstance(this).addToRequestQueue(request, Constant.JSON_REQUEST);
             } else {
                 Toast.makeText(this, R.string.title_no_connection, Toast.LENGTH_SHORT).show();

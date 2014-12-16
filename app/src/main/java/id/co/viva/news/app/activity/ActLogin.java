@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.MenuItem;
@@ -29,6 +30,9 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -251,7 +255,8 @@ public class ActLogin extends FragmentActivity implements OnCompleteListener, On
                 ex.printStackTrace();
             }
         } else if(view.getId() == R.id.tv_forgot_password) {
-
+            Intent intent = new Intent(this, ActForgotPassword.class);
+            startActivity(intent);
         }
     }
 
@@ -296,28 +301,46 @@ public class ActLogin extends FragmentActivity implements OnCompleteListener, On
     }
 
     @Override
-    public void onComplete() {
+    public void onComplete(String message) {
         btnSign.setProgress(100);
         Toast.makeText(this,
-                R.string.label_validation_success_login, Toast.LENGTH_SHORT).show();
-        refreshContent();
+                message, Toast.LENGTH_SHORT).show();
+        Runnable r = new Runnable() {
+            @Override
+            public void run() {
+                refreshContent();
+            }
+        };
+        Handler h = new Handler();
+        h.postDelayed(r, 1000);
     }
 
     @Override
-    public void onFailed() {
-        btnSign.setProgress(0);
-        enableWhenPressed();
-        Toast.makeText(this,
-                R.string.label_validation_failed_login,
-                Toast.LENGTH_SHORT).show();
+    public void onDelay(String message) {
+        btnSign.setProgress(100);
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+        Runnable r = new Runnable() {
+            @Override
+            public void run() {
+                refreshContent();
+            }
+        };
+        Handler h = new Handler();
+        h.postDelayed(r, 1000);
     }
 
     @Override
-    public void onError() {
+    public void onFailed(String message) {
         btnSign.setProgress(0);
         enableWhenPressed();
-        Toast.makeText(this,
-                R.string.label_error, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onError(String message) {
+        btnSign.setProgress(0);
+        enableWhenPressed();
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -353,7 +376,7 @@ public class ActLogin extends FragmentActivity implements OnCompleteListener, On
                 personPhotoUrl = personPhotoUrl.substring(0,
                         personPhotoUrl.length() - 2)
                         + Constant.PROFILE_PIC_SIZE;
-                userAccount.saveLoginStatesGPlus(email, personName, personPhotoUrl);
+                userAccount.saveLoginStatesSocmed(email, personName, personPhotoUrl);
             }
         } catch (Exception e) {
             e.getMessage();
@@ -410,7 +433,7 @@ public class ActLogin extends FragmentActivity implements OnCompleteListener, On
 
     @Override
     public void onErrorGetAttributes(String error) {
-        Log.e(Constant.TAG, error);
+
     }
 
     private void startRequestPathUserInfo() {
@@ -419,13 +442,35 @@ public class ActLogin extends FragmentActivity implements OnCompleteListener, On
                     new com.android.volley.Response.Listener<String>() {
                         @Override
                         public void onResponse(String s) {
-                            Log.i(Constant.TAG, "Response Path User : " + s);
+                            Log.i(Constant.TAG, "Response Path User Info : " + s);
+                            try {
+                                JSONObject json = new JSONObject(s);
+                                String type = json.getString("type");
+                                JSONObject json_user = json.getJSONObject("user");
+                                String user_name = json_user.getString("name");
+                                String email = json_user.getString("email");
+                                String user_photo = json_user.getString("photo");
+                                JSONObject jsonPhoto = new JSONObject(user_photo);
+                                JSONObject sizeMedium = jsonPhoto.getJSONObject("medium");
+                                String photoUrl = sizeMedium.getString("url");
+                                if((type.equals("OK") || type.equals("CREATED") || type.equals("ACCEPTED"))) {
+                                    userAccount = new UserAccount(ActLogin.this);
+                                    userAccount.saveLoginStatesSocmed(email, user_name, photoUrl);
+                                    Log.i(Constant.TAG, user_name + " " + email+ " " + photoUrl);
+                                    refreshContent();
+                                } else {
+                                    Toast.makeText(ActLogin.this, getResources().getString(R.string.label_error_post_comment), Toast.LENGTH_SHORT).show();
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
                         }
                     },
                     new com.android.volley.Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError volleyError) {
-
+                            volleyError.getMessage();
+                            Toast.makeText(ActLogin.this, getResources().getString(R.string.label_error_post_comment), Toast.LENGTH_SHORT).show();
                         }
             }) {
                 @Override

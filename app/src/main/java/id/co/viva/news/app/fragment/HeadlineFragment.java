@@ -157,7 +157,7 @@ public class HeadlineFragment extends Fragment implements
 
     private void parseJson(final ArrayList<Headline> headlines) {
         if(isInternetPresent) {
-            StringRequest stringRequest = new StringRequest(Request.Method.GET, Constant.URL_HOMEPAGE,
+            StringRequest stringRequest = new StringRequest(Request.Method.GET, Constant.NEW_HEADLINE,
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String volleyResponse) {
@@ -246,8 +246,8 @@ public class HeadlineFragment extends Fragment implements
                 @Override
                 public void onErrorResponse(VolleyError volleyError) {
                     try {
-                        if(Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.URL_HOMEPAGE) != null) {
-                            String cachedResponse = new String(Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.URL_HOMEPAGE).data);
+                        if(Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_HEADLINE) != null) {
+                            String cachedResponse = new String(Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_HEADLINE).data);
                             Log.i(Constant.TAG, "From Cached : " + cachedResponse);
                             JSONObject jsonObject = new JSONObject(cachedResponse);
                             jsonArrayResponses = jsonObject.getJSONArray(Constant.response);
@@ -300,13 +300,13 @@ public class HeadlineFragment extends Fragment implements
                     Constant.TIME_OUT,
                     0,
                     DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-            Global.getInstance(getActivity()).getRequestQueue().getCache().invalidate(Constant.URL_HOMEPAGE, true);
-            Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.URL_HOMEPAGE);
+            Global.getInstance(getActivity()).getRequestQueue().getCache().invalidate(Constant.NEW_HEADLINE, true);
+            Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_HEADLINE);
             Global.getInstance(getActivity()).addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
         } else {
             try {
-                if(Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.URL_HOMEPAGE) != null) {
-                    String cachedResponse = new String(Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.URL_HOMEPAGE).data);
+                if(Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_HEADLINE) != null) {
+                    String cachedResponse = new String(Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_HEADLINE).data);
                     Log.i(Constant.TAG, "From Cached : " + cachedResponse);
                     JSONObject jsonObject = new JSONObject(cachedResponse);
                     jsonArrayResponses = jsonObject.getJSONArray(Constant.response);
@@ -377,7 +377,7 @@ public class HeadlineFragment extends Fragment implements
                 loading_layout.setVisibility(View.VISIBLE);
                 labelLoadData.setVisibility(View.VISIBLE);
                 rippleView.setVisibility(View.GONE);
-                StringRequest stringRequest = new StringRequest(Request.Method.GET, Constant.URL_HOMEPAGE,
+                StringRequest stringRequest = new StringRequest(Request.Method.GET, Constant.NEW_HEADLINE,
                         new Response.Listener<String>() {
                             @Override
                             public void onResponse(String volleyResponse) {
@@ -477,8 +477,8 @@ public class HeadlineFragment extends Fragment implements
                         Constant.TIME_OUT,
                         0,
                         DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-                Global.getInstance(getActivity()).getRequestQueue().getCache().invalidate(Constant.URL_HOMEPAGE, true);
-                Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.URL_HOMEPAGE);
+                Global.getInstance(getActivity()).getRequestQueue().getCache().invalidate(Constant.NEW_HEADLINE, true);
+                Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_HEADLINE);
                 Global.getInstance(getActivity()).addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
             } else {
                 Toast.makeText(getActivity(), R.string.title_no_connection, Toast.LENGTH_SHORT).show();
@@ -493,7 +493,7 @@ public class HeadlineFragment extends Fragment implements
         data = String.valueOf(dataSize += 12);
         Log.i(Constant.TAG, "DATA PAGE : " + data);
         if(isInternetPresent) {
-            StringRequest stringRequest = new StringRequest(Request.Method.GET, Constant.URL_HOMEPAGE + data,
+            StringRequest stringRequest = new StringRequest(Request.Method.GET, Constant.NEW_HEADLINE + "start/" + data,
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String volleyResponse) {
@@ -545,8 +545,8 @@ public class HeadlineFragment extends Fragment implements
                     Constant.TIME_OUT,
                     0,
                     DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-            Global.getInstance(getActivity()).getRequestQueue().getCache().invalidate(Constant.URL_HOMEPAGE + data, true);
-            Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.URL_HOMEPAGE + data);
+            Global.getInstance(getActivity()).getRequestQueue().getCache().invalidate(Constant.NEW_HEADLINE + "start/" + data, true);
+            Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_HEADLINE + "start/" + data);
             Global.getInstance(getActivity()).addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
         }
     }

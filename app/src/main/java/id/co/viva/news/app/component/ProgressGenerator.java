@@ -16,9 +16,11 @@ public class ProgressGenerator {
     private OnProgressDoneListener onProgressDoneListener;
     private Random random = new Random();
     private int mProgress;
+    private String mType;
 
-    public ProgressGenerator(OnProgressDoneListener onProgressDoneListener) {
+    public ProgressGenerator(OnProgressDoneListener onProgressDoneListener, String mType) {
         this.onProgressDoneListener = onProgressDoneListener;
+        this.mType = mType;
     }
 
     public void start(final CircularProgressButton button) {
@@ -30,8 +32,9 @@ public class ProgressGenerator {
                 button.setProgress(mProgress);
                 if (mProgress < 100) {
                     handler.postDelayed(this, generateDelay());
+                    onProgressDoneListener.onProgressProcess();
                 } else {
-                    onProgressDoneListener.onProgressDone();
+                    onProgressDoneListener.onProgressDone(mType);
                 }
             }
         }, generateDelay());

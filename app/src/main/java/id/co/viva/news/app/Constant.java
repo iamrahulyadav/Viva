@@ -1,6 +1,15 @@
 package id.co.viva.news.app;
 
+import android.annotation.TargetApi;
 import android.app.ActionBar;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.os.Build;
+import android.renderscript.Allocation;
+import android.renderscript.Element;
+import android.renderscript.RenderScript;
+import android.renderscript.ScriptIntrinsicBlur;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListAdapter;
@@ -27,21 +36,16 @@ public class Constant {
     public static final String LOGIN_STATES_FULLNAME = "login_states_fullname";
     public static final String LOGIN_STATES_URL_PHOTO = "login_states_url_photo";
     public static final String LOGIN_STATES_ISLOGIN = "isLogin";
+    public static final String LOGIN_STATES_PHONE = "login_states_phone";
+    public static final String LOGIN_STATES_GENDER = "login_states_gender";
+    public static final String LOGIN_STATES_CITY = "login_states_city";
+    public static final String LOGIN_STATES_BIRTHDATE = "login_states_birthdate";
 
     public static final String GCM_SENDER_ID = "246836504311";
     public static final String GCM_URL_BACKEND_SERVER = "http://apps.vivall.tv/gcm_registration.php";
 
     public static final String TAG = VivaApp.class.getSimpleName();
     public static final String TAG_GCM = "VIVA-GCM";
-
-    private static String BASE_URL = "http://www.viva.co.id/rss/api/mobile/";
-    public static String URL_HOMEPAGE = BASE_URL + "homepage/";
-    public static String URL_KANAL_NEWS = BASE_URL + "kanal_news";
-    public static String URL_KANAL_BOLA = BASE_URL + "kanal_bola";
-    public static String URL_KANAL_LIFE = BASE_URL + "kanal_life";
-    public static String URL_KANAL_DETAIL = BASE_URL + "kanal/";
-    public static String URL_DETAIL = BASE_URL + "detail/";
-    public static String URL_SEARCH = BASE_URL + "search/";
 
     private static String BASE_URL_NEW = "http://api.viva.co.id/app/";
     public static String NEW_HEADLINE = BASE_URL_NEW + "headlinelist/";
@@ -57,6 +61,7 @@ public class Constant {
     public static String NEW_COMMENTS = BASE_URL_NEW + "sendcomment/";
     public static String NEW_RATES = BASE_URL_NEW + "sendrate/";
     public static String NEW_LIST_COMMENT = BASE_URL_NEW + "commentlist";
+    public static String NEW_FORGOT_PASSWORD = BASE_URL_NEW + "forgotpass";
 
     public static final String JSON_REQUEST = "json_obj_req";
 
@@ -96,20 +101,20 @@ public class Constant {
     private static final int HOUR_MILLIS = 60 * MINUTE_MILLIS;
     private static final int DAY_MILLIS = 24 * HOUR_MILLIS;
 
+    private static final float BITMAP_SCALE = 0.4f;
+    private static final float BLUR_RADIUS = 7.5f;
+
     public static final String AT_LOG_DOMAIN = ".ati-host.net";
     public static final String AT_SUB_DOMAIN = "logw351";
     public static final String AT_SITE_ID = "551156";
     public static final String AT_SUB_SITE = "1";
 
+    public static final String PATH_REDIRECT = "http://www.viva.co.id";
     public static final String PATH_CLIENT_ID = "b4ae86c36dc20232e66277b8c320778a5d34be09";
     public static final String PATH_SECRET_ID = "d21eceb45c4a57ad1fd94c53a3e408c3bd89b32f";
     public static final String PATH_AUTHENTICATE_URL = "https://partner.path.com/oauth2/authenticate";
     public static final String PATH_ACCESS_TOKEN_URL = "https://partner.path.com/oauth2/access_token";
     public static final String PATH_USER_INFO_URL = "https://partner.path.com/1/user/self";
-    public static final String CONFIG_PATH_CLIENT_ID = "path_client_id";
-    public static final String CONFIG_PATH_CLIENT_SECRET = "path_client_secret";
-    public static final String CONFIG_PATH_RESPONSE_TYPE = "path_response_type";
-    public static final String CONFIG_PATH_REDIRECT_URL = "path_redirect_url";
     public static final String ATTRIBUTE_PATH_ACCESS_TOKEN = "access_token";
     public static final String ATTRIBUTE_PATH_USER_ID = "user_id";
 
@@ -129,6 +134,24 @@ public class Constant {
     public static final String SEARCH_RESULT_PAGE = "SEARCH_RESULT_PAGE_";
     public static final String FROM_SEARCH_RESULT_DETAIL_CONTENT = "FROM_SEARCH_RESULT_DETAIL_CONTENT_";
     public static final String FROM_RELATED_ARTICLE_DETAIL_CONTENT = "FROM_RELATED_ARTICLE_DETAIL_CONTENT_";
+    public static final String FROM_EDITOR_CHOICE = "FROM_EDITOR_CHOICE_";
+
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
+    public static Bitmap blur(Context ctx, Bitmap image) {
+        int width = Math.round(image.getWidth() * BITMAP_SCALE);
+        int height = Math.round(image.getHeight() * BITMAP_SCALE);
+        Bitmap inputBitmap = Bitmap.createScaledBitmap(image, width, height, false);
+        Bitmap outputBitmap = Bitmap.createBitmap(inputBitmap);
+        RenderScript rs = RenderScript.create(ctx);
+        ScriptIntrinsicBlur theIntrinsic = ScriptIntrinsicBlur.create(rs, Element.U8_4(rs));
+        Allocation tmpIn = Allocation.createFromBitmap(rs, inputBitmap);
+        Allocation tmpOut = Allocation.createFromBitmap(rs, outputBitmap);
+        theIntrinsic.setRadius(BLUR_RADIUS);
+        theIntrinsic.setInput(tmpIn);
+        theIntrinsic.forEach(tmpOut);
+        tmpOut.copyTo(outputBitmap);
+        return outputBitmap;
+    }
 
     public static void setListViewHeightBasedOnChildren(ListView listView) {
         ListAdapter listAdapter = listView.getAdapter();

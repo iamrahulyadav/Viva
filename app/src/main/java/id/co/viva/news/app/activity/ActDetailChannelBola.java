@@ -129,7 +129,7 @@ public class ActDetailChannelBola extends ActBase implements
         floatingActionButton.setOnClickListener(this);
 
         if(isInternetPresent) {
-            StringRequest stringRequest = new StringRequest(Request.Method.GET, Constant.URL_KANAL_DETAIL + id + "/2/0/10",
+            StringRequest stringRequest = new StringRequest(Request.Method.GET, Constant.NEW_KANAL + "ch/" + id + "/lv/2/s/0",
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String volleyResponse) {
@@ -180,14 +180,14 @@ public class ActDetailChannelBola extends ActBase implements
                     Constant.TIME_OUT,
                     0,
                     DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-            Global.getInstance(this).getRequestQueue().getCache().invalidate(Constant.URL_KANAL_DETAIL + id + "/2/0/10", true);
-            Global.getInstance(this).getRequestQueue().getCache().get(Constant.URL_KANAL_DETAIL + id + "/2/0/10");
+            Global.getInstance(this).getRequestQueue().getCache().invalidate(Constant.NEW_KANAL + "ch/" + id + "/lv/2/s/0", true);
+            Global.getInstance(this).getRequestQueue().getCache().get(Constant.NEW_KANAL + "ch/" + id + "/lv/2/s/0");
             Global.getInstance(this).addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
         } else {
             Toast.makeText(this, R.string.title_no_connection, Toast.LENGTH_SHORT).show();
-            if(Global.getInstance(this).getRequestQueue().getCache().get(Constant.URL_KANAL_DETAIL + id + "/2/0/10") != null) {
+            if(Global.getInstance(this).getRequestQueue().getCache().get(Constant.NEW_KANAL + "ch/" + id + "/lv/2/s/0") != null) {
                 cachedResponse = new String(Global.getInstance(this).
-                        getRequestQueue().getCache().get(Constant.URL_KANAL_DETAIL + id + "/2/0/10").data);
+                        getRequestQueue().getCache().get(Constant.NEW_KANAL + "ch/" + id + "/lv/2/s/0").data);
                 Log.i(Constant.TAG, "CHANNEL BOLA CACHED RESPONSE : " + cachedResponse);
                 try{
                     JSONObject jsonObject = new JSONObject(cachedResponse);
@@ -255,7 +255,7 @@ public class ActDetailChannelBola extends ActBase implements
         data = String.valueOf(dataSize += 10);
         Log.i(Constant.TAG, "DATA PAGE : " + data);
         if(isInternetPresent) {
-            StringRequest stringRequest = new StringRequest(Request.Method.GET, Constant.URL_KANAL_DETAIL + id + "/2/" + data + "/10",
+            StringRequest stringRequest = new StringRequest(Request.Method.GET, Constant.NEW_KANAL + "ch/" + id + "/lv/2/s/" + data,
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String volleyResponse) {
@@ -302,8 +302,8 @@ public class ActDetailChannelBola extends ActBase implements
                     Constant.TIME_OUT,
                     0,
                     DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-            Global.getInstance(this).getRequestQueue().getCache().invalidate(Constant.URL_KANAL_DETAIL + id + "/2/" + data + "/10", true);
-            Global.getInstance(this).getRequestQueue().getCache().get(Constant.URL_KANAL_DETAIL + id + "/2/" + data + "/10");
+            Global.getInstance(this).getRequestQueue().getCache().invalidate(Constant.NEW_KANAL + "ch/" + id + "/lv/2/s/" + data, true);
+            Global.getInstance(this).getRequestQueue().getCache().get(Constant.NEW_KANAL + "ch/" + id + "/lv/2/s/" + data);
             Global.getInstance(this).addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
         }
     }
@@ -328,7 +328,7 @@ public class ActDetailChannelBola extends ActBase implements
             if(isInternetPresent) {
                 rippleView.setVisibility(View.GONE);
                 loading_layout.setVisibility(View.VISIBLE);
-                StringRequest stringRequest = new StringRequest(Request.Method.GET, Constant.URL_KANAL_DETAIL + id + "/2/0/10",
+                StringRequest stringRequest = new StringRequest(Request.Method.GET, Constant.NEW_KANAL + "ch/" + id + "/lv/2/s/0",
                         new Response.Listener<String>() {
                             @Override
                             public void onResponse(String volleyResponse) {
@@ -382,8 +382,8 @@ public class ActDetailChannelBola extends ActBase implements
                         Constant.TIME_OUT,
                         0,
                         DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-                Global.getInstance(this).getRequestQueue().getCache().invalidate(Constant.URL_KANAL_DETAIL + id + "/2/0/10", true);
-                Global.getInstance(this).getRequestQueue().getCache().get(Constant.URL_KANAL_DETAIL + id + "/2/0/10");
+                Global.getInstance(this).getRequestQueue().getCache().invalidate(Constant.NEW_KANAL + "ch/" + id + "/lv/2/s/0", true);
+                Global.getInstance(this).getRequestQueue().getCache().get(Constant.NEW_KANAL + "ch/" + id + "/lv/2/s/0");
                 Global.getInstance(this).addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
             }
         } else if(view.getId() == R.id.fab) {

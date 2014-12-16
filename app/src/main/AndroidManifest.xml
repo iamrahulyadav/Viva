@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="id.co.viva.news.app"
-    android:versionCode="12"
-    android:versionName="2.0.1">
+    android:versionCode="13"
+    android:versionName="2.0.2">
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
@@ -21,6 +21,7 @@
         android:icon="@drawable/icon_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme"
+        android:screenOrientation="portrait"
         android:name="android.support.multidex.MultiDexApplication">
 
         <meta-data
@@ -63,6 +64,10 @@
 
         <activity
             android:name=".activity.ActRating"
+            android:theme="@style/AppTheme"/>
+
+        <activity
+            android:name=".activity.ActForgotPassword"
             android:theme="@style/AppTheme"/>
 
         <activity

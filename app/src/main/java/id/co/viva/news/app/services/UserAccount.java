@@ -2,6 +2,7 @@ package id.co.viva.news.app.services;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -17,6 +18,7 @@ import java.util.Map;
 
 import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.Global;
+import id.co.viva.news.app.R;
 import id.co.viva.news.app.interfaces.OnCompleteListener;
 import id.co.viva.news.app.interfaces.OnDoneListener;
 import id.co.viva.news.app.interfaces.OnPathListener;
@@ -31,8 +33,10 @@ public class UserAccount {
 
     private static final int STATUS_SUCCESS = 1;
     private static final int STATUS_FAILED = 0;
+    private static final int STATUS_DELAY = 2;
     private static final String EMAIL = "email";
     private static final String FULLNAME = "fullname";
+    private static final String MESSAGE = "message";
     private static final String STATUS = "status";
     private static final String TYPE = "type";
     private static final String USER_ID = "user_id";
@@ -45,15 +49,15 @@ public class UserAccount {
     private String mEmail;
     private String mPassword;
     private String mUsername;
-    private String mAlamat;
-    private String mKota;
-    private String mGender;
-    private String mBirthDate;
-    private String mPhone;
     private String mRate;
 
     public UserAccount(Context mContext) {
         this.mContext = mContext;
+    }
+
+    public UserAccount(OnCompleteListener mListener, String mEmail) {
+        this.mEmail = mEmail;
+        this.mListener = mListener;
     }
 
     public UserAccount(String article_id, String mEmail, String mUsername, String comment_text,
@@ -84,19 +88,57 @@ public class UserAccount {
         this.mContext = mContext;
     }
 
-    public UserAccount(String mUsername, String mEmail, String mPassword, String mAlamat,
-                       String mKota, String mGender, String mBirthDate, String mPhone,
+    public UserAccount(String mUsername, String mEmail, String mPassword,
                        OnCompleteListener mListener, Context mContext) {
         this.mEmail = mEmail;
         this.mPassword = mPassword;
         this.mUsername = mUsername;
-        this.mAlamat = mAlamat;
-        this.mKota = mKota;
-        this.mGender = mGender;
-        this.mBirthDate = mBirthDate;
-        this.mPhone = mPhone;
         this.mListener = mListener;
         this.mContext = mContext;
+    }
+
+    public void sendForgotPassword() {
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, Constant.NEW_FORGOT_PASSWORD,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String s) {
+                        Log.i(Constant.TAG, "Response Forgot Password : " + s);
+                        try {
+                            JSONObject jsonObject = new JSONObject(s);
+                            int status = jsonObject.getInt(STATUS);
+                            String message = jsonObject.getString(MESSAGE);
+                            if(status == STATUS_SUCCESS) {
+                                mListener.onComplete(message);
+                            } else if(status == STATUS_FAILED) {
+                                mListener.onFailed(message);
+                            }
+                        } catch (Exception e) {
+                            e.getMessage();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+                        volleyError.getMessage();
+                        Toast.makeText(mContext, R.string.label_error_post_comment, Toast.LENGTH_SHORT).show();
+                        mListener.onError(mContext.getResources().getString(R.string.label_error_post_comment));
+                    }
+                })
+        {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("email", mEmail);
+                return params;
+            }
+        };
+        stringRequest.setShouldCache(false);
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                Constant.TIME_OUT_LONG,
+                0,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        Global.getInstance(mContext).addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
     }
 
     public void sendRating() {
@@ -108,10 +150,11 @@ public class UserAccount {
                         try {
                             JSONObject jsonObject = new JSONObject(s);
                             int status = jsonObject.getInt(STATUS);
+                            String message = jsonObject.getString(MESSAGE);
                             if(status == STATUS_SUCCESS) {
-                                mListener.onComplete();
+                                mListener.onComplete(message);
                             } else if(status == STATUS_FAILED) {
-                                mListener.onFailed();
+                                mListener.onFailed(message);
                             }
                         } catch (Exception e) {
                             e.getMessage();
@@ -122,7 +165,8 @@ public class UserAccount {
                     @Override
                     public void onErrorResponse(VolleyError volleyError) {
                         volleyError.getMessage();
-                        mListener.onError();
+                        Toast.makeText(mContext, R.string.label_error_post_comment, Toast.LENGTH_SHORT).show();
+                        mListener.onError(mContext.getResources().getString(R.string.label_error_post_comment));
                     }
                 })
         {
@@ -153,10 +197,11 @@ public class UserAccount {
                         try {
                             JSONObject jsonObject = new JSONObject(s);
                             int status = jsonObject.getInt(STATUS);
+                            String message = jsonObject.getString(MESSAGE);
                             if(status == STATUS_SUCCESS) {
-                                mListener.onComplete();
+                                mListener.onComplete(message);
                             } else if(status == STATUS_FAILED) {
-                                mListener.onFailed();
+                                mListener.onFailed(message);
                             }
                         } catch (Exception e) {
                             e.getMessage();
@@ -167,7 +212,8 @@ public class UserAccount {
                     @Override
                     public void onErrorResponse(VolleyError volleyError) {
                         volleyError.getMessage();
-                        mListener.onError();
+                        Toast.makeText(mContext, R.string.label_error_post_comment, Toast.LENGTH_SHORT).show();
+                        mListener.onError(mContext.getResources().getString(R.string.label_error_post_comment));
                     }
                 })
         {
@@ -201,11 +247,15 @@ public class UserAccount {
                             int status = jsonObject.getInt(STATUS);
                             String email = jsonObject.getString(EMAIL);
                             String fullname = jsonObject.getString(FULLNAME);
+                            String message = jsonObject.getString(MESSAGE);
                             if(status == STATUS_SUCCESS) {
                                 saveLoginStates(email, fullname);
-                                mListener.onComplete();
+                                mListener.onComplete(message);
                             } else if(status == STATUS_FAILED) {
-                                mListener.onFailed();
+                                mListener.onFailed(message);
+                            } else if(status == STATUS_DELAY) {
+                                saveLoginStates(email, fullname);
+                                mListener.onDelay(message);
                             }
                         } catch (Exception e) {
                             e.getMessage();
@@ -216,7 +266,8 @@ public class UserAccount {
                     @Override
                     public void onErrorResponse(VolleyError volleyError) {
                         volleyError.getMessage();
-                        mListener.onError();
+                        Toast.makeText(mContext, R.string.label_error_post_comment, Toast.LENGTH_SHORT).show();
+                        mListener.onError(mContext.getResources().getString(R.string.label_error_post_comment));
                     }
                 })
         {
@@ -291,10 +342,11 @@ public class UserAccount {
                         try {
                             JSONObject jsonObject = new JSONObject(s);
                             int status = jsonObject.getInt(STATUS);
+                            String message = jsonObject.getString(MESSAGE);
                             if(status == STATUS_SUCCESS) {
-                                mListener.onComplete();
+                                mListener.onComplete(message);
                             } else if(status == STATUS_FAILED) {
-                                mListener.onFailed();
+                                mListener.onFailed(message);
                             }
                         } catch (Exception e) {
                             e.getMessage();
@@ -305,8 +357,8 @@ public class UserAccount {
                     @Override
                     public void onErrorResponse(VolleyError volleyError) {
                         volleyError.getMessage();
-                        Log.e(Constant.TAG, volleyError.toString());
-                        mListener.onError();
+                        Toast.makeText(mContext, R.string.label_error_post_comment, Toast.LENGTH_SHORT).show();
+                        mListener.onError(mContext.getResources().getString(R.string.label_error_post_comment));
                     }
                 })
         {
@@ -316,11 +368,6 @@ public class UserAccount {
                 params.put("email", mEmail);
                 params.put("password", mPassword);
                 params.put("username", mUsername);
-                params.put("address", mAlamat);
-                params.put("city", mKota);
-                params.put("gender", mGender);
-                params.put("birthdate", mBirthDate);
-                params.put("phone", mPhone);
                 return params;
             }
         };
@@ -344,6 +391,7 @@ public class UserAccount {
                             if(type.equalsIgnoreCase("OK") || type.equalsIgnoreCase("CREATED") || type.equalsIgnoreCase("ACCEPTED")) {
                                 String user_id = jsonObject.getString(USER_ID);
                                 String access_token = jsonObject.getString(ACCESS_TOKEN);
+                                Log.i(Constant.TAG, "TOKEN " + user_id + " " + access_token);
                                 pathListener.onSavePathAttributes(access_token, user_id);
                             }
                         } catch (Exception e) {
@@ -385,7 +433,7 @@ public class UserAccount {
         Global.getInstance(mContext).getDefaultEditor().commit();
     }
 
-    public void saveLoginStatesGPlus(String emailState, String fullnameState, String urlPhoto) {
+    public void saveLoginStatesSocmed(String emailState, String fullnameState, String urlPhoto) {
         Global.getInstance(mContext).getDefaultEditor().putString(Constant.LOGIN_STATES_EMAIL, emailState);
         Global.getInstance(mContext).getDefaultEditor().putString(Constant.LOGIN_STATES_FULLNAME, fullnameState);
         Global.getInstance(mContext).getDefaultEditor().putString(Constant.LOGIN_STATES_URL_PHOTO, urlPhoto);
@@ -399,12 +447,45 @@ public class UserAccount {
         Global.getInstance(mContext).getDefaultEditor().commit();
     }
 
+    public void saveAttributesUserProfile(String phone, String gender, String birthdate, String city) {
+        if(phone.length() > 0) {
+            Global.getInstance(mContext).getDefaultEditor().putString(Constant.LOGIN_STATES_PHONE, phone);
+        }
+        if(gender.length() > 0) {
+            Global.getInstance(mContext).getDefaultEditor().putString(Constant.LOGIN_STATES_GENDER, gender);
+        }
+        if(birthdate.length() > 0) {
+            Global.getInstance(mContext).getDefaultEditor().putString(Constant.LOGIN_STATES_BIRTHDATE, birthdate);
+        }
+        if(city.length() > 0) {
+            Global.getInstance(mContext).getDefaultEditor().putString(Constant.LOGIN_STATES_CITY, city);
+        }
+        Global.getInstance(mContext).getDefaultEditor().putBoolean(Constant.LOGIN_STATES_ISLOGIN, true);
+        Global.getInstance(mContext).getDefaultEditor().commit();
+    }
+
     public void deleteLoginStates() {
         Global.getInstance(mContext).getDefaultEditor().remove(Constant.LOGIN_STATES_EMAIL);
         Global.getInstance(mContext).getDefaultEditor().remove(Constant.LOGIN_STATES_FULLNAME);
         if(Global.getInstance(mContext).getSharedPreferences(mContext)
                 .getString(Constant.LOGIN_STATES_URL_PHOTO, "").length() > 0) {
             Global.getInstance(mContext).getDefaultEditor().remove(Constant.LOGIN_STATES_URL_PHOTO);
+        }
+        if(Global.getInstance(mContext).getSharedPreferences(mContext)
+                .getString(Constant.LOGIN_STATES_PHONE, "").length() > 0) {
+            Global.getInstance(mContext).getDefaultEditor().remove(Constant.LOGIN_STATES_PHONE);
+        }
+        if(Global.getInstance(mContext).getSharedPreferences(mContext)
+                .getString(Constant.LOGIN_STATES_GENDER, "").length() > 0) {
+            Global.getInstance(mContext).getDefaultEditor().remove(Constant.LOGIN_STATES_GENDER);
+        }
+        if(Global.getInstance(mContext).getSharedPreferences(mContext)
+                .getString(Constant.LOGIN_STATES_CITY, "").length() > 0) {
+            Global.getInstance(mContext).getDefaultEditor().remove(Constant.LOGIN_STATES_CITY);
+        }
+        if(Global.getInstance(mContext).getSharedPreferences(mContext)
+                .getString(Constant.LOGIN_STATES_BIRTHDATE, "").length() > 0) {
+            Global.getInstance(mContext).getDefaultEditor().remove(Constant.LOGIN_STATES_BIRTHDATE);
         }
         Global.getInstance(mContext).getDefaultEditor().putBoolean(Constant.LOGIN_STATES_ISLOGIN, false);
         Global.getInstance(mContext).getDefaultEditor().commit();

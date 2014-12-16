@@ -192,25 +192,30 @@ public class ActComment extends FragmentActivity implements View.OnClickListener
     }
 
     @Override
-    public void onComplete() {
+    public void onComplete(String message) {
         btnSubmit.setProgress(100);
-        Toast.makeText(this, R.string.label_success_post_comment, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
         finish();
         startActivity(getIntent());
     }
 
     @Override
-    public void onFailed() {
-        btnSubmit.setProgress(0);
-        enableView();
-        Toast.makeText(this, R.string.label_failed_post_comment, Toast.LENGTH_SHORT).show();
+    public void onDelay(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
     @Override
-    public void onError() {
+    public void onFailed(String message) {
         btnSubmit.setProgress(0);
         enableView();
-        Toast.makeText(this, R.string.label_error_post_comment, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onError(String message) {
+        btnSubmit.setProgress(0);
+        enableView();
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
     @Override

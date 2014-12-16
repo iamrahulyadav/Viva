@@ -22,7 +22,6 @@ import java.util.Map;
 
 import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.Global;
-import id.co.viva.news.app.VivaApp;
 import id.co.viva.news.app.model.DeviceInfo;
 
 /**
@@ -150,7 +149,7 @@ public class GCM {
         };
         jsonObjectRequest.setShouldCache(true);
         jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(
-                Constant.TIME_OUT,
+                Constant.TIME_OUT_LONG,
                 0,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         Global.getInstance(activity).addToRequestQueue(jsonObjectRequest, Constant.JSON_REQUEST);

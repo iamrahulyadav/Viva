@@ -108,7 +108,7 @@ public class ActSearchResult extends FragmentActivity implements
             analytics.getAnalyticByATInternet(Constant.SEARCH_RESULT_PAGE + query.toUpperCase());
             analytics.getAnalyticByGoogleAnalytic(Constant.SEARCH_RESULT_PAGE + query.toUpperCase());
 
-            StringRequest stringRequest = new StringRequest(Request.Method.GET, Constant.URL_SEARCH + query,
+            StringRequest stringRequest = new StringRequest(Request.Method.GET, Constant.NEW_SEARCH + "q/" + query + "/s/0",
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String volleyResponse) {
@@ -158,8 +158,8 @@ public class ActSearchResult extends FragmentActivity implements
                     Constant.TIME_OUT,
                     0,
                     DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-            Global.getInstance(this).getRequestQueue().getCache().invalidate(Constant.URL_SEARCH + query, true);
-            Global.getInstance(this).getRequestQueue().getCache().get(Constant.URL_SEARCH + query);
+            Global.getInstance(this).getRequestQueue().getCache().invalidate(Constant.NEW_SEARCH + "q/" + query + "/s/0", true);
+            Global.getInstance(this).getRequestQueue().getCache().get(Constant.NEW_SEARCH + "q/" + query + "/s/0" + query);
             Global.getInstance(this).addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
         }
     }

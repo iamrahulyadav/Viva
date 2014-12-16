@@ -138,25 +138,30 @@ public class ActRating extends FragmentActivity implements OnCompleteListener,
     }
 
     @Override
-    public void onComplete() {
+    public void onComplete(String message) {
         btnRate.setProgress(100);
-        Toast.makeText(this, R.string.label_success_post_rate, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
         finish();
         startActivity(getIntent());
     }
 
     @Override
-    public void onFailed() {
-        enableView();
-        btnRate.setProgress(0);
-        Toast.makeText(this, R.string.label_failed_post_rate, Toast.LENGTH_SHORT).show();
+    public void onDelay(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
     @Override
-    public void onError() {
+    public void onFailed(String message) {
         enableView();
         btnRate.setProgress(0);
-        Toast.makeText(this, R.string.label_error, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onError(String message) {
+        enableView();
+        btnRate.setProgress(0);
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
     @Override

@@ -106,7 +106,7 @@ public class NewsFragment extends Fragment implements View.OnClickListener {
         featuredNewsArrayList = new ArrayList<FeaturedNews>();
 
         if(isInternetPresent) {
-            StringRequest request = new StringRequest(Request.Method.GET, Constant.URL_KANAL_NEWS,
+            StringRequest request = new StringRequest(Request.Method.GET, Constant.NEW_NEWS,
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String s) {
@@ -160,14 +160,14 @@ public class NewsFragment extends Fragment implements View.OnClickListener {
                     Constant.TIME_OUT,
                     0,
                     DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-            Global.getInstance(getActivity()).getRequestQueue().getCache().invalidate(Constant.URL_KANAL_NEWS, true);
-            Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.URL_KANAL_NEWS);
+            Global.getInstance(getActivity()).getRequestQueue().getCache().invalidate(Constant.NEW_NEWS, true);
+            Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_NEWS);
             Global.getInstance(getActivity()).addToRequestQueue(request, Constant.JSON_REQUEST);
         } else {
             Toast.makeText(getActivity(), R.string.title_no_connection, Toast.LENGTH_SHORT).show();
-            if(Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.URL_KANAL_NEWS) != null) {
+            if(Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_NEWS) != null) {
                 cachedResponse = new String(Global.getInstance(getActivity()).
-                        getRequestQueue().getCache().get(Constant.URL_KANAL_NEWS).data);
+                        getRequestQueue().getCache().get(Constant.NEW_NEWS).data);
                 Log.i(Constant.TAG, "KANAL NEWS CACHED : " + cachedResponse);
                 try {
                     JSONObject jsonObject = new JSONObject(cachedResponse);
@@ -219,7 +219,7 @@ public class NewsFragment extends Fragment implements View.OnClickListener {
             if(isInternetPresent) {
                 rippleView.setVisibility(View.GONE);
                 loading_layout.setVisibility(View.VISIBLE);
-                StringRequest request = new StringRequest(Request.Method.GET, Constant.URL_KANAL_NEWS,
+                StringRequest request = new StringRequest(Request.Method.GET, Constant.NEW_NEWS,
                         new Response.Listener<String>() {
                             @Override
                             public void onResponse(String s) {
@@ -273,8 +273,8 @@ public class NewsFragment extends Fragment implements View.OnClickListener {
                         Constant.TIME_OUT,
                         0,
                         DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-                Global.getInstance(getActivity()).getRequestQueue().getCache().invalidate(Constant.URL_KANAL_NEWS, true);
-                Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.URL_KANAL_NEWS);
+                Global.getInstance(getActivity()).getRequestQueue().getCache().invalidate(Constant.NEW_NEWS, true);
+                Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_NEWS);
                 Global.getInstance(getActivity()).addToRequestQueue(request, Constant.JSON_REQUEST);
             } else {
                 Toast.makeText(getActivity(), R.string.title_no_connection, Toast.LENGTH_SHORT).show();

@@ -147,7 +147,7 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
 
     private void parseJson(final ArrayList<News> news) {
         if(isInternetPresent) {
-            StringRequest stringRequest = new StringRequest(Request.Method.GET, Constant.URL_HOMEPAGE,
+            StringRequest stringRequest = new StringRequest(Request.Method.GET, Constant.NEW_TERBARU,
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String volleyResponse) {
@@ -156,7 +156,7 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
                                 JSONObject jsonObject = new JSONObject(volleyResponse);
                                 jsonArrayResponses = jsonObject.getJSONArray(Constant.response);
                                 if(jsonArrayResponses != null) {
-                                    JSONObject objTerbaru = jsonArrayResponses.getJSONObject(1);
+                                    JSONObject objTerbaru = jsonArrayResponses.getJSONObject(0);
                                     if(objTerbaru !=  null) {
                                         jsonArraySegmentNews = objTerbaru.getJSONArray(NEWS);
                                         for(int i=0; i<jsonArraySegmentNews.length(); i++) {
@@ -200,13 +200,13 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
                 @Override
                 public void onErrorResponse(VolleyError volleyError) {
                     try {
-                        if(Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.URL_HOMEPAGE) != null) {
-                            String cachedResponse = new String(Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.URL_HOMEPAGE).data);
+                        if(Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_TERBARU) != null) {
+                            String cachedResponse = new String(Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_TERBARU).data);
                             Log.i(Constant.TAG, "From Cached : " + cachedResponse);
                             JSONObject jsonObject = new JSONObject(cachedResponse);
                             jsonArrayResponses = jsonObject.getJSONArray(Constant.response);
                             if(jsonArrayResponses != null) {
-                                JSONObject objTerbaru = jsonArrayResponses.getJSONObject(1);
+                                JSONObject objTerbaru = jsonArrayResponses.getJSONObject(0);
                                 if(objTerbaru !=  null) {
                                     jsonArraySegmentNews = objTerbaru.getJSONArray(NEWS);
                                     for(int i=0; i<jsonArraySegmentNews.length(); i++) {
@@ -252,18 +252,18 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
                     Constant.TIME_OUT,
                     0,
                     DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-            Global.getInstance(getActivity()).getRequestQueue().getCache().invalidate(Constant.URL_HOMEPAGE, true);
-            Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.URL_HOMEPAGE);
+            Global.getInstance(getActivity()).getRequestQueue().getCache().invalidate(Constant.NEW_TERBARU, true);
+            Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_TERBARU);
             Global.getInstance(getActivity()).addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
         } else {
             try {
-                if(Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.URL_HOMEPAGE) != null) {
-                    String cachedResponse = new String(Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.URL_HOMEPAGE).data);
+                if(Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_TERBARU) != null) {
+                    String cachedResponse = new String(Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_TERBARU).data);
                     Log.i(Constant.TAG, "From Cached : " + cachedResponse);
                     JSONObject jsonObject = new JSONObject(cachedResponse);
                     jsonArrayResponses = jsonObject.getJSONArray(Constant.response);
                     if(jsonArrayResponses != null) {
-                        JSONObject objTerbaru = jsonArrayResponses.getJSONObject(1);
+                        JSONObject objTerbaru = jsonArrayResponses.getJSONObject(0);
                         if(objTerbaru !=  null) {
                             jsonArraySegmentNews = objTerbaru.getJSONArray(NEWS);
                             for(int i=0; i<jsonArraySegmentNews.length(); i++) {
@@ -325,7 +325,7 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
         data = String.valueOf(dataSize += 10);
         Log.i(Constant.TAG, "DATA PAGE : " + data);
         if(isInternetPresent) {
-                StringRequest stringRequest = new StringRequest(Request.Method.GET, Constant.URL_HOMEPAGE + data,
+                StringRequest stringRequest = new StringRequest(Request.Method.GET, Constant.NEW_TERBARU + "start/" + data,
                         new Response.Listener<String>() {
                             @Override
                             public void onResponse(String volleyResponse) {
@@ -334,7 +334,7 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
                                     JSONObject jsonObject = new JSONObject(volleyResponse);
                                     jsonArrayResponses = jsonObject.getJSONArray(Constant.response);
                                     if(jsonArrayResponses != null) {
-                                        JSONObject objTerbaru = jsonArrayResponses.getJSONObject(1);
+                                        JSONObject objTerbaru = jsonArrayResponses.getJSONObject(0);
                                         if(objTerbaru !=  null) {
                                             jsonArraySegmentNews = objTerbaru.getJSONArray(NEWS);
                                             for(int i=0; i<jsonArraySegmentNews.length(); i++) {
@@ -376,8 +376,8 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
                         Constant.TIME_OUT,
                         0,
                         DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-                Global.getInstance(getActivity()).getRequestQueue().getCache().invalidate(Constant.URL_HOMEPAGE + data, true);
-                Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.URL_HOMEPAGE + data);
+                Global.getInstance(getActivity()).getRequestQueue().getCache().invalidate(Constant.NEW_TERBARU + "start/" + data, true);
+                Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_TERBARU + "start/" + data);
                 Global.getInstance(getActivity()).addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
         }
     }
@@ -389,7 +389,7 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
                 loading_layout.setVisibility(View.VISIBLE);
                 labelLoadData.setVisibility(View.VISIBLE);
                 rippleView.setVisibility(View.GONE);
-                StringRequest stringRequest = new StringRequest(Request.Method.GET, Constant.URL_HOMEPAGE,
+                StringRequest stringRequest = new StringRequest(Request.Method.GET, Constant.NEW_TERBARU,
                         new Response.Listener<String>() {
                             @Override
                             public void onResponse(String volleyResponse) {
@@ -398,7 +398,7 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
                                     JSONObject jsonObject = new JSONObject(volleyResponse);
                                     jsonArrayResponses = jsonObject.getJSONArray(Constant.response);
                                     if(jsonArrayResponses != null) {
-                                        JSONObject objTerbaru = jsonArrayResponses.getJSONObject(1);
+                                        JSONObject objTerbaru = jsonArrayResponses.getJSONObject(0);
                                         if(objTerbaru !=  null) {
                                             jsonArraySegmentNews = objTerbaru.getJSONArray(NEWS);
                                             for(int i=0; i<jsonArraySegmentNews.length(); i++) {
@@ -443,13 +443,13 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
                     @Override
                     public void onErrorResponse(VolleyError volleyError) {
                         try {
-                            if(Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.URL_HOMEPAGE) != null) {
-                                String cachedResponse = new String(Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.URL_HOMEPAGE).data);
+                            if(Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_TERBARU) != null) {
+                                String cachedResponse = new String(Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_TERBARU).data);
                                 Log.i(Constant.TAG, "From Cached : " + cachedResponse);
                                 JSONObject jsonObject = new JSONObject(cachedResponse);
                                 jsonArrayResponses = jsonObject.getJSONArray(Constant.response);
                                 if(jsonArrayResponses != null) {
-                                    JSONObject objTerbaru = jsonArrayResponses.getJSONObject(1);
+                                    JSONObject objTerbaru = jsonArrayResponses.getJSONObject(0);
                                     if(objTerbaru !=  null) {
                                         jsonArraySegmentNews = objTerbaru.getJSONArray(NEWS);
                                         for(int i=0; i<jsonArraySegmentNews.length(); i++) {
@@ -495,8 +495,8 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
                         Constant.TIME_OUT,
                         0,
                         DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-                Global.getInstance(getActivity()).getRequestQueue().getCache().invalidate(Constant.URL_HOMEPAGE, true);
-                Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.URL_HOMEPAGE);
+                Global.getInstance(getActivity()).getRequestQueue().getCache().invalidate(Constant.NEW_TERBARU, true);
+                Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_TERBARU);
                 Global.getInstance(getActivity()).addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
             } else {
                 Toast.makeText(getActivity(), R.string.title_no_connection, Toast.LENGTH_SHORT).show();

@@ -42,10 +42,9 @@ public class ActPath extends FragmentActivity {
                     mProgressBar.setVisibility(View.VISIBLE);
                     if(url != null) {
                         Log.i(Constant.TAG, "URL : " + url);
-                        String redirect_url = Constant.CONFIG_PATH_REDIRECT_URL;
-                        String response_type = Constant.CONFIG_PATH_RESPONSE_TYPE;
+                        String redirect_url = Constant.PATH_REDIRECT;
                         if(url.startsWith(redirect_url)) {
-                            socmedPath.setPath_code(url.replace(redirect_url + "?" + response_type + "=", ""));
+                            socmedPath.setPath_code(url.replace(redirect_url + "/?code=", ""));
                             setResult(RESULT_OK);
                             finish();
                         }

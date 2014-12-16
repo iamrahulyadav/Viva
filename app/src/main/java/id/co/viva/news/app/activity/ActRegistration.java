@@ -1,23 +1,16 @@
 package id.co.viva.news.app.activity;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.dd.processbutton.iml.ActionProcessButton;
-import com.doomonafireball.betterpickers.datepicker.DatePickerBuilder;
-import com.doomonafireball.betterpickers.datepicker.DatePickerDialogFragment;
 
-import java.util.ArrayList;
-
-import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.interfaces.OnCompleteListener;
 import id.co.viva.news.app.services.UserAccount;
@@ -27,21 +20,14 @@ import id.co.viva.news.app.services.Validation;
  * Created by reza on 02/12/14.
  */
 public class ActRegistration extends FragmentActivity
-        implements View.OnClickListener, AdapterView.OnItemSelectedListener,
-        DatePickerDialogFragment.DatePickerDialogHandler, OnCompleteListener {
+        implements View.OnClickListener, AdapterView.OnItemSelectedListener, OnCompleteListener {
 
     private EditText etUsername;
     private EditText etEmail;
     private EditText etPassword;
-    private EditText etAddress;
-    private EditText etCity;
-    private Spinner spinGender;
-    private EditText etBirth;
-    private EditText etTlp;
+    private EditText etRetypePassword;
     private ActionProcessButton btnRegist;
-
     private String genderSelected;
-
     private Validation validation;
     private UserAccount userAccount;
 
@@ -49,27 +35,19 @@ public class ActRegistration extends FragmentActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act_register);
-
         validation = new Validation();
-
         getPrefActionBar();
+        defineViews();
+    }
 
+    private void defineViews() {
         etUsername = (EditText) findViewById(R.id.form_regist_username);
         etEmail = (EditText) findViewById(R.id.form_regist_email);
         etPassword = (EditText) findViewById(R.id.form_regist_password);
-        etCity = (EditText) findViewById(R.id.form_regist_city);
-        etAddress = (EditText) findViewById(R.id.form_regist_address);
-        spinGender = (Spinner) findViewById(R.id.form_regist_gender);
-        etBirth = (EditText) findViewById(R.id.form_regist_birthdate);
-        etTlp = (EditText) findViewById(R.id.form_regist_phone);
+        etRetypePassword = (EditText) findViewById(R.id.form_regist_password_retype);
         btnRegist = (ActionProcessButton) findViewById(R.id.btn_daftar);
-
-        spinGender.setOnItemSelectedListener(this);
-        etBirth.setOnClickListener(this);
         btnRegist.setOnClickListener(this);
         btnRegist.setMode(ActionProcessButton.Mode.ENDLESS);
-
-        populateDataGender();
     }
 
     @Override
@@ -89,31 +67,13 @@ public class ActRegistration extends FragmentActivity
         getActionBar().setTitle("Registrasi");
     }
 
-    private void populateDataGender() {
-        ArrayList<String> genderList = new ArrayList<String>();
-        genderList.add(getResources().getString(R.string.label_gender_male));
-        genderList.add(getResources().getString(R.string.label_gender_female));
-        ArrayAdapter<String> genderAdapter = new ArrayAdapter<String>(
-                this, android.R.layout.simple_spinner_item, genderList);
-        genderAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinGender.setAdapter(genderAdapter);
-    }
-
     @Override
     public void onClick(View view) {
-        if(view.getId() == R.id.form_regist_birthdate) {
-            DatePickerBuilder dpb = new DatePickerBuilder()
-                    .setFragmentManager(getSupportFragmentManager())
-                    .setStyleResId(R.style.BetterPickersDialogFragment);
-            dpb.show();
-        } else if(view.getId() == R.id.btn_daftar) {
+        if(view.getId() == R.id.btn_daftar) {
             String username = etUsername.getText().toString();
             String email = etEmail.getText().toString();
             String password = etPassword.getText().toString();
-            String address = etAddress.getText().toString();
-            String birthdate = etBirth.getText().toString();
-            String phone = etTlp.getText().toString();
-            String city = etCity.getText().toString();
+            String retype_password = etRetypePassword.getText().toString();
             //Some Validation
             if(!validation.isLengthValid(username)) {
                 etUsername.setError(getResources().getString(R.string.label_registrasi_username_character_length));
@@ -121,17 +81,10 @@ public class ActRegistration extends FragmentActivity
                 etEmail.setError(getResources().getString(R.string.label_validation_email));
             } else if(!validation.isLengthValid(password)) {
                 etPassword.setError(getResources().getString(R.string.label_validation_password_length));
-            } else if(!validation.isLengthValid(address)) {
-                etAddress.setError(getResources().getString(R.string.label_registrasi_address_character_length));
-            } else if(birthdate.length() < 1) {
-                etBirth.setError(getResources().getString(R.string.label_registrasi_birt_validation));
-            } else if(!validation.isLengthValid(phone)) {
-                etTlp.setError(getResources().getString(R.string.label_registrasi_phone_validation));
-            } else if(city.length() < 3) {
-                etCity.setError(getResources().getString(R.string.label_registrasi_city_validation));
+            } else if(!retype_password.equals(password)) {
+                etRetypePassword.setError(getResources().getString(R.string.label_validation_password_length_retype));
             } else {
-                userAccount = new UserAccount(username, email, password, address,
-                        city, genderSelected, birthdate, phone, this, ActRegistration.this);
+                userAccount = new UserAccount(username, email, password, this, ActRegistration.this);
                 disableView();
                 btnRegist.setProgress(1);
                 userAccount.signUp();
@@ -150,43 +103,45 @@ public class ActRegistration extends FragmentActivity
     }
 
     @Override
-    public void onDialogDateSet(int i, int year, int month, int date) {
-        etBirth.setText(String.valueOf(date) + "-" + String.valueOf(month+1) + "-" + String.valueOf(year));
-    }
-
-    @Override
-    public void onComplete() {
+    public void onComplete(String message) {
         btnRegist.setProgress(100);
         Toast.makeText(this,
-                R.string.label_validation_success_register, Toast.LENGTH_SHORT).show();
-        finish();
+                message, Toast.LENGTH_SHORT).show();
+        Runnable r = new Runnable() {
+            @Override
+            public void run() {
+                finish();
+            }
+        };
+        Handler h = new Handler();
+        h.postDelayed(r, 1000);
     }
 
     @Override
-    public void onFailed() {
-        btnRegist.setProgress(0);
-        enableView();
-        Toast.makeText(this,
-                R.string.label_validation_failed_register, Toast.LENGTH_SHORT).show();
+    public void onDelay(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
     @Override
-    public void onError() {
+    public void onFailed(String message) {
         btnRegist.setProgress(0);
         enableView();
         Toast.makeText(this,
-                R.string.label_error, Toast.LENGTH_SHORT).show();
+                message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onError(String message) {
+        btnRegist.setProgress(0);
+        enableView();
+        Toast.makeText(this,
+                message, Toast.LENGTH_SHORT).show();
     }
 
     private void disableView() {
         etUsername.setEnabled(false);
         etEmail.setEnabled(false);
         etPassword.setEnabled(false);
-        etCity.setEnabled(false);
-        etAddress.setEnabled(false);
-        spinGender.setEnabled(false);
-        etBirth.setEnabled(false);
-        etTlp.setEnabled(false);
         btnRegist.setEnabled(false);
     }
 
@@ -194,11 +149,6 @@ public class ActRegistration extends FragmentActivity
         etUsername.setEnabled(true);
         etEmail.setEnabled(true);
         etPassword.setEnabled(true);
-        etCity.setEnabled(true);
-        etAddress.setEnabled(true);
-        spinGender.setEnabled(true);
-        etBirth.setEnabled(true);
-        etTlp.setEnabled(true);
         btnRegist.setEnabled(true);
     }
 
