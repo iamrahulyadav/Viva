@@ -8,12 +8,14 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
@@ -32,15 +34,19 @@ import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.Global;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.component.ProgressGenerator;
+import id.co.viva.news.app.component.ZoomFlip;
+import id.co.viva.news.app.fragment.CardBackFragment;
+import id.co.viva.news.app.fragment.CardFrontFragment;
 import id.co.viva.news.app.interfaces.OnProgressDoneListener;
+import id.co.viva.news.app.interfaces.ShowingBackListener;
 import id.co.viva.news.app.services.UserAccount;
 
 /**
  * Created by reza on 03/12/14.
  */
 public class ActUserProfile extends FragmentActivity implements View.OnClickListener,
-        OnProgressDoneListener, AdapterView.OnItemSelectedListener,
-        DatePickerDialogFragment.DatePickerDialogHandler {
+        OnProgressDoneListener, AdapterView.OnItemSelectedListener, ShowingBackListener,
+        DatePickerDialogFragment.DatePickerDialogHandler, FragmentManager.OnBackStackChangedListener {
 
     private static final String TYPE_LOGOUT = "logout";
     private static final String TYPE_SAVE = "save";
@@ -66,13 +72,21 @@ public class ActUserProfile extends FragmentActivity implements View.OnClickList
     private String birthdate;
     private ProgressGenerator progressGenerator;
 
+    private ZoomFlip zoomFlip;
+    private FrameLayout mParentLayout;
+    private RelativeLayout mMainContainer;
+    private RelativeLayout mOverlayLayout;
+    private CardBackFragment mBackFragment;
+    private CardFrontFragment mFrontFragment;
+    private boolean mShowingBack = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act_profile);
         getHeaderActionBar();
-        defineView();
         getProfile();
+        defineView();
         //Showing Data
         if(fullname.length() > 0) {
             mProfileName.setText(fullname);
@@ -129,6 +143,9 @@ public class ActUserProfile extends FragmentActivity implements View.OnClickList
                     .setFragmentManager(getSupportFragmentManager())
                     .setStyleResId(R.style.BetterPickersDialogFragment);
             dpb.show();
+        } else if(view.getId() == R.id.img_thumb_profile) {
+            flip();
+            zoomFlip.zoomImageFromThumb(mprofileThumb);
         }
     }
 
@@ -219,9 +236,20 @@ public class ActUserProfile extends FragmentActivity implements View.OnClickList
         mprofileThumb = (ImageView) findViewById(R.id.img_thumb_profile);
         btnLogout = (CircularProgressButton) findViewById(R.id.btn_logout);
         btnSave = (CircularProgressButton) findViewById(R.id.btn_change_data_user);
+        mBackFragment = new CardBackFragment(fullname, photourl, this);
+        mFrontFragment = new CardFrontFragment(photourl, this);
+        getFragmentManager().beginTransaction()
+                .add(R.id.main, mFrontFragment).commit();
+        mParentLayout = (FrameLayout) findViewById(R.id.container);
+        mMainContainer = (RelativeLayout) findViewById(R.id.main);
+        mMainContainer.setVisibility(View.GONE);
+        mOverlayLayout = (RelativeLayout) findViewById(R.id.overlay);
+        zoomFlip = new ZoomFlip(mParentLayout, mMainContainer, mOverlayLayout);
+        zoomFlip.setShowingBackListener(this);
         btnLogout.setOnClickListener(this);
         btnSave.setOnClickListener(this);
         etBirth.setOnClickListener(this);
+        mprofileThumb.setOnClickListener(this);
         spinnerGender.setOnItemSelectedListener(this);
     }
 
@@ -284,5 +312,45 @@ public class ActUserProfile extends FragmentActivity implements View.OnClickList
             backgroundLayout.setBackgroundDrawable(placeHolderDrawable);
         }
     };
+
+    @Override
+    public void onBackPressed() {
+        if (mShowingBack){
+            flip();
+            zoomFlip.moveToThumb();
+        }
+        else {
+            super.onBackPressed();
+            overridePendingTransition(R.anim.slide_right_enter, R.anim.slide_right_exit);
+        }
+    }
+
+    @Override
+    public void onShowingBackClick() {
+        flip();
+        zoomFlip.moveToThumb();
+    }
+
+    private void flip() {
+        if (mShowingBack) {
+            getFragmentManager().popBackStack();
+            return;
+        }
+        mShowingBack = true;
+        getFragmentManager()
+                .beginTransaction()
+                .setCustomAnimations(R.animator.card_flip_right_in,
+                        R.animator.card_flip_right_out,
+                        R.animator.card_flip_left_in,
+                        R.animator.card_flip_left_out)
+                .replace(R.id.main, mBackFragment)
+                .addToBackStack(null).commit();
+    }
+
+    @Override
+    public void onBackStackChanged() {
+        mShowingBack = (getFragmentManager().getBackStackEntryCount() > 0);
+        invalidateOptionsMenu();
+    }
 
 }

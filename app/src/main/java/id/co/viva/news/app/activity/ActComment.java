@@ -97,10 +97,8 @@ public class ActComment extends FragmentActivity implements View.OnClickListener
     }
 
     private void getCommentList() {
-        if(isInternetPresent) {
-            userAccount = new UserAccount(this);
-            userAccount.getCommentList(fullname, mIds, this);
-        }
+        userAccount = new UserAccount(this);
+        userAccount.getCommentList(fullname, mIds, this);
     }
 
     @Override

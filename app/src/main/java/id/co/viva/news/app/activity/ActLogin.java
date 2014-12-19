@@ -66,8 +66,6 @@ public class ActLogin extends FragmentActivity implements OnCompleteListener, On
     //Facebook Instances
     private final List<String> facebook_permission =
             Arrays.asList("public_profile", "email");
-    private String user_name;
-    private String user_email;
 
     //Path Instances
     public static final int REQUEST_PATH_AUTHENTICATE = 9999;
@@ -410,13 +408,15 @@ public class ActLogin extends FragmentActivity implements OnCompleteListener, On
 
     @Override
     public void onCompleteGetInfo(GraphUser user, Response response) {
-        user_name = user.getName().toString();
-        user_email = user.getUsername();
+        String user_id = user.getId();
+        String user_name = user.getName().toString();
+        String user_email = user.getUsername();
         if(user_email == null) {
             user_email = user.getName().toString();
         }
         userAccount = new UserAccount(this);
-        userAccount.saveLoginStates(user_email, user_name);
+        userAccount.saveLoginStatesSocmed(user_email, user_name,
+                Constant.URL_FACEBOOK_PHOTO + user_id + "/picture?type=large");
     }
 
     @Override

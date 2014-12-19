@@ -29,4 +29,8 @@
         android:text="@string/label_no_results_favorite"
         android:textColor="@color/header_grey"
         android:id="@+id/text_no_result_detail_content_favorite"/>
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/coachmark_favorite_list"></RelativeLayout>
 </RelativeLayout>

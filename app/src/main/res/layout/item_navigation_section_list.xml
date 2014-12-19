@@ -4,7 +4,7 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="0dp"
-    android:background="@color/header_headline_terbaru_new"
+    android:background="@color/date_color"
     android:orientation="vertical">
     <RelativeLayout
         android:layout_width="fill_parent"

@@ -12,9 +12,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.nhaarman.listviewanimations.appearance.simple.ScaleInAnimationAdapter;
 import com.nhaarman.listviewanimations.itemmanipulation.DynamicListView;
 import com.nhaarman.listviewanimations.itemmanipulation.swipedismiss.OnDismissCallback;
 import com.nhaarman.listviewanimations.itemmanipulation.swipedismiss.undo.SimpleSwipeUndoAdapter;
@@ -26,6 +26,8 @@ import id.co.viva.news.app.Global;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.activity.ActDetailFavorite;
 import id.co.viva.news.app.adapter.FavoriteAdapter;
+import id.co.viva.news.app.coachmark.CoachmarkBuilder;
+import id.co.viva.news.app.coachmark.CoachmarkView;
 import id.co.viva.news.app.model.Favorites;
 
 /**
@@ -37,10 +39,11 @@ public class FavoritesFragment extends Fragment implements AdapterView.OnItemCli
     private String favoriteList;
     private int favoriteListSize;
     private FavoriteAdapter favoriteAdapter;
-    private ScaleInAnimationAdapter scaleInAnimationAdapter;
     private DynamicListView listFavorite;
     private TextView textNoResult;
     private SimpleSwipeUndoAdapter simpleSwipeUndoAdapter;
+    private View coachmarkView;
+    private CoachmarkView showtips;
 
     @Override
     public void onAttach(Activity activity) {
@@ -53,6 +56,9 @@ public class FavoritesFragment extends Fragment implements AdapterView.OnItemCli
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.frag_favorites, container, false);
+
+        coachmarkView = rootView.findViewById(R.id.coachmark_favorite_list);
+        showCoachMark();
 
         textNoResult = (TextView) rootView.findViewById(R.id.text_no_result_detail_content_favorite);
         textNoResult.setVisibility(View.GONE);
@@ -100,10 +106,8 @@ public class FavoritesFragment extends Fragment implements AdapterView.OnItemCli
                 });
 
         if(favoriteListSize > 0 || favoritesArrayList != null) {
-            scaleInAnimationAdapter = new ScaleInAnimationAdapter(favoriteAdapter);
-            scaleInAnimationAdapter.setAbsListView(listFavorite);
-            listFavorite.setAdapter(scaleInAnimationAdapter);
-            scaleInAnimationAdapter.notifyDataSetChanged();
+            listFavorite.setAdapter(favoriteAdapter);
+            favoriteAdapter.notifyDataSetChanged();
             //Undo Adapter
             simpleSwipeUndoAdapter.setAbsListView(listFavorite);
             listFavorite.setAdapter(simpleSwipeUndoAdapter);
@@ -111,6 +115,23 @@ public class FavoritesFragment extends Fragment implements AdapterView.OnItemCli
         }
 
         return rootView;
+    }
+
+    private void showCoachMark() {
+        if(Global.getInstance(getActivity()).getSharedPreferences(getActivity()).getBoolean(Constant.FIRST_INSTALL_FAVORITES, true)) {
+            RelativeLayout relativeLayout = new RelativeLayout(getActivity());
+            relativeLayout.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            ((RelativeLayout) coachmarkView).addView(relativeLayout);
+            showtips = new CoachmarkBuilder(getActivity())
+                    .setTarget(relativeLayout, 0, 0, 0)
+                    .setTitle(getResources().getString(R.string.label_navigation_favorite))
+                    .setDescription(getResources().getString(R.string.label_navigation_favorite_desc))
+                    .setDelay(1000)
+                    .build();
+            showtips.show(getActivity());
+            Global.getInstance(getActivity()).getSharedPreferences(getActivity()).
+                    edit().putBoolean(Constant.FIRST_INSTALL_FAVORITES, false).commit();
+        }
     }
 
     @Override

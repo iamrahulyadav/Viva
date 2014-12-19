@@ -14,6 +14,9 @@
     <string name="label_error">Terjadi kesalahan!</string>
     <string name="label_loading_data">Memuat data...</string>
     <string name="label_navigation_button">Navigation Button</string>
+    <string name="label_navigation_favorite">Favorite Articles</string>
+    <string name="label_navigation_favorite_desc">Nikmati pengalaman membaca anda dengan menggunakan fitur Favorites.
+        Simple, Off-line Mode, No Registration!</string>
     <string name="label_navigation_button_desc">Eksplorasi anda dimulai dari sini.</string>
     <string name="label_search_button">Search Button</string>
     <string name="label_search_button_desc">Temukan artikel yang anda cari di sini.</string>

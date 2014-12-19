@@ -50,11 +50,13 @@ import id.co.viva.news.app.adapter.RelatedAdapter;
 import id.co.viva.news.app.model.Favorites;
 import id.co.viva.news.app.model.RelatedArticle;
 import id.co.viva.news.app.services.Analytics;
+import id.co.viva.news.app.services.UserAccount;
 
 /**
  * Created by root on 07/10/14.
  */
-public class DetailHeadlineIndexFragment extends Fragment implements View.OnClickListener {
+public class DetailHeadlineIndexFragment extends Fragment implements View.OnClickListener,
+        AdapterView.OnItemClickListener {
 
     private String id;
     private String imageContent;
@@ -103,58 +105,42 @@ public class DetailHeadlineIndexFragment extends Fragment implements View.OnClic
         id = getArguments().getString("id");
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.item_detail_headline, container, false);
-
-        setHasOptionsMenu(true);
-
-        analytics = new Analytics(getActivity());
-        analytics.getAnalyticByATInternet(Constant.HEADLINE_DETAIL_PAGE);
-        analytics.getAnalyticByGoogleAnalytic(Constant.HEADLINE_DETAIL_PAGE);
-
+    private void defineViews(View view) {
+        relatedArticleArrayList = new ArrayList<RelatedArticle>();
         loading_layout = (RelativeLayout) view.findViewById(R.id.loading_progress_layout);
         headerRelated = (RelativeLayout) view.findViewById(R.id.header_related_article_headline);
         headerRelated.setVisibility(View.GONE);
         tvNoResult = (TextView) view.findViewById(R.id.text_no_result_detail_headline);
         tvNoResult.setVisibility(View.GONE);
-
         rippleView = (RippleView) view.findViewById(R.id.layout_ripple_view_headline_terbaru);
         rippleView.setVisibility(View.GONE);
         rippleView.setOnClickListener(this);
-
         imageContentLayout = view.findViewById(R.id.image_content);
-
         listView = (ListView) view.findViewById(R.id.list_related_article_headline);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                if(relatedArticleArrayList.size() > 0) {
-                    RelatedArticle relatedArticle = relatedArticleArrayList.get(position);
-                    Log.i(Constant.TAG, "ID : " + relatedArticle.getId());
-                    Bundle bundle = new Bundle();
-                    bundle.putString("id", relatedArticle.getRelated_article_id());
-                    bundle.putString("kanal", relatedArticle.getKanal());
-                    bundle.putString("shared_url", relatedArticle.getShared_url());
-                    Intent intent = new Intent(getActivity(), ActDetailContentDefault.class);
-                    intent.putExtras(bundle);
-                    getActivity().startActivity(intent);
-                    getActivity().overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
-                }
-            }
-        });
-
-        relatedArticleArrayList = new ArrayList<RelatedArticle>();
-
+        listView.setOnItemClickListener(this);
         tvTitleHeadlineDetail = (TextView) view.findViewById(R.id.title_detail_headline);
         tvDateHeadlineDetail = (TextView) view.findViewById(R.id.date_detail_headline);
         tvReporterHeadlineDetail = (TextView) view.findViewById(R.id.reporter_detail_headline);
         tvContentHeadlineDetail = (TextView) view.findViewById(R.id.content_detail_headline);
-
         ivThumbDetailHeadline = (ImageView) view.findViewById(R.id.thumb_detail_headline);
         ivThumbDetailHeadline.setFocusable(true);
         ivThumbDetailHeadline.setFocusableInTouchMode(true);
         ivThumbDetailHeadline.requestFocus();
+    }
+
+    private void getAnalytics() {
+        analytics = new Analytics(getActivity());
+        analytics.getAnalyticByATInternet(Constant.HEADLINE_DETAIL_PAGE);
+        analytics.getAnalyticByGoogleAnalytic(Constant.HEADLINE_DETAIL_PAGE);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.item_detail_headline, container, false);
+
+        setHasOptionsMenu(true);
+        defineViews(view);
+        getAnalytics();
 
         if(Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + id) != null) {
             cachedResponse = new String(Global.getInstance(getActivity()).
@@ -439,14 +425,12 @@ public class DetailHeadlineIndexFragment extends Fragment implements View.OnClic
             case R.id.subaction_favorites:
                 favoriteList = Global.getInstance(getActivity()).getSharedPreferences(getActivity())
                         .getString(Constant.FAVORITES_LIST, "");
-
                 if(favoriteList == null || favoriteList.length() <= 0) {
                     favoritesArrayList = Global.getInstance(getActivity()).getFavoritesList();
                 } else {
                     favoritesArrayList = Global.getInstance(getActivity()).getInstanceGson().
                             fromJson(favoriteList, Global.getInstance(getActivity()).getType());
                 }
-
                 new SweetAlertDialog(getActivity(), SweetAlertDialog.WARNING_TYPE)
                         .setTitleText(getResources().getString(R.string.label_favorite_navigation_title))
                         .setContentText(title)
@@ -456,12 +440,10 @@ public class DetailHeadlineIndexFragment extends Fragment implements View.OnClic
                             public void onClick(SweetAlertDialog sDialog) {
                                 favoritesArrayList.add(new Favorites(ids, title, channel_id, kanal,
                                     image_url, date_publish, reporter_name, url_shared, content));
-
                                 String favorite = Global.getInstance(getActivity()).getInstanceGson().toJson(favoritesArrayList);
                                 Global.getInstance(getActivity()).getDefaultEditor().putString(Constant.FAVORITES_LIST, favorite);
                                 Global.getInstance(getActivity()).getDefaultEditor().putInt(Constant.FAVORITES_LIST_SIZE, favoritesArrayList.size());
                                 Global.getInstance(getActivity()).getDefaultEditor().commit();
-
                                 sDialog.setTitleText(getResources().getString(R.string.label_favorite_navigation_title_confirm))
                                         .setContentText(getResources().getString(R.string.label_favorite_navigation_content))
                                         .setConfirmText(getResources().getString(R.string.label_favorite_ok))
@@ -576,6 +558,22 @@ public class DetailHeadlineIndexFragment extends Fragment implements View.OnClic
                 loading_layout.setVisibility(View.GONE);
                 tvNoResult.setVisibility(View.VISIBLE);
             }
+        }
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+        if(relatedArticleArrayList.size() > 0) {
+            RelatedArticle relatedArticle = relatedArticleArrayList.get(position);
+            Log.i(Constant.TAG, "ID : " + relatedArticle.getId());
+            Bundle bundle = new Bundle();
+            bundle.putString("id", relatedArticle.getRelated_article_id());
+            bundle.putString("kanal", relatedArticle.getKanal());
+            bundle.putString("shared_url", relatedArticle.getShared_url());
+            Intent intent = new Intent(getActivity(), ActDetailContentDefault.class);
+            intent.putExtras(bundle);
+            getActivity().startActivity(intent);
+            getActivity().overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
         }
     }
 

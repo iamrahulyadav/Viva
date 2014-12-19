@@ -15,9 +15,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -34,10 +38,9 @@ import id.co.viva.news.app.fragment.LifeFragment;
 import id.co.viva.news.app.fragment.NewsFragment;
 import id.co.viva.news.app.interfaces.Item;
 import id.co.viva.news.app.model.NavigationItem;
-import id.co.viva.news.app.model.NavigationProfileItem;
 import id.co.viva.news.app.model.NavigationSectionItem;
 
-public class ActBase extends FragmentActivity {
+public class ActBase extends FragmentActivity implements View.OnClickListener {
 
     protected DrawerLayout mDrawerLayout;
     private CharSequence mTitle;
@@ -51,6 +54,11 @@ public class ActBase extends FragmentActivity {
     private String fullname;
     private String email;
     private String photourl;
+    private RelativeLayout mNavLayout;
+    private ImageView mImgProfile;
+    private TextView mNameProfile;
+    private TextView mEmailProfile;
+    private ImageView mBackground;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,38 +66,15 @@ public class ActBase extends FragmentActivity {
         setContentView(R.layout.act_main);
 
         mTitle = mDrawerTitle = getTitle();
-
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerList = (ListView) findViewById(R.id.list_slidermenu);
-
         getProfile();
-
-        navDrawerItems = new ArrayList<Item>();
-        if(fullname.length() > 0 && email.length() > 0) {
-            navDrawerItems.add(new NavigationProfileItem(fullname, email));
-        } else if(fullname.length() > 0 && email.length() > 0 && photourl.length() > 0) {
-            navDrawerItems.add(new NavigationProfileItem(fullname, email, photourl));
-        } else {
-            navDrawerItems.add(new NavigationProfileItem("Username", "Email"));
-        }
-        navDrawerItems.add(new NavigationItem(getResources().getString(R.string.label_item_navigation_headline), R.drawable.icon_terbaru));
-        navDrawerItems.add(new NavigationItem(getResources().getString(R.string.label_item_navigation_terbaru), R.drawable.icon_headline));
-        navDrawerItems.add(new NavigationItem(getResources().getString(R.string.label_item_navigation_favorites), R.drawable.icon_favorites));
-        navDrawerItems.add(new NavigationSectionItem(getResources().getString(R.string.label_section_navigation_channel)));
-        navDrawerItems.add(new NavigationItem(getResources().getString(R.string.label_item_navigation_news), R.drawable.icon_viva_news));
-        navDrawerItems.add(new NavigationItem(getResources().getString(R.string.label_item_navigation_bola), R.drawable.icon_viva_bola));
-        navDrawerItems.add(new NavigationItem(getResources().getString(R.string.label_item_navigation_life), R.drawable.icon_viva_life));
-        navDrawerItems.add(new NavigationSectionItem(getResources().getString(R.string.label_section_navigation_preferences)));
-        navDrawerItems.add(new NavigationItem(getResources().getString(R.string.label_item_navigation_about), R.drawable.icon_about));
+        defineViews();
+        defineItemList();
 
         mDrawerList.setOnItemClickListener(new SlideMenuClickListener());
         adapter = new NavigationAdapter(getApplicationContext(), navDrawerItems);
         mDrawerList.setAdapter(adapter);
 
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
-        getActionBar().setIcon(R.drawable.logo_viva_coid_second);
-        getActionBar().setDisplayShowTitleEnabled(false);
+        showHeaderActionBar();
 
         mDrawerToggle = new ActionBarDrawerToggle(this,
                 mDrawerLayout,
@@ -112,38 +97,70 @@ public class ActBase extends FragmentActivity {
         mDrawerLayout.setDrawerListener(mDrawerToggle);
     }
 
+    private void defineItemList() {
+        navDrawerItems = new ArrayList<Item>();
+        navDrawerItems.add(new NavigationItem(getResources().getString(R.string.label_item_navigation_headline), R.drawable.icon_terbaru));
+        navDrawerItems.add(new NavigationItem(getResources().getString(R.string.label_item_navigation_terbaru), R.drawable.icon_headline));
+        navDrawerItems.add(new NavigationItem(getResources().getString(R.string.label_item_navigation_favorites), R.drawable.icon_favorites));
+        navDrawerItems.add(new NavigationSectionItem(getResources().getString(R.string.label_section_navigation_channel)));
+        navDrawerItems.add(new NavigationItem(getResources().getString(R.string.label_item_navigation_news), R.drawable.icon_viva_news));
+        navDrawerItems.add(new NavigationItem(getResources().getString(R.string.label_item_navigation_bola), R.drawable.icon_viva_bola));
+        navDrawerItems.add(new NavigationItem(getResources().getString(R.string.label_item_navigation_life), R.drawable.icon_viva_life));
+        navDrawerItems.add(new NavigationSectionItem(getResources().getString(R.string.label_section_navigation_preferences)));
+        navDrawerItems.add(new NavigationItem(getResources().getString(R.string.label_item_navigation_about), R.drawable.icon_about));
+    }
+
+    private void showHeaderActionBar() {
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setHomeButtonEnabled(true);
+        getActionBar().setIcon(R.drawable.logo_viva_coid_second);
+        getActionBar().setDisplayShowTitleEnabled(false);
+    }
+
+    private void defineViews() {
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerList = (ListView) findViewById(R.id.list_slidermenu);
+        mNavLayout = (RelativeLayout) findViewById(R.id.nav_layout);
+        mBackground = (ImageView) findViewById(R.id.profile_bg);
+        mImgProfile = (ImageView) findViewById(R.id.img_profile);
+        mImgProfile.setOnClickListener(this);
+        mNameProfile = (TextView) findViewById(R.id.tv_username);
+        mEmailProfile = (TextView) findViewById(R.id.tv_user_email);
+        if(fullname.length() > 0 && email.length() > 0) {
+            mNameProfile.setText(fullname);
+            mEmailProfile.setText(email);
+        } else {
+            mImgProfile.setImageResource(R.drawable.nophoto);
+            mNameProfile.setText("Anda belum");
+            mEmailProfile.setText(R.string.label_login);
+        }
+        if(photourl.length() > 0) {
+            Picasso.with(this).load(photourl).into(mImgProfile);
+            Picasso.with(this).load(photourl).into(mBackground);
+        }
+    }
+
     private void displayView(int position) {
         switch (position) {
             case 0:
-                if(fullname.length() > 0 && email.length() > 0) {
-                    Intent intent = new Intent(this, ActUserProfile.class);
-                    startActivity(intent);
-                    overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
-                } else {
-                    Intent intent = new Intent(this, ActLogin.class);
-                    startActivity(intent);
-                    overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
-                }
-                break;
-            case 1:
                 fragment = new HeadlineFragment();
                 break;
-            case 2:
+            case 1:
                 fragment = new TerbaruFragment();
                 break;
-            case 3:
+            case 2:
                 fragment = new FavoritesFragment();
                 break;
-            case 5:
+            case 4:
                 fragment =  new NewsFragment();
                 break;
-            case 6:
+            case 5:
                 fragment =  new BolaFragment();
                 break;
-            case 7:
+            case 6:
                 fragment =  new LifeFragment();
                 break;
-            case 9:
+            case 8:
                 fragment =  new AboutFragment();
                 break;
             default:
@@ -157,9 +174,24 @@ public class ActBase extends FragmentActivity {
                     .commit();
             mDrawerList.setItemChecked(position, true);
             mDrawerList.setSelection(position);
-            mDrawerLayout.closeDrawer(mDrawerList);
+            mDrawerLayout.closeDrawer(mNavLayout);
         } else {
             Log.e(Constant.TAG, "Error creating fragment..");
+        }
+    }
+
+    @Override
+    public void onClick(View view) {
+        if(view.getId() == R.id.img_profile) {
+            if(fullname.length() > 0 && email.length() > 0) {
+                Intent intent = new Intent(this, ActUserProfile.class);
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+            } else {
+                Intent intent = new Intent(this, ActLogin.class);
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+            }
         }
     }
 
@@ -225,8 +257,8 @@ public class ActBase extends FragmentActivity {
 
     @Override
     public void onBackPressed() {
-        if(mDrawerLayout.isDrawerOpen(mDrawerList)) {
-            mDrawerLayout.closeDrawer(mDrawerList);
+        if(mDrawerLayout.isDrawerOpen(mNavLayout)) {
+            mDrawerLayout.closeDrawer(mNavLayout);
         } else {
            super.onBackPressed();
         }

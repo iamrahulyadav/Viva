@@ -4,7 +4,6 @@ import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.os.Build;
 import android.renderscript.Allocation;
 import android.renderscript.Element;
@@ -26,9 +25,11 @@ public class Constant {
     public static final int PROFILE_PIC_SIZE = 400;
     public final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     public final static int NUMBER_OF_TOP_LIST_ITEMS = 4;
+    public final static String URL_FACEBOOK_PHOTO = "http://graph.facebook.com/";
 
     public static final String fragment_headline = "class id.co.viva.news.app.fragment.HeadlineFragment";
-    public static final String FIRST_INSTALL = "first_install";
+    public static final String FIRST_INSTALL = "first_install_main";
+    public static final String FIRST_INSTALL_FAVORITES = "first_install_favorites";
 
     public static final String FAVORITES_LIST = "favorites_list";
     public static final String FAVORITES_LIST_SIZE = "favorites_list_size";
