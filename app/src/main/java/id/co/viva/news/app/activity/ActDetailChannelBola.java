@@ -253,8 +253,10 @@ public class ActDetailChannelBola extends ActBase implements
     @Override
     public void onLoadMore() {
         data = String.valueOf(dataSize += 10);
-        Log.i(Constant.TAG, "DATA PAGE : " + data);
         if(isInternetPresent) {
+            analytics.getAnalyticByATInternet(Constant.SUBKANAL_BOLA_PAGE + "_" + data);
+            analytics.getAnalyticByGoogleAnalytic(Constant.SUBKANAL_BOLA_PAGE + "_" + data);
+
             StringRequest stringRequest = new StringRequest(Request.Method.GET, Constant.NEW_KANAL + "ch/" + id + "/lv/2/s/" + data,
                     new Response.Listener<String>() {
                         @Override

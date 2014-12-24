@@ -50,6 +50,7 @@ public class UserAccount {
     private String mPassword;
     private String mUsername;
     private String mRate;
+    private String mUserSocialId;
 
     public UserAccount(Context mContext) {
         this.mContext = mContext;
@@ -60,8 +61,9 @@ public class UserAccount {
         this.mListener = mListener;
     }
 
-    public UserAccount(String article_id, String mEmail, String mUsername, String comment_text,
-                       String app_id, OnCompleteListener mListener, Context mContext) {
+    public UserAccount(String user_social_id, String app_id, String article_id, String mEmail, String mUsername, String comment_text,
+                       OnCompleteListener mListener, Context mContext) {
+        this.mUserSocialId = user_social_id;
         this.article_id = article_id;
         this.mEmail = mEmail;
         this.mUsername = mUsername;
@@ -95,6 +97,58 @@ public class UserAccount {
         this.mUsername = mUsername;
         this.mListener = mListener;
         this.mContext = mContext;
+    }
+
+    public void editProfile(final String username, final String gender, final String city, final String birth, final OnCompleteListener completeListener) {
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, Constant.NEW_UPDATE_PROFILE,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String s) {
+                        Log.i(Constant.TAG, "Response Updated Profile : " + s);
+                        try {
+                            JSONObject jsonObject = new JSONObject(s);
+                            int status = jsonObject.getInt(STATUS);
+                            String message = jsonObject.getString(MESSAGE);
+                            if(status == STATUS_SUCCESS) {
+                                completeListener.onComplete(message);
+                            } else if(status == STATUS_FAILED) {
+                                completeListener.onFailed(message);
+                            }
+                        } catch (Exception e) {
+                            e.getMessage();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+                        Toast.makeText(mContext, R.string.label_error_post_comment, Toast.LENGTH_SHORT).show();
+                        completeListener.onError(mContext.getResources().getString(R.string.label_error_post_comment));
+                    }
+                })
+        {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("username", username);
+                if(gender.length() > 0) {
+                    params.put("gender", gender);
+                }
+                if(city.length() > 0) {
+                    params.put("city", city);
+                }
+                if(birth.length() > 0) {
+                    params.put("birthdate", birth);
+                }
+                return params;
+            }
+        };
+        stringRequest.setShouldCache(false);
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                Constant.TIME_OUT_LONG,
+                0,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        Global.getInstance(mContext).addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
     }
 
     public void sendForgotPassword() {
@@ -224,7 +278,10 @@ public class UserAccount {
                 params.put("email", mEmail);
                 params.put("username", mUsername);
                 params.put("comment_text", comment_text);
-                params.put("app_id", "10");
+                params.put("app_id", app_id);
+                if(mUserSocialId.length() > 0) {
+                    params.put("user_social_id", mUserSocialId);
+                }
                 return params;
             }
         };
@@ -236,7 +293,7 @@ public class UserAccount {
         Global.getInstance(mContext).addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
     }
 
-    public void signIn() {
+    public void signIn(final String app_id) {
         StringRequest stringRequest = new StringRequest(Request.Method.POST, Constant.NEW_LOGIN,
                 new Response.Listener<String>() {
                     @Override
@@ -249,12 +306,12 @@ public class UserAccount {
                             String fullname = jsonObject.getString(FULLNAME);
                             String message = jsonObject.getString(MESSAGE);
                             if(status == STATUS_SUCCESS) {
-                                saveLoginStates(email, fullname);
+                                saveLoginStates(email, fullname, app_id);
                                 mListener.onComplete(message);
                             } else if(status == STATUS_FAILED) {
                                 mListener.onFailed(message);
                             } else if(status == STATUS_DELAY) {
-                                saveLoginStates(email, fullname);
+                                saveLoginStates(email, fullname, app_id);
                                 mListener.onDelay(message);
                             }
                         } catch (Exception e) {
@@ -276,8 +333,6 @@ public class UserAccount {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("email", mEmail);
                 params.put("password", mPassword);
-                Log.i(Constant.TAG, "Email : " + mEmail);
-                Log.i(Constant.TAG, "Password : " + mPassword);
                 return params;
             }
         };
@@ -426,14 +481,17 @@ public class UserAccount {
         Global.getInstance(mContext).addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
     }
 
-    public void saveLoginStates(String emailState, String fullnameState) {
+    public void saveLoginStates(String emailState, String fullnameState, String app_id) {
         Global.getInstance(mContext).getDefaultEditor().putString(Constant.LOGIN_STATES_EMAIL, emailState);
         Global.getInstance(mContext).getDefaultEditor().putString(Constant.LOGIN_STATES_FULLNAME, fullnameState);
+        Global.getInstance(mContext).getDefaultEditor().putString(Constant.LOGIN_STATES_APP_ID, app_id);
         Global.getInstance(mContext).getDefaultEditor().putBoolean(Constant.LOGIN_STATES_ISLOGIN, true);
         Global.getInstance(mContext).getDefaultEditor().commit();
     }
 
-    public void saveLoginStatesSocmed(String emailState, String fullnameState, String urlPhoto) {
+    public void saveLoginStatesSocmed(String userSocialId, String app_id, String emailState, String fullnameState, String urlPhoto) {
+        Global.getInstance(mContext).getDefaultEditor().putString(Constant.LOGIN_STATES_USER_SOCIAL_ID, userSocialId);
+        Global.getInstance(mContext).getDefaultEditor().putString(Constant.LOGIN_STATES_APP_ID, app_id);
         Global.getInstance(mContext).getDefaultEditor().putString(Constant.LOGIN_STATES_EMAIL, emailState);
         Global.getInstance(mContext).getDefaultEditor().putString(Constant.LOGIN_STATES_FULLNAME, fullnameState);
         Global.getInstance(mContext).getDefaultEditor().putString(Constant.LOGIN_STATES_URL_PHOTO, urlPhoto);
@@ -447,15 +505,18 @@ public class UserAccount {
         Global.getInstance(mContext).getDefaultEditor().commit();
     }
 
-    public void saveAttributesUserProfile(String phone, String gender, String birthdate, String city) {
-        if(phone.length() > 0) {
-            Global.getInstance(mContext).getDefaultEditor().putString(Constant.LOGIN_STATES_PHONE, phone);
-        }
+    public void saveAttributesUserProfile(String gender, String birthdate, String state, String province, String city) {
         if(gender.length() > 0) {
             Global.getInstance(mContext).getDefaultEditor().putString(Constant.LOGIN_STATES_GENDER, gender);
         }
         if(birthdate.length() > 0) {
             Global.getInstance(mContext).getDefaultEditor().putString(Constant.LOGIN_STATES_BIRTHDATE, birthdate);
+        }
+        if(state.length() > 0) {
+            Global.getInstance(mContext).getDefaultEditor().putString(Constant.LOGIN_STATES_COUNTRY, state);
+        }
+        if(province.length() > 0) {
+            Global.getInstance(mContext).getDefaultEditor().putString(Constant.LOGIN_STATES_PROVINCE, province);
         }
         if(city.length() > 0) {
             Global.getInstance(mContext).getDefaultEditor().putString(Constant.LOGIN_STATES_CITY, city);
@@ -468,12 +529,24 @@ public class UserAccount {
         Global.getInstance(mContext).getDefaultEditor().remove(Constant.LOGIN_STATES_EMAIL);
         Global.getInstance(mContext).getDefaultEditor().remove(Constant.LOGIN_STATES_FULLNAME);
         if(Global.getInstance(mContext).getSharedPreferences(mContext)
+                .getString(Constant.LOGIN_STATES_USER_SOCIAL_ID, "").length() > 0) {
+            Global.getInstance(mContext).getDefaultEditor().remove(Constant.LOGIN_STATES_USER_SOCIAL_ID);
+        }
+        if(Global.getInstance(mContext).getSharedPreferences(mContext)
+                .getString(Constant.LOGIN_STATES_APP_ID, "").length() > 0) {
+            Global.getInstance(mContext).getDefaultEditor().remove(Constant.LOGIN_STATES_APP_ID);
+        }
+        if(Global.getInstance(mContext).getSharedPreferences(mContext)
                 .getString(Constant.LOGIN_STATES_URL_PHOTO, "").length() > 0) {
             Global.getInstance(mContext).getDefaultEditor().remove(Constant.LOGIN_STATES_URL_PHOTO);
         }
         if(Global.getInstance(mContext).getSharedPreferences(mContext)
-                .getString(Constant.LOGIN_STATES_PHONE, "").length() > 0) {
-            Global.getInstance(mContext).getDefaultEditor().remove(Constant.LOGIN_STATES_PHONE);
+                .getString(Constant.LOGIN_STATES_PROVINCE, "").length() > 0) {
+            Global.getInstance(mContext).getDefaultEditor().remove(Constant.LOGIN_STATES_PROVINCE);
+        }
+        if(Global.getInstance(mContext).getSharedPreferences(mContext)
+                .getString(Constant.LOGIN_STATES_COUNTRY, "").length() > 0) {
+            Global.getInstance(mContext).getDefaultEditor().remove(Constant.LOGIN_STATES_COUNTRY);
         }
         if(Global.getInstance(mContext).getSharedPreferences(mContext)
                 .getString(Constant.LOGIN_STATES_GENDER, "").length() > 0) {

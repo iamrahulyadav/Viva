@@ -226,7 +226,7 @@ public class ActLogin extends FragmentActivity implements OnCompleteListener, On
                     userAccount = new UserAccount(email, password, this, this);
                     disableWhenPressed();
                     btnSign.setProgress(1);
-                    userAccount.signIn();
+                    userAccount.signIn(Constant.CODE_VIVA);
                 } else if(!validation.isEmailValid(email) && validation.isLengthValid(password)) {
                     Toast.makeText(this, R.string.label_validation_email, Toast.LENGTH_SHORT).show();
                 } else if(validation.isEmailValid(email) && !validation.isLengthValid(password)) {
@@ -367,6 +367,7 @@ public class ActLogin extends FragmentActivity implements OnCompleteListener, On
             if(Plus.PeopleApi.getCurrentPerson(mGoogleApiClient) != null) {
                 Person currentPerson = Plus.PeopleApi
                         .getCurrentPerson(mGoogleApiClient);
+                String id = currentPerson.getId();
                 String personName = currentPerson.getDisplayName();
                 String personPhotoUrl = currentPerson.getImage().getUrl();
                 String email = Plus.AccountApi.getAccountName(mGoogleApiClient);
@@ -374,7 +375,7 @@ public class ActLogin extends FragmentActivity implements OnCompleteListener, On
                 personPhotoUrl = personPhotoUrl.substring(0,
                         personPhotoUrl.length() - 2)
                         + Constant.PROFILE_PIC_SIZE;
-                userAccount.saveLoginStatesSocmed(email, personName, personPhotoUrl);
+                userAccount.saveLoginStatesSocmed(id, Constant.CODE_GPLUS, email, personName, personPhotoUrl);
             }
         } catch (Exception e) {
             e.getMessage();
@@ -391,9 +392,7 @@ public class ActLogin extends FragmentActivity implements OnCompleteListener, On
     private void onSessionStateChange(Session session, SessionState state) {
         if (state.isOpened()) {
             new GetFacebookInfo(this, session).execute();
-        } else if (state.isClosed()) {
-
-        }
+        } else if (state.isClosed()) {}
     }
 
     private void openActiveSession() {
@@ -409,13 +408,13 @@ public class ActLogin extends FragmentActivity implements OnCompleteListener, On
     @Override
     public void onCompleteGetInfo(GraphUser user, Response response) {
         String user_id = user.getId();
-        String user_name = user.getName().toString();
+        String user_name = user.getFirstName();
         String user_email = user.getUsername();
         if(user_email == null) {
             user_email = user.getName().toString();
         }
         userAccount = new UserAccount(this);
-        userAccount.saveLoginStatesSocmed(user_email, user_name,
+        userAccount.saveLoginStatesSocmed(user_id, Constant.CODE_FACEBOOK, user_email, user_name,
                 Constant.URL_FACEBOOK_PHOTO + user_id + "/picture?type=large");
     }
 
@@ -425,16 +424,14 @@ public class ActLogin extends FragmentActivity implements OnCompleteListener, On
     }
 
     @Override
-    public void onSavePathAttributes(String acces_token, String user_id) {
+    public void onSavePathAttributes(String access_token, String user_id) {
         userAccount = new UserAccount(this);
-        userAccount.saveAttributesPath(acces_token, user_id);
+        userAccount.saveAttributesPath(access_token, user_id);
         startRequestPathUserInfo();
     }
 
     @Override
-    public void onErrorGetAttributes(String error) {
-
-    }
+    public void onErrorGetAttributes(String error) {}
 
     private void startRequestPathUserInfo() {
         if(isInternetPresent) {
@@ -449,13 +446,14 @@ public class ActLogin extends FragmentActivity implements OnCompleteListener, On
                                 JSONObject json_user = json.getJSONObject("user");
                                 String user_name = json_user.getString("name");
                                 String email = json_user.getString("email");
+                                String id = json_user.getString("id");
                                 String user_photo = json_user.getString("photo");
                                 JSONObject jsonPhoto = new JSONObject(user_photo);
                                 JSONObject sizeMedium = jsonPhoto.getJSONObject("medium");
                                 String photoUrl = sizeMedium.getString("url");
                                 if((type.equals("OK") || type.equals("CREATED") || type.equals("ACCEPTED"))) {
                                     userAccount = new UserAccount(ActLogin.this);
-                                    userAccount.saveLoginStatesSocmed(email, user_name, photoUrl);
+                                    userAccount.saveLoginStatesSocmed(id, Constant.CODE_PATH, email, user_name, photoUrl);
                                     Log.i(Constant.TAG, user_name + " " + email+ " " + photoUrl);
                                     refreshContent();
                                 } else {

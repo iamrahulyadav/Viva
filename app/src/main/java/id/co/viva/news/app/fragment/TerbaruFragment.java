@@ -323,8 +323,10 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
     @Override
     public void onLoadMore() {
         data = String.valueOf(dataSize += 10);
-        Log.i(Constant.TAG, "DATA PAGE : " + data);
         if(isInternetPresent) {
+            analytics.getAnalyticByATInternet(Constant.TERBARU_PAGE + "_" + data);
+            analytics.getAnalyticByGoogleAnalytic(Constant.TERBARU_PAGE + "_" + data);
+
                 StringRequest stringRequest = new StringRequest(Request.Method.GET, Constant.NEW_TERBARU + "start/" + data,
                         new Response.Listener<String>() {
                             @Override

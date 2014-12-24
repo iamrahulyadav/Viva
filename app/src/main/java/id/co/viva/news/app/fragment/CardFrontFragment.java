@@ -30,7 +30,9 @@ public class CardFrontFragment extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_card_front, container, false);
         mFrontImage = (ImageView) v.findViewById(R.id.image_card_front);
-        Picasso.with(context).load(photoUrl).into(mFrontImage);
+        if(photoUrl.length() > 0) {
+            Picasso.with(context).load(photoUrl).into(mFrontImage);
+        }
         return v;
     }
 

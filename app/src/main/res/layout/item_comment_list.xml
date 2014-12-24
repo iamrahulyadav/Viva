@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/google_card">
+    android:layout_height="match_parent">
     <RelativeLayout
         android:layout_width="match_parent"
         android:id="@+id/header_item_list_comment"
@@ -31,22 +30,10 @@
             android:textColor="@color/date_color"/>
     </RelativeLayout>
     <id.co.viva.news.app.component.BounvenoTextView
-        android:id="@+id/label_item_comment"
+        android:id="@+id/content_item_comment"
         android:layout_below="@id/header_item_list_comment"
         android:layout_width="fill_parent"
-        android:textStyle="bold"
-        android:layout_marginTop="10dp"
-        android:textSize="14sp"
-        android:text="@string/label_amount_comments"
-        android:layout_height="wrap_content"
-        android:textColor="@color/lynch"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"/>
-    <id.co.viva.news.app.component.BounvenoTextView
-        android:id="@+id/content_item_comment"
-        android:layout_below="@id/label_item_comment"
-        android:layout_width="fill_parent"
-        android:textSize="14sp"
+        android:textSize="16sp"
         android:layout_margin="5dp"
         android:text="@android:string/unknownName"
         android:layout_height="wrap_content"

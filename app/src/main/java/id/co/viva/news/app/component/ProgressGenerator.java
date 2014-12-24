@@ -16,11 +16,9 @@ public class ProgressGenerator {
     private OnProgressDoneListener onProgressDoneListener;
     private Random random = new Random();
     private int mProgress;
-    private String mType;
 
-    public ProgressGenerator(OnProgressDoneListener onProgressDoneListener, String mType) {
+    public ProgressGenerator(OnProgressDoneListener onProgressDoneListener) {
         this.onProgressDoneListener = onProgressDoneListener;
-        this.mType = mType;
     }
 
     public void start(final CircularProgressButton button) {
@@ -34,7 +32,7 @@ public class ProgressGenerator {
                     handler.postDelayed(this, generateDelay());
                     onProgressDoneListener.onProgressProcess();
                 } else {
-                    onProgressDoneListener.onProgressDone(mType);
+                    onProgressDoneListener.onProgressDone();
                 }
             }
         }, generateDelay());

@@ -29,6 +29,7 @@ import id.co.viva.news.app.adapter.FavoriteAdapter;
 import id.co.viva.news.app.coachmark.CoachmarkBuilder;
 import id.co.viva.news.app.coachmark.CoachmarkView;
 import id.co.viva.news.app.model.Favorites;
+import id.co.viva.news.app.services.Analytics;
 
 /**
  * Created by reza on 17/11/14.
@@ -44,6 +45,7 @@ public class FavoritesFragment extends Fragment implements AdapterView.OnItemCli
     private SimpleSwipeUndoAdapter simpleSwipeUndoAdapter;
     private View coachmarkView;
     private CoachmarkView showtips;
+    private Analytics analytics;
 
     @Override
     public void onAttach(Activity activity) {
@@ -56,6 +58,8 @@ public class FavoritesFragment extends Fragment implements AdapterView.OnItemCli
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.frag_favorites, container, false);
+
+        getAnalytics();
 
         coachmarkView = rootView.findViewById(R.id.coachmark_favorite_list);
         showCoachMark();
@@ -115,6 +119,12 @@ public class FavoritesFragment extends Fragment implements AdapterView.OnItemCli
         }
 
         return rootView;
+    }
+
+    private void getAnalytics() {
+        analytics = new Analytics(getActivity());
+        analytics.getAnalyticByATInternet(Constant.FAVORITES_PAGE);
+        analytics.getAnalyticByGoogleAnalytic(Constant.FAVORITES_PAGE);
     }
 
     private void showCoachMark() {

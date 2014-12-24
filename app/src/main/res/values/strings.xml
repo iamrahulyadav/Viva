@@ -16,10 +16,14 @@
     <string name="label_navigation_button">Navigation Button</string>
     <string name="label_navigation_favorite">Favorite Articles</string>
     <string name="label_navigation_favorite_desc">Nikmati pengalaman membaca anda dengan menggunakan fitur Favorites.
-        Simple, Off-line Mode, No Registration!</string>
+        Simple and Off-line Mode!</string>
+    <string name="label_image_profile">Profile Photo</string>
+    <string name="label_image_profile_desc">Tap untuk melihat detail foto.</string>
     <string name="label_navigation_button_desc">Eksplorasi anda dimulai dari sini.</string>
     <string name="label_search_button">Search Button</string>
     <string name="label_search_button_desc">Temukan artikel yang anda cari di sini.</string>
+    <string name="label_action_menu">Action Menu</string>
+    <string name="label_action_menu_desc">Simpan artikel favoritmu. Berikan komentar unikmu.</string>
     <string name="label_share_button">Share Button</string>
     <string name="label_share_button_desc">Bagikan artikel-artikel hebat dengan ini.</string>
     <string name="label_favorites">FAVORITES</string>
@@ -43,10 +47,16 @@
     <string name="label_gender_male">Laki-laki</string>
     <string name="label_gender_female">Perempuan</string>
 
+    <string name="label_failed_get_province">Gagal mendapatkan data provinsi!</string>
+    <string name="label_failed_get_city">Gagal mendapatkan data kota!</string>
+
     <string name="label_registrasi_username">Username</string>
     <string name="label_registrasi_password">Password</string>
     <string name="label_registrasi_email">Email</string>
     <string name="label_registrasi_password_retype">ReType Password</string>
+    <string name="label_registrasi_country">Negara</string>
+    <string name="label_registrasi_default_country">Indonesia</string>
+    <string name="label_registrasi_province">Provinsi</string>
     <string name="label_registrasi_city">Kota</string>
     <string name="label_registrasi_gender">Jenis Kelamin</string>
     <string name="label_registrasi_birthdate">Tanggal Lahir</string>
@@ -92,9 +102,9 @@
     <string name="label_forgot_password"><u>Forgot Password</u></string>
     <string name="label_please_input_email">Masukkan Email Anda :</string>
     <string name="label_save_data_profile">Simpan</string>
-    <string name="label_hint_picker_date">Double tap untuk memilih tanggal</string>
+    <string name="label_hint_picker_date">Tap untuk memilih tanggal</string>
     <string name="label_failed_save_data_profile">Gagal menyimpan data!</string>
-    <string name="label_success_save_data_profile">Data berhasil disimpan!</string>
+    <string name="label_success_save_data_profile">Data Tersimpan!</string>
     <string name="label_logout">Logout</string>
     <string name="label_logout_failed">Gagal Logout!</string>
     <string name="label_logout_complete">Berhasil Logout!</string>

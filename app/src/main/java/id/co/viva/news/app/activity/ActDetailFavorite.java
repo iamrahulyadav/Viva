@@ -10,7 +10,10 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import id.co.viva.news.app.Constant;
+import id.co.viva.news.app.Global;
 import id.co.viva.news.app.R;
+import id.co.viva.news.app.services.Analytics;
 
 /**
  * Created by reza on 24/11/14.
@@ -24,6 +27,9 @@ public class ActDetailFavorite extends FragmentActivity {
     private TextView tvContent;
     private TextView tvReportername;
 
+    private Analytics analytics;
+    private boolean isInternetPresent = false;
+
     private String title;
     private String image_url;
     private String date_publish;
@@ -33,6 +39,9 @@ public class ActDetailFavorite extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        isInternetPresent = Global.getInstance(this)
+                .getConnectionStatus().isConnectingToInternet();
+
         intent = getIntent();
         title = intent.getStringExtra("title");
         image_url = intent.getStringExtra("image_url");
@@ -40,12 +49,13 @@ public class ActDetailFavorite extends FragmentActivity {
         content = intent.getStringExtra("content");
         reporter_name = intent.getStringExtra("reporter_name");
 
+        if(isInternetPresent) {
+            getAnalytics(title);
+        }
+
         setContentView(R.layout.act_detail_favorite);
 
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
-        getActionBar().setDisplayShowTitleEnabled(true);
-        getActionBar().setTitle("Favorites");
+        getHeaderActionBar();
 
         imageDetail = (ImageView)findViewById(R.id.thumb_detail_content_favorite);
         tvTitle = (TextView)findViewById(R.id.title_detail_content_favorite);
@@ -65,6 +75,19 @@ public class ActDetailFavorite extends FragmentActivity {
         tvDatePublish.setText(date_publish);
         tvContent.setText(Html.fromHtml(content).toString());
         tvReportername.setText(reporter_name);
+    }
+
+    private void getHeaderActionBar() {
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setHomeButtonEnabled(true);
+        getActionBar().setDisplayShowTitleEnabled(true);
+        getActionBar().setTitle("Favorites");
+    }
+
+    private void getAnalytics(String title) {
+        analytics = new Analytics(this);
+        analytics.getAnalyticByATInternet(Constant.FAVORITES_PAGE_DETAIL + title);
+        analytics.getAnalyticByGoogleAnalytic(Constant.FAVORITES_PAGE_DETAIL + title);
     }
 
     @Override

@@ -27,8 +27,22 @@ public class Constant {
     public final static int NUMBER_OF_TOP_LIST_ITEMS = 4;
     public final static String URL_FACEBOOK_PHOTO = "http://graph.facebook.com/";
 
+    public static final String CODE_VIVA = "10";
+    public static final String CODE_FACEBOOK = "11";
+    public static final String CODE_PATH = "12";
+    public static final String CODE_GPLUS = "13";
+
+    public static final String TAG_LOCATION_NAME = "nama";
+    public static final String TAG_LOCATION_PROVINCE_ID = "id_propinsi";
+    public static final String TAG_LOCATION_KABUPATEN_ID = "id_kabupaten";
+
+    public static final String ADAPTER_PROVINCE = "adapter_province";
+    public static final String ADAPTER_CITY = "adapter_city";
+
     public static final String fragment_headline = "class id.co.viva.news.app.fragment.HeadlineFragment";
     public static final String FIRST_INSTALL = "first_install_main";
+    public static final String FIRST_INSTALL_PROFILE = "first_install_profile";
+    public static final String FIRST_INSTALL_DETAIL = "first_install_detail";
     public static final String FIRST_INSTALL_FAVORITES = "first_install_favorites";
 
     public static final String FAVORITES_LIST = "favorites_list";
@@ -36,11 +50,14 @@ public class Constant {
     public static final String LOGIN_STATES_EMAIL = "login_states_email";
     public static final String LOGIN_STATES_FULLNAME = "login_states_fullname";
     public static final String LOGIN_STATES_URL_PHOTO = "login_states_url_photo";
+    public static final String LOGIN_STATES_USER_SOCIAL_ID = "login_states_user_social_id";
+    public static final String LOGIN_STATES_APP_ID = "login_states_app_id";
     public static final String LOGIN_STATES_ISLOGIN = "isLogin";
-    public static final String LOGIN_STATES_PHONE = "login_states_phone";
     public static final String LOGIN_STATES_GENDER = "login_states_gender";
     public static final String LOGIN_STATES_CITY = "login_states_city";
     public static final String LOGIN_STATES_BIRTHDATE = "login_states_birthdate";
+    public static final String LOGIN_STATES_PROVINCE = "login_states_province";
+    public static final String LOGIN_STATES_COUNTRY = "login_states_country";
 
     public static final String GCM_SENDER_ID = "246836504311";
     public static final String GCM_URL_BACKEND_SERVER = "http://apps.vivall.tv/gcm_registration.php";
@@ -63,11 +80,14 @@ public class Constant {
     public static String NEW_RATES = BASE_URL_NEW + "sendrate/";
     public static String NEW_LIST_COMMENT = BASE_URL_NEW + "commentlist";
     public static String NEW_FORGOT_PASSWORD = BASE_URL_NEW + "forgotpass";
+    public static final String NEW_GET_PROVINCE = BASE_URL_NEW + "location/";
+    public static final String NEW_UPDATE_PROFILE = BASE_URL_NEW + "updateprofile";
 
     public static final String JSON_REQUEST = "json_obj_req";
 
     public static final String response = "response";
     public static final String headlines = "headlines";
+    public static final String comment_list = "comment_list";
     public static final String related_article = "related_article";
     public static final String detail = "detail";
     public static final String url = "url";
@@ -136,6 +156,10 @@ public class Constant {
     public static final String FROM_SEARCH_RESULT_DETAIL_CONTENT = "FROM_SEARCH_RESULT_DETAIL_CONTENT_";
     public static final String FROM_RELATED_ARTICLE_DETAIL_CONTENT = "FROM_RELATED_ARTICLE_DETAIL_CONTENT_";
     public static final String FROM_EDITOR_CHOICE = "FROM_EDITOR_CHOICE_";
+    public static final String FAVORITES_PAGE = "FAVORITES_PAGE";
+    public static final String FAVORITES_PAGE_DETAIL = "FAVORITES_PAGE_DETAIL_";
+    public static final String COMMENTED_ARTICLE = "COMMENTED_ARTICLE";
+    public static final String RATING_ARTICLE = "RATING_ARTICLE";
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     public static Bitmap blur(Context ctx, Bitmap image) {

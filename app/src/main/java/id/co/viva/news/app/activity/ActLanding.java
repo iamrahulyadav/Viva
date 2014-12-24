@@ -4,6 +4,9 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.FragmentActivity;
@@ -22,6 +25,7 @@ import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.util.ArrayList;
 
@@ -202,9 +206,27 @@ public class ActLanding extends FragmentActivity implements View.OnClickListener
         }
         if(photourl.length() > 0) {
             Picasso.with(this).load(photourl).into(mImgProfile);
-            Picasso.with(this).load(photourl).into(mBackground);
+            Picasso.with(this).load(photourl).into(target);
+        } else {
+            mImgProfile.setImageResource(R.drawable.ic_profile);
         }
     }
+
+    private Target target = new Target() {
+        @Override
+        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+            BitmapDrawable bitmapDrawable = new BitmapDrawable(Constant.blur(ActLanding.this, bitmap));
+            mBackground.setBackgroundDrawable(bitmapDrawable);
+        }
+        @Override
+        public void onBitmapFailed(Drawable errorDrawable) {
+            mBackground.setBackgroundDrawable(errorDrawable);
+        }
+        @Override
+        public void onPrepareLoad(Drawable placeHolderDrawable) {
+            mBackground.setBackgroundDrawable(placeHolderDrawable);
+        }
+    };
 
     private void getProfile() {
         Global.getInstance(this).getDefaultEditor();

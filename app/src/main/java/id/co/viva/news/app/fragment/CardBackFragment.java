@@ -36,7 +36,9 @@ public class CardBackFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_card_back, container, false);
         mFrontImage = (ImageView) v.findViewById(R.id.image_card_back);
-        Picasso.with(context).load(photoUrl).into(mFrontImage);
+        if(photoUrl.length() > 0) {
+            Picasso.with(context).load(photoUrl).into(mFrontImage);
+        }
         mTitle = (TextView) v.findViewById(R.id.text_card_back);
         mTitle.setText(title);
         return v;

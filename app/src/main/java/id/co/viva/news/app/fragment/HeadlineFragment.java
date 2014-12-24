@@ -162,11 +162,6 @@ public class HeadlineFragment extends Fragment implements
                         @Override
                         public void onResponse(String volleyResponse) {
                             Log.i(Constant.TAG, volleyResponse);
-                            if(volleyResponse.contains("null")) {
-                                loading_layout.setVisibility(View.GONE);
-                                labelLoadData.setVisibility(View.GONE);
-                                rippleView.setVisibility(View.VISIBLE);
-                            }
                             try {
                                 JSONObject jsonObject = new JSONObject(volleyResponse);
                                 jsonArrayResponses = jsonObject.getJSONArray(Constant.response);
@@ -491,8 +486,10 @@ public class HeadlineFragment extends Fragment implements
     @Override
     public void onLoadMore() {
         data = String.valueOf(dataSize += 12);
-        Log.i(Constant.TAG, "DATA PAGE : " + data);
         if(isInternetPresent) {
+            analytics.getAnalyticByATInternet(Constant.HEADLINE_PAGE + "_" + data);
+            analytics.getAnalyticByGoogleAnalytic(Constant.HEADLINE_PAGE + "_" + data);
+
             StringRequest stringRequest = new StringRequest(Request.Method.GET, Constant.NEW_HEADLINE + "start/" + data,
                     new Response.Listener<String>() {
                         @Override

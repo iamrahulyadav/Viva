@@ -2,6 +2,7 @@ package id.co.viva.news.app.activity;
 
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,6 +28,7 @@ import id.co.viva.news.app.adapter.CommentAdapter;
 import id.co.viva.news.app.interfaces.OnCompleteListener;
 import id.co.viva.news.app.interfaces.OnDoneListener;
 import id.co.viva.news.app.model.Comment;
+import id.co.viva.news.app.services.Analytics;
 import id.co.viva.news.app.services.UserAccount;
 
 /**
@@ -46,12 +48,15 @@ public class ActComment extends FragmentActivity implements View.OnClickListener
     private EditText etComment;
     private String fullname;
     private String email;
+    private String userSocialId;
+    private String app_id;
     private String mFromKanal;
     private UserAccount userAccount;
     private LinearLayout mLayout;
     private boolean isInternetPresent = false;
     private ArrayList<Comment> commentArrayList;
     private CommentAdapter adapter;
+    private Analytics analytics;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,9 +67,10 @@ public class ActComment extends FragmentActivity implements View.OnClickListener
         mTitle = bundle.getString("title");
         mFromKanal = bundle.getString("type_kanal");
 
-        setContentView(R.layout.act_comment);
-
+        getAnalytics(mTitle);
         getStateUser();
+
+        setContentView(R.layout.act_comment);
 
         isInternetPresent = Global.getInstance(this).getConnectionStatus().isConnectingToInternet();
 
@@ -94,6 +100,12 @@ public class ActComment extends FragmentActivity implements View.OnClickListener
         if(isInternetPresent) {
             getCommentList();
         }
+    }
+
+    private void getAnalytics(String title) {
+        analytics = new Analytics(this);
+        analytics.getAnalyticByATInternet(Constant.COMMENTED_ARTICLE + "_" + title);
+        analytics.getAnalyticByGoogleAnalytic(Constant.COMMENTED_ARTICLE + "_" + title);
     }
 
     private void getCommentList() {
@@ -145,6 +157,10 @@ public class ActComment extends FragmentActivity implements View.OnClickListener
                 .getString(Constant.LOGIN_STATES_FULLNAME, "");
         email = Global.getInstance(this).getSharedPreferences(this)
                 .getString(Constant.LOGIN_STATES_EMAIL, "");
+        userSocialId = Global.getInstance(this).getSharedPreferences(this)
+                .getString(Constant.LOGIN_STATES_USER_SOCIAL_ID, "");
+        app_id = Global.getInstance(this).getSharedPreferences(this)
+                .getString(Constant.LOGIN_STATES_APP_ID, "");
     }
 
     @Override
@@ -157,7 +173,7 @@ public class ActComment extends FragmentActivity implements View.OnClickListener
                 Toast.makeText(this, R.string.label_validation_for_comment_length, Toast.LENGTH_SHORT).show();
             } else {
                 if(isInternetPresent) {
-                    userAccount = new UserAccount(mIds, email, fullname, comments, "Android", this, ActComment.this);
+                    userAccount = new UserAccount(userSocialId, app_id, mIds, email, fullname, comments, this, ActComment.this);
                     disableView();
                     btnSubmit.setProgress(1);
                     userAccount.sendComment();
@@ -193,8 +209,15 @@ public class ActComment extends FragmentActivity implements View.OnClickListener
     public void onComplete(String message) {
         btnSubmit.setProgress(100);
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-        finish();
-        startActivity(getIntent());
+        Runnable r = new Runnable() {
+            @Override
+            public void run() {
+                finish();
+                startActivity(getIntent());
+            }
+        };
+        Handler h = new Handler();
+        h.postDelayed(r, 1000);
     }
 
     @Override

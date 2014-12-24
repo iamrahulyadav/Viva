@@ -1,12 +1,15 @@
 package id.co.viva.news.app.activity;
 
 import android.content.Intent;
+import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -39,6 +42,9 @@ import java.util.ArrayList;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import id.co.viva.news.app.Global;
+import id.co.viva.news.app.coachmark.CoachmarkBuilder;
+import id.co.viva.news.app.coachmark.CoachmarkView;
+import id.co.viva.news.app.model.Comment;
 import id.co.viva.news.app.model.Favorites;
 import id.co.viva.news.app.services.Analytics;
 import id.co.viva.news.app.Constant;
@@ -75,17 +81,26 @@ public class ActDetailContentDefault extends FragmentActivity
     private String fromkanal;
     private String shared_url;
 
+    private TextView tvPreviewCommentUser;
+    private TextView tvPreviewCommentContent;
+    private LinearLayout layoutCommentPreview;
+    private int count = 0;
+
     private View imageContentLayout;
     private RelativeLayout headerRelated;
     private boolean isInternetPresent = false;
     private TextView tvNoResult;
-    private ArrayList<RelatedArticle> relatedArticleArrayList;
     private RelatedAdapter adapter;
     private ListView listView;
     private Analytics analytics;
     private RelativeLayout loading_layout;
     private String favoriteList;
     private ArrayList<Favorites> favoritesArrayList;
+    private ArrayList<RelatedArticle> relatedArticleArrayList;
+    private ArrayList<Comment> commentArrayList;
+
+    private View coachmarkView;
+    private CoachmarkView showtips;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,6 +136,8 @@ public class ActDetailContentDefault extends FragmentActivity
         getActionBar().setDisplayShowTitleEnabled(false);
         getActionBar().setIcon(R.drawable.logo_viva_coid_second);
 
+        coachmarkView = findViewById(R.id.coachmark_detail);
+
         if(fromkanal != null) {
             if(fromkanal.equalsIgnoreCase("bola")) {
                 colorDrawable.setColor(getResources().getColor(R.color.color_bola));
@@ -145,7 +162,14 @@ public class ActDetailContentDefault extends FragmentActivity
 
         listView = (ListView) findViewById(R.id.list_related_article_default);
         listView.setOnItemClickListener(this);
+
+        layoutCommentPreview = (LinearLayout) findViewById(R.id.layout_preview_comment_list);
+        layoutCommentPreview.setVisibility(View.GONE);
+        tvPreviewCommentContent = (TextView) findViewById(R.id.text_preview_comment_content);
+        tvPreviewCommentUser = (TextView) findViewById(R.id.text_preview_comment_user);
+
         relatedArticleArrayList = new ArrayList<RelatedArticle>();
+        commentArrayList = new ArrayList<Comment>();
 
         imageContentLayout = findViewById(R.id.image_content);
 
@@ -159,196 +183,316 @@ public class ActDetailContentDefault extends FragmentActivity
         ivThumbDetail.setFocusableInTouchMode(true);
         ivThumbDetail.requestFocus();
 
-        if(Global.getInstance(this).getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + id) != null) {
-            cachedResponse = new String(Global.getInstance(this).
-                    getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + id).data);
-            Log.i(Constant.TAG, "CONTENT DETAIL CACHED : " + cachedResponse);
-            try {
-                JSONObject jsonObject = new JSONObject(cachedResponse);
-                JSONObject response = jsonObject.getJSONObject(Constant.response);
-                JSONObject detail = response.getJSONObject(Constant.detail);
-                ids = detail.getString(Constant.id);
-                channel_id = detail.getString(Constant.channel_id);
-                kanal = detail.getString(Constant.kanal);
-                title = detail.getString(Constant.title);
-                image_url = detail.getString(Constant.image_url);
-                date_publish = detail.getString(Constant.date_publish);
-                content = detail.getString(Constant.content);
-                reporter_name = detail.getString(Constant.reporter_name);
-                url_shared = detail.getString(Constant.url);
+        showCoachMark();
 
-                JSONArray related_article = response.getJSONArray(Constant.related_article);
-                for(int i=0; i<related_article.length(); i++) {
-                    JSONObject objRelated = related_article.getJSONObject(i);
-                    String id = objRelated.getString(Constant.id);
-                    String article_id = objRelated.getString(Constant.article_id);
-                    String related_article_id = objRelated.getString(Constant.related_article_id);
-                    String related_title = objRelated.getString(Constant.related_title);
-                    String related_channel_level_1_id = objRelated.getString(Constant.related_channel_level_1_id);
-                    String channel_id = objRelated.getString(Constant.channel_id);
-                    String related_date_publish = objRelated.getString(Constant.related_date_publish);
-                    String image = objRelated.getString(Constant.image);
-                    String kanal = objRelated.getString(Constant.kanal);
-                    String shared_url = objRelated.getString(Constant.url);
-                    relatedArticleArrayList.add(new RelatedArticle(id, article_id, related_article_id, related_title,
-                            related_channel_level_1_id, channel_id, related_date_publish, image, kanal, shared_url));
-                    Log.i(Constant.TAG, "RELATED ARTICLE CACHED : " + relatedArticleArrayList.get(i).getRelated_title());
-                }
+        if(isInternetPresent) {
+            StringRequest request = new StringRequest(Request.Method.GET, Constant.NEW_DETAIL + "/id/" + id,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String volleyResponse) {
+                            Log.i(Constant.TAG, volleyResponse);
+                            try {
+                                JSONObject jsonObject = new JSONObject(volleyResponse);
+                                JSONObject response = jsonObject.getJSONObject(Constant.response);
+                                JSONObject detail = response.getJSONObject(Constant.detail);
+                                ids = detail.getString(Constant.id);
+                                channel_id = detail.getString(Constant.channel_id);
+                                kanal = detail.getString(Constant.kanal);
+                                title = detail.getString(Constant.title);
+                                image_url = detail.getString(Constant.image_url);
+                                date_publish = detail.getString(Constant.date_publish);
+                                content = detail.getString(Constant.content);
+                                reporter_name = detail.getString(Constant.reporter_name);
+                                url_shared = detail.getString(Constant.url);
 
-                tvTitleDetail.setText(title);
-                tvDateDetail.setText(date_publish);
-                tvContentDetail.setText(Html.fromHtml(content).toString());
-                tvContentDetail.setMovementMethod(LinkMovementMethod.getInstance());
+                                JSONArray related_article = response.getJSONArray(Constant.related_article);
+                                for(int i=0; i<related_article.length(); i++) {
+                                    JSONObject objRelated = related_article.getJSONObject(i);
+                                    String id = objRelated.getString(Constant.id);
+                                    String article_id = objRelated.getString(Constant.article_id);
+                                    String related_article_id = objRelated.getString(Constant.related_article_id);
+                                    String related_title = objRelated.getString(Constant.related_title);
+                                    String related_channel_level_1_id = objRelated.getString(Constant.related_channel_level_1_id);
+                                    String channel_id = objRelated.getString(Constant.channel_id);
+                                    String related_date_publish = objRelated.getString(Constant.related_date_publish);
+                                    String image = objRelated.getString(Constant.image);
+                                    String kanal = objRelated.getString(Constant.kanal);
+                                    String shared_url = objRelated.getString(Constant.url);
+                                    relatedArticleArrayList.add(new RelatedArticle(id, article_id, related_article_id, related_title,
+                                            related_channel_level_1_id, channel_id, related_date_publish, image, kanal, shared_url));
+                                    Log.i(Constant.TAG, "RELATED ARTICLE : " + relatedArticleArrayList.get(i).getRelated_title());
+                                }
 
-                Document doc = Jsoup.parse(content);
-                Elements ele = doc.select("img");
-                for (Element el : ele) {
-                    ImageView imageView = new ImageView(this);
-                    imageContent = el.attr("src").replaceAll("[|?*<\">+\\[\\]']", "");
-                    Log.i(Constant.TAG, "IMAGE CONTENT : " + imageContent);
-                    Picasso.with(this).load(imageContent).into(imageView);
-                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                            ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                    params.gravity = Gravity.CENTER_HORIZONTAL;
-                    imageView.setLayoutParams(params);
-                    imageView.setPadding(0, 10, 0, 10);
-                    ((LinearLayout) imageContentLayout).addView(imageView);
-                }
+                                tvTitleDetail.setText(title);
+                                tvDateDetail.setText(date_publish);
+                                tvContentDetail.setText(Html.fromHtml(content).toString());
+                                tvContentDetail.setMovementMethod(LinkMovementMethod.getInstance());
 
-                tvReporterDetail.setText(reporter_name);
-                Picasso.with(this).load(image_url).into(ivThumbDetail);
+                                Document doc = Jsoup.parse(content);
+                                Elements ele = doc.select("img");
+                                for (Element el : ele) {
+                                    ImageView imageView = new ImageView(ActDetailContentDefault.this);
+                                    imageContent = el.attr("src").replaceAll("[|?*<\">+\\[\\]']", "");
+                                    Log.i(Constant.TAG, "IMAGE CONTENT : " + imageContent);
+                                    Picasso.with(ActDetailContentDefault.this).load(imageContent).into(imageView);
+                                    imageView.setLayoutParams(new ViewGroup.LayoutParams(
+                                            ViewGroup.LayoutParams.WRAP_CONTENT,
+                                            ViewGroup.LayoutParams.WRAP_CONTENT));
+                                    imageView.setPadding(10, 10, 10, 10);
+                                    ((LinearLayout) imageContentLayout).addView(imageView);
+                                }
 
-                if(relatedArticleArrayList.size() > 0 || !relatedArticleArrayList.isEmpty()) {
-                    adapter = new RelatedAdapter(this, relatedArticleArrayList);
-                    listView.setAdapter(adapter);
-                    Constant.setListViewHeightBasedOnChildren(listView);
-                    adapter.notifyDataSetChanged();
-                    headerRelated.setVisibility(View.VISIBLE);
-                    if(fromkanal != null) {
-                        if(fromkanal.equalsIgnoreCase("bola")) {
-                            headerRelated.setBackgroundResource(R.color.color_bola);
-                        } else if(fromkanal.equalsIgnoreCase("vivalife")) {
-                            headerRelated.setBackgroundResource(R.color.color_life);
-                        } else {
-                            headerRelated.setBackgroundResource(R.color.color_news);
-                        }
-                    } else {
-                        headerRelated.setBackgroundResource(R.color.header_grey);
-                    }
-                }
+                                tvReporterDetail.setText(reporter_name);
+                                Picasso.with(ActDetailContentDefault.this).load(image_url).into(ivThumbDetail);
 
-                loading_layout.setVisibility(View.GONE);
-            } catch (Exception e) {
-                e.getMessage();
-            }
-        } else {
-            if(isInternetPresent) {
-                StringRequest request = new StringRequest(Request.Method.GET, Constant.NEW_DETAIL + "/id/" + id,
-                        new Response.Listener<String>() {
-                            @Override
-                            public void onResponse(String volleyResponse) {
-                                Log.i(Constant.TAG, volleyResponse);
-                                try {
-                                    JSONObject jsonObject = new JSONObject(volleyResponse);
-                                    JSONObject response = jsonObject.getJSONObject(Constant.response);
-                                    JSONObject detail = response.getJSONObject(Constant.detail);
-                                    ids = detail.getString(Constant.id);
-                                    channel_id = detail.getString(Constant.channel_id);
-                                    kanal = detail.getString(Constant.kanal);
-                                    title = detail.getString(Constant.title);
-                                    image_url = detail.getString(Constant.image_url);
-                                    date_publish = detail.getString(Constant.date_publish);
-                                    content = detail.getString(Constant.content);
-                                    reporter_name = detail.getString(Constant.reporter_name);
-                                    url_shared = detail.getString(Constant.url);
-
-                                    JSONArray related_article = response.getJSONArray(Constant.related_article);
-                                    for(int i=0; i<related_article.length(); i++) {
-                                        JSONObject objRelated = related_article.getJSONObject(i);
-                                        String id = objRelated.getString(Constant.id);
-                                        String article_id = objRelated.getString(Constant.article_id);
-                                        String related_article_id = objRelated.getString(Constant.related_article_id);
-                                        String related_title = objRelated.getString(Constant.related_title);
-                                        String related_channel_level_1_id = objRelated.getString(Constant.related_channel_level_1_id);
-                                        String channel_id = objRelated.getString(Constant.channel_id);
-                                        String related_date_publish = objRelated.getString(Constant.related_date_publish);
-                                        String image = objRelated.getString(Constant.image);
-                                        String kanal = objRelated.getString(Constant.kanal);
-                                        String shared_url = objRelated.getString(Constant.url);
-                                        relatedArticleArrayList.add(new RelatedArticle(id, article_id, related_article_id, related_title,
-                                                related_channel_level_1_id, channel_id, related_date_publish, image, kanal, shared_url));
-                                        Log.i(Constant.TAG, "RELATED ARTICLE : " + relatedArticleArrayList.get(i).getRelated_title());
-                                    }
-
-                                    tvTitleDetail.setText(title);
-                                    tvDateDetail.setText(date_publish);
-                                    tvContentDetail.setText(Html.fromHtml(content).toString());
-                                    tvContentDetail.setMovementMethod(LinkMovementMethod.getInstance());
-
-                                    Document doc = Jsoup.parse(content);
-                                    Elements ele = doc.select("img");
-                                    for (Element el : ele) {
-                                        ImageView imageView = new ImageView(ActDetailContentDefault.this);
-                                        imageContent = el.attr("src").replaceAll("[|?*<\">+\\[\\]']", "");
-                                        Log.i(Constant.TAG, "IMAGE CONTENT : " + imageContent);
-                                        Picasso.with(ActDetailContentDefault.this).load(imageContent).into(imageView);
-                                        imageView.setLayoutParams(new ViewGroup.LayoutParams(
-                                                ViewGroup.LayoutParams.WRAP_CONTENT,
-                                                ViewGroup.LayoutParams.WRAP_CONTENT));
-                                        imageView.setPadding(10, 10, 10, 10);
-                                        ((LinearLayout) imageContentLayout).addView(imageView);
-                                    }
-
-                                    tvReporterDetail.setText(reporter_name);
-                                    Picasso.with(ActDetailContentDefault.this).load(image_url).into(ivThumbDetail);
-
-                                    if(relatedArticleArrayList.size() > 0 || !relatedArticleArrayList.isEmpty()) {
-                                        adapter = new RelatedAdapter(ActDetailContentDefault.this, relatedArticleArrayList);
-                                        listView.setAdapter(adapter);
-                                        Constant.setListViewHeightBasedOnChildren(listView);
-                                        adapter.notifyDataSetChanged();
-                                        headerRelated.setVisibility(View.VISIBLE);
-                                        if(fromkanal != null) {
-                                            if(fromkanal.equalsIgnoreCase("bola")) {
-                                                headerRelated.setBackgroundResource(R.color.color_bola);
-                                            } else if(fromkanal.equalsIgnoreCase("vivalife")) {
-                                                headerRelated.setBackgroundResource(R.color.color_life);
-                                            } else {
-                                                headerRelated.setBackgroundResource(R.color.color_news);
-                                            }
+                                if(relatedArticleArrayList.size() > 0 || !relatedArticleArrayList.isEmpty()) {
+                                    adapter = new RelatedAdapter(ActDetailContentDefault.this, relatedArticleArrayList);
+                                    listView.setAdapter(adapter);
+                                    Constant.setListViewHeightBasedOnChildren(listView);
+                                    adapter.notifyDataSetChanged();
+                                    headerRelated.setVisibility(View.VISIBLE);
+                                    if(fromkanal != null) {
+                                        if(fromkanal.equalsIgnoreCase("bola")) {
+                                            headerRelated.setBackgroundResource(R.color.color_bola);
+                                        } else if(fromkanal.equalsIgnoreCase("vivalife")) {
+                                            headerRelated.setBackgroundResource(R.color.color_life);
                                         } else {
-                                            headerRelated.setBackgroundResource(R.color.header_grey);
+                                            headerRelated.setBackgroundResource(R.color.color_news);
                                         }
+                                    } else {
+                                        headerRelated.setBackgroundResource(R.color.header_grey);
                                     }
+                                }
 
-                                    loading_layout.setVisibility(View.GONE);
-                                } catch (Exception e) {
-                                    e.getMessage();
+                                JSONArray comment_list = response.getJSONArray(Constant.comment_list);
+                                for(int i=0; i<comment_list.length(); i++) {
+                                    JSONObject objRelated = comment_list.getJSONObject(i);
+                                    String id = objRelated.getString(Constant.id);
+                                    String name = objRelated.getString(Constant.name);
+                                    String comment_text = objRelated.getString(Constant.comment_text);
+                                    commentArrayList.add(new Comment(id, null, name, null, comment_text, null, null, null));
+                                    Log.i(Constant.TAG, "COMMENTS PREVIEW : " + commentArrayList.get(i).getComment_text());
+                                }
+
+                                if(commentArrayList.size() > 0) {
+                                    layoutCommentPreview.setVisibility(View.VISIBLE);
+                                    Thread thread = new Thread() {
+                                        @Override
+                                        public void run() {
+                                            try {
+                                                while (true) {
+                                                    Thread.sleep(3000);
+                                                    if(ActDetailContentDefault.this == null) {
+                                                        return;
+                                                    }
+                                                    runOnUiThread(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            tvPreviewCommentUser.setText(commentArrayList.get(count).getUsername());
+                                                            tvPreviewCommentContent.setText(commentArrayList.get(count).getComment_text());
+                                                            count++;
+                                                            if (count >= commentArrayList.size()) {
+                                                                count = 0;
+                                                            }
+                                                        }
+                                                    });
+                                                }
+                                            } catch (InterruptedException e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    };
+                                    thread.start();
+                                }
+
+                                loading_layout.setVisibility(View.GONE);
+                            } catch (Exception e) {
+                                e.getMessage();
+                            }
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError volleyError) {
+                            volleyError.getMessage();
+                            onBackPressed();
+                            Toast.makeText(ActDetailContentDefault.this, R.string.title_no_connection, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+            request.setShouldCache(true);
+            request.setRetryPolicy(new DefaultRetryPolicy(
+                    Constant.TIME_OUT,
+                    0,
+                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+            Global.getInstance(this).getRequestQueue().getCache().invalidate(Constant.NEW_DETAIL + "/id/" + id, true);
+            Global.getInstance(this).getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + id);
+            Global.getInstance(this).addToRequestQueue(request, Constant.JSON_REQUEST);
+        } else {
+            if(Global.getInstance(this).getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + id) != null) {
+                cachedResponse = new String(Global.getInstance(this).
+                        getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + id).data);
+                Log.i(Constant.TAG, "CONTENT DETAIL CACHED : " + cachedResponse);
+                try {
+                    JSONObject jsonObject = new JSONObject(cachedResponse);
+                    JSONObject response = jsonObject.getJSONObject(Constant.response);
+                    JSONObject detail = response.getJSONObject(Constant.detail);
+                    ids = detail.getString(Constant.id);
+                    channel_id = detail.getString(Constant.channel_id);
+                    kanal = detail.getString(Constant.kanal);
+                    title = detail.getString(Constant.title);
+                    image_url = detail.getString(Constant.image_url);
+                    date_publish = detail.getString(Constant.date_publish);
+                    content = detail.getString(Constant.content);
+                    reporter_name = detail.getString(Constant.reporter_name);
+                    url_shared = detail.getString(Constant.url);
+
+                    JSONArray related_article = response.getJSONArray(Constant.related_article);
+                    for(int i=0; i<related_article.length(); i++) {
+                        JSONObject objRelated = related_article.getJSONObject(i);
+                        String id = objRelated.getString(Constant.id);
+                        String article_id = objRelated.getString(Constant.article_id);
+                        String related_article_id = objRelated.getString(Constant.related_article_id);
+                        String related_title = objRelated.getString(Constant.related_title);
+                        String related_channel_level_1_id = objRelated.getString(Constant.related_channel_level_1_id);
+                        String channel_id = objRelated.getString(Constant.channel_id);
+                        String related_date_publish = objRelated.getString(Constant.related_date_publish);
+                        String image = objRelated.getString(Constant.image);
+                        String kanal = objRelated.getString(Constant.kanal);
+                        String shared_url = objRelated.getString(Constant.url);
+                        relatedArticleArrayList.add(new RelatedArticle(id, article_id, related_article_id, related_title,
+                                related_channel_level_1_id, channel_id, related_date_publish, image, kanal, shared_url));
+                        Log.i(Constant.TAG, "RELATED ARTICLE CACHED : " + relatedArticleArrayList.get(i).getRelated_title());
+                    }
+
+                    tvTitleDetail.setText(title);
+                    tvDateDetail.setText(date_publish);
+                    tvContentDetail.setText(Html.fromHtml(content).toString());
+                    tvContentDetail.setMovementMethod(LinkMovementMethod.getInstance());
+
+                    Document doc = Jsoup.parse(content);
+                    Elements ele = doc.select("img");
+                    for (Element el : ele) {
+                        ImageView imageView = new ImageView(this);
+                        imageContent = el.attr("src").replaceAll("[|?*<\">+\\[\\]']", "");
+                        Log.i(Constant.TAG, "IMAGE CONTENT : " + imageContent);
+                        Picasso.with(this).load(imageContent).into(imageView);
+                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                        params.gravity = Gravity.CENTER_HORIZONTAL;
+                        imageView.setLayoutParams(params);
+                        imageView.setPadding(0, 10, 0, 10);
+                        ((LinearLayout) imageContentLayout).addView(imageView);
+                    }
+
+                    tvReporterDetail.setText(reporter_name);
+                    Picasso.with(this).load(image_url).into(ivThumbDetail);
+
+                    if(relatedArticleArrayList.size() > 0 || !relatedArticleArrayList.isEmpty()) {
+                        adapter = new RelatedAdapter(this, relatedArticleArrayList);
+                        listView.setAdapter(adapter);
+                        Constant.setListViewHeightBasedOnChildren(listView);
+                        adapter.notifyDataSetChanged();
+                        headerRelated.setVisibility(View.VISIBLE);
+                        if(fromkanal != null) {
+                            if(fromkanal.equalsIgnoreCase("bola")) {
+                                headerRelated.setBackgroundResource(R.color.color_bola);
+                            } else if(fromkanal.equalsIgnoreCase("vivalife")) {
+                                headerRelated.setBackgroundResource(R.color.color_life);
+                            } else {
+                                headerRelated.setBackgroundResource(R.color.color_news);
+                            }
+                        } else {
+                            headerRelated.setBackgroundResource(R.color.header_grey);
+                        }
+                    }
+
+                    JSONArray comment_list = response.getJSONArray(Constant.comment_list);
+                    for(int i=0; i<comment_list.length(); i++) {
+                        JSONObject objRelated = comment_list.getJSONObject(i);
+                        String id = objRelated.getString(Constant.id);
+                        String name = objRelated.getString(Constant.name);
+                        String comment_text = objRelated.getString(Constant.comment_text);
+                        commentArrayList.add(new Comment(id, null, name, null, comment_text, null, null, null));
+                        Log.i(Constant.TAG, "COMMENTS PREVIEW : " + commentArrayList.get(i).getComment_text());
+                    }
+
+                    if(commentArrayList.size() > 0) {
+                        layoutCommentPreview.setVisibility(View.VISIBLE);
+                        Thread thread = new Thread() {
+                            @Override
+                            public void run() {
+                                try {
+                                    while (true) {
+                                        Thread.sleep(3000);
+                                        if(ActDetailContentDefault.this == null) {
+                                            return;
+                                        }
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                tvPreviewCommentUser.setText(commentArrayList.get(count).getUsername());
+                                                tvPreviewCommentContent.setText(commentArrayList.get(count).getComment_text());
+                                                count++;
+                                                if (count >= commentArrayList.size()) {
+                                                    count = 0;
+                                                }
+                                            }
+                                        });
+                                    }
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
                                 }
                             }
-                        },
-                        new Response.ErrorListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError volleyError) {
-                                volleyError.getMessage();
-                                onBackPressed();
-                                Toast.makeText(ActDetailContentDefault.this, R.string.title_no_connection, Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                request.setShouldCache(true);
-                request.setRetryPolicy(new DefaultRetryPolicy(
-                        Constant.TIME_OUT,
-                        0,
-                        DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-                Global.getInstance(this).getRequestQueue().getCache().invalidate(Constant.NEW_DETAIL + "/id/" + id, true);
-                Global.getInstance(this).getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + id);
-                Global.getInstance(this).addToRequestQueue(request, Constant.JSON_REQUEST);
+                        };
+                        thread.start();
+                    }
+
+                    loading_layout.setVisibility(View.GONE);
+                } catch (Exception e) {
+                    e.getMessage();
+                }
             } else {
                 Toast.makeText(this, R.string.title_no_connection, Toast.LENGTH_SHORT).show();
                 loading_layout.setVisibility(View.GONE);
                 tvNoResult.setVisibility(View.VISIBLE);
             }
         }
+    }
+
+    private void showCoachMark() {
+        if(Global.getInstance(this).getSharedPreferences(this).getBoolean(Constant.FIRST_INSTALL_DETAIL, true)) {
+            RelativeLayout relativeLayout = new RelativeLayout(this);
+            relativeLayout.setLayoutParams(new ViewGroup.LayoutParams(70, 70));
+            ((RelativeLayout) coachmarkView).addView(relativeLayout);
+            showtips = new CoachmarkBuilder(this)
+                    .setTarget(relativeLayout, getWidthFocus(), getHeightFocus(), 60)
+                    .setTitle(getResources().getString(R.string.label_action_menu))
+                    .setDescription(getResources().getString(R.string.label_action_menu_desc))
+                    .build();
+            showtips.show(this);
+            Global.getInstance(this).getSharedPreferences(this).
+                    edit().putBoolean(Constant.FIRST_INSTALL_DETAIL, false).commit();
+        }
+    }
+
+    private int getHeightFocus() {
+        int actionBarHeight = 0;
+        int heightFocus;
+        TypedValue typedValue = new TypedValue();
+        if (getTheme().resolveAttribute(android.R.attr.actionBarSize, typedValue, true))
+        {
+            actionBarHeight = TypedValue.complexToDimensionPixelSize(typedValue.data,getResources().getDisplayMetrics());
+        }
+        heightFocus = 0 - (actionBarHeight / 2);
+        return heightFocus;
+    }
+
+    private int getWidthFocus() {
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int width = size.x;
+        return width - 75;
     }
 
     @Override

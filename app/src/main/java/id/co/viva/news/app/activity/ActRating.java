@@ -2,6 +2,7 @@ package id.co.viva.news.app.activity;
 
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,6 +19,7 @@ import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.Global;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.interfaces.OnCompleteListener;
+import id.co.viva.news.app.services.Analytics;
 import id.co.viva.news.app.services.UserAccount;
 
 /**
@@ -41,14 +43,16 @@ public class ActRating extends FragmentActivity implements OnCompleteListener,
     private LinearLayout mLayout;
     private RatingBar ratingBar;
     private boolean isInternetPresent = false;
-
+    private Analytics analytics;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getParameters();
-        setContentView(R.layout.act_rating);
+        getAnalytics(mTitle);
         getStateUser();
+
+        setContentView(R.layout.act_rating);
 
         isInternetPresent = Global.getInstance(this).getConnectionStatus().isConnectingToInternet();
 
@@ -141,8 +145,15 @@ public class ActRating extends FragmentActivity implements OnCompleteListener,
     public void onComplete(String message) {
         btnRate.setProgress(100);
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-        finish();
-        startActivity(getIntent());
+        Runnable r = new Runnable() {
+            @Override
+            public void run() {
+                finish();
+                startActivity(getIntent());
+            }
+        };
+        Handler h = new Handler();
+        h.postDelayed(r, 1000);
     }
 
     @Override
@@ -168,18 +179,28 @@ public class ActRating extends FragmentActivity implements OnCompleteListener,
     public void onClick(View view) {
         if(view.getId() == R.id.btn_send_rate) {
             if(isInternetPresent) {
-                if(amountRate != null) {
-                    userAccount = new UserAccount(fullname, email, mIds, amountRate, this, ActRating.this);
-                    disableView();
-                    btnRate.setProgress(1);
-                    userAccount.sendRating();
+                if(fullname.length() > 0 || email.length() > 0) {
+                    if(amountRate != null) {
+                        userAccount = new UserAccount(fullname, email, mIds, amountRate, this, ActRating.this);
+                        disableView();
+                        btnRate.setProgress(1);
+                        userAccount.sendRating();
+                    } else {
+                        Toast.makeText(this, R.string.title_validate_rate, Toast.LENGTH_SHORT).show();
+                    }
                 } else {
-                    Toast.makeText(this, R.string.title_validate_rate, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.label_validation_for_comment, Toast.LENGTH_SHORT).show();
                 }
             } else {
                 Toast.makeText(this, R.string.title_no_connection, Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    private void getAnalytics(String title) {
+        analytics = new Analytics(this);
+        analytics.getAnalyticByATInternet(Constant.RATING_ARTICLE + "_" + title);
+        analytics.getAnalyticByGoogleAnalytic(Constant.RATING_ARTICLE + "_" + title);
     }
 
     @Override

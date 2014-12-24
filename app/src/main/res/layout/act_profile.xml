@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.nirhart.parallaxscroll.views.ParallaxScrollView
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:parallax_factor="1.9"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
     <FrameLayout
@@ -17,7 +17,7 @@
                 android:layout_height="180dp"
                 android:paddingLeft="15dp"
                 android:paddingRight="15dp"
-                android:background="@color/light_white"
+                android:background="@drawable/profile_bg"
                 android:id="@+id/layout_background_profile_photo">
                 <com.pkmmte.view.CircularImageView
                     android:id="@+id/img_thumb_profile"
@@ -69,68 +69,89 @@
                 <id.co.viva.news.app.component.BounvenoTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textColor="@color/red"
                     android:textStyle="bold"
                     android:layout_marginTop="30dp"
-                    android:layout_marginLeft="10dp"
-                    android:textSize="14sp"
-                    android:text="@string/label_registrasi_phone"/>
-                <EditText
-                    android:id="@+id/form_regist_phone"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="10dp"
-                    android:phoneNumber="true"
-                    android:textSize="12sp"
-                    android:layout_marginLeft="10dp"
-                    android:textColorHint="@color/date_color"/>
-                <id.co.viva.news.app.component.BounvenoTextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textStyle="bold"
-                    android:layout_marginTop="30dp"
-                    android:layout_marginLeft="10dp"
-                    android:textSize="14sp"
-                    android:text="@string/label_registrasi_city"/>
-                <EditText
-                    android:id="@+id/form_regist_city"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="10dp"
-                    android:textSize="12sp"
-                    android:layout_marginLeft="10dp"
-                    android:textColorHint="@color/date_color"/>
-                <id.co.viva.news.app.component.BounvenoTextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textStyle="bold"
-                    android:layout_marginTop="30dp"
-                    android:layout_marginLeft="10dp"
-                    android:textSize="14sp"
-                    android:text="@string/label_registrasi_birthdate"/>
-                <EditText
-                    android:id="@+id/form_regist_birthdate"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="10dp"
-                    android:hint="@string/label_hint_picker_date"
-                    android:textSize="12sp"
-                    android:layout_marginLeft="10dp"
-                    android:textColorHint="@color/date_color"/>
-                <id.co.viva.news.app.component.BounvenoTextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textStyle="bold"
-                    android:layout_marginTop="30dp"
-                    android:layout_marginLeft="10dp"
+                    android:layout_marginLeft="30dp"
                     android:textSize="14sp"
                     android:text="@string/label_registrasi_gender"/>
                 <Spinner
                     android:id="@+id/spin_regist_gender"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="10dp"
+                    android:layout_marginRight="30dp"
                     android:textSize="12sp"
-                    android:layout_marginLeft="10dp"
+                    android:layout_marginLeft="30dp"
+                    android:textColorHint="@color/date_color"/>
+                <id.co.viva.news.app.component.BounvenoTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:textColor="@color/red"
+                    android:layout_marginTop="30dp"
+                    android:layout_marginLeft="30dp"
+                    android:textSize="14sp"
+                    android:text="@string/label_registrasi_birthdate"/>
+                <EditText
+                    android:id="@+id/form_regist_birthdate"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="30dp"
+                    android:hint="@string/label_hint_picker_date"
+                    android:textSize="12sp"
+                    android:layout_marginLeft="30dp"
+                    android:textColorHint="@color/date_color"/>
+                <id.co.viva.news.app.component.BounvenoTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:layout_marginTop="30dp"
+                    android:textColor="@color/red"
+                    android:layout_marginLeft="30dp"
+                    android:textSize="14sp"
+                    android:text="@string/label_registrasi_country"/>
+                <EditText
+                    android:id="@+id/form_regist_country"
+                    android:layout_width="fill_parent"
+                    android:text="@string/label_registrasi_default_country"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="30dp"
+                    android:textSize="12sp"
+                    android:layout_marginLeft="30dp"
+                    android:textColorHint="@color/date_color"/>
+                <id.co.viva.news.app.component.BounvenoTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/red"
+                    android:textStyle="bold"
+                    android:layout_marginTop="30dp"
+                    android:layout_marginLeft="30dp"
+                    android:textSize="14sp"
+                    android:text="@string/label_registrasi_province"/>
+                <Spinner
+                    android:id="@+id/spin_regist_province"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="30dp"
+                    android:textSize="12sp"
+                    android:layout_marginLeft="30dp"
+                    android:textColorHint="@color/date_color"/>
+                <id.co.viva.news.app.component.BounvenoTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/red"
+                    android:textStyle="bold"
+                    android:layout_marginTop="30dp"
+                    android:layout_marginLeft="30dp"
+                    android:textSize="14sp"
+                    android:text="@string/label_registrasi_city"/>
+                <Spinner
+                    android:id="@+id/spin_regist_city"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="30dp"
+                    android:textSize="12sp"
+                    android:layout_marginLeft="30dp"
                     android:textColorHint="@color/date_color"/>
             </LinearLayout>
             <LinearLayout
@@ -145,23 +166,33 @@
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="40dp"
-                    android:layout_margin="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginBottom="10dp"
                     android:textColor="@color/white"
                     android:textSize="14sp"
                     app:cpb_textComplete="@string/label_logout_complete"
                     app:cpb_textError="@string/label_logout_failed"
                     app:cpb_textIdle="@string/label_logout" />
-                <com.dd.CircularProgressButton
+                <com.dd.processbutton.iml.ActionProcessButton
                     android:id="@+id/btn_change_data_user"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="40dp"
-                    android:layout_margin="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="30dp"
+                    android:layout_marginBottom="10dp"
                     android:textColor="@color/white"
                     android:textSize="14sp"
-                    app:cpb_textComplete="@string/label_success_save_data_profile"
-                    app:cpb_textError="@string/label_failed_save_data_profile"
-                    app:cpb_textIdle="@string/label_save_data_profile" />
+                    android:text="@string/label_save_data_profile"
+                    custom:pb_colorComplete="@color/green"
+                    custom:pb_colorNormal="@color/red"
+                    custom:pb_colorPressed="@color/cpb_red_dark"
+                    custom:pb_colorProgress="@color/blue"
+                    custom:pb_textComplete="@string/label_success_save_data_profile"
+                    custom:pb_textProgress="@string/label_loading"/>
             </LinearLayout>
         </RelativeLayout>
         <RelativeLayout
@@ -179,5 +210,9 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:visibility="invisible" />
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/coachmark_img_profile"></RelativeLayout>
     </FrameLayout>
-</com.nirhart.parallaxscroll.views.ParallaxScrollView>
+</ScrollView>
