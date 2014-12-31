@@ -46,32 +46,47 @@ public class SearchResultAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View view, ViewGroup viewGroup) {
-        View rootView = LayoutInflater.from(context)
-                .inflate(R.layout.item_search_result, viewGroup, false);
+        ViewHolder holder;
 
-        ImageView icon_item_search_result = (ImageView) rootView.findViewById(R.id.image_item_search_result);
-        TextView title_item_search_result = (TextView) rootView.findViewById(R.id.title_item_search_result);
-        TextView date_item_search_result = (TextView) rootView.findViewById(R.id.date_item_search_result);
-        TextView subkanal_item_search_result = (TextView) rootView.findViewById(R.id.subkanal_item_search_result);
-        RelativeLayout subkanal_item_search_result_layout = (RelativeLayout) rootView.findViewById(R.id.subkanal_item_search_result_layout);
+        if(view == null) {
+            LayoutInflater inflater = LayoutInflater.from(context);
+            view = inflater.inflate(R.layout.item_search_result, null);
+            holder = new ViewHolder();
+            holder.title_item_search_result = (TextView) view.findViewById(R.id.title_item_search_result);
+            holder.date_item_search_result = (TextView) view.findViewById(R.id.date_item_search_result);
+            holder.subkanal_item_search_result = (TextView) view.findViewById(R.id.subkanal_item_search_result);
+            holder.subkanal_item_search_result_layout = (RelativeLayout) view.findViewById(R.id.subkanal_item_search_result_layout);
+            holder.icon_item_search_result = (ImageView) view.findViewById(R.id.image_item_search_result);
+            view.setTag(holder);
+        } else {
+            holder = (ViewHolder) view.getTag();
+        }
 
         SearchResult result = searchResultArrayList.get(position);
         if(result.getImage_url().length() > 0) {
-            Picasso.with(context).load(result.getImage_url()).into(icon_item_search_result);
+            Picasso.with(context).load(result.getImage_url()).into(holder.icon_item_search_result);
         }
-        title_item_search_result.setText(result.getTitle());
-        date_item_search_result.setText(result.getDate_publish());
-        subkanal_item_search_result.setText(result.getKanal());
+        holder.title_item_search_result.setText(result.getTitle());
+        holder.date_item_search_result.setText(result.getDate_publish());
+        holder.subkanal_item_search_result.setText(result.getKanal());
 
         if(result.getKanal().equalsIgnoreCase("bola")) {
-            subkanal_item_search_result_layout.setBackgroundResource(R.color.color_bola);
+            holder.subkanal_item_search_result_layout.setBackgroundResource(R.color.color_bola);
         } else if(result.getKanal().equalsIgnoreCase("vivalife")) {
-            subkanal_item_search_result_layout.setBackgroundResource(R.color.color_life);
+            holder.subkanal_item_search_result_layout.setBackgroundResource(R.color.color_life);
         } else  {
-            subkanal_item_search_result_layout.setBackgroundResource(R.color.color_news);
+            holder.subkanal_item_search_result_layout.setBackgroundResource(R.color.color_news);
         }
 
-        return rootView;
+        return view;
+    }
+
+    private static class ViewHolder {
+        public TextView title_item_search_result;
+        public TextView date_item_search_result;
+        public TextView subkanal_item_search_result;
+        public RelativeLayout subkanal_item_search_result_layout;
+        public ImageView icon_item_search_result;
     }
 
 }

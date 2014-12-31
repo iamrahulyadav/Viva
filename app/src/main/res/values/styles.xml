@@ -8,7 +8,6 @@
     <style name="MyActionBar" parent="android:style/Widget.Holo.ActionBar">
         <item name="android:background">@color/header_headline_terbaru_new</item>
         <item name="android:titleTextStyle">@style/MyActionBar.TitleTextStyle</item>
-
     </style>
 
     <style name="MyActionBar.TitleTextStyle" parent="android:style/TextAppearance.Holo.Widget.ActionBar.Title">

@@ -9,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
@@ -21,7 +20,6 @@ import id.co.viva.news.app.R;
 public class CardBackFragment extends Fragment {
 
     private ImageView mFrontImage;
-    private TextView mTitle;
     private String photoUrl;
     private String title;
     private Context context;
@@ -39,8 +37,6 @@ public class CardBackFragment extends Fragment {
         if(photoUrl.length() > 0) {
             Picasso.with(context).load(photoUrl).into(mFrontImage);
         }
-        mTitle = (TextView) v.findViewById(R.id.text_card_back);
-        mTitle.setText(title);
         return v;
     }
 

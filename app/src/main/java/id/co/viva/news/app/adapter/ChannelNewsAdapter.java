@@ -48,29 +48,42 @@ public class ChannelNewsAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View view, ViewGroup viewGroup) {
-        View rootView = LayoutInflater.from(context)
-                .inflate(R.layout.item_channel_news_list, viewGroup, false);
+        ViewHolder holder;
 
-        TextView title_item_channel_news = (TextView) rootView.findViewById(R.id.title_item_channel_news);
-        TextView date_item_channel_news = (TextView) rootView.findViewById(R.id.date_item_channel_news);
-        ImageView image_item_channel_news = (ImageView) rootView.findViewById(R.id.image_item_channel_news);
+        if(view == null) {
+            LayoutInflater inflater = LayoutInflater.from(context);
+            view = inflater.inflate(R.layout.item_channel_news_list, null);
+            holder = new ViewHolder();
+            holder.image_item_channel_news = (ImageView) view.findViewById(R.id.image_item_channel_news);
+            holder.title_item_channel_news = (TextView) view.findViewById(R.id.title_item_channel_news);
+            holder.date_item_channel_news = (TextView) view.findViewById(R.id.date_item_channel_news);
+            view.setTag(holder);
+        } else {
+            holder = (ViewHolder) view.getTag();
+        }
 
         ChannelNews channelNews = channelNewsArrayList.get(position);
-        title_item_channel_news.setText(channelNews.getTitle());
+        holder.title_item_channel_news.setText(channelNews.getTitle());
 
         try {
             DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             Date date = (Date)formatter.parse(channelNews.getDate_publish());
-            date_item_channel_news.setText(Constant.getTimeAgo(date.getTime()));
+            holder.date_item_channel_news.setText(Constant.getTimeAgo(date.getTime()));
         } catch (Exception e) {
             e.getMessage();
         }
 
         if(channelNews.getImage_url().length() > 0) {
-            Picasso.with(context).load(channelNews.getImage_url()).into(image_item_channel_news);
+            Picasso.with(context).load(channelNews.getImage_url()).into(holder.image_item_channel_news);
         }
 
-        return rootView;
+        return view;
+    }
+
+    private static class ViewHolder {
+        public ImageView image_item_channel_news;
+        public TextView title_item_channel_news;
+        public TextView date_item_channel_news;
     }
 
 }

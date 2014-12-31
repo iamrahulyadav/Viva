@@ -45,18 +45,33 @@ public class FeaturedBolaAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View view, ViewGroup viewGroup) {
-        View rootView = LayoutInflater.from(context)
-                .inflate(R.layout.item_grid_bola, viewGroup, false);
-        ImageView thumb_featured = (ImageView) rootView.findViewById(R.id.item_thumb_bola);
-        TextView title_kanal = (TextView) rootView.findViewById(R.id.item_title_kanal_bola);
-        FeaturedBola featuredBola = subNewsArrayList.get(position);
-        title_kanal.setText(featuredBola.getChannel_title().toUpperCase());
-        if(featuredBola.getImage_url().length() > 0) {
-            Picasso.with(context).load(featuredBola.getImage_url()).into(thumb_featured);
+        ViewHolder holder;
+
+        if(view == null) {
+            LayoutInflater inflater = LayoutInflater.from(context);
+            view = inflater.inflate(R.layout.item_grid_bola, null);
+            holder = new ViewHolder();
+            holder.thumb_featured = (ImageView) view.findViewById(R.id.item_thumb_bola);
+            holder.title_kanal = (TextView) view.findViewById(R.id.item_title_kanal_bola);
+            view.setTag(holder);
         } else {
-            thumb_featured.setImageResource(R.drawable.default_image);
+            holder = (ViewHolder) view.getTag();
         }
-        return rootView;
+
+        FeaturedBola featuredBola = subNewsArrayList.get(position);
+        holder.title_kanal.setText(featuredBola.getChannel_title().toUpperCase());
+        if(featuredBola.getImage_url().length() > 0) {
+            Picasso.with(context).load(featuredBola.getImage_url()).into(holder.thumb_featured);
+        } else {
+            holder.thumb_featured.setImageResource(R.drawable.default_image);
+        }
+
+        return view;
+    }
+
+    private static class ViewHolder {
+        public TextView title_kanal;
+        public ImageView thumb_featured;
     }
 
 }

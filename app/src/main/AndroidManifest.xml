@@ -48,17 +48,17 @@
             android:name=".activity.ActLanding"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"/>
-            <meta-data
-                android:name="android.app.default_searchable"
-                android:value=".activity.ActSearchResult" />/>
+        <meta-data
+            android:name="android.app.default_searchable"
+            android:value=".activity.ActSearchResult" />/>
 
         <activity
             android:name=".activity.ActBase"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"/>
-            <meta-data
-                android:name="android.app.default_searchable"
-                android:value=".activity.ActSearchResult" />/>
+        <meta-data
+            android:name="android.app.default_searchable"
+            android:value=".activity.ActSearchResult" />/>
 
         <activity
             android:name=".activity.ActDetailHeadline"
@@ -113,25 +113,25 @@
             android:name=".activity.ActDetailContentNews"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"/>
-            <meta-data
-                android:name="android.app.default_searchable"
-                android:value=".activity.ActSearchResult" />/>
+        <meta-data
+            android:name="android.app.default_searchable"
+            android:value=".activity.ActSearchResult" />/>
 
         <activity
             android:name=".activity.ActDetailContentLife"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"/>
-            <meta-data
-                android:name="android.app.default_searchable"
-                android:value=".activity.ActSearchResult" />/>
+        <meta-data
+            android:name="android.app.default_searchable"
+            android:value=".activity.ActSearchResult" />/>
 
         <activity
             android:name=".activity.ActDetailContentBola"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"/>
-            <meta-data
-                android:name="android.app.default_searchable"
-                android:value=".activity.ActSearchResult" />
+        <meta-data
+            android:name="android.app.default_searchable"
+            android:value=".activity.ActSearchResult" />
 
         <activity
             android:name=".activity.ActDetailTerbaru"

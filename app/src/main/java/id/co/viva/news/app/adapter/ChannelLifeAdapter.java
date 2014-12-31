@@ -49,29 +49,42 @@ public class ChannelLifeAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View view, ViewGroup viewGroup) {
-        View rootView = LayoutInflater.from(context)
-                .inflate(R.layout.item_channel_life_list, viewGroup, false);
+        ViewHolder holder;
 
-        TextView title_item_channel_life = (TextView) rootView.findViewById(R.id.title_item_channel_life);
-        TextView date_item_channel_life = (TextView) rootView.findViewById(R.id.date_item_channel_life);
-        ImageView image_item_channel_life = (ImageView) rootView.findViewById(R.id.image_item_channel_life);
+        if(view == null) {
+            LayoutInflater inflater = LayoutInflater.from(context);
+            view = inflater.inflate(R.layout.item_channel_life_list, null);
+            holder = new ViewHolder();
+            holder.image_item_channel_life = (ImageView) view.findViewById(R.id.image_item_channel_life);
+            holder.title_item_channel_life = (TextView) view.findViewById(R.id.title_item_channel_life);
+            holder.date_item_channel_life = (TextView) view.findViewById(R.id.date_item_channel_life);
+            view.setTag(holder);
+        } else {
+            holder = (ViewHolder) view.getTag();
+        }
 
         ChannelLife channelLife = channelLifeArrayList.get(position);
-        title_item_channel_life.setText(channelLife.getTitle());
+        holder.title_item_channel_life.setText(channelLife.getTitle());
 
         try {
             DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             Date date = (Date)formatter.parse(channelLife.getDate_publish());
-            date_item_channel_life.setText(Constant.getTimeAgo(date.getTime()));
+            holder.date_item_channel_life.setText(Constant.getTimeAgo(date.getTime()));
         } catch (Exception e) {
             e.getMessage();
         }
 
         if(channelLife.getImage_url().length() > 0) {
-            Picasso.with(context).load(channelLife.getImage_url()).into(image_item_channel_life);
+            Picasso.with(context).load(channelLife.getImage_url()).into(holder.image_item_channel_life);
         }
 
-        return rootView;
+        return view;
+    }
+
+    private static class ViewHolder {
+        public ImageView image_item_channel_life;
+        public TextView title_item_channel_life;
+        public TextView date_item_channel_life;
     }
 
 }

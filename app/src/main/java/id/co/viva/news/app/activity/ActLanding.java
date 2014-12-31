@@ -147,7 +147,7 @@ public class ActLanding extends FragmentActivity implements View.OnClickListener
 
     @Override
     public void onClick(View view) {
-        if(view.getId() == R.id.img_profile) {
+        if(view.getId() == R.id.profile_bg) {
             if(fullname.length() > 0 && email.length() > 0) {
                 Intent intent = new Intent(this, ActUserProfile.class);
                 startActivity(intent);
@@ -193,7 +193,7 @@ public class ActLanding extends FragmentActivity implements View.OnClickListener
         mBackground = (ImageView) findViewById(R.id.profile_bg);
         mNavLayout = (RelativeLayout) findViewById(R.id.nav_layout);
         mImgProfile = (ImageView) findViewById(R.id.img_profile);
-        mImgProfile.setOnClickListener(this);
+        mBackground.setOnClickListener(this);
         mNameProfile = (TextView) findViewById(R.id.tv_username);
         mEmailProfile = (TextView) findViewById(R.id.tv_user_email);
         if(fullname.length() > 0 && email.length() > 0) {

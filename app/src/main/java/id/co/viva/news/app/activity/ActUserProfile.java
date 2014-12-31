@@ -41,7 +41,6 @@ import id.co.viva.news.app.component.ProgressGenerator;
 import id.co.viva.news.app.component.ZoomFlip;
 import id.co.viva.news.app.fragment.CardBackFragment;
 import id.co.viva.news.app.fragment.CardFrontFragment;
-import id.co.viva.news.app.interfaces.CoachmarkListener;
 import id.co.viva.news.app.interfaces.OnCompleteListener;
 import id.co.viva.news.app.interfaces.OnProgressDoneListener;
 import id.co.viva.news.app.interfaces.OnSpinnerListener;

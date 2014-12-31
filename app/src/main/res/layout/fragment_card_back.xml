@@ -6,16 +6,5 @@
         android:id="@+id/image_card_back"
         android:layout_width="200dp"
         android:layout_height="200dp"
-        android:layout_centerInParent="true"
-        android:scaleType="fitCenter"/>
-    <id.co.viva.news.app.component.BounvenoTextView
-        android:id="@+id/text_card_back"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@color/white"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="30dp"
-        android:text="@string/abc_action_bar_home_description"
-        android:layout_centerHorizontal="true"
-        android:textSize="20sp" />
+        android:layout_centerInParent="true"/>
 </RelativeLayout>

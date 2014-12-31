@@ -7,6 +7,5 @@
         android:id="@+id/image_card_front"
         android:layout_width="200dp"
         android:layout_height="200dp"
-        android:layout_gravity="center"
-        android:scaleType="fitCenter"/>
+        android:layout_gravity="center"/>
 </LinearLayout>

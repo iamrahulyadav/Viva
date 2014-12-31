@@ -31,6 +31,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.flaviofaria.kenburnsview.KenBurnsView;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -84,7 +85,7 @@ public class DetailHeadlineIndexFragment extends Fragment implements View.OnClic
     private TextView tvDateHeadlineDetail;
     private TextView tvReporterHeadlineDetail;
     private TextView tvContentHeadlineDetail;
-    private ImageView ivThumbDetailHeadline;
+    private KenBurnsView ivThumbDetailHeadline;
     private TextView tvPreviewCommentUser;
     private TextView tvPreviewCommentContent;
     private LinearLayout layoutCommentPreview;
@@ -141,7 +142,8 @@ public class DetailHeadlineIndexFragment extends Fragment implements View.OnClic
         tvDateHeadlineDetail = (TextView) view.findViewById(R.id.date_detail_headline);
         tvReporterHeadlineDetail = (TextView) view.findViewById(R.id.reporter_detail_headline);
         tvContentHeadlineDetail = (TextView) view.findViewById(R.id.content_detail_headline);
-        ivThumbDetailHeadline = (ImageView) view.findViewById(R.id.thumb_detail_headline);
+        ivThumbDetailHeadline = (KenBurnsView) view.findViewById(R.id.thumb_detail_headline);
+        ivThumbDetailHeadline.setOnClickListener(this);
         ivThumbDetailHeadline.setFocusable(true);
         ivThumbDetailHeadline.setFocusableInTouchMode(true);
         ivThumbDetailHeadline.requestFocus();
@@ -308,6 +310,7 @@ public class DetailHeadlineIndexFragment extends Fragment implements View.OnClic
                                     thread.start();
                                 }
 
+                                getActivity().invalidateOptionsMenu();
                                 loading_layout.setVisibility(View.GONE);
                             } catch (Exception e) {
                                 e.getMessage();
@@ -567,10 +570,30 @@ public class DetailHeadlineIndexFragment extends Fragment implements View.OnClic
     }
 
     @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        if(url_shared == null || url_shared.length() < 1) {
+            try {
+                if(Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + id) != null) {
+                    cachedResponse = new String(Global.getInstance(getActivity()).
+                            getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + id).data);
+                    JSONObject jsonObject = new JSONObject(cachedResponse);
+                    JSONObject response = jsonObject.getJSONObject(Constant.response);
+                    JSONObject detail = response.getJSONObject(Constant.detail);
+                    url_shared = detail.getString(Constant.url);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_frag_detail, menu);
         MenuItem item = menu.findItem(R.id.action_share);
-        ShareActionProvider myShareActionProvider = (ShareActionProvider) item.getActionProvider();
+        ShareActionProvider myShareActionProvider = (ShareActionProvider)
+                item.getActionProvider();
         Intent myIntent = new Intent();
         myIntent.setAction(Intent.ACTION_SEND);
         myIntent.putExtra(Intent.EXTRA_TEXT, url_shared);
@@ -752,6 +775,7 @@ public class DetailHeadlineIndexFragment extends Fragment implements View.OnClic
                                         thread.start();
                                     }
 
+                                    getActivity().invalidateOptionsMenu();
                                     loading_layout.setVisibility(View.GONE);
                                 } catch (Exception e) {
                                     e.getMessage();
@@ -778,6 +802,10 @@ public class DetailHeadlineIndexFragment extends Fragment implements View.OnClic
                 Toast.makeText(getActivity(), R.string.title_no_connection, Toast.LENGTH_SHORT).show();
                 loading_layout.setVisibility(View.GONE);
                 tvNoResult.setVisibility(View.VISIBLE);
+            }
+        } else if(view.getId() == R.id.thumb_detail_headline) {
+            if(image_url.length() > 0) {
+
             }
         }
     }

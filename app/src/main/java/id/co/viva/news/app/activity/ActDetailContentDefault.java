@@ -29,6 +29,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.flaviofaria.kenburnsview.KenBurnsView;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -72,7 +73,7 @@ public class ActDetailContentDefault extends FragmentActivity
     private TextView tvDateDetail;
     private TextView tvReporterDetail;
     private TextView tvContentDetail;
-    private ImageView ivThumbDetail;
+    private KenBurnsView ivThumbDetail;
 
     private String id;
     private String imageContent;
@@ -178,7 +179,7 @@ public class ActDetailContentDefault extends FragmentActivity
         tvReporterDetail = (TextView) findViewById(R.id.reporter_detail_content_default);
         tvContentDetail = (TextView) findViewById(R.id.content_detail_content_default);
 
-        ivThumbDetail = (ImageView) findViewById(R.id.thumb_detail_content_default);
+        ivThumbDetail = (KenBurnsView) findViewById(R.id.thumb_detail_content_default);
         ivThumbDetail.setFocusable(true);
         ivThumbDetail.setFocusableInTouchMode(true);
         ivThumbDetail.requestFocus();

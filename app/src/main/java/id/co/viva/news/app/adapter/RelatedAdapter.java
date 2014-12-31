@@ -45,18 +45,30 @@ public class RelatedAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View view, ViewGroup viewGroup) {
-        View rootView = LayoutInflater.from(context)
-                .inflate(R.layout.item_related_article, viewGroup, false);
+        ViewHolder holder;
 
-        TextView title_item_related = (TextView) rootView.findViewById(R.id.title_related_article);
-        ImageView image_item_related = (ImageView) rootView.findViewById(R.id.image_related_article);
+        if(view == null) {
+            LayoutInflater inflater = LayoutInflater.from(context);
+            view = inflater.inflate(R.layout.item_related_article, null);
+            holder = new ViewHolder();
+            holder.title_item_related = (TextView) view.findViewById(R.id.title_related_article);
+            holder.image_item_related = (ImageView) view.findViewById(R.id.image_related_article);
+            view.setTag(holder);
+        } else {
+            holder = (ViewHolder) view.getTag();
+        }
 
         RelatedArticle relatedArticle = relatedArticleArrayList.get(position);
-        title_item_related.setText(relatedArticle.getRelated_title());
+        holder.title_item_related.setText(relatedArticle.getRelated_title());
         if(relatedArticle.getImage().length() > 0) {
-            Picasso.with(context).load(relatedArticle.getImage()).into(image_item_related);
+            Picasso.with(context).load(relatedArticle.getImage()).into(holder.image_item_related);
         }
-        return rootView;
+        return view;
+    }
+
+    private static class ViewHolder {
+        public TextView title_item_related;
+        public ImageView image_item_related;
     }
 
 }

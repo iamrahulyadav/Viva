@@ -1,5 +1,6 @@
 package id.co.viva.news.app.activity;
 
+import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -163,12 +164,19 @@ public class ActComment extends FragmentActivity implements View.OnClickListener
                 .getString(Constant.LOGIN_STATES_APP_ID, "");
     }
 
+    private void doLoginFirst() {
+        finish();
+        Intent intent = new Intent(this, ActLogin.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
+
     @Override
     public void onClick(View view) {
         if(view.getId() == R.id.btn_send_comment) {
             String comments = etComment.getText().toString();
             if((fullname.length() == 0 && email.length() == 0) || (fullname.length() == 0) || (email.length() == 0)) {
-                Toast.makeText(this, R.string.label_validation_for_comment, Toast.LENGTH_SHORT).show();
+                doLoginFirst();
             } else if(comments.length() < 1) {
                 Toast.makeText(this, R.string.label_validation_for_comment_length, Toast.LENGTH_SHORT).show();
             } else {
@@ -177,6 +185,8 @@ public class ActComment extends FragmentActivity implements View.OnClickListener
                     disableView();
                     btnSubmit.setProgress(1);
                     userAccount.sendComment();
+                } else {
+                    Toast.makeText(this, R.string.title_no_connection, Toast.LENGTH_SHORT).show();
                 }
             }
         } else if(view.getId() == R.id.et_comment_user) {

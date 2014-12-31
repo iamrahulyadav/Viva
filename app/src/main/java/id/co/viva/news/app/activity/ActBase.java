@@ -127,7 +127,7 @@ public class ActBase extends FragmentActivity implements View.OnClickListener {
         mNavLayout = (RelativeLayout) findViewById(R.id.nav_layout);
         mBackground = (ImageView) findViewById(R.id.profile_bg);
         mImgProfile = (ImageView) findViewById(R.id.img_profile);
-        mImgProfile.setOnClickListener(this);
+        mBackground.setOnClickListener(this);
         mNameProfile = (TextView) findViewById(R.id.tv_username);
         mEmailProfile = (TextView) findViewById(R.id.tv_user_email);
         if(fullname.length() > 0 && email.length() > 0) {
@@ -204,7 +204,7 @@ public class ActBase extends FragmentActivity implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-        if(view.getId() == R.id.img_profile) {
+        if(view.getId() == R.id.profile_bg) {
             if(fullname.length() > 0 && email.length() > 0) {
                 Intent intent = new Intent(this, ActUserProfile.class);
                 startActivity(intent);
@@ -282,7 +282,7 @@ public class ActBase extends FragmentActivity implements View.OnClickListener {
         if(mDrawerLayout.isDrawerOpen(mNavLayout)) {
             mDrawerLayout.closeDrawer(mNavLayout);
         } else {
-           super.onBackPressed();
+            super.onBackPressed();
         }
     }
 

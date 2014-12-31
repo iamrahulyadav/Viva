@@ -51,25 +51,32 @@ public class FavoriteAdapter extends BaseAdapter implements UndoAdapter {
 
     @Override
     public View getView(int position, View view, ViewGroup viewGroup) {
-        View rootView = LayoutInflater.from(context)
-                .inflate(R.layout.item_favorites_list, viewGroup, false);
+        ViewHolder holder;
 
-        TextView date_item_favorite = (TextView) rootView.findViewById(R.id.date_item_favorites);
-        TextView title_item_favorite = (TextView) rootView.findViewById(R.id.title_item_favorites);
-        ImageView image_item_favorite = (ImageView) rootView.findViewById(R.id.image_item_favorites);
-
-        Favorites favorites = favoritesArrayList.get(position);
-        title_item_favorite.setText(favorites.getTitle());
-        date_item_favorite.setText(favorites.getDate_publish());
-        if(favorites.getKanal().equalsIgnoreCase("bola")) {
-            image_item_favorite.setImageResource(R.drawable.icon_viva_bola);
-        } else if(favorites.getKanal().equalsIgnoreCase("vivalife")) {
-            image_item_favorite.setImageResource(R.drawable.icon_viva_life);
+        if(view == null) {
+            LayoutInflater inflater = LayoutInflater.from(context);
+            view = inflater.inflate(R.layout.item_favorites_list, null);
+            holder = new ViewHolder();
+            holder.image_item_favorite = (ImageView) view.findViewById(R.id.image_item_favorites);
+            holder.date_item_favorite = (TextView) view.findViewById(R.id.date_item_favorites);
+            holder.title_item_favorite = (TextView) view.findViewById(R.id.title_item_favorites);
+            view.setTag(holder);
         } else {
-            image_item_favorite.setImageResource(R.drawable.icon_viva_news);
+            holder = (ViewHolder) view.getTag();
         }
 
-        return rootView;
+        Favorites favorites = favoritesArrayList.get(position);
+        holder.title_item_favorite.setText(favorites.getTitle());
+        holder.date_item_favorite.setText(favorites.getDate_publish());
+        if(favorites.getKanal().equalsIgnoreCase("bola")) {
+            holder.image_item_favorite.setImageResource(R.drawable.icon_viva_bola);
+        } else if(favorites.getKanal().equalsIgnoreCase("vivalife")) {
+            holder.image_item_favorite.setImageResource(R.drawable.icon_viva_life);
+        } else {
+            holder.image_item_favorite.setImageResource(R.drawable.icon_viva_news);
+        }
+
+        return view;
     }
 
     @NonNull
@@ -86,6 +93,12 @@ public class FavoriteAdapter extends BaseAdapter implements UndoAdapter {
     @Override
     public View getUndoClickView(@NonNull View view) {
         return view.findViewById(R.id.undo_row_undobutton);
+    }
+
+    private static class ViewHolder {
+        public TextView date_item_favorite;
+        public TextView title_item_favorite;
+        public ImageView image_item_favorite;
     }
 
 }

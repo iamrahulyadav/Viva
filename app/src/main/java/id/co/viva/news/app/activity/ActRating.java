@@ -1,5 +1,6 @@
 package id.co.viva.news.app.activity;
 
+import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -175,6 +176,13 @@ public class ActRating extends FragmentActivity implements OnCompleteListener,
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
+    private void doLoginFirst() {
+        finish();
+        Intent intent = new Intent(this, ActLogin.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
+
     @Override
     public void onClick(View view) {
         if(view.getId() == R.id.btn_send_rate) {
@@ -189,7 +197,7 @@ public class ActRating extends FragmentActivity implements OnCompleteListener,
                         Toast.makeText(this, R.string.title_validate_rate, Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Toast.makeText(this, R.string.label_validation_for_comment, Toast.LENGTH_SHORT).show();
+                    doLoginFirst();
                 }
             } else {
                 Toast.makeText(this, R.string.title_no_connection, Toast.LENGTH_SHORT).show();

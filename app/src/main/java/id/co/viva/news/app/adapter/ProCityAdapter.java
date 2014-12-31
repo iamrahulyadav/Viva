@@ -61,28 +61,41 @@ public class ProCityAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View view, ViewGroup viewGroup) {
-        View rootView = LayoutInflater.from(context)
-                .inflate(R.layout.item_spin_procity, viewGroup, false);
+        ViewHolder holder;
 
-        TextView nama = (TextView) rootView.findViewById(R.id.text_item_name);
-        TextView id_propinsi = (TextView) rootView.findViewById(R.id.text_item_id_propinsi);
-        TextView id_kabupaten = (TextView) rootView.findViewById(R.id.text_item_id_kabupaten);
+        if(view == null) {
+            LayoutInflater inflater = LayoutInflater.from(context);
+            view = inflater.inflate(R.layout.item_spin_procity, null);
+            holder = new ViewHolder();
+            holder.nama = (TextView) view.findViewById(R.id.text_item_name);
+            holder.id_propinsi = (TextView) view.findViewById(R.id.text_item_id_propinsi);
+            holder.id_kabupaten = (TextView) view.findViewById(R.id.text_item_id_kabupaten);
+            view.setTag(holder);
+        } else {
+            holder = (ViewHolder) view.getTag();
+        }
 
         if(mType.equals(Constant.ADAPTER_PROVINCE)) {
             Province province = provinceArrayList.get(position);
-            nama.setText(province.getNama());
-            id_propinsi.setText(province.getId_propinsi());
-            id_kabupaten.setText(province.getId_kabupaten());
+            holder.nama.setText(province.getNama());
+            holder.id_propinsi.setText(province.getId_propinsi());
+            holder.id_kabupaten.setText(province.getId_kabupaten());
         }
 
         if(mType.equals(Constant.ADAPTER_CITY)) {
             City city = cityArrayList.get(position);
-            nama.setText(city.getNama());
-            id_propinsi.setText(city.getId_propinsi());
-            id_kabupaten.setText(city.getId_kabupaten());
+            holder.nama.setText(city.getNama());
+            holder.id_propinsi.setText(city.getId_propinsi());
+            holder.id_kabupaten.setText(city.getId_kabupaten());
         }
 
-        return rootView;
+        return view;
+    }
+
+    private static class ViewHolder {
+        public TextView nama;
+        public TextView id_propinsi;
+        public TextView id_kabupaten;
     }
 
 }

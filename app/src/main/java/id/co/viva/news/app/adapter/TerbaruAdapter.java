@@ -49,37 +49,51 @@ public class TerbaruAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View view, ViewGroup viewGroup) {
-        View rootView = LayoutInflater.from(context)
-                .inflate(R.layout.item_latest_terbaru, viewGroup, false);
+        ViewHolder holder;
 
-        ImageView icon_item_news = (ImageView) rootView.findViewById(R.id.image_item_news);
-        ImageView icon_item_viva_news = (ImageView) rootView.findViewById(R.id.icon_headline_terbaru);
-        TextView title_item_news = (TextView) rootView.findViewById(R.id.title_item_latest);
-        TextView date_item_news = (TextView) rootView.findViewById(R.id.date_item_news);
+        if(view == null) {
+            LayoutInflater inflater = LayoutInflater.from(context);
+            view = inflater.inflate(R.layout.item_latest_terbaru, null);
+            holder = new ViewHolder();
+            holder.icon_item_news = (ImageView) view.findViewById(R.id.image_item_news);
+            holder.icon_item_viva_news = (ImageView) view.findViewById(R.id.icon_headline_terbaru);
+            holder.title_item_news = (TextView) view.findViewById(R.id.title_item_latest);
+            holder.date_item_news = (TextView) view.findViewById(R.id.date_item_news);
+            view.setTag(holder);
+        } else {
+            holder = (ViewHolder) view.getTag();
+        }
 
         News news = newsArrayList.get(position);
         if(news.getImage_url().length() > 0) {
-            Picasso.with(context).load(news.getImage_url()).into(icon_item_news);
+            Picasso.with(context).load(news.getImage_url()).into(holder.icon_item_news);
         }
-        title_item_news.setText(news.getTitle());
+        holder.title_item_news.setText(news.getTitle());
 
         if(news.getKanal().equalsIgnoreCase("bola")) {
-            icon_item_viva_news.setImageResource(R.drawable.icon_viva_bola);
+            holder.icon_item_viva_news.setImageResource(R.drawable.icon_viva_bola);
         } else if(news.getKanal().equalsIgnoreCase("vivalife")) {
-            icon_item_viva_news.setImageResource(R.drawable.icon_viva_life);
+            holder.icon_item_viva_news.setImageResource(R.drawable.icon_viva_life);
         } else {
-            icon_item_viva_news.setImageResource(R.drawable.icon_viva_news);
+            holder.icon_item_viva_news.setImageResource(R.drawable.icon_viva_news);
         }
 
         try {
             DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             Date date = (Date)formatter.parse(news.getDate_publish());
-            date_item_news.setText(Constant.getTimeAgo(date.getTime()));
+            holder.date_item_news.setText(Constant.getTimeAgo(date.getTime()));
         } catch (Exception e) {
             e.getMessage();
         }
 
-        return rootView;
+        return view;
+    }
+
+    private static class ViewHolder {
+        public TextView title_item_news;
+        public TextView date_item_news;
+        public ImageView icon_item_news;
+        public ImageView icon_item_viva_news;
     }
 
 }

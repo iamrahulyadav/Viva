@@ -31,6 +31,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.flaviofaria.kenburnsview.KenBurnsView;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -83,7 +84,7 @@ public class DetailTerbaruIndexFragment extends Fragment implements View.OnClick
     private TextView tvDateNewsDetail;
     private TextView tvReporterNewsDetail;
     private TextView tvContentNewsDetail;
-    private ImageView ivThumbDetailNews;
+    private KenBurnsView ivThumbDetailNews;
     private TextView tvPreviewCommentUser;
     private TextView tvPreviewCommentContent;
     private LinearLayout layoutCommentPreview;
@@ -210,7 +211,7 @@ public class DetailTerbaruIndexFragment extends Fragment implements View.OnClick
         tvReporterNewsDetail = (TextView) view.findViewById(R.id.reporter_detail_news);
         tvContentNewsDetail = (TextView) view.findViewById(R.id.content_detail_news);
 
-        ivThumbDetailNews = (ImageView) view.findViewById(R.id.thumb_detail_news);
+        ivThumbDetailNews = (KenBurnsView) view.findViewById(R.id.thumb_detail_news);
         ivThumbDetailNews.setFocusable(true);
         ivThumbDetailNews.setFocusableInTouchMode(true);
         ivThumbDetailNews.requestFocus();
@@ -326,6 +327,7 @@ public class DetailTerbaruIndexFragment extends Fragment implements View.OnClick
                                     thread.start();
                                 }
 
+                                getActivity().invalidateOptionsMenu();
                                 loading_layout.setVisibility(View.GONE);
                             } catch (Exception e) {
                                 e.getMessage();
@@ -648,10 +650,30 @@ public class DetailTerbaruIndexFragment extends Fragment implements View.OnClick
     }
 
     @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        if(url_shared == null || url_shared.length() < 1) {
+            try {
+                if(Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + id) != null) {
+                    cachedResponse = new String(Global.getInstance(getActivity()).
+                            getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + id).data);
+                    JSONObject jsonObject = new JSONObject(cachedResponse);
+                    JSONObject response = jsonObject.getJSONObject(Constant.response);
+                    JSONObject detail = response.getJSONObject(Constant.detail);
+                    url_shared = detail.getString(Constant.url);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_frag_detail, menu);
         MenuItem item = menu.findItem(R.id.action_share);
-        ShareActionProvider myShareActionProvider = (ShareActionProvider) item.getActionProvider();
+        ShareActionProvider myShareActionProvider = (ShareActionProvider)
+                item.getActionProvider();
         Intent myIntent = new Intent();
         myIntent.setAction(Intent.ACTION_SEND);
         myIntent.putExtra(Intent.EXTRA_TEXT, url_shared);
@@ -775,6 +797,7 @@ public class DetailTerbaruIndexFragment extends Fragment implements View.OnClick
                                         thread.start();
                                     }
 
+                                    getActivity().invalidateOptionsMenu();
                                     loading_layout.setVisibility(View.GONE);
                                 } catch (Exception e) {
                                     e.getMessage();

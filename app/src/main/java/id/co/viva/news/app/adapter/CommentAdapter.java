@@ -46,27 +46,40 @@ public class CommentAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View view, ViewGroup viewGroup) {
-        View rootView = LayoutInflater.from(context)
-                .inflate(R.layout.item_comment_list, viewGroup, false);
+        ViewHolder holder;
 
-        TextView name_item_comment = (TextView) rootView.findViewById(R.id.name_item_comment);
-        TextView date_item_comment = (TextView) rootView.findViewById(R.id.date_item_comment);
-        TextView comment_item_content = (TextView) rootView.findViewById(R.id.content_item_comment);
+        if(view == null) {
+            LayoutInflater inflater = LayoutInflater.from(context);
+            view = inflater.inflate(R.layout.item_comment_list, null);
+            holder = new ViewHolder();
+            holder.name_item_comment = (TextView) view.findViewById(R.id.name_item_comment);
+            holder.date_item_comment = (TextView) view.findViewById(R.id.date_item_comment);
+            holder.comment_item_content = (TextView) view.findViewById(R.id.content_item_comment);
+            view.setTag(holder);
+        } else {
+            holder = (ViewHolder) view.getTag();
+        }
 
         Comment comment = commentArrayList.get(position);
-        name_item_comment.setText(comment.getUsername());
+        holder.name_item_comment.setText(comment.getUsername());
         if(comment.getComment_text().length() > 0 ) {
-            comment_item_content.setText(comment.getComment_text());
+            holder.comment_item_content.setText(comment.getComment_text());
         }
         try {
             DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             Date date = (Date)formatter.parse(comment.getSubmitted_date());
-            date_item_comment.setText(Constant.getTimeAgo(date.getTime()));
+            holder.date_item_comment.setText(Constant.getTimeAgo(date.getTime()));
         } catch (Exception e) {
             e.getMessage();
         }
 
-        return rootView;
+        return view;
+    }
+
+    private static class ViewHolder {
+        public TextView name_item_comment;
+        public TextView date_item_comment;
+        public TextView comment_item_content;
     }
 
 }
