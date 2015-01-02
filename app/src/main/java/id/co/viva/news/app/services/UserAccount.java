@@ -134,9 +134,9 @@ public class UserAccount {
                 if(gender.length() > 0) {
                     params.put("gender", gender);
                 }
-                if(city.length() > 0) {
-                    params.put("city", city);
-                }
+//                if(city.length() > 0) {
+//                    params.put("city", city);
+//                }
                 if(birth.length() > 0) {
                     params.put("birthdate", birth);
                 }

@@ -57,7 +57,7 @@ import id.co.viva.news.app.model.RelatedArticle;
  * Created by reza on 27/10/14.
  */
 public class ActDetailContentDefault extends FragmentActivity
-        implements AdapterView.OnItemClickListener {
+        implements AdapterView.OnItemClickListener, View.OnClickListener {
 
     private String ids;
     private String title;
@@ -180,6 +180,7 @@ public class ActDetailContentDefault extends FragmentActivity
         tvContentDetail = (TextView) findViewById(R.id.content_detail_content_default);
 
         ivThumbDetail = (KenBurnsView) findViewById(R.id.thumb_detail_content_default);
+        ivThumbDetail.setOnClickListener(this);
         ivThumbDetail.setFocusable(true);
         ivThumbDetail.setFocusableInTouchMode(true);
         ivThumbDetail.requestFocus();
@@ -591,6 +592,20 @@ public class ActDetailContentDefault extends FragmentActivity
             intent.putExtras(bundle);
             startActivity(intent);
             overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+        }
+    }
+
+    @Override
+    public void onClick(View view) {
+        if(view.getId() == R.id.thumb_detail_content_default) {
+            if(image_url.length() > 0) {
+                Bundle bundle = new Bundle();
+                bundle.putString("photoUrl", image_url);
+                Intent intent = new Intent(this, ActDetailPhotoThumb.class);
+                intent.putExtras(bundle);
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+            }
         }
     }
 

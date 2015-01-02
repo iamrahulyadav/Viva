@@ -143,7 +143,9 @@ public class GCM {
                 params.put("model", deviceInfo.getModel());
                 params.put("country", deviceInfo.getSIMCountryISO());
                 params.put("operator", deviceInfo.getSIMOperatorName());
-                params.put("msisdn", deviceInfo.getPhoneFromTelephony());
+                if(deviceInfo.getPhoneFromTelephony().length() > 0) {
+                    params.put("msisdn", deviceInfo.getPhoneFromTelephony());
+                }
                 return params;
             }
         };

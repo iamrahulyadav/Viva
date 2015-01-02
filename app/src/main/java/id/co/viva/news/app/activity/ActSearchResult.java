@@ -10,7 +10,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -30,10 +29,11 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import id.co.viva.news.app.Global;
+import id.co.viva.news.app.component.LoadMoreListView;
+import id.co.viva.news.app.interfaces.OnLoadMoreListener;
 import id.co.viva.news.app.services.Analytics;
 import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.R;
-//import id.co.viva.news.app.VivaApp;
 import id.co.viva.news.app.adapter.SearchResultAdapter;
 import id.co.viva.news.app.model.SearchResult;
 
@@ -41,10 +41,10 @@ import id.co.viva.news.app.model.SearchResult;
  * Created by reza on 13/10/14.
  */
 public class ActSearchResult extends FragmentActivity implements
-        AdapterView.OnItemClickListener {
+        AdapterView.OnItemClickListener, OnLoadMoreListener {
 
     private TextView tvSearchResult;
-    private ListView listSearchResult;
+    private LoadMoreListView listSearchResult;
     private String query;
     private boolean isInternetPresent = false;
     private JSONArray jsonArrayResponses;
@@ -54,6 +54,9 @@ public class ActSearchResult extends FragmentActivity implements
     private AnimationAdapter mAnimAdapter;
     private Analytics analytics;
     private Menu mMenu;
+    private int dataSize = 0;
+    private String data;
+    private SearchResultAdapter searchResultAdapter;
 
     private String id ;
     private String kanal ;
@@ -73,16 +76,19 @@ public class ActSearchResult extends FragmentActivity implements
         isInternetPresent = Global.getInstance(this).
                 getConnectionStatus().isConnectingToInternet();
 
+        resultArrayList = new ArrayList<SearchResult>();
+        searchResultAdapter = new SearchResultAdapter(this, resultArrayList);
+
         tvSearchResult = (TextView)findViewById(R.id.text_search_result);
-        listSearchResult = (ListView)findViewById(R.id.list_search_result);
+        listSearchResult = (LoadMoreListView)findViewById(R.id.list_search_result);
         listSearchResult.setOnItemClickListener(this);
+        listSearchResult.setOnLoadMoreListener(this);
         tvNoResult = (TextView)findViewById(R.id.text_no_result);
         loading_layout = (RelativeLayout)findViewById(R.id.loading_progress_layout);
 
         if(isInternetPresent) {
             tvNoResult.setVisibility(View.GONE);
             loading_layout.setVisibility(View.VISIBLE);
-            resultArrayList = new ArrayList<SearchResult>();
             handleIntent(getIntent());
         } else {
             Toast.makeText(this, R.string.title_no_connection, Toast.LENGTH_SHORT).show();
@@ -133,7 +139,7 @@ public class ActSearchResult extends FragmentActivity implements
                                     }
                                 }
                                 if (resultArrayList.size() > 0 || !resultArrayList.isEmpty()) {
-                                    mAnimAdapter = new ScaleInAnimationAdapter(new SearchResultAdapter(getApplicationContext(), resultArrayList));
+                                    mAnimAdapter = new ScaleInAnimationAdapter(searchResultAdapter);
                                     mAnimAdapter.setAbsListView(listSearchResult);
                                     listSearchResult.setAdapter(mAnimAdapter);
                                     mAnimAdapter.notifyDataSetChanged();
@@ -159,7 +165,7 @@ public class ActSearchResult extends FragmentActivity implements
                     0,
                     DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
             Global.getInstance(this).getRequestQueue().getCache().invalidate(Constant.NEW_SEARCH + "q/" + query + "/s/0", true);
-            Global.getInstance(this).getRequestQueue().getCache().get(Constant.NEW_SEARCH + "q/" + query + "/s/0" + query);
+            Global.getInstance(this).getRequestQueue().getCache().get(Constant.NEW_SEARCH + "q/" + query + "/s/0");
             Global.getInstance(this).addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
         }
     }
@@ -198,6 +204,61 @@ public class ActSearchResult extends FragmentActivity implements
         TextView searchTextView = (TextView) searchView.findViewById(searchTextViewId);
         searchTextView.setHintTextColor(getResources().getColor(R.color.white));
         return true;
+    }
+
+    @Override
+    public void onLoadMore() {
+        data = String.valueOf(dataSize += 10);
+        if(isInternetPresent) {
+            StringRequest stringRequest = new StringRequest(Request.Method.GET, Constant.NEW_SEARCH + "q/" + query + "/s/" + data,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String volleyResponse) {
+                            Log.i(Constant.TAG, "LOAD MORE SEARCH RESPONSES : " + volleyResponse);
+                            try {
+                                JSONObject jsonObject = new JSONObject(volleyResponse);
+                                JSONObject response = jsonObject.getJSONObject(Constant.response);
+                                jsonArrayResponses = response.getJSONArray(Constant.search);
+                                if(jsonArrayResponses != null) {
+                                    for(int i=0; i<jsonArrayResponses.length(); i++) {
+                                        JSONObject jsonHeadline = jsonArrayResponses.getJSONObject(i);
+                                        id = jsonHeadline.getString(Constant.id);
+                                        kanal = jsonHeadline.getString(Constant.kanal);
+                                        image_url = jsonHeadline.getString(Constant.image_url);
+                                        title = jsonHeadline.getString(Constant.title);
+                                        slug = jsonHeadline.getString(Constant.slug);
+                                        date_publish = jsonHeadline.getString(Constant.date_publish);
+                                        url = jsonHeadline.getString(Constant.url);
+                                        resultArrayList.add(new SearchResult(id, kanal, image_url,
+                                                title, slug, date_publish, url));
+                                        Log.i(Constant.TAG, "LOAD MORE SEARCH RESULTS : " + resultArrayList.get(i).getTitle());
+                                    }
+                                }
+                                if (resultArrayList.size() > 0 || !resultArrayList.isEmpty()) {
+                                    mAnimAdapter = new ScaleInAnimationAdapter(searchResultAdapter);
+                                    mAnimAdapter.setAbsListView(listSearchResult);
+                                    mAnimAdapter.notifyDataSetChanged();
+                                    listSearchResult.onLoadMoreComplete();
+                                }
+                            } catch (Exception e) {
+                                e.getMessage();
+                            }
+                        }
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError volleyError) {
+                    Toast.makeText(ActSearchResult.this, R.string.label_error, Toast.LENGTH_SHORT).show();
+                }
+            });
+            stringRequest.setShouldCache(true);
+            stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                    Constant.TIME_OUT,
+                    0,
+                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+            Global.getInstance(this).getRequestQueue().getCache().invalidate(Constant.NEW_SEARCH + "q/" + query + "/s/" + data, true);
+            Global.getInstance(this).getRequestQueue().getCache().get(Constant.NEW_SEARCH + "q/" + query + "/s/" + data);
+            Global.getInstance(this).addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
+        }
     }
 
 }

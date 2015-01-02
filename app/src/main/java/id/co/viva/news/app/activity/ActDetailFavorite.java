@@ -5,9 +5,10 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.text.Html;
 import android.view.MenuItem;
-import android.widget.ImageView;
+import android.view.View;
 import android.widget.TextView;
 
+import com.flaviofaria.kenburnsview.KenBurnsView;
 import com.squareup.picasso.Picasso;
 
 import id.co.viva.news.app.Constant;
@@ -18,10 +19,10 @@ import id.co.viva.news.app.services.Analytics;
 /**
  * Created by reza on 24/11/14.
  */
-public class ActDetailFavorite extends FragmentActivity {
+public class ActDetailFavorite extends FragmentActivity implements View.OnClickListener {
 
     private Intent intent;
-    private ImageView imageDetail;
+    private KenBurnsView imageDetail;
     private TextView tvTitle;
     private TextView tvDatePublish;
     private TextView tvContent;
@@ -57,7 +58,7 @@ public class ActDetailFavorite extends FragmentActivity {
 
         getHeaderActionBar();
 
-        imageDetail = (ImageView)findViewById(R.id.thumb_detail_content_favorite);
+        imageDetail = (KenBurnsView)findViewById(R.id.thumb_detail_content_favorite);
         tvTitle = (TextView)findViewById(R.id.title_detail_content_favorite);
         tvDatePublish = (TextView)findViewById(R.id.date_detail_content_favorite);
         tvContent = (TextView)findViewById(R.id.content_detail_content_favorite);
@@ -70,6 +71,8 @@ public class ActDetailFavorite extends FragmentActivity {
         } catch (Exception e) {
             e.getMessage();
         }
+
+        imageDetail.setOnClickListener(this);
 
         tvTitle.setText(title);
         tvDatePublish.setText(date_publish);
@@ -98,6 +101,20 @@ public class ActDetailFavorite extends FragmentActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onClick(View view) {
+        if(view.getId() == R.id.thumb_detail_content_favorite) {
+            if(image_url.length() > 0) {
+                Bundle bundle = new Bundle();
+                bundle.putString("photoUrl", image_url);
+                Intent intent = new Intent(this, ActDetailPhotoThumb.class);
+                intent.putExtras(bundle);
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+            }
+        }
     }
 
 }

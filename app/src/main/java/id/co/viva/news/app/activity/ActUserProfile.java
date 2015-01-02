@@ -461,9 +461,9 @@ public class ActUserProfile extends FragmentActivity implements View.OnClickList
     @Override
     public void onErrorLoadDataSpinner(String error, String type) {
         if(type.equals(Constant.ADAPTER_PROVINCE)) {
-            Toast.makeText(this, R.string.label_failed_get_province, Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, R.string.label_failed_get_province, Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(this, R.string.label_failed_get_city, Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, R.string.label_failed_get_city, Toast.LENGTH_SHORT).show();
         }
     }
 

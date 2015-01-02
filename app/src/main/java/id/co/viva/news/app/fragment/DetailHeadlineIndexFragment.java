@@ -49,6 +49,7 @@ import id.co.viva.news.app.Global;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.activity.ActComment;
 import id.co.viva.news.app.activity.ActDetailContentDefault;
+import id.co.viva.news.app.activity.ActDetailPhotoThumb;
 import id.co.viva.news.app.activity.ActRating;
 import id.co.viva.news.app.adapter.RelatedAdapter;
 import id.co.viva.news.app.coachmark.CoachmarkBuilder;
@@ -805,7 +806,12 @@ public class DetailHeadlineIndexFragment extends Fragment implements View.OnClic
             }
         } else if(view.getId() == R.id.thumb_detail_headline) {
             if(image_url.length() > 0) {
-
+                Bundle bundle = new Bundle();
+                bundle.putString("photoUrl", image_url);
+                Intent intent = new Intent(getActivity(), ActDetailPhotoThumb.class);
+                intent.putExtras(bundle);
+                startActivity(intent);
+                getActivity().overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
             }
         }
     }
