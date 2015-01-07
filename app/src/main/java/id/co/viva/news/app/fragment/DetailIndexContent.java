@@ -204,6 +204,7 @@ public class DetailIndexContent extends Fragment implements
         commentArrayList = new ArrayList<Comment>();
 
         layoutCommentPreview = (LinearLayout) view.findViewById(R.id.layout_preview_comment_list);
+        layoutCommentPreview.setOnClickListener(this);
         layoutCommentPreview.setVisibility(View.GONE);
         tvPreviewCommentContent = (TextView) view.findViewById(R.id.text_preview_comment_content);
         tvPreviewCommentUser = (TextView) view.findViewById(R.id.text_preview_comment_user);
@@ -634,65 +635,73 @@ public class DetailIndexContent extends Fragment implements
         return view;
     }
 
+    private void moveCommentPage() {
+        Bundle bundle = new Bundle();
+        bundle.putString("imageurl", image_url);
+        bundle.putString("title", title);
+        bundle.putString("article_id", ids);
+        bundle.putString("type_kanal", kanal);
+        Intent intent = new Intent(getActivity(), ActComment.class);
+        intent.putExtras(bundle);
+        startActivity(intent);
+        getActivity().overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+    }
+
+    private void moveRatingPage() {
+        Bundle bundles = new Bundle();
+        bundles.putString("imageurl", image_url);
+        bundles.putString("title", title);
+        bundles.putString("article_id", ids);
+        bundles.putString("type_kanal", kanal);
+        Intent intents = new Intent(getActivity(), ActRating.class);
+        intents.putExtras(bundles);
+        startActivity(intents);
+        getActivity().overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+    }
+
+    private void doFavorites() {
+        favoriteList = Global.getInstance(getActivity()).getSharedPreferences(getActivity())
+                .getString(Constant.FAVORITES_LIST, "");
+        if(favoriteList == null || favoriteList.length() <= 0) {
+            favoritesArrayList = Global.getInstance(getActivity()).getFavoritesList();
+        } else {
+            favoritesArrayList = Global.getInstance(getActivity()).getInstanceGson().
+                    fromJson(favoriteList, Global.getInstance(getActivity()).getType());
+        }
+        new SweetAlertDialog(getActivity(), SweetAlertDialog.WARNING_TYPE)
+                .setTitleText(getResources().getString(R.string.label_favorite_navigation_title))
+                .setContentText(title)
+                .setConfirmText(getResources().getString(R.string.label_favorite_ok))
+                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sDialog) {
+                        favoritesArrayList.add(new Favorites(ids, title, channel_id, kanal,
+                                image_url, date_publish, reporter_name, url_shared, content));
+                        String favorite = Global.getInstance(getActivity()).getInstanceGson().toJson(favoritesArrayList);
+                        Global.getInstance(getActivity()).getDefaultEditor().putString(Constant.FAVORITES_LIST, favorite);
+                        Global.getInstance(getActivity()).getDefaultEditor().putInt(Constant.FAVORITES_LIST_SIZE, favoritesArrayList.size());
+                        Global.getInstance(getActivity()).getDefaultEditor().commit();
+                        sDialog.setTitleText(getResources().getString(R.string.label_favorite_navigation_title_confirm))
+                                .setContentText(getResources().getString(R.string.label_favorite_navigation_content))
+                                .setConfirmText(getResources().getString(R.string.label_favorite_ok))
+                                .setConfirmClickListener(null)
+                                .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+                    }
+                })
+                .show();
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.subaction_rate:
-                Bundle bundles = new Bundle();
-                bundles.putString("imageurl", image_url);
-                bundles.putString("title", title);
-                bundles.putString("article_id", ids);
-                bundles.putString("type_kanal", kanal);
-                Intent intents = new Intent(getActivity(), ActRating.class);
-                intents.putExtras(bundles);
-                startActivity(intents);
-                getActivity().overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+                moveRatingPage();
                 return true;
             case R.id.subaction_comments:
-                Bundle bundle = new Bundle();
-                bundle.putString("imageurl", image_url);
-                bundle.putString("title", title);
-                bundle.putString("article_id", ids);
-                bundle.putString("type_kanal", kanal);
-                Intent intent = new Intent(getActivity(), ActComment.class);
-                intent.putExtras(bundle);
-                startActivity(intent);
-                getActivity().overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+                moveCommentPage();
                 return true;
             case R.id.subaction_favorites:
-                favoriteList = Global.getInstance(getActivity()).getSharedPreferences(getActivity())
-                        .getString(Constant.FAVORITES_LIST, "");
-
-                if(favoriteList == null || favoriteList.length() <= 0) {
-                    favoritesArrayList = Global.getInstance(getActivity()).getFavoritesList();
-                } else {
-                    favoritesArrayList = Global.getInstance(getActivity()).getInstanceGson().
-                            fromJson(favoriteList, Global.getInstance(getActivity()).getType());
-                }
-
-                new SweetAlertDialog(getActivity(), SweetAlertDialog.WARNING_TYPE)
-                        .setTitleText(getResources().getString(R.string.label_favorite_navigation_title))
-                        .setContentText(title)
-                        .setConfirmText(getResources().getString(R.string.label_favorite_ok))
-                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                            @Override
-                            public void onClick(SweetAlertDialog sDialog) {
-                                favoritesArrayList.add(new Favorites(ids, title, channel_id, kanal,
-                                        image_url, date_publish, reporter_name, url_shared, content));
-
-                                String favorite = Global.getInstance(getActivity()).getInstanceGson().toJson(favoritesArrayList);
-                                Global.getInstance(getActivity()).getDefaultEditor().putString(Constant.FAVORITES_LIST, favorite);
-                                Global.getInstance(getActivity()).getDefaultEditor().putInt(Constant.FAVORITES_LIST_SIZE, favoritesArrayList.size());
-                                Global.getInstance(getActivity()).getDefaultEditor().commit();
-
-                                sDialog.setTitleText(getResources().getString(R.string.label_favorite_navigation_title_confirm))
-                                        .setContentText(getResources().getString(R.string.label_favorite_navigation_content))
-                                        .setConfirmText(getResources().getString(R.string.label_favorite_ok))
-                                        .setConfirmClickListener(null)
-                                        .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
-                            }
-                        })
-                        .show();
+                doFavorites();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -918,6 +927,8 @@ public class DetailIndexContent extends Fragment implements
                 startActivity(intent);
                 getActivity().overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
             }
+        } else if(view.getId() == R.id.layout_preview_comment_list) {
+            moveCommentPage();
         }
     }
 

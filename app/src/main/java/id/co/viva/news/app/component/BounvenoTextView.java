@@ -23,7 +23,7 @@ public class BounvenoTextView extends TextView {
     @Override
     public void setTypeface(Typeface tf, int style) {
         try {
-            Typeface helveticaTF = Typeface.createFromAsset(getContext().getAssets(), "fonts/RobotoSlabLight.ttf");
+            Typeface helveticaTF = Typeface.createFromAsset(getContext().getAssets(), "fonts/Roboto-Light.ttf");
             super.setTypeface(helveticaTF);
         } catch (Exception e) {
             super.setTypeface(tf);

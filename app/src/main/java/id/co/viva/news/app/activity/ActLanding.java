@@ -63,11 +63,15 @@ public class ActLanding extends FragmentActivity implements View.OnClickListener
     private ImageView mImgProfile;
     private TextView mNameProfile;
     private TextView mEmailProfile;
+    private boolean isInternetPresent = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act_main);
+
+        isInternetPresent = Global.getInstance(this)
+                .getConnectionStatus().isConnectingToInternet();
 
         mTitle = mDrawerTitle = getTitle();
         getProfile();
@@ -200,13 +204,16 @@ public class ActLanding extends FragmentActivity implements View.OnClickListener
             mNameProfile.setText(fullname);
             mEmailProfile.setText(email);
         } else {
-            mImgProfile.setImageResource(R.drawable.nophoto);
-            mNameProfile.setText("Anda belum");
+            mNameProfile.setText("Anda Belum");
             mEmailProfile.setText(R.string.label_login);
         }
         if(photourl.length() > 0) {
-            Picasso.with(this).load(photourl).into(mImgProfile);
-            Picasso.with(this).load(photourl).into(target);
+            if(isInternetPresent) {
+                Picasso.with(this).load(photourl).into(mImgProfile);
+                Picasso.with(this).load(photourl).into(target);
+            } else {
+                mImgProfile.setImageResource(R.drawable.ic_profile);
+            }
         } else {
             mImgProfile.setImageResource(R.drawable.ic_profile);
         }

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="135dp"
+        android:scaleType="fitXY"
+        android:id="@+id/image_item_slider_detail"/>
+    <id.co.viva.news.app.component.BounvenoTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxLines="3"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/image_item_slider_detail"
+        android:textSize="12sp"
+        android:id="@+id/title_image_item_slider_detail"/>
+</RelativeLayout>

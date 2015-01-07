@@ -32,7 +32,7 @@
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="5dp"
                 android:id="@+id/title_and_kanal_detail_content_layout_default"
                 android:orientation="horizontal">
                 <id.co.viva.news.app.component.BounvenoTextView
@@ -47,7 +47,7 @@
                 android:id="@+id/date_detail_content_default"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="5dp"
                 android:textColor="@color/date_color"
                 android:layout_below="@id/title_and_kanal_detail_content_layout_default"
                 android:textSize="16sp"/>
@@ -56,13 +56,19 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/date_detail_content_default"
-                android:layout_marginBottom="20dp"
                 android:textColor="@color/red"
+                android:layout_marginBottom="15dp"
                 android:textSize="16sp"/>
+            <android.support.v4.view.ViewPager
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_marginBottom="15dp"
+                android:layout_below="@id/reporter_detail_content_default"
+                android:id="@+id/horizontal_list"/>
             <id.co.viva.news.app.component.BounvenoTextView
                 android:id="@+id/content_detail_content_default"
-                android:layout_below="@id/reporter_detail_content_default"
-                android:lineSpacingExtra="15px"
+                android:layout_below="@id/horizontal_list"
+                android:lineSpacingExtra="10px"
                 android:layout_width="wrap_content"
                 android:textSize="18sp"
                 android:textColor="@color/black"
@@ -104,18 +110,12 @@
                     android:layout_marginLeft="5dp"
                     android:id="@+id/text_preview_comment_content"/>
             </LinearLayout>
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_below="@id/layout_preview_comment_list"
-                android:id="@+id/image_content"></LinearLayout>
             <RelativeLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:id="@+id/header_related_article"
-                android:layout_below="@id/image_content"
+                android:layout_below="@id/layout_preview_comment_list"
                 android:background="@color/header_grey">
                 <id.co.viva.news.app.component.BounvenoTextView
                     android:layout_width="wrap_content"

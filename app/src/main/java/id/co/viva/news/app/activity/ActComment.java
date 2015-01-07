@@ -191,7 +191,7 @@ public class ActComment extends FragmentActivity implements View.OnClickListener
             }
         } else if(view.getId() == R.id.et_comment_user) {
             if(fullname.length() == 0 && email.length() == 0) {
-                Toast.makeText(this, R.string.label_validation_for_comment, Toast.LENGTH_SHORT).show();
+                doLoginFirst();
             }
         }
     }

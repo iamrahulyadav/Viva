@@ -5,18 +5,17 @@ import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.view.ViewPager;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Display;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -34,19 +33,17 @@ import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import id.co.viva.news.app.Global;
+import id.co.viva.news.app.adapter.ImageSliderAdapter;
 import id.co.viva.news.app.coachmark.CoachmarkBuilder;
 import id.co.viva.news.app.coachmark.CoachmarkView;
 import id.co.viva.news.app.model.Comment;
 import id.co.viva.news.app.model.Favorites;
+import id.co.viva.news.app.model.SliderContentImage;
 import id.co.viva.news.app.services.Analytics;
 import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.R;
@@ -68,6 +65,7 @@ public class ActDetailContentDefault extends FragmentActivity
     private String content;
     private String reporter_name;
     private String url_shared;
+    private String image_caption;
 
     private TextView tvTitleDetail;
     private TextView tvDateDetail;
@@ -76,29 +74,32 @@ public class ActDetailContentDefault extends FragmentActivity
     private KenBurnsView ivThumbDetail;
 
     private String id;
-    private String imageContent;
     private String cachedResponse;
     private String typeFrom;
     private String fromkanal;
     private String shared_url;
+    private String sliderPhotoUrl;
+    private String sliderTitle ;
 
     private TextView tvPreviewCommentUser;
     private TextView tvPreviewCommentContent;
     private LinearLayout layoutCommentPreview;
     private int count = 0;
 
-    private View imageContentLayout;
     private RelativeLayout headerRelated;
     private boolean isInternetPresent = false;
     private TextView tvNoResult;
     private RelatedAdapter adapter;
+    private ImageSliderAdapter imageSliderAdapter;
     private ListView listView;
+    private ViewPager viewPager;
     private Analytics analytics;
     private RelativeLayout loading_layout;
     private String favoriteList;
     private ArrayList<Favorites> favoritesArrayList;
     private ArrayList<RelatedArticle> relatedArticleArrayList;
     private ArrayList<Comment> commentArrayList;
+    private ArrayList<SliderContentImage> sliderContentImages;
 
     private View coachmarkView;
     private CoachmarkView showtips;
@@ -131,29 +132,11 @@ public class ActDetailContentDefault extends FragmentActivity
 
         setContentView(R.layout.item_detail_content_default);
 
-        ColorDrawable colorDrawable = new ColorDrawable();
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
-        getActionBar().setDisplayShowTitleEnabled(false);
-        getActionBar().setIcon(R.drawable.logo_viva_coid_second);
+        setHeaderActionbar();
 
         coachmarkView = findViewById(R.id.coachmark_detail);
-
-        if(fromkanal != null) {
-            if(fromkanal.equalsIgnoreCase("bola")) {
-                colorDrawable.setColor(getResources().getColor(R.color.color_bola));
-                getActionBar().setBackgroundDrawable(colorDrawable);
-            } else if(fromkanal.equalsIgnoreCase("vivalife")) {
-                colorDrawable.setColor(getResources().getColor(R.color.color_life));
-                getActionBar().setBackgroundDrawable(colorDrawable);
-            } else {
-                colorDrawable.setColor(getResources().getColor(R.color.color_news));
-                getActionBar().setBackgroundDrawable(colorDrawable);
-            }
-        } else {
-            colorDrawable.setColor(getResources().getColor(R.color.header_headline_terbaru_new));
-            getActionBar().setBackgroundDrawable(colorDrawable);
-        }
+        viewPager = (ViewPager) findViewById(R.id.horizontal_list);
+        viewPager.setVisibility(View.GONE);
 
         loading_layout = (RelativeLayout) findViewById(R.id.loading_progress_layout_default);
         headerRelated = (RelativeLayout) findViewById(R.id.header_related_article);
@@ -165,14 +148,14 @@ public class ActDetailContentDefault extends FragmentActivity
         listView.setOnItemClickListener(this);
 
         layoutCommentPreview = (LinearLayout) findViewById(R.id.layout_preview_comment_list);
+        layoutCommentPreview.setOnClickListener(this);
         layoutCommentPreview.setVisibility(View.GONE);
         tvPreviewCommentContent = (TextView) findViewById(R.id.text_preview_comment_content);
         tvPreviewCommentUser = (TextView) findViewById(R.id.text_preview_comment_user);
 
         relatedArticleArrayList = new ArrayList<RelatedArticle>();
         commentArrayList = new ArrayList<Comment>();
-
-        imageContentLayout = findViewById(R.id.image_content);
+        sliderContentImages = new ArrayList<SliderContentImage>();
 
         tvTitleDetail = (TextView) findViewById(R.id.title_detail_content_default);
         tvDateDetail = (TextView) findViewById(R.id.date_detail_content_default);
@@ -206,6 +189,17 @@ public class ActDetailContentDefault extends FragmentActivity
                                 content = detail.getString(Constant.content);
                                 reporter_name = detail.getString(Constant.reporter_name);
                                 url_shared = detail.getString(Constant.url);
+                                image_caption = detail.getString(Constant.image_caption);
+
+                                JSONArray sliderImageArray = detail.getJSONArray(Constant.content_images);
+                                if(sliderImageArray != null) {
+                                    for(int i=0; i<sliderImageArray.length(); i++) {
+                                        JSONObject objSlider = sliderImageArray.getJSONObject(i);
+                                        sliderPhotoUrl = objSlider.getString("src");
+                                        sliderTitle = objSlider.getString("title");
+                                        sliderContentImages.add(new SliderContentImage(sliderPhotoUrl, sliderTitle));
+                                    }
+                                }
 
                                 JSONArray related_article = response.getJSONArray(Constant.related_article);
                                 for(int i=0; i<related_article.length(); i++) {
@@ -229,23 +223,16 @@ public class ActDetailContentDefault extends FragmentActivity
                                 tvDateDetail.setText(date_publish);
                                 tvContentDetail.setText(Html.fromHtml(content).toString());
                                 tvContentDetail.setMovementMethod(LinkMovementMethod.getInstance());
-
-                                Document doc = Jsoup.parse(content);
-                                Elements ele = doc.select("img");
-                                for (Element el : ele) {
-                                    ImageView imageView = new ImageView(ActDetailContentDefault.this);
-                                    imageContent = el.attr("src").replaceAll("[|?*<\">+\\[\\]']", "");
-                                    Log.i(Constant.TAG, "IMAGE CONTENT : " + imageContent);
-                                    Picasso.with(ActDetailContentDefault.this).load(imageContent).into(imageView);
-                                    imageView.setLayoutParams(new ViewGroup.LayoutParams(
-                                            ViewGroup.LayoutParams.WRAP_CONTENT,
-                                            ViewGroup.LayoutParams.WRAP_CONTENT));
-                                    imageView.setPadding(10, 10, 10, 10);
-                                    ((LinearLayout) imageContentLayout).addView(imageView);
-                                }
-
                                 tvReporterDetail.setText(reporter_name);
                                 Picasso.with(ActDetailContentDefault.this).load(image_url).into(ivThumbDetail);
+
+                                if(sliderContentImages.size() > 0) {
+                                    imageSliderAdapter = new ImageSliderAdapter(getSupportFragmentManager(), sliderContentImages);
+                                    viewPager.setAdapter(imageSliderAdapter);
+                                    viewPager.setCurrentItem(0);
+                                    imageSliderAdapter.notifyDataSetChanged();
+                                    viewPager.setVisibility(View.VISIBLE);
+                                }
 
                                 if(relatedArticleArrayList.size() > 0 || !relatedArticleArrayList.isEmpty()) {
                                     adapter = new RelatedAdapter(ActDetailContentDefault.this, relatedArticleArrayList);
@@ -347,6 +334,7 @@ public class ActDetailContentDefault extends FragmentActivity
                     content = detail.getString(Constant.content);
                     reporter_name = detail.getString(Constant.reporter_name);
                     url_shared = detail.getString(Constant.url);
+                    image_caption = detail.getString(Constant.image_caption);
 
                     JSONArray related_article = response.getJSONArray(Constant.related_article);
                     for(int i=0; i<related_article.length(); i++) {
@@ -370,24 +358,16 @@ public class ActDetailContentDefault extends FragmentActivity
                     tvDateDetail.setText(date_publish);
                     tvContentDetail.setText(Html.fromHtml(content).toString());
                     tvContentDetail.setMovementMethod(LinkMovementMethod.getInstance());
-
-                    Document doc = Jsoup.parse(content);
-                    Elements ele = doc.select("img");
-                    for (Element el : ele) {
-                        ImageView imageView = new ImageView(this);
-                        imageContent = el.attr("src").replaceAll("[|?*<\">+\\[\\]']", "");
-                        Log.i(Constant.TAG, "IMAGE CONTENT : " + imageContent);
-                        Picasso.with(this).load(imageContent).into(imageView);
-                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                        params.gravity = Gravity.CENTER_HORIZONTAL;
-                        imageView.setLayoutParams(params);
-                        imageView.setPadding(0, 10, 0, 10);
-                        ((LinearLayout) imageContentLayout).addView(imageView);
-                    }
-
                     tvReporterDetail.setText(reporter_name);
                     Picasso.with(this).load(image_url).into(ivThumbDetail);
+
+                    if(sliderContentImages.size() > 0) {
+                        imageSliderAdapter = new ImageSliderAdapter(getSupportFragmentManager(), sliderContentImages);
+                        viewPager.setAdapter(imageSliderAdapter);
+                        viewPager.setCurrentItem(0);
+                        imageSliderAdapter.notifyDataSetChanged();
+                        viewPager.setVisibility(View.VISIBLE);
+                    }
 
                     if(relatedArticleArrayList.size() > 0 || !relatedArticleArrayList.isEmpty()) {
                         adapter = new RelatedAdapter(this, relatedArticleArrayList);
@@ -461,6 +441,29 @@ public class ActDetailContentDefault extends FragmentActivity
         }
     }
 
+    private void setHeaderActionbar() {
+        ColorDrawable colorDrawable = new ColorDrawable();
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setHomeButtonEnabled(true);
+        getActionBar().setDisplayShowTitleEnabled(false);
+        getActionBar().setIcon(R.drawable.logo_viva_coid_second);
+        if(fromkanal != null) {
+            if(fromkanal.equalsIgnoreCase("bola")) {
+                colorDrawable.setColor(getResources().getColor(R.color.color_bola));
+                getActionBar().setBackgroundDrawable(colorDrawable);
+            } else if(fromkanal.equalsIgnoreCase("vivalife")) {
+                colorDrawable.setColor(getResources().getColor(R.color.color_life));
+                getActionBar().setBackgroundDrawable(colorDrawable);
+            } else {
+                colorDrawable.setColor(getResources().getColor(R.color.color_news));
+                getActionBar().setBackgroundDrawable(colorDrawable);
+            }
+        } else {
+            colorDrawable.setColor(getResources().getColor(R.color.header_headline_terbaru_new));
+            getActionBar().setBackgroundDrawable(colorDrawable);
+        }
+    }
+
     private void showCoachMark() {
         if(Global.getInstance(this).getSharedPreferences(this).getBoolean(Constant.FIRST_INSTALL_DETAIL, true)) {
             RelativeLayout relativeLayout = new RelativeLayout(this);
@@ -497,6 +500,62 @@ public class ActDetailContentDefault extends FragmentActivity
         return width - 75;
     }
 
+    private void moveCommentPage() {
+        Bundle bundle = new Bundle();
+        bundle.putString("imageurl", image_url);
+        bundle.putString("title", title);
+        bundle.putString("article_id", ids);
+        bundle.putString("type_kanal", kanal);
+        Intent intent = new Intent(this, ActComment.class);
+        intent.putExtras(bundle);
+        startActivity(intent);
+        overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+    }
+
+    private void moveRatingPage() {
+        Bundle bundles = new Bundle();
+        bundles.putString("imageurl", image_url);
+        bundles.putString("title", title);
+        bundles.putString("article_id", ids);
+        bundles.putString("type_kanal", kanal);
+        Intent intents = new Intent(this, ActRating.class);
+        intents.putExtras(bundles);
+        startActivity(intents);
+        overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+    }
+
+    private void doFavorites() {
+        favoriteList = Global.getInstance(this).getSharedPreferences(this)
+                .getString(Constant.FAVORITES_LIST, "");
+        if(favoriteList == null || favoriteList.length() <= 0) {
+            favoritesArrayList = Global.getInstance(this).getFavoritesList();
+        } else {
+            favoritesArrayList = Global.getInstance(this).getInstanceGson().
+                    fromJson(favoriteList, Global.getInstance(this).getType());
+        }
+        new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE)
+                .setTitleText(getResources().getString(R.string.label_favorite_navigation_title))
+                .setContentText(title)
+                .setConfirmText(getResources().getString(R.string.label_favorite_ok))
+                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sDialog) {
+                        favoritesArrayList.add(new Favorites(ids, title, channel_id, kanal,
+                                image_url, date_publish, reporter_name, url_shared, content));
+                        String favorite = Global.getInstance(ActDetailContentDefault.this).getInstanceGson().toJson(favoritesArrayList);
+                        Global.getInstance(ActDetailContentDefault.this).getDefaultEditor().putString(Constant.FAVORITES_LIST, favorite);
+                        Global.getInstance(ActDetailContentDefault.this).getDefaultEditor().putInt(Constant.FAVORITES_LIST_SIZE, favoritesArrayList.size());
+                        Global.getInstance(ActDetailContentDefault.this).getDefaultEditor().commit();
+                        sDialog.setTitleText(getResources().getString(R.string.label_favorite_navigation_title_confirm))
+                                .setContentText(getResources().getString(R.string.label_favorite_navigation_content))
+                                .setConfirmText(getResources().getString(R.string.label_favorite_ok))
+                                .setConfirmClickListener(null)
+                                .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+                    }
+                })
+                .show();
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -504,61 +563,13 @@ public class ActDetailContentDefault extends FragmentActivity
                 finish();
                 return true;
             case R.id.subaction_rate:
-                Bundle bundles = new Bundle();
-                bundles.putString("imageurl", image_url);
-                bundles.putString("title", title);
-                bundles.putString("article_id", ids);
-                bundles.putString("type_kanal", kanal);
-                Intent intents = new Intent(this, ActRating.class);
-                intents.putExtras(bundles);
-                startActivity(intents);
-                overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+                moveRatingPage();
                 return true;
             case R.id.subaction_comments:
-                Bundle bundle = new Bundle();
-                bundle.putString("imageurl", image_url);
-                bundle.putString("title", title);
-                bundle.putString("article_id", ids);
-                bundle.putString("type_kanal", kanal);
-                Intent intent = new Intent(this, ActComment.class);
-                intent.putExtras(bundle);
-                startActivity(intent);
-                overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+                moveCommentPage();
                 return true;
             case R.id.subaction_favorites:
-                favoriteList = Global.getInstance(this).getSharedPreferences(this)
-                        .getString(Constant.FAVORITES_LIST, "");
-
-                if(favoriteList == null || favoriteList.length() <= 0) {
-                    favoritesArrayList = Global.getInstance(this).getFavoritesList();
-                } else {
-                    favoritesArrayList = Global.getInstance(this).getInstanceGson().
-                            fromJson(favoriteList, Global.getInstance(this).getType());
-                }
-
-                new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE)
-                        .setTitleText(getResources().getString(R.string.label_favorite_navigation_title))
-                        .setContentText(title)
-                        .setConfirmText(getResources().getString(R.string.label_favorite_ok))
-                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                            @Override
-                            public void onClick(SweetAlertDialog sDialog) {
-                                favoritesArrayList.add(new Favorites(ids, title, channel_id, kanal,
-                                        image_url, date_publish, reporter_name, url_shared, content));
-
-                                String favorite = Global.getInstance(ActDetailContentDefault.this).getInstanceGson().toJson(favoritesArrayList);
-                                Global.getInstance(ActDetailContentDefault.this).getDefaultEditor().putString(Constant.FAVORITES_LIST, favorite);
-                                Global.getInstance(ActDetailContentDefault.this).getDefaultEditor().putInt(Constant.FAVORITES_LIST_SIZE, favoritesArrayList.size());
-                                Global.getInstance(ActDetailContentDefault.this).getDefaultEditor().commit();
-
-                                sDialog.setTitleText(getResources().getString(R.string.label_favorite_navigation_title_confirm))
-                                        .setContentText(getResources().getString(R.string.label_favorite_navigation_content))
-                                        .setConfirmText(getResources().getString(R.string.label_favorite_ok))
-                                        .setConfirmClickListener(null)
-                                        .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
-                            }
-                        })
-                        .show();
+                doFavorites();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -595,17 +606,24 @@ public class ActDetailContentDefault extends FragmentActivity
         }
     }
 
+    private void toDetailThumbnail() {
+        Bundle bundle = new Bundle();
+        bundle.putString("photoUrl", image_url);
+        bundle.putString("image_caption", image_caption);
+        Intent intent = new Intent(this, ActDetailPhotoThumb.class);
+        intent.putExtras(bundle);
+        startActivity(intent);
+        overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+    }
+
     @Override
     public void onClick(View view) {
         if(view.getId() == R.id.thumb_detail_content_default) {
             if(image_url.length() > 0) {
-                Bundle bundle = new Bundle();
-                bundle.putString("photoUrl", image_url);
-                Intent intent = new Intent(this, ActDetailPhotoThumb.class);
-                intent.putExtras(bundle);
-                startActivity(intent);
-                overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+                toDetailThumbnail();
             }
+        } else if(view.getId() == R.id.layout_preview_comment_list) {
+            moveCommentPage();
         }
     }
 

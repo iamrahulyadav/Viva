@@ -214,7 +214,7 @@ public class ActSearchResult extends FragmentActivity implements
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String volleyResponse) {
-                            Log.i(Constant.TAG, "LOAD MORE SEARCH RESPONSES : " + volleyResponse);
+                            Log.i(Constant.TAG, "LOAD MORE SEARCH RESPONSES : " + Constant.NEW_SEARCH + "q/" + query + "/s/" + data);
                             try {
                                 JSONObject jsonObject = new JSONObject(volleyResponse);
                                 JSONObject response = jsonObject.getJSONObject(Constant.response);
@@ -258,6 +258,8 @@ public class ActSearchResult extends FragmentActivity implements
             Global.getInstance(this).getRequestQueue().getCache().invalidate(Constant.NEW_SEARCH + "q/" + query + "/s/" + data, true);
             Global.getInstance(this).getRequestQueue().getCache().get(Constant.NEW_SEARCH + "q/" + query + "/s/" + data);
             Global.getInstance(this).addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
+        } else {
+            Toast.makeText(this, R.string.title_no_connection, Toast.LENGTH_SHORT).show();
         }
     }
 

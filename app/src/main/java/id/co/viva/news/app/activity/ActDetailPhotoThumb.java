@@ -4,19 +4,22 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.MenuItem;
 import android.view.Window;
-import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
 import id.co.viva.news.app.R;
+import id.co.viva.news.app.component.ZoomImageView;
 
 /**
  * Created by reza on 31/12/14.
  */
 public class ActDetailPhotoThumb extends FragmentActivity {
 
-    private ImageView imageView;
+    private ZoomImageView imageView;
+    private TextView textView;
     private String photoUrl;
+    private String image_caption;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,12 +30,18 @@ public class ActDetailPhotoThumb extends FragmentActivity {
 
         Bundle bundle = getIntent().getExtras();
         photoUrl = bundle.getString("photoUrl");
+        image_caption = bundle.getString("image_caption");
         setContentView(R.layout.act_detail_photo_thumb);
 
-        imageView = (ImageView)findViewById(R.id.img_thumb_content_dialog);
+        imageView = (ZoomImageView)findViewById(R.id.img_thumb_content_dialog);
+        imageView.setMaxZoom(4f);
+        textView = (TextView)findViewById(R.id.title_thumb_content_dialog);
 
         if(photoUrl.length() > 0) {
             Picasso.with(this).load(photoUrl).into(imageView);
+        }
+        if(image_caption.length() > 0) {
+            textView.setText(image_caption);
         }
     }
 

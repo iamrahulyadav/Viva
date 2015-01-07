@@ -108,6 +108,7 @@ public class Constant {
     public static final String app_id = "app_id";
     public static final String submitted_date = "submitted_date";
     public static final String status = "status";
+    public static final String image_caption = "image_caption";
 
     public static final String article_id = "article_id";
     public static final String related_article_id = "related_article_id";
@@ -116,6 +117,7 @@ public class Constant {
     public static final String channel_id = "channel_id";
     public static final String related_date_publish = "related_date_publish";
     public static final String image = "image";
+    public static final String content_images = "content_images";
 
     private static final int SECOND_MILLIS = 1000;
     private static final int MINUTE_MILLIS = 60 * SECOND_MILLIS;
@@ -130,9 +132,9 @@ public class Constant {
     public static final String AT_SITE_ID = "551156";
     public static final String AT_SUB_SITE = "1";
 
-    public static final String PATH_REDIRECT = "http://www.viva.co.id";
-    public static final String PATH_CLIENT_ID = "b4ae86c36dc20232e66277b8c320778a5d34be09";
-    public static final String PATH_SECRET_ID = "d21eceb45c4a57ad1fd94c53a3e408c3bd89b32f";
+    public static final String PATH_REDIRECT = "http://viva.co.id";
+    public static final String PATH_CLIENT_ID = "29eb3edd59992f2418946e028774d91004bd05a9";
+    public static final String PATH_SECRET_ID = "e8b08b8d51b679a3a33de1089ec373d6f5a38419";
     public static final String PATH_AUTHENTICATE_URL = "https://partner.path.com/oauth2/authenticate";
     public static final String PATH_ACCESS_TOKEN_URL = "https://partner.path.com/oauth2/access_token";
     public static final String PATH_USER_INFO_URL = "https://partner.path.com/1/user/self";
