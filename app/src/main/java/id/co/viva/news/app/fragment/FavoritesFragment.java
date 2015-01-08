@@ -29,6 +29,7 @@ import id.co.viva.news.app.adapter.FavoriteAdapter;
 import id.co.viva.news.app.coachmark.CoachmarkBuilder;
 import id.co.viva.news.app.coachmark.CoachmarkView;
 import id.co.viva.news.app.model.Favorites;
+import id.co.viva.news.app.model.SliderContentImage;
 import id.co.viva.news.app.services.Analytics;
 
 /**
@@ -37,6 +38,7 @@ import id.co.viva.news.app.services.Analytics;
 public class FavoritesFragment extends Fragment implements AdapterView.OnItemClickListener {
 
     private ArrayList<Favorites> favoritesArrayList;
+    private ArrayList<SliderContentImage> sliderContentImages;
     private String favoriteList;
     private int favoriteListSize;
     private FavoriteAdapter favoriteAdapter;
@@ -148,12 +150,17 @@ public class FavoritesFragment extends Fragment implements AdapterView.OnItemCli
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
         if(favoriteListSize > 0) {
             Favorites favorites = favoritesArrayList.get(position);
+            sliderContentImages = favorites.getSliderContentImages();
+            String listThumbSlider = Global.getInstance(getActivity()).getInstanceGson().toJson(sliderContentImages);
             Bundle bundle = new Bundle();
             bundle.putString("title", favorites.getTitle());
             bundle.putString("image_url", favorites.getImage_url());
             bundle.putString("date_publish", favorites.getDate_publish());
             bundle.putString("content", favorites.getContent());
             bundle.putString("reporter_name", favorites.getReporter_name());
+            bundle.putString("image_caption", favorites.getImage_caption());
+            bundle.putString("list_thumbnail_body", listThumbSlider);
+            bundle.putInt("list_thumbnail_body_size", sliderContentImages.size());
             Intent intent = new Intent(getActivity(), ActDetailFavorite.class);
             intent.putExtras(bundle);
             getActivity().startActivity(intent);

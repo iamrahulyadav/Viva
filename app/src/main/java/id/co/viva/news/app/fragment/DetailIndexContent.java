@@ -5,12 +5,12 @@ import android.graphics.Point;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Display;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,7 +19,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -38,10 +37,6 @@ import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
 
@@ -53,12 +48,14 @@ import id.co.viva.news.app.activity.ActComment;
 import id.co.viva.news.app.activity.ActDetailContentDefault;
 import id.co.viva.news.app.activity.ActDetailPhotoThumb;
 import id.co.viva.news.app.activity.ActRating;
+import id.co.viva.news.app.adapter.ImageSliderAdapter;
 import id.co.viva.news.app.adapter.RelatedAdapter;
 import id.co.viva.news.app.coachmark.CoachmarkBuilder;
 import id.co.viva.news.app.coachmark.CoachmarkView;
 import id.co.viva.news.app.model.Comment;
 import id.co.viva.news.app.model.Favorites;
 import id.co.viva.news.app.model.RelatedArticle;
+import id.co.viva.news.app.model.SliderContentImage;
 import id.co.viva.news.app.services.Analytics;
 
 /**
@@ -69,7 +66,6 @@ public class DetailIndexContent extends Fragment implements
 
     private String id;
     private String kanals;
-    private String imageContent;
     private RelativeLayout headerRelated;
     private boolean isInternetPresent = false;
     private String cachedResponse;
@@ -77,13 +73,14 @@ public class DetailIndexContent extends Fragment implements
     private TextView tvNoResult;
     private ArrayList<RelatedArticle> relatedArticleArrayList;
     private RelatedAdapter adapter;
+    private ImageSliderAdapter imageSliderAdapter;
     private ListView listView;
-    private View imageContentLayout;
     private Analytics analytics;
     private RippleView rippleView;
     private String favoriteList;
     private ArrayList<Favorites> favoritesArrayList;
     private ArrayList<Comment> commentArrayList;
+    private ArrayList<SliderContentImage> sliderContentImages;
 
     private TextView tvTitleDetail;
     private TextView tvDateDetail;
@@ -91,6 +88,7 @@ public class DetailIndexContent extends Fragment implements
     private TextView tvContentDetail;
     private KenBurnsView ivThumbDetail;
     private Button btnRetry;
+    private ViewPager viewPager;
     private TextView tvPreviewCommentUser;
     private TextView tvPreviewCommentContent;
     private LinearLayout layoutCommentPreview;
@@ -105,6 +103,9 @@ public class DetailIndexContent extends Fragment implements
     private String content;
     private String reporter_name;
     private String url_shared;
+    private String image_caption;
+    private String sliderPhotoUrl;
+    private String sliderTitle ;
 
     private View coachmarkView;
     private CoachmarkView showtips;
@@ -183,6 +184,8 @@ public class DetailIndexContent extends Fragment implements
         }
 
         coachmarkView = view.findViewById(R.id.coachmark_detail);
+        viewPager = (ViewPager) view.findViewById(R.id.horizontal_list);
+        viewPager.setVisibility(View.GONE);
 
         loading_layout = (RelativeLayout) view.findViewById(R.id.loading_progress_layout);
         headerRelated = (RelativeLayout) view.findViewById(R.id.header_related_article);
@@ -202,14 +205,13 @@ public class DetailIndexContent extends Fragment implements
 
         relatedArticleArrayList = new ArrayList<RelatedArticle>();
         commentArrayList = new ArrayList<Comment>();
+        sliderContentImages = new ArrayList<SliderContentImage>();
 
         layoutCommentPreview = (LinearLayout) view.findViewById(R.id.layout_preview_comment_list);
         layoutCommentPreview.setOnClickListener(this);
         layoutCommentPreview.setVisibility(View.GONE);
         tvPreviewCommentContent = (TextView) view.findViewById(R.id.text_preview_comment_content);
         tvPreviewCommentUser = (TextView) view.findViewById(R.id.text_preview_comment_user);
-
-        imageContentLayout = view.findViewById(R.id.image_content);
 
         tvTitleDetail = (TextView) view.findViewById(R.id.title_detail_content);
         tvDateDetail = (TextView) view.findViewById(R.id.date_detail_content);
@@ -243,6 +245,17 @@ public class DetailIndexContent extends Fragment implements
                                 content = detail.getString(Constant.content);
                                 reporter_name = detail.getString(Constant.reporter_name);
                                 url_shared = detail.getString(Constant.url);
+                                image_caption = detail.getString(Constant.image_caption);
+
+                                JSONArray sliderImageArray = detail.getJSONArray(Constant.content_images);
+                                if(sliderImageArray != null) {
+                                    for(int i=0; i<sliderImageArray.length(); i++) {
+                                        JSONObject objSlider = sliderImageArray.getJSONObject(i);
+                                        sliderPhotoUrl = objSlider.getString("src");
+                                        sliderTitle = objSlider.getString("title");
+                                        sliderContentImages.add(new SliderContentImage(sliderPhotoUrl, sliderTitle));
+                                    }
+                                }
 
                                 JSONArray related_article = response.getJSONArray(Constant.related_article);
                                 for(int i=0; i<related_article.length(); i++) {
@@ -266,23 +279,16 @@ public class DetailIndexContent extends Fragment implements
                                 tvDateDetail.setText(date_publish);
                                 tvContentDetail.setText(Html.fromHtml(content).toString());
                                 tvContentDetail.setMovementMethod(LinkMovementMethod.getInstance());
-
-                                Document doc = Jsoup.parse(content);
-                                Elements ele = doc.select("img");
-                                for (Element el : ele) {
-                                    ImageView imageView = new ImageView(getActivity());
-                                    imageContent = el.attr("src").replaceAll("[|?*<\">+\\[\\]']", "");
-                                    Log.i(Constant.TAG, "IMAGE CONTENT : " + imageContent);
-                                    Picasso.with(getActivity()).load(imageContent).into(imageView);
-                                    imageView.setLayoutParams(new ViewGroup.LayoutParams(
-                                            ViewGroup.LayoutParams.WRAP_CONTENT,
-                                            ViewGroup.LayoutParams.WRAP_CONTENT));
-                                    imageView.setPadding(10, 10, 10, 10);
-                                    ((LinearLayout) imageContentLayout).addView(imageView);
-                                }
-
                                 tvReporterDetail.setText(reporter_name);
                                 Picasso.with(getActivity()).load(image_url).into(ivThumbDetail);
+
+                                if(sliderContentImages.size() > 0) {
+                                    imageSliderAdapter = new ImageSliderAdapter(getFragmentManager(), sliderContentImages);
+                                    viewPager.setAdapter(imageSliderAdapter);
+                                    viewPager.setCurrentItem(0);
+                                    imageSliderAdapter.notifyDataSetChanged();
+                                    viewPager.setVisibility(View.VISIBLE);
+                                }
 
                                 if(relatedArticleArrayList.size() > 0 || !relatedArticleArrayList.isEmpty()) {
                                     adapter = new RelatedAdapter(getActivity(), relatedArticleArrayList);
@@ -372,6 +378,17 @@ public class DetailIndexContent extends Fragment implements
                                     content = detail.getString(Constant.content);
                                     reporter_name = detail.getString(Constant.reporter_name);
                                     url_shared = detail.getString(Constant.url);
+                                    image_caption = detail.getString(Constant.image_caption);
+
+                                    JSONArray sliderImageArray = detail.getJSONArray(Constant.content_images);
+                                    if(sliderImageArray != null) {
+                                        for(int i=0; i<sliderImageArray.length(); i++) {
+                                            JSONObject objSlider = sliderImageArray.getJSONObject(i);
+                                            sliderPhotoUrl = objSlider.getString("src");
+                                            sliderTitle = objSlider.getString("title");
+                                            sliderContentImages.add(new SliderContentImage(sliderPhotoUrl, sliderTitle));
+                                        }
+                                    }
 
                                     JSONArray related_article = response.getJSONArray(Constant.related_article);
                                     for(int i=0; i<related_article.length(); i++) {
@@ -395,24 +412,16 @@ public class DetailIndexContent extends Fragment implements
                                     tvDateDetail.setText(date_publish);
                                     tvContentDetail.setText(Html.fromHtml(content).toString());
                                     tvContentDetail.setMovementMethod(LinkMovementMethod.getInstance());
-
-                                    Document doc = Jsoup.parse(content);
-                                    Elements ele = doc.select("img");
-                                    for (Element el : ele) {
-                                        ImageView imageView = new ImageView(getActivity());
-                                        imageContent = el.attr("src").replaceAll("[|?*<\">+\\[\\]']", "");
-                                        Log.i(Constant.TAG, "IMAGE CONTENT : " + imageContent);
-                                        Picasso.with(getActivity()).load(imageContent).into(imageView);
-                                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                                                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                                        params.gravity = Gravity.CENTER_HORIZONTAL;
-                                        imageView.setLayoutParams(params);
-                                        imageView.setPadding(0, 10, 0, 10);
-                                        ((LinearLayout) imageContentLayout).addView(imageView);
-                                    }
-
                                     tvReporterDetail.setText(reporter_name);
                                     Picasso.with(getActivity()).load(image_url).into(ivThumbDetail);
+
+                                    if(sliderContentImages.size() > 0) {
+                                        imageSliderAdapter = new ImageSliderAdapter(getFragmentManager(), sliderContentImages);
+                                        viewPager.setAdapter(imageSliderAdapter);
+                                        viewPager.setCurrentItem(0);
+                                        imageSliderAdapter.notifyDataSetChanged();
+                                        viewPager.setVisibility(View.VISIBLE);
+                                    }
 
                                     if(relatedArticleArrayList.size() > 0 || !relatedArticleArrayList.isEmpty()) {
                                         adapter = new RelatedAdapter(getActivity(), relatedArticleArrayList);
@@ -519,6 +528,17 @@ public class DetailIndexContent extends Fragment implements
                     content = detail.getString(Constant.content);
                     reporter_name = detail.getString(Constant.reporter_name);
                     url_shared = detail.getString(Constant.url);
+                    image_caption = detail.getString(Constant.image_caption);
+
+                    JSONArray sliderImageArray = detail.getJSONArray(Constant.content_images);
+                    if(sliderImageArray != null) {
+                        for(int i=0; i<sliderImageArray.length(); i++) {
+                            JSONObject objSlider = sliderImageArray.getJSONObject(i);
+                            sliderPhotoUrl = objSlider.getString("src");
+                            sliderTitle = objSlider.getString("title");
+                            sliderContentImages.add(new SliderContentImage(sliderPhotoUrl, sliderTitle));
+                        }
+                    }
 
                     JSONArray related_article = response.getJSONArray(Constant.related_article);
                     for(int i=0; i<related_article.length(); i++) {
@@ -542,24 +562,16 @@ public class DetailIndexContent extends Fragment implements
                     tvDateDetail.setText(date_publish);
                     tvContentDetail.setText(Html.fromHtml(content).toString());
                     tvContentDetail.setMovementMethod(LinkMovementMethod.getInstance());
-
-                    Document doc = Jsoup.parse(content);
-                    Elements ele = doc.select("img");
-                    for (Element el : ele) {
-                        ImageView imageView = new ImageView(getActivity());
-                        imageContent = el.attr("src").replaceAll("[|?*<\">+\\[\\]']", "");
-                        Log.i(Constant.TAG, "IMAGE CONTENT : " + imageContent);
-                        Picasso.with(getActivity()).load(imageContent).into(imageView);
-                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                        params.gravity = Gravity.CENTER_HORIZONTAL;
-                        imageView.setLayoutParams(params);
-                        imageView.setPadding(0, 10, 0, 10);
-                        ((LinearLayout) imageContentLayout).addView(imageView);
-                    }
-
                     tvReporterDetail.setText(reporter_name);
                     Picasso.with(getActivity()).load(image_url).into(ivThumbDetail);
+
+                    if(sliderContentImages.size() > 0) {
+                        imageSliderAdapter = new ImageSliderAdapter(getFragmentManager(), sliderContentImages);
+                        viewPager.setAdapter(imageSliderAdapter);
+                        viewPager.setCurrentItem(0);
+                        imageSliderAdapter.notifyDataSetChanged();
+                        viewPager.setVisibility(View.VISIBLE);
+                    }
 
                     if(relatedArticleArrayList.size() > 0 || !relatedArticleArrayList.isEmpty()) {
                         adapter = new RelatedAdapter(getActivity(), relatedArticleArrayList);
@@ -676,7 +688,7 @@ public class DetailIndexContent extends Fragment implements
                     @Override
                     public void onClick(SweetAlertDialog sDialog) {
                         favoritesArrayList.add(new Favorites(ids, title, channel_id, kanal,
-                                image_url, date_publish, reporter_name, url_shared, content));
+                                image_url, date_publish, reporter_name, url_shared, content, image_caption, sliderContentImages));
                         String favorite = Global.getInstance(getActivity()).getInstanceGson().toJson(favoritesArrayList);
                         Global.getInstance(getActivity()).getDefaultEditor().putString(Constant.FAVORITES_LIST, favorite);
                         Global.getInstance(getActivity()).getDefaultEditor().putInt(Constant.FAVORITES_LIST_SIZE, favoritesArrayList.size());
@@ -781,6 +793,17 @@ public class DetailIndexContent extends Fragment implements
                                     content = detail.getString(Constant.content);
                                     reporter_name = detail.getString(Constant.reporter_name);
                                     url_shared = detail.getString(Constant.url);
+                                    image_caption = detail.getString(Constant.image_caption);
+
+                                    JSONArray sliderImageArray = detail.getJSONArray(Constant.content_images);
+                                    if(sliderImageArray != null) {
+                                        for(int i=0; i<sliderImageArray.length(); i++) {
+                                            JSONObject objSlider = sliderImageArray.getJSONObject(i);
+                                            sliderPhotoUrl = objSlider.getString("src");
+                                            sliderTitle = objSlider.getString("title");
+                                            sliderContentImages.add(new SliderContentImage(sliderPhotoUrl, sliderTitle));
+                                        }
+                                    }
 
                                     JSONArray related_article = response.getJSONArray(Constant.related_article);
                                     for(int i=0; i<related_article.length(); i++) {
@@ -804,23 +827,16 @@ public class DetailIndexContent extends Fragment implements
                                     tvDateDetail.setText(date_publish);
                                     tvContentDetail.setText(Html.fromHtml(content).toString());
                                     tvContentDetail.setMovementMethod(LinkMovementMethod.getInstance());
-
-                                    Document doc = Jsoup.parse(content);
-                                    Elements ele = doc.select("img");
-                                    for (Element el : ele) {
-                                        ImageView imageView = new ImageView(getActivity());
-                                        imageContent = el.attr("src").replaceAll("[|?*<\">+\\[\\]']", "");
-                                        Log.i(Constant.TAG, "IMAGE CONTENT : " + imageContent);
-                                        Picasso.with(getActivity()).load(imageContent).into(imageView);
-                                        imageView.setLayoutParams(new ViewGroup.LayoutParams(
-                                                ViewGroup.LayoutParams.WRAP_CONTENT,
-                                                ViewGroup.LayoutParams.WRAP_CONTENT));
-                                        imageView.setPadding(10, 10, 10, 10);
-                                        ((LinearLayout) imageContentLayout).addView(imageView);
-                                    }
-
                                     tvReporterDetail.setText(reporter_name);
                                     Picasso.with(getActivity()).load(image_url).into(ivThumbDetail);
+
+                                    if(sliderContentImages.size() > 0) {
+                                        imageSliderAdapter = new ImageSliderAdapter(getFragmentManager(), sliderContentImages);
+                                        viewPager.setAdapter(imageSliderAdapter);
+                                        viewPager.setCurrentItem(0);
+                                        imageSliderAdapter.notifyDataSetChanged();
+                                        viewPager.setVisibility(View.VISIBLE);
+                                    }
 
                                     if(relatedArticleArrayList.size() > 0 || !relatedArticleArrayList.isEmpty()) {
                                         adapter = new RelatedAdapter(getActivity(), relatedArticleArrayList);
@@ -922,6 +938,7 @@ public class DetailIndexContent extends Fragment implements
             if(image_url.length() > 0) {
                 Bundle bundle = new Bundle();
                 bundle.putString("photoUrl", image_url);
+                bundle.putString("image_caption", image_caption);
                 Intent intent = new Intent(getActivity(), ActDetailPhotoThumb.class);
                 intent.putExtras(bundle);
                 startActivity(intent);

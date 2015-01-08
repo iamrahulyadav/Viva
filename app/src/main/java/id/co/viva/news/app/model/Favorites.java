@@ -1,5 +1,7 @@
 package id.co.viva.news.app.model;
 
+import java.util.ArrayList;
+
 /**
  * Created by reza on 17/11/14.
  */
@@ -14,6 +16,16 @@ public class Favorites {
     private String reporter_name;
     private String url;
     private String content;
+    private String image_caption;
+    private ArrayList<SliderContentImage> sliderContentImages;
+
+    public ArrayList<SliderContentImage> getSliderContentImages() {
+        return sliderContentImages;
+    }
+
+    public String getImage_caption() {
+        return image_caption;
+    }
 
     public String getId() {
         return id;
@@ -67,10 +79,6 @@ public class Favorites {
         return reporter_name;
     }
 
-    public void setReporter_name(String reporter_name) {
-        this.reporter_name = reporter_name;
-    }
-
     public String getUrl() {
         return url;
     }
@@ -88,7 +96,8 @@ public class Favorites {
     }
 
     public Favorites (String id, String title, String channel_id, String kanal, String image_url,
-                      String date_publish, String reporter_name, String url, String content) {
+                      String date_publish, String reporter_name, String url, String content, String image_caption,
+                      ArrayList<SliderContentImage> sliderContentImages) {
         this.id = id;
         this.title = title;
         this.channel_id = channel_id;
@@ -98,6 +107,8 @@ public class Favorites {
         this.reporter_name = reporter_name;
         this.url = url;
         this.content = content;
+        this.image_caption = image_caption;
+        this.sliderContentImages = sliderContentImages;
     }
 
 }

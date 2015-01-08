@@ -336,6 +336,16 @@ public class ActDetailContentDefault extends FragmentActivity
                     url_shared = detail.getString(Constant.url);
                     image_caption = detail.getString(Constant.image_caption);
 
+                    JSONArray sliderImageArray = detail.getJSONArray(Constant.content_images);
+                    if(sliderImageArray != null) {
+                        for(int i=0; i<sliderImageArray.length(); i++) {
+                            JSONObject objSlider = sliderImageArray.getJSONObject(i);
+                            sliderPhotoUrl = objSlider.getString("src");
+                            sliderTitle = objSlider.getString("title");
+                            sliderContentImages.add(new SliderContentImage(sliderPhotoUrl, sliderTitle));
+                        }
+                    }
+
                     JSONArray related_article = response.getJSONArray(Constant.related_article);
                     for(int i=0; i<related_article.length(); i++) {
                         JSONObject objRelated = related_article.getJSONObject(i);
@@ -541,7 +551,7 @@ public class ActDetailContentDefault extends FragmentActivity
                     @Override
                     public void onClick(SweetAlertDialog sDialog) {
                         favoritesArrayList.add(new Favorites(ids, title, channel_id, kanal,
-                                image_url, date_publish, reporter_name, url_shared, content));
+                                image_url, date_publish, reporter_name, url_shared, content, image_caption, sliderContentImages));
                         String favorite = Global.getInstance(ActDetailContentDefault.this).getInstanceGson().toJson(favoritesArrayList);
                         Global.getInstance(ActDetailContentDefault.this).getDefaultEditor().putString(Constant.FAVORITES_LIST, favorite);
                         Global.getInstance(ActDetailContentDefault.this).getDefaultEditor().putInt(Constant.FAVORITES_LIST_SIZE, favoritesArrayList.size());

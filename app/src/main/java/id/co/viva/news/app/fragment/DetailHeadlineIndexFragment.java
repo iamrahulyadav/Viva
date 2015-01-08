@@ -5,6 +5,7 @@ import android.graphics.Point;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
@@ -17,7 +18,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -36,10 +36,6 @@ import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
 
@@ -51,12 +47,14 @@ import id.co.viva.news.app.activity.ActComment;
 import id.co.viva.news.app.activity.ActDetailContentDefault;
 import id.co.viva.news.app.activity.ActDetailPhotoThumb;
 import id.co.viva.news.app.activity.ActRating;
+import id.co.viva.news.app.adapter.ImageSliderAdapter;
 import id.co.viva.news.app.adapter.RelatedAdapter;
 import id.co.viva.news.app.coachmark.CoachmarkBuilder;
 import id.co.viva.news.app.coachmark.CoachmarkView;
 import id.co.viva.news.app.model.Comment;
 import id.co.viva.news.app.model.Favorites;
 import id.co.viva.news.app.model.RelatedArticle;
+import id.co.viva.news.app.model.SliderContentImage;
 import id.co.viva.news.app.services.Analytics;
 
 /**
@@ -66,8 +64,6 @@ public class DetailHeadlineIndexFragment extends Fragment implements View.OnClic
         AdapterView.OnItemClickListener {
 
     private String id;
-    private String imageContent;
-    private View imageContentLayout;
     private RelativeLayout headerRelated;
     private boolean isInternetPresent = false;
     private String cachedResponse;
@@ -75,7 +71,9 @@ public class DetailHeadlineIndexFragment extends Fragment implements View.OnClic
     private TextView tvNoResult;
     private ArrayList<RelatedArticle> relatedArticleArrayList;
     private ArrayList<Comment> commentArrayList;
+    private ArrayList<SliderContentImage> sliderContentImages;
     private RelatedAdapter adapter;
+    private ImageSliderAdapter imageSliderAdapter;
     private ListView listView;
     private Analytics analytics;
     private RippleView rippleView;
@@ -90,12 +88,14 @@ public class DetailHeadlineIndexFragment extends Fragment implements View.OnClic
     private TextView tvPreviewCommentUser;
     private TextView tvPreviewCommentContent;
     private LinearLayout layoutCommentPreview;
+    private ViewPager viewPager;
     private int count = 0;
 
     private View coachmarkView;
     private CoachmarkView showtips;
 
     private String ids;
+    private String image_caption;
     private String title;
     private String channel_id;
     private String kanal;
@@ -104,6 +104,8 @@ public class DetailHeadlineIndexFragment extends Fragment implements View.OnClic
     private String content;
     private String reporter_name;
     private String url_shared;
+    private String sliderPhotoUrl;
+    private String sliderTitle ;
 
     public static DetailHeadlineIndexFragment newInstance(String id) {
         DetailHeadlineIndexFragment detailHeadlineIndexFragment = new DetailHeadlineIndexFragment();
@@ -121,6 +123,8 @@ public class DetailHeadlineIndexFragment extends Fragment implements View.OnClic
     }
 
     private void defineViews(View view) {
+        viewPager = (ViewPager) view.findViewById(R.id.horizontal_list);
+        viewPager.setVisibility(View.GONE);
         layoutCommentPreview = (LinearLayout) view.findViewById(R.id.layout_preview_comment_list);
         layoutCommentPreview.setOnClickListener(this);
         layoutCommentPreview.setVisibility(View.GONE);
@@ -128,6 +132,7 @@ public class DetailHeadlineIndexFragment extends Fragment implements View.OnClic
         tvPreviewCommentUser = (TextView) view.findViewById(R.id.text_preview_comment_user);
         relatedArticleArrayList = new ArrayList<RelatedArticle>();
         commentArrayList = new ArrayList<Comment>();
+        sliderContentImages = new ArrayList<SliderContentImage>();
         loading_layout = (RelativeLayout) view.findViewById(R.id.loading_progress_layout);
         headerRelated = (RelativeLayout) view.findViewById(R.id.header_related_article_headline);
         headerRelated.setVisibility(View.GONE);
@@ -136,7 +141,6 @@ public class DetailHeadlineIndexFragment extends Fragment implements View.OnClic
         rippleView = (RippleView) view.findViewById(R.id.layout_ripple_view_headline_terbaru);
         rippleView.setVisibility(View.GONE);
         rippleView.setOnClickListener(this);
-        imageContentLayout = view.findViewById(R.id.image_content);
         listView = (ListView) view.findViewById(R.id.list_related_article_headline);
         listView.setOnItemClickListener(this);
         coachmarkView = view.findViewById(R.id.coachmark_detail);
@@ -222,6 +226,17 @@ public class DetailHeadlineIndexFragment extends Fragment implements View.OnClic
                                 content = detail.getString(Constant.content);
                                 reporter_name = detail.getString(Constant.reporter_name);
                                 url_shared = detail.getString(Constant.url);
+                                image_caption = detail.getString(Constant.image_caption);
+
+                                JSONArray sliderImageArray = detail.getJSONArray(Constant.content_images);
+                                if(sliderImageArray != null) {
+                                    for(int i=0; i<sliderImageArray.length(); i++) {
+                                        JSONObject objSlider = sliderImageArray.getJSONObject(i);
+                                        sliderPhotoUrl = objSlider.getString("src");
+                                        sliderTitle = objSlider.getString("title");
+                                        sliderContentImages.add(new SliderContentImage(sliderPhotoUrl, sliderTitle));
+                                    }
+                                }
 
                                 JSONArray related_article = response.getJSONArray(Constant.related_article);
                                 for(int i=0; i<related_article.length(); i++) {
@@ -245,23 +260,16 @@ public class DetailHeadlineIndexFragment extends Fragment implements View.OnClic
                                 tvDateHeadlineDetail.setText(date_publish);
                                 tvContentHeadlineDetail.setText(Html.fromHtml(content).toString());
                                 tvContentHeadlineDetail.setMovementMethod(LinkMovementMethod.getInstance());
-
-                                Document doc = Jsoup.parse(content);
-                                Elements ele = doc.select("img");
-                                for (Element el : ele) {
-                                    ImageView imageView = new ImageView(getActivity());
-                                    imageContent = el.attr("src").replaceAll("[|?*<\">+\\[\\]']", "");
-                                    Log.i(Constant.TAG, "IMAGE CONTENT : " + imageContent);
-                                    Picasso.with(getActivity()).load(imageContent).into(imageView);
-                                    imageView.setLayoutParams(new ViewGroup.LayoutParams(
-                                            ViewGroup.LayoutParams.WRAP_CONTENT,
-                                            ViewGroup.LayoutParams.WRAP_CONTENT));
-                                    imageView.setPadding(10, 10, 10, 10);
-                                    ((LinearLayout) imageContentLayout).addView(imageView);
-                                }
-
                                 tvReporterHeadlineDetail.setText(reporter_name);
                                 Picasso.with(getActivity()).load(image_url).into(ivThumbDetailHeadline);
+
+                                if(sliderContentImages.size() > 0) {
+                                    imageSliderAdapter = new ImageSliderAdapter(getFragmentManager(), sliderContentImages);
+                                    viewPager.setAdapter(imageSliderAdapter);
+                                    viewPager.setCurrentItem(0);
+                                    imageSliderAdapter.notifyDataSetChanged();
+                                    viewPager.setVisibility(View.VISIBLE);
+                                }
 
                                 if(relatedArticleArrayList.size() > 0 || !relatedArticleArrayList.isEmpty()) {
                                     adapter = new RelatedAdapter(getActivity(), relatedArticleArrayList);
@@ -341,6 +349,17 @@ public class DetailHeadlineIndexFragment extends Fragment implements View.OnClic
                                     content = detail.getString(Constant.content);
                                     reporter_name = detail.getString(Constant.reporter_name);
                                     url_shared = detail.getString(Constant.url);
+                                    image_caption = detail.getString(Constant.image_caption);
+
+                                    JSONArray sliderImageArray = detail.getJSONArray(Constant.content_images);
+                                    if(sliderImageArray != null) {
+                                        for(int i=0; i<sliderImageArray.length(); i++) {
+                                            JSONObject objSlider = sliderImageArray.getJSONObject(i);
+                                            sliderPhotoUrl = objSlider.getString("src");
+                                            sliderTitle = objSlider.getString("title");
+                                            sliderContentImages.add(new SliderContentImage(sliderPhotoUrl, sliderTitle));
+                                        }
+                                    }
 
                                     JSONArray related_article = response.getJSONArray(Constant.related_article);
                                     for(int i=0; i<related_article.length(); i++) {
@@ -364,23 +383,16 @@ public class DetailHeadlineIndexFragment extends Fragment implements View.OnClic
                                     tvDateHeadlineDetail.setText(date_publish);
                                     tvContentHeadlineDetail.setText(Html.fromHtml(content).toString());
                                     tvContentHeadlineDetail.setMovementMethod(LinkMovementMethod.getInstance());
-
-                                    Document doc = Jsoup.parse(content);
-                                    Elements ele = doc.select("img");
-                                    for (Element el : ele) {
-                                        ImageView imageView = new ImageView(getActivity());
-                                        imageContent = el.attr("src").replaceAll("[|?*<\">+\\[\\]']", "");
-                                        Log.i(Constant.TAG, "IMAGE CONTENT : " + imageContent);
-                                        Picasso.with(getActivity()).load(imageContent).into(imageView);
-                                        imageView.setLayoutParams(new ViewGroup.LayoutParams(
-                                                ViewGroup.LayoutParams.WRAP_CONTENT,
-                                                ViewGroup.LayoutParams.WRAP_CONTENT));
-                                        imageView.setPadding(10, 10, 10, 10);
-                                        ((LinearLayout) imageContentLayout).addView(imageView);
-                                    }
-
                                     tvReporterHeadlineDetail.setText(reporter_name);
                                     Picasso.with(getActivity()).load(image_url).into(ivThumbDetailHeadline);
+
+                                    if(sliderContentImages.size() > 0) {
+                                        imageSliderAdapter = new ImageSliderAdapter(getFragmentManager(), sliderContentImages);
+                                        viewPager.setAdapter(imageSliderAdapter);
+                                        viewPager.setCurrentItem(0);
+                                        imageSliderAdapter.notifyDataSetChanged();
+                                        viewPager.setVisibility(View.VISIBLE);
+                                    }
 
                                     if(relatedArticleArrayList.size() > 0 || !relatedArticleArrayList.isEmpty()) {
                                         adapter = new RelatedAdapter(getActivity(), relatedArticleArrayList);
@@ -467,6 +479,17 @@ public class DetailHeadlineIndexFragment extends Fragment implements View.OnClic
                     content = detail.getString(Constant.content);
                     reporter_name = detail.getString(Constant.reporter_name);
                     url_shared = detail.getString(Constant.url);
+                    image_caption = detail.getString(Constant.image_caption);
+
+                    JSONArray sliderImageArray = detail.getJSONArray(Constant.content_images);
+                    if(sliderImageArray != null) {
+                        for(int i=0; i<sliderImageArray.length(); i++) {
+                            JSONObject objSlider = sliderImageArray.getJSONObject(i);
+                            sliderPhotoUrl = objSlider.getString("src");
+                            sliderTitle = objSlider.getString("title");
+                            sliderContentImages.add(new SliderContentImage(sliderPhotoUrl, sliderTitle));
+                        }
+                    }
 
                     JSONArray related_article = response.getJSONArray(Constant.related_article);
                     for(int i=0; i<related_article.length(); i++) {
@@ -490,23 +513,16 @@ public class DetailHeadlineIndexFragment extends Fragment implements View.OnClic
                     tvDateHeadlineDetail.setText(date_publish);
                     tvContentHeadlineDetail.setText(Html.fromHtml(content).toString());
                     tvContentHeadlineDetail.setMovementMethod(LinkMovementMethod.getInstance());
-
-                    Document doc = Jsoup.parse(content);
-                    Elements ele = doc.select("img");
-                    for (Element el : ele) {
-                        ImageView imageView = new ImageView(getActivity());
-                        imageContent = el.attr("src").replaceAll("[|?*<\">+\\[\\]']", "");
-                        Log.i(Constant.TAG, "IMAGE CONTENT : " + imageContent);
-                        Picasso.with(getActivity()).load(imageContent).into(imageView);
-                        imageView.setLayoutParams(new ViewGroup.LayoutParams(
-                                ViewGroup.LayoutParams.WRAP_CONTENT,
-                                ViewGroup.LayoutParams.WRAP_CONTENT));
-                        imageView.setPadding(10, 10, 10, 10);
-                        ((LinearLayout) imageContentLayout).addView(imageView);
-                    }
-
                     tvReporterHeadlineDetail.setText(reporter_name);
                     Picasso.with(getActivity()).load(image_url).into(ivThumbDetailHeadline);
+
+                    if(sliderContentImages.size() > 0) {
+                        imageSliderAdapter = new ImageSliderAdapter(getFragmentManager(), sliderContentImages);
+                        viewPager.setAdapter(imageSliderAdapter);
+                        viewPager.setCurrentItem(0);
+                        imageSliderAdapter.notifyDataSetChanged();
+                        viewPager.setVisibility(View.VISIBLE);
+                    }
 
                     if(relatedArticleArrayList.size() > 0 || !relatedArticleArrayList.isEmpty()) {
                         adapter = new RelatedAdapter(getActivity(), relatedArticleArrayList);
@@ -610,7 +626,7 @@ public class DetailHeadlineIndexFragment extends Fragment implements View.OnClic
                     @Override
                     public void onClick(SweetAlertDialog sDialog) {
                         favoritesArrayList.add(new Favorites(ids, title, channel_id, kanal,
-                                image_url, date_publish, reporter_name, url_shared, content));
+                                image_url, date_publish, reporter_name, url_shared, content, image_caption, sliderContentImages));
                         String favorite = Global.getInstance(getActivity()).getInstanceGson().toJson(favoritesArrayList);
                         Global.getInstance(getActivity()).getDefaultEditor().putString(Constant.FAVORITES_LIST, favorite);
                         Global.getInstance(getActivity()).getDefaultEditor().putInt(Constant.FAVORITES_LIST_SIZE, favoritesArrayList.size());
@@ -699,6 +715,17 @@ public class DetailHeadlineIndexFragment extends Fragment implements View.OnClic
                                     content = detail.getString(Constant.content);
                                     reporter_name = detail.getString(Constant.reporter_name);
                                     url_shared = detail.getString(Constant.url);
+                                    image_caption = detail.getString(Constant.image_caption);
+
+                                    JSONArray sliderImageArray = detail.getJSONArray(Constant.content_images);
+                                    if(sliderImageArray != null) {
+                                        for(int i=0; i<sliderImageArray.length(); i++) {
+                                            JSONObject objSlider = sliderImageArray.getJSONObject(i);
+                                            sliderPhotoUrl = objSlider.getString("src");
+                                            sliderTitle = objSlider.getString("title");
+                                            sliderContentImages.add(new SliderContentImage(sliderPhotoUrl, sliderTitle));
+                                        }
+                                    }
 
                                     JSONArray related_article = response.getJSONArray(Constant.related_article);
                                     for(int i=0; i<related_article.length(); i++) {
@@ -722,23 +749,16 @@ public class DetailHeadlineIndexFragment extends Fragment implements View.OnClic
                                     tvDateHeadlineDetail.setText(date_publish);
                                     tvContentHeadlineDetail.setText(Html.fromHtml(content).toString());
                                     tvContentHeadlineDetail.setMovementMethod(LinkMovementMethod.getInstance());
-
-                                    Document doc = Jsoup.parse(content);
-                                    Elements ele = doc.select("img");
-                                    for (Element el : ele) {
-                                        ImageView imageView = new ImageView(getActivity());
-                                        imageContent = el.attr("src").replaceAll("[|?*<\">+\\[\\]']", "");
-                                        Log.i(Constant.TAG, "IMAGE CONTENT : " + imageContent);
-                                        Picasso.with(getActivity()).load(imageContent).into(imageView);
-                                        imageView.setLayoutParams(new ViewGroup.LayoutParams(
-                                                ViewGroup.LayoutParams.WRAP_CONTENT,
-                                                ViewGroup.LayoutParams.WRAP_CONTENT));
-                                        imageView.setPadding(10, 10, 10, 10);
-                                        ((LinearLayout) imageContentLayout).addView(imageView);
-                                    }
-
                                     tvReporterHeadlineDetail.setText(reporter_name);
                                     Picasso.with(getActivity()).load(image_url).into(ivThumbDetailHeadline);
+
+                                    if(sliderContentImages.size() > 0) {
+                                        imageSliderAdapter = new ImageSliderAdapter(getFragmentManager(), sliderContentImages);
+                                        viewPager.setAdapter(imageSliderAdapter);
+                                        viewPager.setCurrentItem(0);
+                                        imageSliderAdapter.notifyDataSetChanged();
+                                        viewPager.setVisibility(View.VISIBLE);
+                                    }
 
                                     if(relatedArticleArrayList.size() > 0 || !relatedArticleArrayList.isEmpty()) {
                                         adapter = new RelatedAdapter(getActivity(), relatedArticleArrayList);
@@ -821,6 +841,7 @@ public class DetailHeadlineIndexFragment extends Fragment implements View.OnClic
             if(image_url.length() > 0) {
                 Bundle bundle = new Bundle();
                 bundle.putString("photoUrl", image_url);
+                bundle.putString("image_caption", image_caption);
                 Intent intent = new Intent(getActivity(), ActDetailPhotoThumb.class);
                 intent.putExtras(bundle);
                 startActivity(intent);

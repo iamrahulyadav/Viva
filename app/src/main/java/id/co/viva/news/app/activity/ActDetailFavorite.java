@@ -3,6 +3,7 @@ package id.co.viva.news.app.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.view.ViewPager;
 import android.text.Html;
 import android.view.MenuItem;
 import android.view.View;
@@ -11,9 +12,13 @@ import android.widget.TextView;
 import com.flaviofaria.kenburnsview.KenBurnsView;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+
 import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.Global;
 import id.co.viva.news.app.R;
+import id.co.viva.news.app.adapter.ImageSliderAdapter;
+import id.co.viva.news.app.model.SliderContentImage;
 import id.co.viva.news.app.services.Analytics;
 
 /**
@@ -27,42 +32,36 @@ public class ActDetailFavorite extends FragmentActivity implements View.OnClickL
     private TextView tvDatePublish;
     private TextView tvContent;
     private TextView tvReportername;
+    private ImageSliderAdapter imageSliderAdapter;
+    private ViewPager viewPager;
 
     private Analytics analytics;
     private boolean isInternetPresent = false;
+    private ArrayList<SliderContentImage> sliderContentImages;
 
     private String title;
     private String image_url;
     private String date_publish;
     private String content;
     private String reporter_name;
+    private String image_caption;
+    private int thumbSize;
+    private String sThumbList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         isInternetPresent = Global.getInstance(this)
                 .getConnectionStatus().isConnectingToInternet();
-
-        intent = getIntent();
-        title = intent.getStringExtra("title");
-        image_url = intent.getStringExtra("image_url");
-        date_publish = intent.getStringExtra("date_publish");
-        content = intent.getStringExtra("content");
-        reporter_name = intent.getStringExtra("reporter_name");
+        getParams();
 
         if(isInternetPresent) {
             getAnalytics(title);
         }
 
         setContentView(R.layout.act_detail_favorite);
-
         getHeaderActionBar();
-
-        imageDetail = (KenBurnsView)findViewById(R.id.thumb_detail_content_favorite);
-        tvTitle = (TextView)findViewById(R.id.title_detail_content_favorite);
-        tvDatePublish = (TextView)findViewById(R.id.date_detail_content_favorite);
-        tvContent = (TextView)findViewById(R.id.content_detail_content_favorite);
-        tvReportername = (TextView)findViewById(R.id.reporter_detail_content_favorite);
+        defineViews();
 
         try {
             if(image_url != null) {
@@ -78,6 +77,37 @@ public class ActDetailFavorite extends FragmentActivity implements View.OnClickL
         tvDatePublish.setText(date_publish);
         tvContent.setText(Html.fromHtml(content).toString());
         tvReportername.setText(reporter_name);
+
+        if(thumbSize > 0 && sliderContentImages != null) {
+            imageSliderAdapter = new ImageSliderAdapter(getSupportFragmentManager(), sliderContentImages);
+            viewPager.setAdapter(imageSliderAdapter);
+            viewPager.setCurrentItem(0);
+            imageSliderAdapter.notifyDataSetChanged();
+            viewPager.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void getParams() {
+        intent = getIntent();
+        title = intent.getStringExtra("title");
+        image_url = intent.getStringExtra("image_url");
+        date_publish = intent.getStringExtra("date_publish");
+        content = intent.getStringExtra("content");
+        reporter_name = intent.getStringExtra("reporter_name");
+        image_caption = intent.getStringExtra("image_caption");
+        thumbSize = intent.getIntExtra("list_thumbnail_body_size", 0);
+        sThumbList = intent.getStringExtra("list_thumbnail_body");
+    }
+
+    private void defineViews() {
+        sliderContentImages = Global.getInstance(this).getInstanceGson().
+                fromJson(sThumbList, Global.getInstance(this).getTypeSlider());
+        imageDetail = (KenBurnsView)findViewById(R.id.thumb_detail_content_favorite);
+        tvTitle = (TextView)findViewById(R.id.title_detail_content_favorite);
+        tvDatePublish = (TextView)findViewById(R.id.date_detail_content_favorite);
+        tvContent = (TextView)findViewById(R.id.content_detail_content_favorite);
+        tvReportername = (TextView)findViewById(R.id.reporter_detail_content_favorite);
+        viewPager = (ViewPager) findViewById(R.id.horizontal_list);
     }
 
     private void getHeaderActionBar() {
@@ -109,6 +139,7 @@ public class ActDetailFavorite extends FragmentActivity implements View.OnClickL
             if(image_url.length() > 0) {
                 Bundle bundle = new Bundle();
                 bundle.putString("photoUrl", image_url);
+                bundle.putString("image_caption", image_caption);
                 Intent intent = new Intent(this, ActDetailPhotoThumb.class);
                 intent.putExtras(bundle);
                 startActivity(intent);

@@ -18,6 +18,7 @@ import java.util.ArrayList;
 
 import id.co.viva.news.app.connection.ConnectionDetector;
 import id.co.viva.news.app.model.Favorites;
+import id.co.viva.news.app.model.SliderContentImage;
 
 /**
  * Created by reza on 08/12/14.
@@ -31,6 +32,7 @@ public class Global {
     private ATParams atParams;
     private ArrayList<Favorites> favoritesList;
     private Type type;
+    private Type typeSlider;
     private Gson gson;
     private SharedPreferences.Editor editor;
     private Context mContext;
@@ -97,6 +99,13 @@ public class Global {
             type = new TypeToken<ArrayList<Favorites>>(){}.getType();
         }
         return type;
+    }
+
+    public Type getTypeSlider() {
+        if(typeSlider == null) {
+            typeSlider = new TypeToken<ArrayList<SliderContentImage>>(){}.getType();
+        }
+        return typeSlider;
     }
 
     public Gson getInstanceGson() {
