@@ -43,6 +43,7 @@
     <string name="label_successful_gplus_connected">Berhasil terkoneksi dengan Google Plus!</string>
 
     <string name="facebook_app_id">331105887084412</string>
+    <string name="public_api_key_google">AIzaSyBq5FW1T561DfYKpolGaltd4S6rQrj-KrY</string>
 
     <string name="label_gender_male">Laki-laki</string>
     <string name="label_gender_female">Perempuan</string>
@@ -77,7 +78,7 @@
     <string name="label_item_navigation_headline">Headlines</string>
     <string name="label_item_navigation_terbaru">Terbaru</string>
     <string name="label_item_navigation_favorites">Favorites</string>
-    <string name="label_item_navigation_news">News</string>
+    <string name="label_item_navigation_news">Berita</string>
     <string name="label_item_navigation_bola">Bola</string>
     <string name="label_item_navigation_life">Life</string>
     <string name="label_item_navigation_about">About</string>
@@ -120,6 +121,7 @@
     <string name="label_success_post_rate">Artikel berhasil di rate!</string>
     <string name="label_failed_post_rate">Rate artikel gagal!</string>
     <string name="label_send_email">Kirim</string>
+    <string name="label_video_click"><u>Klik untuk melihat video.</u></string>
     <string name="label_success_send_email">Email telah berhasil dikirim. Silahkan cek email anda untuk melihat password.</string>
 
     <string name="title_copyright">Copyright © 2008 - 2014 PT. Viva Media Baru</string>

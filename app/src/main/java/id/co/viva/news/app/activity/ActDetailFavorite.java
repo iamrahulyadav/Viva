@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.flaviofaria.kenburnsview.KenBurnsView;
 import com.squareup.picasso.Picasso;
+import com.viewpagerindicator.LinePageIndicator;
 
 import java.util.ArrayList;
 
@@ -34,6 +35,7 @@ public class ActDetailFavorite extends FragmentActivity implements View.OnClickL
     private TextView tvReportername;
     private ImageSliderAdapter imageSliderAdapter;
     private ViewPager viewPager;
+    private LinePageIndicator linePageIndicator;
 
     private Analytics analytics;
     private boolean isInternetPresent = false;
@@ -83,7 +85,9 @@ public class ActDetailFavorite extends FragmentActivity implements View.OnClickL
             viewPager.setAdapter(imageSliderAdapter);
             viewPager.setCurrentItem(0);
             imageSliderAdapter.notifyDataSetChanged();
+            linePageIndicator.setViewPager(viewPager);
             viewPager.setVisibility(View.VISIBLE);
+            linePageIndicator.setVisibility(View.VISIBLE);
         }
     }
 
@@ -108,6 +112,8 @@ public class ActDetailFavorite extends FragmentActivity implements View.OnClickL
         tvContent = (TextView)findViewById(R.id.content_detail_content_favorite);
         tvReportername = (TextView)findViewById(R.id.reporter_detail_content_favorite);
         viewPager = (ViewPager) findViewById(R.id.horizontal_list);
+        linePageIndicator = (LinePageIndicator)findViewById(R.id.indicator);
+        linePageIndicator.setVisibility(View.GONE);
     }
 
     private void getHeaderActionBar() {

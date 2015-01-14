@@ -71,6 +71,11 @@
             android:theme="@style/AppTheme"/>
 
         <activity
+            android:name=".activity.ActVideo"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"/>
+
+        <activity
             android:name=".activity.ActForgotPassword"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"/>

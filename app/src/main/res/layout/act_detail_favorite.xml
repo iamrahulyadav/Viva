@@ -62,14 +62,23 @@
             <android.support.v4.view.ViewPager
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
-                android:layout_marginBottom="15dp"
                 android:visibility="gone"
                 android:layout_below="@id/reporter_detail_content_favorite"
                 android:id="@+id/horizontal_list"/>
+            <com.viewpagerindicator.LinePageIndicator
+                android:id="@+id/indicator"
+                android:layout_marginBottom="15dp"
+                android:layout_height="wrap_content"
+                android:layout_width="fill_parent"
+                android:layout_below="@id/horizontal_list"
+                app:strokeWidth="4dp"
+                app:lineWidth="30dp"
+                app:unselectedColor="#FF888888"
+                app:selectedColor="@color/blue"/>
             <id.co.viva.news.app.component.BounvenoTextView
                 android:id="@+id/content_detail_content_favorite"
                 android:lineSpacingExtra="10px"
-                android:layout_below="@id/horizontal_list"
+                android:layout_below="@id/indicator"
                 android:layout_width="wrap_content"
                 android:textSize="18sp"
                 android:textColor="@color/black"

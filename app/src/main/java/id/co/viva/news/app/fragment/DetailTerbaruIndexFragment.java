@@ -33,6 +33,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.flaviofaria.kenburnsview.KenBurnsView;
 import com.squareup.picasso.Picasso;
+import com.viewpagerindicator.LinePageIndicator;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -47,6 +48,7 @@ import id.co.viva.news.app.activity.ActComment;
 import id.co.viva.news.app.activity.ActDetailContentDefault;
 import id.co.viva.news.app.activity.ActDetailPhotoThumb;
 import id.co.viva.news.app.activity.ActRating;
+import id.co.viva.news.app.activity.ActVideo;
 import id.co.viva.news.app.adapter.ImageSliderAdapter;
 import id.co.viva.news.app.adapter.RelatedAdapter;
 import id.co.viva.news.app.coachmark.CoachmarkBuilder;
@@ -55,6 +57,7 @@ import id.co.viva.news.app.model.Comment;
 import id.co.viva.news.app.model.Favorites;
 import id.co.viva.news.app.model.RelatedArticle;
 import id.co.viva.news.app.model.SliderContentImage;
+import id.co.viva.news.app.model.Video;
 import id.co.viva.news.app.services.Analytics;
 
 /**
@@ -71,6 +74,7 @@ public class DetailTerbaruIndexFragment extends Fragment implements View.OnClick
     private ArrayList<RelatedArticle> relatedArticleArrayList;
     private ArrayList<Comment> commentArrayList;
     private ArrayList<SliderContentImage> sliderContentImages;
+    private ArrayList<Video> videoArrayList;
     private RelatedAdapter adapter;
     private ListView listView;
     private Analytics analytics;
@@ -99,13 +103,18 @@ public class DetailTerbaruIndexFragment extends Fragment implements View.OnClick
     private String url_shared;
     private String image_caption;
     private String sliderPhotoUrl;
-    private String sliderTitle ;
+    private String sliderTitle;
+    private String urlVideo;
+    private String widthVideo;
+    private String heightVideo;
 
     private ImageSliderAdapter imageSliderAdapter;
     private ViewPager viewPager;
+    private LinePageIndicator linePageIndicator;
 
     private View coachmarkView;
     private CoachmarkView showtips;
+    private TextView textLinkVideo;
 
     public static DetailTerbaruIndexFragment newInstance(String id) {
         DetailTerbaruIndexFragment detailHeadlineIndexFragment = new DetailTerbaruIndexFragment();
@@ -171,6 +180,9 @@ public class DetailTerbaruIndexFragment extends Fragment implements View.OnClick
         viewPager = (ViewPager) view.findViewById(R.id.horizontal_list);
         viewPager.setVisibility(View.GONE);
 
+        linePageIndicator = (LinePageIndicator) view.findViewById(R.id.indicator);
+        linePageIndicator.setVisibility(View.GONE);
+
         layoutCommentPreview = (LinearLayout) view.findViewById(R.id.layout_preview_comment_list);
         layoutCommentPreview.setOnClickListener(this);
         layoutCommentPreview.setVisibility(View.GONE);
@@ -210,6 +222,7 @@ public class DetailTerbaruIndexFragment extends Fragment implements View.OnClick
         relatedArticleArrayList = new ArrayList<RelatedArticle>();
         commentArrayList = new ArrayList<Comment>();
         sliderContentImages = new ArrayList<SliderContentImage>();
+        videoArrayList = new ArrayList<Video>();
 
         tvTitleNewsDetail = (TextView) view.findViewById(R.id.title_detail_news);
         tvDateNewsDetail = (TextView) view.findViewById(R.id.date_detail_news);
@@ -221,6 +234,10 @@ public class DetailTerbaruIndexFragment extends Fragment implements View.OnClick
         ivThumbDetailNews.setFocusable(true);
         ivThumbDetailNews.setFocusableInTouchMode(true);
         ivThumbDetailNews.requestFocus();
+
+        textLinkVideo = (TextView) view.findViewById(R.id.text_move_video);
+        textLinkVideo.setOnClickListener(this);
+        textLinkVideo.setVisibility(View.GONE);
 
         showCoachMark();
 
@@ -255,6 +272,17 @@ public class DetailTerbaruIndexFragment extends Fragment implements View.OnClick
                                     }
                                 }
 
+                                JSONArray content_video = detail.getJSONArray(Constant.content_video);
+                                if(content_video != null && content_video.length() > 0) {
+                                    for(int i=0; i<content_video.length(); i++) {
+                                        JSONObject objVideo = content_video.getJSONObject(i);
+                                        urlVideo = objVideo.getString("src_1");
+                                        widthVideo = objVideo.getString("src_2");
+                                        heightVideo = objVideo.getString("src_3");
+                                        videoArrayList.add(new Video(urlVideo, widthVideo, heightVideo));
+                                    }
+                                }
+
                                 JSONArray related_article = response.getJSONArray(Constant.related_article);
                                 for(int i=0; i<related_article.length(); i++) {
                                     JSONObject objRelated = related_article.getJSONObject(i);
@@ -273,6 +301,16 @@ public class DetailTerbaruIndexFragment extends Fragment implements View.OnClick
                                     Log.i(Constant.TAG, "RELATED ARTICLE : " + relatedArticleArrayList.get(i).getRelated_title());
                                 }
 
+                                JSONArray comment_list = response.getJSONArray(Constant.comment_list);
+                                for(int i=0; i<comment_list.length(); i++) {
+                                    JSONObject objRelated = comment_list.getJSONObject(i);
+                                    String id = objRelated.getString(Constant.id);
+                                    String name = objRelated.getString(Constant.name);
+                                    String comment_text = objRelated.getString(Constant.comment_text);
+                                    commentArrayList.add(new Comment(id, null, name, null, comment_text, null, null, null));
+                                    Log.i(Constant.TAG, "COMMENTS PREVIEW : " + commentArrayList.get(i).getComment_text());
+                                }
+
                                 tvTitleNewsDetail.setText(title);
                                 tvDateNewsDetail.setText(date_publish);
                                 tvContentNewsDetail.setText(Html.fromHtml(content).toString());
@@ -285,7 +323,9 @@ public class DetailTerbaruIndexFragment extends Fragment implements View.OnClick
                                     viewPager.setAdapter(imageSliderAdapter);
                                     viewPager.setCurrentItem(0);
                                     imageSliderAdapter.notifyDataSetChanged();
+                                    linePageIndicator.setViewPager(viewPager);
                                     viewPager.setVisibility(View.VISIBLE);
+                                    linePageIndicator.setVisibility(View.VISIBLE);
                                 }
 
                                 if(relatedArticleArrayList.size() > 0 || !relatedArticleArrayList.isEmpty()) {
@@ -294,16 +334,6 @@ public class DetailTerbaruIndexFragment extends Fragment implements View.OnClick
                                     Constant.setListViewHeightBasedOnChildren(listView);
                                     adapter.notifyDataSetChanged();
                                     headerRelated.setVisibility(View.VISIBLE);
-                                }
-
-                                JSONArray comment_list = response.getJSONArray(Constant.comment_list);
-                                for(int i=0; i<comment_list.length(); i++) {
-                                    JSONObject objRelated = comment_list.getJSONObject(i);
-                                    String id = objRelated.getString(Constant.id);
-                                    String name = objRelated.getString(Constant.name);
-                                    String comment_text = objRelated.getString(Constant.comment_text);
-                                    commentArrayList.add(new Comment(id, null, name, null, comment_text, null, null, null));
-                                    Log.i(Constant.TAG, "COMMENTS PREVIEW : " + commentArrayList.get(i).getComment_text());
                                 }
 
                                 if(commentArrayList.size() > 0) {
@@ -338,7 +368,12 @@ public class DetailTerbaruIndexFragment extends Fragment implements View.OnClick
                                 }
 
                                 getActivity().invalidateOptionsMenu();
+
                                 loading_layout.setVisibility(View.GONE);
+
+                                if(urlVideo.length() > 0) {
+                                    textLinkVideo.setVisibility(View.VISIBLE);
+                                }
                             } catch (Exception e) {
                                 e.getMessage();
                             }
@@ -396,6 +431,16 @@ public class DetailTerbaruIndexFragment extends Fragment implements View.OnClick
                                         Log.i(Constant.TAG, "RELATED ARTICLE CACHED : " + relatedArticleArrayList.get(i).getRelated_title());
                                     }
 
+                                    JSONArray comment_list = response.getJSONArray(Constant.comment_list);
+                                    for(int i=0; i<comment_list.length(); i++) {
+                                        JSONObject objRelated = comment_list.getJSONObject(i);
+                                        String id = objRelated.getString(Constant.id);
+                                        String name = objRelated.getString(Constant.name);
+                                        String comment_text = objRelated.getString(Constant.comment_text);
+                                        commentArrayList.add(new Comment(id, null, name, null, comment_text, null, null, null));
+                                        Log.i(Constant.TAG, "COMMENTS PREVIEW : " + commentArrayList.get(i).getComment_text());
+                                    }
+
                                     tvTitleNewsDetail.setText(title);
                                     tvDateNewsDetail.setText(date_publish);
                                     tvContentNewsDetail.setText(Html.fromHtml(content).toString());
@@ -408,7 +453,9 @@ public class DetailTerbaruIndexFragment extends Fragment implements View.OnClick
                                         viewPager.setAdapter(imageSliderAdapter);
                                         viewPager.setCurrentItem(0);
                                         imageSliderAdapter.notifyDataSetChanged();
+                                        linePageIndicator.setViewPager(viewPager);
                                         viewPager.setVisibility(View.VISIBLE);
+                                        linePageIndicator.setVisibility(View.VISIBLE);
                                     }
 
                                     if(relatedArticleArrayList.size() > 0 || !relatedArticleArrayList.isEmpty()) {
@@ -417,16 +464,6 @@ public class DetailTerbaruIndexFragment extends Fragment implements View.OnClick
                                         Constant.setListViewHeightBasedOnChildren(listView);
                                         adapter.notifyDataSetChanged();
                                         headerRelated.setVisibility(View.VISIBLE);
-                                    }
-
-                                    JSONArray comment_list = response.getJSONArray(Constant.comment_list);
-                                    for(int i=0; i<comment_list.length(); i++) {
-                                        JSONObject objRelated = comment_list.getJSONObject(i);
-                                        String id = objRelated.getString(Constant.id);
-                                        String name = objRelated.getString(Constant.name);
-                                        String comment_text = objRelated.getString(Constant.comment_text);
-                                        commentArrayList.add(new Comment(id, null, name, null, comment_text, null, null, null));
-                                        Log.i(Constant.TAG, "COMMENTS PREVIEW : " + commentArrayList.get(i).getComment_text());
                                     }
 
                                     if(commentArrayList.size() > 0) {
@@ -526,6 +563,16 @@ public class DetailTerbaruIndexFragment extends Fragment implements View.OnClick
                         Log.i(Constant.TAG, "RELATED ARTICLE CACHED : " + relatedArticleArrayList.get(i).getRelated_title());
                     }
 
+                    JSONArray comment_list = response.getJSONArray(Constant.comment_list);
+                    for(int i=0; i<comment_list.length(); i++) {
+                        JSONObject objRelated = comment_list.getJSONObject(i);
+                        String id = objRelated.getString(Constant.id);
+                        String name = objRelated.getString(Constant.name);
+                        String comment_text = objRelated.getString(Constant.comment_text);
+                        commentArrayList.add(new Comment(id, null, name, null, comment_text, null, null, null));
+                        Log.i(Constant.TAG, "COMMENTS PREVIEW : " + commentArrayList.get(i).getComment_text());
+                    }
+
                     tvTitleNewsDetail.setText(title);
                     tvDateNewsDetail.setText(date_publish);
                     tvContentNewsDetail.setText(Html.fromHtml(content).toString());
@@ -538,7 +585,9 @@ public class DetailTerbaruIndexFragment extends Fragment implements View.OnClick
                         viewPager.setAdapter(imageSliderAdapter);
                         viewPager.setCurrentItem(0);
                         imageSliderAdapter.notifyDataSetChanged();
+                        linePageIndicator.setViewPager(viewPager);
                         viewPager.setVisibility(View.VISIBLE);
+                        linePageIndicator.setVisibility(View.VISIBLE);
                     }
 
                     if(relatedArticleArrayList.size() > 0 || !relatedArticleArrayList.isEmpty()) {
@@ -547,16 +596,6 @@ public class DetailTerbaruIndexFragment extends Fragment implements View.OnClick
                         Constant.setListViewHeightBasedOnChildren(listView);
                         adapter.notifyDataSetChanged();
                         headerRelated.setVisibility(View.VISIBLE);
-                    }
-
-                    JSONArray comment_list = response.getJSONArray(Constant.comment_list);
-                    for(int i=0; i<comment_list.length(); i++) {
-                        JSONObject objRelated = comment_list.getJSONObject(i);
-                        String id = objRelated.getString(Constant.id);
-                        String name = objRelated.getString(Constant.name);
-                        String comment_text = objRelated.getString(Constant.comment_text);
-                        commentArrayList.add(new Comment(id, null, name, null, comment_text, null, null, null));
-                        Log.i(Constant.TAG, "COMMENTS PREVIEW : " + commentArrayList.get(i).getComment_text());
                     }
 
                     if(commentArrayList.size() > 0) {
@@ -623,6 +662,15 @@ public class DetailTerbaruIndexFragment extends Fragment implements View.OnClick
         Intent intents = new Intent(getActivity(), ActRating.class);
         intents.putExtras(bundles);
         startActivity(intents);
+        getActivity().overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+    }
+
+    private void moveVideoPage() {
+        Bundle bundle = new Bundle();
+        bundle.putString("urlVideo", urlVideo);
+        Intent intent = new Intent(getActivity(), ActVideo.class);
+        intent.putExtras(bundle);
+        startActivity(intent);
         getActivity().overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
     }
 
@@ -744,6 +792,17 @@ public class DetailTerbaruIndexFragment extends Fragment implements View.OnClick
                                         }
                                     }
 
+                                    JSONArray content_video = detail.getJSONArray(Constant.content_video);
+                                    if(content_video != null && content_video.length() > 0) {
+                                        for(int i=0; i<content_video.length(); i++) {
+                                            JSONObject objVideo = content_video.getJSONObject(i);
+                                            urlVideo = objVideo.getString("src_1");
+                                            widthVideo = objVideo.getString("src_2");
+                                            heightVideo = objVideo.getString("src_3");
+                                            videoArrayList.add(new Video(urlVideo, widthVideo, heightVideo));
+                                        }
+                                    }
+
                                     JSONArray related_article = response.getJSONArray(Constant.related_article);
                                     for(int i=0; i<related_article.length(); i++) {
                                         JSONObject objRelated = related_article.getJSONObject(i);
@@ -762,6 +821,16 @@ public class DetailTerbaruIndexFragment extends Fragment implements View.OnClick
                                         Log.i(Constant.TAG, "RELATED ARTICLE : " + relatedArticleArrayList.get(i).getRelated_title());
                                     }
 
+                                    JSONArray comment_list = response.getJSONArray(Constant.comment_list);
+                                    for(int i=0; i<comment_list.length(); i++) {
+                                        JSONObject objRelated = comment_list.getJSONObject(i);
+                                        String id = objRelated.getString(Constant.id);
+                                        String name = objRelated.getString(Constant.name);
+                                        String comment_text = objRelated.getString(Constant.comment_text);
+                                        commentArrayList.add(new Comment(id, null, name, null, comment_text, null, null, null));
+                                        Log.i(Constant.TAG, "COMMENTS PREVIEW : " + commentArrayList.get(i).getComment_text());
+                                    }
+
                                     tvTitleNewsDetail.setText(title);
                                     tvDateNewsDetail.setText(date_publish);
                                     tvContentNewsDetail.setText(Html.fromHtml(content).toString());
@@ -774,7 +843,9 @@ public class DetailTerbaruIndexFragment extends Fragment implements View.OnClick
                                         viewPager.setAdapter(imageSliderAdapter);
                                         viewPager.setCurrentItem(0);
                                         imageSliderAdapter.notifyDataSetChanged();
+                                        linePageIndicator.setViewPager(viewPager);
                                         viewPager.setVisibility(View.VISIBLE);
+                                        linePageIndicator.setVisibility(View.VISIBLE);
                                     }
 
                                     if(relatedArticleArrayList.size() > 0 || !relatedArticleArrayList.isEmpty()) {
@@ -783,16 +854,6 @@ public class DetailTerbaruIndexFragment extends Fragment implements View.OnClick
                                         Constant.setListViewHeightBasedOnChildren(listView);
                                         adapter.notifyDataSetChanged();
                                         headerRelated.setVisibility(View.VISIBLE);
-                                    }
-
-                                    JSONArray comment_list = response.getJSONArray(Constant.comment_list);
-                                    for(int i=0; i<comment_list.length(); i++) {
-                                        JSONObject objRelated = comment_list.getJSONObject(i);
-                                        String id = objRelated.getString(Constant.id);
-                                        String name = objRelated.getString(Constant.name);
-                                        String comment_text = objRelated.getString(Constant.comment_text);
-                                        commentArrayList.add(new Comment(id, null, name, null, comment_text, null, null, null));
-                                        Log.i(Constant.TAG, "COMMENTS PREVIEW : " + commentArrayList.get(i).getComment_text());
                                     }
 
                                     if(commentArrayList.size() > 0) {
@@ -828,7 +889,12 @@ public class DetailTerbaruIndexFragment extends Fragment implements View.OnClick
                                     }
 
                                     getActivity().invalidateOptionsMenu();
+
                                     loading_layout.setVisibility(View.GONE);
+
+                                    if(urlVideo.length() > 0) {
+                                        textLinkVideo.setVisibility(View.VISIBLE);
+                                    }
                                 } catch (Exception e) {
                                     e.getMessage();
                                 }
@@ -867,6 +933,8 @@ public class DetailTerbaruIndexFragment extends Fragment implements View.OnClick
             }
         } else if(view.getId() == R.id.layout_preview_comment_list) {
             moveCommentPage();
+        } else if(view.getId() == R.id.text_move_video) {
+            moveVideoPage();
         }
     }
 

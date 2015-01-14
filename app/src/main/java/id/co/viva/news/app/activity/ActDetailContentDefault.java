@@ -30,6 +30,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.flaviofaria.kenburnsview.KenBurnsView;
 import com.squareup.picasso.Picasso;
+import com.viewpagerindicator.LinePageIndicator;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -44,6 +45,7 @@ import id.co.viva.news.app.coachmark.CoachmarkView;
 import id.co.viva.news.app.model.Comment;
 import id.co.viva.news.app.model.Favorites;
 import id.co.viva.news.app.model.SliderContentImage;
+import id.co.viva.news.app.model.Video;
 import id.co.viva.news.app.services.Analytics;
 import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.R;
@@ -66,25 +68,26 @@ public class ActDetailContentDefault extends FragmentActivity
     private String reporter_name;
     private String url_shared;
     private String image_caption;
-
-    private TextView tvTitleDetail;
-    private TextView tvDateDetail;
-    private TextView tvReporterDetail;
-    private TextView tvContentDetail;
-    private KenBurnsView ivThumbDetail;
-
+    private String urlVideo;
+    private String widthVideo;
+    private String heightVideo;
     private String id;
     private String cachedResponse;
     private String typeFrom;
     private String fromkanal;
     private String shared_url;
     private String sliderPhotoUrl;
-    private String sliderTitle ;
+    private String sliderTitle;
+    private int count = 0;
 
+    private TextView tvTitleDetail;
+    private TextView tvDateDetail;
+    private TextView tvReporterDetail;
+    private TextView tvContentDetail;
+    private KenBurnsView ivThumbDetail;
     private TextView tvPreviewCommentUser;
     private TextView tvPreviewCommentContent;
     private LinearLayout layoutCommentPreview;
-    private int count = 0;
 
     private RelativeLayout headerRelated;
     private boolean isInternetPresent = false;
@@ -93,16 +96,20 @@ public class ActDetailContentDefault extends FragmentActivity
     private ImageSliderAdapter imageSliderAdapter;
     private ListView listView;
     private ViewPager viewPager;
+    private LinePageIndicator linePageIndicator;
     private Analytics analytics;
     private RelativeLayout loading_layout;
     private String favoriteList;
+
     private ArrayList<Favorites> favoritesArrayList;
     private ArrayList<RelatedArticle> relatedArticleArrayList;
     private ArrayList<Comment> commentArrayList;
     private ArrayList<SliderContentImage> sliderContentImages;
+    private ArrayList<Video> videoArrayList;
 
     private View coachmarkView;
     private CoachmarkView showtips;
+    private TextView textLinkVideo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,6 +145,9 @@ public class ActDetailContentDefault extends FragmentActivity
         viewPager = (ViewPager) findViewById(R.id.horizontal_list);
         viewPager.setVisibility(View.GONE);
 
+        linePageIndicator = (LinePageIndicator)findViewById(R.id.indicator);
+        linePageIndicator.setVisibility(View.GONE);
+
         loading_layout = (RelativeLayout) findViewById(R.id.loading_progress_layout_default);
         headerRelated = (RelativeLayout) findViewById(R.id.header_related_article);
         headerRelated.setVisibility(View.GONE);
@@ -156,6 +166,7 @@ public class ActDetailContentDefault extends FragmentActivity
         relatedArticleArrayList = new ArrayList<RelatedArticle>();
         commentArrayList = new ArrayList<Comment>();
         sliderContentImages = new ArrayList<SliderContentImage>();
+        videoArrayList = new ArrayList<Video>();
 
         tvTitleDetail = (TextView) findViewById(R.id.title_detail_content_default);
         tvDateDetail = (TextView) findViewById(R.id.date_detail_content_default);
@@ -167,6 +178,10 @@ public class ActDetailContentDefault extends FragmentActivity
         ivThumbDetail.setFocusable(true);
         ivThumbDetail.setFocusableInTouchMode(true);
         ivThumbDetail.requestFocus();
+
+        textLinkVideo = (TextView)findViewById(R.id.text_move_video);
+        textLinkVideo.setOnClickListener(this);
+        textLinkVideo.setVisibility(View.GONE);
 
         showCoachMark();
 
@@ -201,6 +216,17 @@ public class ActDetailContentDefault extends FragmentActivity
                                     }
                                 }
 
+                                JSONArray content_video = detail.getJSONArray(Constant.content_video);
+                                if(content_video != null && content_video.length() > 0) {
+                                    for(int i=0; i<content_video.length(); i++) {
+                                        JSONObject objVideo = content_video.getJSONObject(i);
+                                        urlVideo = objVideo.getString("src_1");
+                                        widthVideo = objVideo.getString("src_2");
+                                        heightVideo = objVideo.getString("src_3");
+                                        videoArrayList.add(new Video(urlVideo, widthVideo, heightVideo));
+                                    }
+                                }
+
                                 JSONArray related_article = response.getJSONArray(Constant.related_article);
                                 for(int i=0; i<related_article.length(); i++) {
                                     JSONObject objRelated = related_article.getJSONObject(i);
@@ -219,6 +245,16 @@ public class ActDetailContentDefault extends FragmentActivity
                                     Log.i(Constant.TAG, "RELATED ARTICLE : " + relatedArticleArrayList.get(i).getRelated_title());
                                 }
 
+                                JSONArray comment_list = response.getJSONArray(Constant.comment_list);
+                                for(int i=0; i<comment_list.length(); i++) {
+                                    JSONObject objRelated = comment_list.getJSONObject(i);
+                                    String id = objRelated.getString(Constant.id);
+                                    String name = objRelated.getString(Constant.name);
+                                    String comment_text = objRelated.getString(Constant.comment_text);
+                                    commentArrayList.add(new Comment(id, null, name, null, comment_text, null, null, null));
+                                    Log.i(Constant.TAG, "COMMENTS PREVIEW : " + commentArrayList.get(i).getComment_text());
+                                }
+
                                 tvTitleDetail.setText(title);
                                 tvDateDetail.setText(date_publish);
                                 tvContentDetail.setText(Html.fromHtml(content).toString());
@@ -231,7 +267,9 @@ public class ActDetailContentDefault extends FragmentActivity
                                     viewPager.setAdapter(imageSliderAdapter);
                                     viewPager.setCurrentItem(0);
                                     imageSliderAdapter.notifyDataSetChanged();
+                                    linePageIndicator.setViewPager(viewPager);
                                     viewPager.setVisibility(View.VISIBLE);
+                                    linePageIndicator.setVisibility(View.VISIBLE);
                                 }
 
                                 if(relatedArticleArrayList.size() > 0 || !relatedArticleArrayList.isEmpty()) {
@@ -253,18 +291,9 @@ public class ActDetailContentDefault extends FragmentActivity
                                     }
                                 }
 
-                                JSONArray comment_list = response.getJSONArray(Constant.comment_list);
-                                for(int i=0; i<comment_list.length(); i++) {
-                                    JSONObject objRelated = comment_list.getJSONObject(i);
-                                    String id = objRelated.getString(Constant.id);
-                                    String name = objRelated.getString(Constant.name);
-                                    String comment_text = objRelated.getString(Constant.comment_text);
-                                    commentArrayList.add(new Comment(id, null, name, null, comment_text, null, null, null));
-                                    Log.i(Constant.TAG, "COMMENTS PREVIEW : " + commentArrayList.get(i).getComment_text());
-                                }
-
                                 if(commentArrayList.size() > 0) {
                                     layoutCommentPreview.setVisibility(View.VISIBLE);
+
                                     Thread thread = new Thread() {
                                         @Override
                                         public void run() {
@@ -295,6 +324,10 @@ public class ActDetailContentDefault extends FragmentActivity
                                 }
 
                                 loading_layout.setVisibility(View.GONE);
+
+                                if(urlVideo.length() > 0) {
+                                    textLinkVideo.setVisibility(View.VISIBLE);
+                                }
                             } catch (Exception e) {
                                 e.getMessage();
                             }
@@ -364,6 +397,16 @@ public class ActDetailContentDefault extends FragmentActivity
                         Log.i(Constant.TAG, "RELATED ARTICLE CACHED : " + relatedArticleArrayList.get(i).getRelated_title());
                     }
 
+                    JSONArray comment_list = response.getJSONArray(Constant.comment_list);
+                    for(int i=0; i<comment_list.length(); i++) {
+                        JSONObject objRelated = comment_list.getJSONObject(i);
+                        String id = objRelated.getString(Constant.id);
+                        String name = objRelated.getString(Constant.name);
+                        String comment_text = objRelated.getString(Constant.comment_text);
+                        commentArrayList.add(new Comment(id, null, name, null, comment_text, null, null, null));
+                        Log.i(Constant.TAG, "COMMENTS PREVIEW : " + commentArrayList.get(i).getComment_text());
+                    }
+
                     tvTitleDetail.setText(title);
                     tvDateDetail.setText(date_publish);
                     tvContentDetail.setText(Html.fromHtml(content).toString());
@@ -376,7 +419,9 @@ public class ActDetailContentDefault extends FragmentActivity
                         viewPager.setAdapter(imageSliderAdapter);
                         viewPager.setCurrentItem(0);
                         imageSliderAdapter.notifyDataSetChanged();
+                        linePageIndicator.setViewPager(viewPager);
                         viewPager.setVisibility(View.VISIBLE);
+                        linePageIndicator.setVisibility(View.VISIBLE);
                     }
 
                     if(relatedArticleArrayList.size() > 0 || !relatedArticleArrayList.isEmpty()) {
@@ -396,16 +441,6 @@ public class ActDetailContentDefault extends FragmentActivity
                         } else {
                             headerRelated.setBackgroundResource(R.color.header_grey);
                         }
-                    }
-
-                    JSONArray comment_list = response.getJSONArray(Constant.comment_list);
-                    for(int i=0; i<comment_list.length(); i++) {
-                        JSONObject objRelated = comment_list.getJSONObject(i);
-                        String id = objRelated.getString(Constant.id);
-                        String name = objRelated.getString(Constant.name);
-                        String comment_text = objRelated.getString(Constant.comment_text);
-                        commentArrayList.add(new Comment(id, null, name, null, comment_text, null, null, null));
-                        Log.i(Constant.TAG, "COMMENTS PREVIEW : " + commentArrayList.get(i).getComment_text());
                     }
 
                     if(commentArrayList.size() > 0) {
@@ -508,6 +543,15 @@ public class ActDetailContentDefault extends FragmentActivity
         display.getSize(size);
         int width = size.x;
         return width - 75;
+    }
+
+    private void moveVideoPage() {
+        Bundle bundle = new Bundle();
+        bundle.putString("urlVideo", urlVideo);
+        Intent intent = new Intent(this, ActVideo.class);
+        intent.putExtras(bundle);
+        startActivity(intent);
+        overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
     }
 
     private void moveCommentPage() {
@@ -634,6 +678,8 @@ public class ActDetailContentDefault extends FragmentActivity
             }
         } else if(view.getId() == R.id.layout_preview_comment_list) {
             moveCommentPage();
+        } else if(view.getId() == R.id.text_move_video) {
+            moveVideoPage();
         }
     }
 

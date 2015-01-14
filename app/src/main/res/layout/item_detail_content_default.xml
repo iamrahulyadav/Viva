@@ -62,16 +62,36 @@
             <android.support.v4.view.ViewPager
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
-                android:layout_marginBottom="15dp"
                 android:layout_below="@id/reporter_detail_content_default"
                 android:id="@+id/horizontal_list"/>
+            <com.viewpagerindicator.LinePageIndicator
+                android:id="@+id/indicator"
+                android:layout_marginBottom="15dp"
+                android:layout_height="wrap_content"
+                android:layout_width="fill_parent"
+                android:layout_below="@id/horizontal_list"
+                app:strokeWidth="4dp"
+                app:lineWidth="30dp"
+                app:unselectedColor="#FF888888"
+                app:selectedColor="@color/blue"/>
             <id.co.viva.news.app.component.BounvenoTextView
                 android:id="@+id/content_detail_content_default"
-                android:layout_below="@id/horizontal_list"
+                android:layout_below="@id/indicator"
                 android:lineSpacingExtra="10px"
                 android:layout_width="wrap_content"
                 android:textSize="18sp"
                 android:textColor="@color/black"
+                android:layout_height="wrap_content" />
+            <id.co.viva.news.app.component.BounvenoTextView
+                android:id="@+id/text_move_video"
+                android:layout_below="@id/content_detail_content_default"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:layout_centerHorizontal="true"
+                android:text="@string/label_video_click"
+                android:textColor="@color/blue"
+                android:layout_marginBottom="5dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
             <LinearLayout
                 android:layout_width="match_parent"
@@ -80,7 +100,7 @@
                 android:paddingBottom="5dp"
                 android:orientation="vertical"
                 android:background="@color/light_white"
-                android:layout_below="@id/content_detail_content_default"
+                android:layout_below="@id/text_move_video"
                 android:id="@+id/layout_preview_comment_list">
                 <id.co.viva.news.app.component.BounvenoTextView
                     android:layout_width="wrap_content"

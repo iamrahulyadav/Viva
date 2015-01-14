@@ -109,6 +109,7 @@ public class Constant {
     public static final String submitted_date = "submitted_date";
     public static final String status = "status";
     public static final String image_caption = "image_caption";
+    public static final String content_video = "content_video";
 
     public static final String article_id = "article_id";
     public static final String related_article_id = "related_article_id";

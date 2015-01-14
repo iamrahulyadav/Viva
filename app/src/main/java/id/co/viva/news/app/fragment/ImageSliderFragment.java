@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
@@ -21,7 +20,6 @@ import id.co.viva.news.app.activity.ActDetailPhotoThumb;
 public class ImageSliderFragment extends Fragment implements View.OnClickListener {
 
     private ImageView imageView;
-    private TextView textView;
     private String mPhotoUrl;
     private String mTitle;
 
@@ -46,12 +44,8 @@ public class ImageSliderFragment extends Fragment implements View.OnClickListene
         View rootView = inflater.inflate(R.layout.item_slider_detail_image, container, false);
         imageView = (ImageView) rootView.findViewById(R.id.image_item_slider_detail);
         imageView.setOnClickListener(this);
-        textView = (TextView) rootView.findViewById(R.id.title_image_item_slider_detail);
         if(mPhotoUrl.length() > 0) {
             Picasso.with(getActivity()).load(mPhotoUrl).into(imageView);
-        }
-        if(mTitle.length() > 0) {
-            textView.setText(mTitle);
         }
         return rootView;
     }
