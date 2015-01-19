@@ -9,7 +9,7 @@
         android:layout_height="match_parent"
         android:paddingRight="10dp"
         android:paddingLeft="10dp">
-        <id.co.viva.news.app.component.BounvenoTextView
+        <id.co.viva.news.app.component.RobotoTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textStyle="bold"
@@ -18,7 +18,7 @@
             android:textColor="@color/header_headline_terbaru_new"
             android:layout_marginTop="10dp"
             android:layout_gravity="center_horizontal"/>
-        <id.co.viva.news.app.component.BounvenoTextView
+        <id.co.viva.news.app.component.RobotoTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textStyle="bold"
@@ -34,7 +34,7 @@
             android:textSize="12sp"
             android:layout_marginLeft="10dp"
             android:textColorHint="@color/date_color"/>
-        <id.co.viva.news.app.component.BounvenoTextView
+        <id.co.viva.news.app.component.RobotoTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textStyle="bold"
@@ -51,7 +51,7 @@
             android:textSize="12sp"
             android:textColorHint="@color/date_color"/>
 
-        <id.co.viva.news.app.component.BounvenoTextView
+        <id.co.viva.news.app.component.RobotoTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textStyle="bold"
@@ -68,7 +68,7 @@
             android:password="true"
             android:textSize="12sp"
             android:textColorHint="@color/date_color"/>
-        <id.co.viva.news.app.component.BounvenoTextView
+        <id.co.viva.news.app.component.RobotoTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textStyle="bold"

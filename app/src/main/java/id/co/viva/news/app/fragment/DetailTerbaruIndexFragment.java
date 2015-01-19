@@ -53,6 +53,7 @@ import id.co.viva.news.app.adapter.ImageSliderAdapter;
 import id.co.viva.news.app.adapter.RelatedAdapter;
 import id.co.viva.news.app.coachmark.CoachmarkBuilder;
 import id.co.viva.news.app.coachmark.CoachmarkView;
+import id.co.viva.news.app.component.ProgressWheel;
 import id.co.viva.news.app.model.Comment;
 import id.co.viva.news.app.model.Favorites;
 import id.co.viva.news.app.model.RelatedArticle;
@@ -69,7 +70,7 @@ public class DetailTerbaruIndexFragment extends Fragment implements View.OnClick
     private RelativeLayout headerRelated;
     private boolean isInternetPresent = false;
     private String cachedResponse;
-    private RelativeLayout loading_layout;
+    private ProgressWheel progressWheel;
     private TextView tvNoResult;
     private ArrayList<RelatedArticle> relatedArticleArrayList;
     private ArrayList<Comment> commentArrayList;
@@ -189,7 +190,7 @@ public class DetailTerbaruIndexFragment extends Fragment implements View.OnClick
         tvPreviewCommentContent = (TextView) view.findViewById(R.id.text_preview_comment_content);
         tvPreviewCommentUser = (TextView) view.findViewById(R.id.text_preview_comment_user);
 
-        loading_layout = (RelativeLayout) view.findViewById(R.id.loading_progress_layout);
+        progressWheel = (ProgressWheel) view.findViewById(R.id.progress_wheel);
         headerRelated = (RelativeLayout) view.findViewById(R.id.header_related_article);
         headerRelated.setVisibility(View.GONE);
 
@@ -369,7 +370,7 @@ public class DetailTerbaruIndexFragment extends Fragment implements View.OnClick
 
                                 getActivity().invalidateOptionsMenu();
 
-                                loading_layout.setVisibility(View.GONE);
+                                progressWheel.setVisibility(View.GONE);
 
                                 if(urlVideo.length() > 0) {
                                     textLinkVideo.setVisibility(View.VISIBLE);
@@ -497,12 +498,12 @@ public class DetailTerbaruIndexFragment extends Fragment implements View.OnClick
                                         thread.start();
                                     }
 
-                                    loading_layout.setVisibility(View.GONE);
+                                    progressWheel.setVisibility(View.GONE);
                                 } catch (Exception e) {
                                     e.getMessage();
                                 }
                             } else {
-                                loading_layout.setVisibility(View.GONE);
+                                progressWheel.setVisibility(View.GONE);
                                 rippleView.setVisibility(View.VISIBLE);
                             }
                         }
@@ -629,13 +630,13 @@ public class DetailTerbaruIndexFragment extends Fragment implements View.OnClick
                         thread.start();
                     }
 
-                    loading_layout.setVisibility(View.GONE);
+                    progressWheel.setVisibility(View.GONE);
                 } catch (Exception e) {
                     e.getMessage();
                 }
             } else {
                 Toast.makeText(getActivity(), R.string.title_no_connection, Toast.LENGTH_SHORT).show();
-                loading_layout.setVisibility(View.GONE);
+                progressWheel.setVisibility(View.GONE);
                 tvNoResult.setVisibility(View.VISIBLE);
             }
         }
@@ -761,7 +762,7 @@ public class DetailTerbaruIndexFragment extends Fragment implements View.OnClick
         if(view.getId() == R.id.layout_ripple_view_headline_terbaru) {
             if(isInternetPresent) {
                 rippleView.setVisibility(View.GONE);
-                loading_layout.setVisibility(View.VISIBLE);
+                progressWheel.setVisibility(View.VISIBLE);
                 StringRequest request = new StringRequest(Request.Method.GET, Constant.NEW_DETAIL + "/id/" + id,
                         new Response.Listener<String>() {
                             @Override
@@ -890,7 +891,7 @@ public class DetailTerbaruIndexFragment extends Fragment implements View.OnClick
 
                                     getActivity().invalidateOptionsMenu();
 
-                                    loading_layout.setVisibility(View.GONE);
+                                    progressWheel.setVisibility(View.GONE);
 
                                     if(urlVideo.length() > 0) {
                                         textLinkVideo.setVisibility(View.VISIBLE);
@@ -904,7 +905,7 @@ public class DetailTerbaruIndexFragment extends Fragment implements View.OnClick
                             @Override
                             public void onErrorResponse(VolleyError volleyError) {
                                 volleyError.getMessage();
-                                loading_layout.setVisibility(View.GONE);
+                                progressWheel.setVisibility(View.GONE);
                                 rippleView.setVisibility(View.VISIBLE);
                             }
                         });
@@ -918,7 +919,7 @@ public class DetailTerbaruIndexFragment extends Fragment implements View.OnClick
                 Global.getInstance(getActivity()).addToRequestQueue(request, Constant.JSON_REQUEST);
             } else {
                 Toast.makeText(getActivity(), R.string.title_no_connection, Toast.LENGTH_SHORT).show();
-                loading_layout.setVisibility(View.GONE);
+                progressWheel.setVisibility(View.GONE);
                 tvNoResult.setVisibility(View.VISIBLE);
             }
         } else if(view.getId() == R.id.thumb_detail_news) {

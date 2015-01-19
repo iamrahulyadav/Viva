@@ -13,7 +13,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.RelativeLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,6 +37,7 @@ import id.co.viva.news.app.Global;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.adapter.ChannelNewsAdapter;
 import id.co.viva.news.app.component.LoadMoreListView;
+import id.co.viva.news.app.component.ProgressWheel;
 import id.co.viva.news.app.interfaces.OnLoadMoreListener;
 import id.co.viva.news.app.model.ChannelNews;
 import id.co.viva.news.app.services.Analytics;
@@ -52,11 +52,11 @@ public class ActDetailChannelNews extends ActBase implements
     private String id;
     private String channel_title;
     private boolean isInternetPresent = false;
-    private RelativeLayout loading_layout;
     private TextView tvNoResult;
     private TextView tvChannel;
     private LoadMoreListView listView;
     private String cachedResponse;
+    private ProgressWheel progressWheel;
     private AnimationAdapter mAnimAdapter;
     private JSONArray jsonArrayResponses, jsonArraySegmentHeadline;
     private Analytics analytics;
@@ -93,7 +93,7 @@ public class ActDetailChannelNews extends ActBase implements
         id = bundle.getString("id");
         channel_title = bundle.getString("channel_title");
 
-        loading_layout = (RelativeLayout) findViewById(R.id.loading_progress_layout);
+        progressWheel = (ProgressWheel) findViewById(R.id.progress_wheel);
 
         rippleView = (RippleView) findViewById(R.id.layout_ripple_view);
         rippleView.setVisibility(View.GONE);
@@ -160,7 +160,7 @@ public class ActDetailChannelNews extends ActBase implements
                                     mAnimAdapter.setAbsListView(listView);
                                     listView.setAdapter(mAnimAdapter);
                                     mAnimAdapter.notifyDataSetChanged();
-                                    loading_layout.setVisibility(View.GONE);
+                                    progressWheel.setVisibility(View.GONE);
                                 }
                             } catch (Exception e) {
                                 e.getMessage();
@@ -171,7 +171,7 @@ public class ActDetailChannelNews extends ActBase implements
                         @Override
                         public void onErrorResponse(VolleyError volleyError) {
                             volleyError.getMessage();
-                            loading_layout.setVisibility(View.GONE);
+                            progressWheel.setVisibility(View.GONE);
                             rippleView.setVisibility(View.VISIBLE);
                         }
                     });
@@ -215,13 +215,13 @@ public class ActDetailChannelNews extends ActBase implements
                         mAnimAdapter.setAbsListView(listView);
                         listView.setAdapter(mAnimAdapter);
                         mAnimAdapter.notifyDataSetChanged();
-                        loading_layout.setVisibility(View.GONE);
+                        progressWheel.setVisibility(View.GONE);
                     }
                 } catch (Exception e) {
                     e.getMessage();
                 }
             } else {
-                loading_layout.setVisibility(View.GONE);
+                progressWheel.setVisibility(View.GONE);
                 tvNoResult.setVisibility(View.VISIBLE);
             }
         }
@@ -329,7 +329,7 @@ public class ActDetailChannelNews extends ActBase implements
         if(view.getId() == R.id.layout_ripple_view) {
             if(isInternetPresent) {
                 rippleView.setVisibility(View.GONE);
-                loading_layout.setVisibility(View.VISIBLE);
+                progressWheel.setVisibility(View.VISIBLE);
                 StringRequest stringRequest = new StringRequest(Request.Method.GET, Constant.NEW_KANAL + "ch/" + id + "/lv/1/s/0",
                         new Response.Listener<String>() {
                             @Override
@@ -361,7 +361,7 @@ public class ActDetailChannelNews extends ActBase implements
                                         mAnimAdapter.setAbsListView(listView);
                                         listView.setAdapter(mAnimAdapter);
                                         mAnimAdapter.notifyDataSetChanged();
-                                        loading_layout.setVisibility(View.GONE);
+                                        progressWheel.setVisibility(View.GONE);
                                         if(rippleView.getVisibility() == View.VISIBLE) {
                                             rippleView.setVisibility(View.GONE);
                                         }
@@ -375,7 +375,7 @@ public class ActDetailChannelNews extends ActBase implements
                             @Override
                             public void onErrorResponse(VolleyError volleyError) {
                                 volleyError.getMessage();
-                                loading_layout.setVisibility(View.GONE);
+                                progressWheel.setVisibility(View.GONE);
                                 rippleView.setVisibility(View.VISIBLE);
                             }
                         });

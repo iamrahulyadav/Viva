@@ -22,7 +22,7 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 
 import id.co.viva.news.app.R;
-import id.co.viva.news.app.component.BounvenoTextView;
+import id.co.viva.news.app.component.RobotoTextView;
 import id.co.viva.news.app.interfaces.CoachmarkListener;
 
 /**
@@ -190,7 +190,7 @@ public class CoachmarkView extends RelativeLayout {
 		/*
 		 * Title
 		 */
-        BounvenoTextView textTitle = new BounvenoTextView(getContext());
+        RobotoTextView textTitle = new RobotoTextView(getContext());
         textTitle.setText(getTitle());
         if (getTitle_color() != 0)
             textTitle.setTextColor(getTitle_color());
@@ -205,7 +205,7 @@ public class CoachmarkView extends RelativeLayout {
 		/*
 		 * Description
 		 */
-        BounvenoTextView text = new BounvenoTextView(getContext());
+        RobotoTextView text = new RobotoTextView(getContext());
         text.setText(getDescription());
         if (getDescription_color() != 0)
             text.setTextColor(getDescription_color());

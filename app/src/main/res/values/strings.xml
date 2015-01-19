@@ -51,6 +51,9 @@
     <string name="label_failed_get_province">Gagal mendapatkan data provinsi!</string>
     <string name="label_failed_get_city">Gagal mendapatkan data kota!</string>
 
+    <string name="url_google_play">market://details?id=</string>
+    <string name="label_failed_found_store">Unable to find market app!</string>
+
     <string name="label_registrasi_username">Username</string>
     <string name="label_registrasi_password">Password</string>
     <string name="label_registrasi_email">Email</string>
@@ -82,6 +85,7 @@
     <string name="label_item_navigation_bola">Bola</string>
     <string name="label_item_navigation_life">Life</string>
     <string name="label_item_navigation_about">About</string>
+    <string name="label_item_navigation_rateapp">Rate App</string>
     <string name="label_section_navigation_channel">CHANNELS</string>
     <string name="label_section_navigation_preferences">PREFERENCES</string>
     <string name="label_loading">Loading...</string>
@@ -124,8 +128,7 @@
     <string name="label_video_click"><u>Klik untuk melihat video.</u></string>
     <string name="label_success_send_email">Email telah berhasil dikirim. Silahkan cek email anda untuk melihat password.</string>
 
-    <string name="title_copyright">Copyright © 2008 - 2014 PT. Viva Media Baru</string>
-    <string name="wording_about_eng">VIVA.co.id mobile application for Android devices so users can enjoy a variety of quality contents of VIVA.co.id with ease of navigation and a wealth of features. Contents in the form of texts, photos and videos are continuously updated and presented creatively to enrich the user experience.</string>
-    <string name="wording_about_indo">Aplikasi mobile VIVA.co.id ini dirancang khusus untuk Android ​agar pengguna dapat menikmati beragam konten bermutu dari VIVA.co.id dengan kemudahan navigasi dan kekayaan fitur Android. Konten dalam bentuk teks, foto, dan video diperbarui terus-menerus dan disajikan secara kreatif sehingga memperkaya pengalaman pengguna.</string>
+    <string name="title_copyright">Copyright © 2008 - 2015 PT. Viva Media Baru</string>
+    <string name="wording_about_indo">Aplikasi mobile VIVA.co.id ini dirancang khusus untuk Android ​agar pengguna dapat menikmati beragam konten bermutu dari VIVA.co.id dengan kemudahan navigasi dan kekayaan fitur Android. Konten dalam bentuk teks, foto dan video diperbarui terus-menerus dan disajikan secara kreatif sehingga memperkaya pengalaman pengguna.</string>
 
 </resources>

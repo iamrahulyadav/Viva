@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,10 +29,11 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import id.co.viva.news.app.Global;
+import id.co.viva.news.app.R;
 import id.co.viva.news.app.activity.ActDetailContentDefault;
+import id.co.viva.news.app.component.ProgressWheel;
 import id.co.viva.news.app.services.Analytics;
 import id.co.viva.news.app.Constant;
-import id.co.viva.news.app.R;
 import id.co.viva.news.app.activity.ActDetailChannelLife;
 import id.co.viva.news.app.adapter.FeaturedLifeAdapter;
 import id.co.viva.news.app.model.FeaturedLife;
@@ -48,7 +48,7 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
     private boolean isInternetPresent = false;
     private GridView gridNews;
     private String cachedResponse;
-    private RelativeLayout loading_layout;
+    private ProgressWheel progressWheel;
     private TextView tvNoResult;
     private Analytics analytics;
     private RippleView rippleView;
@@ -79,8 +79,8 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
         tvNoResult = (TextView) rootView.findViewById(R.id.text_no_result);
         tvNoResult.setVisibility(View.GONE);
 
-        loading_layout = (RelativeLayout) rootView.findViewById(R.id.loading_progress_layout);
-        loading_layout.setVisibility(View.VISIBLE);
+        progressWheel = (ProgressWheel) rootView.findViewById(R.id.progress_wheel);
+        progressWheel.setVisibility(View.VISIBLE);
 
         rippleView = (RippleView) rootView.findViewById(R.id.layout_ripple_view);
         rippleView.setVisibility(View.GONE);
@@ -154,7 +154,7 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
                                     assert swingBottomInAnimationAdapter.getViewAnimator() != null;
                                     swingBottomInAnimationAdapter.getViewAnimator().setInitialDelayMillis(0000);
                                     gridNews.setAdapter(swingBottomInAnimationAdapter);
-                                    loading_layout.setVisibility(View.GONE);
+                                    progressWheel.setVisibility(View.GONE);
                                 }
                             } catch (Exception e) {
                                 e.getMessage();
@@ -165,7 +165,7 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
                         @Override
                         public void onErrorResponse(VolleyError volleyError) {
                             volleyError.getMessage();
-                            loading_layout.setVisibility(View.GONE);
+                            progressWheel.setVisibility(View.GONE);
                             rippleView.setVisibility(View.VISIBLE);
                         }
                     });
@@ -213,13 +213,13 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
                         assert swingBottomInAnimationAdapter.getViewAnimator() != null;
                         swingBottomInAnimationAdapter.getViewAnimator().setInitialDelayMillis(0000);
                         gridNews.setAdapter(swingBottomInAnimationAdapter);
-                        loading_layout.setVisibility(View.GONE);
+                        progressWheel.setVisibility(View.GONE);
                     }
                 } catch (Exception e) {
                     e.getMessage();
                 }
             } else {
-                loading_layout.setVisibility(View.GONE);
+                progressWheel.setVisibility(View.GONE);
                 tvNoResult.setVisibility(View.VISIBLE);
                 Toast.makeText(getActivity(), R.string.title_no_connection, Toast.LENGTH_SHORT).show();
             }
@@ -233,7 +233,7 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
         if(view.getId() == R.id.layout_ripple_view) {
             if(isInternetPresent) {
                 rippleView.setVisibility(View.GONE);
-                loading_layout.setVisibility(View.VISIBLE);
+                progressWheel.setVisibility(View.VISIBLE);
                 StringRequest request = new StringRequest(Request.Method.GET, Constant.NEW_LIFE,
                         new Response.Listener<String>() {
                             @Override
@@ -269,7 +269,7 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
                                         assert swingBottomInAnimationAdapter.getViewAnimator() != null;
                                         swingBottomInAnimationAdapter.getViewAnimator().setInitialDelayMillis(0000);
                                         gridNews.setAdapter(swingBottomInAnimationAdapter);
-                                        loading_layout.setVisibility(View.GONE);
+                                        progressWheel.setVisibility(View.GONE);
                                     }
                                 } catch (Exception e) {
                                     e.getMessage();
@@ -280,7 +280,7 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
                             @Override
                             public void onErrorResponse(VolleyError volleyError) {
                                 volleyError.getMessage();
-                                loading_layout.setVisibility(View.GONE);
+                                progressWheel.setVisibility(View.GONE);
                                 rippleView.setVisibility(View.VISIBLE);
                             }
                         });

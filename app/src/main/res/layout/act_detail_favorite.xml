@@ -35,7 +35,7 @@
                 android:layout_marginBottom="5dp"
                 android:id="@+id/title_and_kanal_detail_content_favorite_layout"
                 android:orientation="horizontal">
-                <id.co.viva.news.app.component.BounvenoTextView
+                <id.co.viva.news.app.component.RobotoBoldTextView
                     android:id="@+id/title_detail_content_favorite"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -43,7 +43,7 @@
                     android:textStyle="bold"
                     android:textSize="24sp"/>
             </LinearLayout>
-            <id.co.viva.news.app.component.BounvenoTextView
+            <id.co.viva.news.app.component.RobotoTextView
                 android:id="@+id/date_detail_content_favorite"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -51,7 +51,7 @@
                 android:textColor="@color/date_color"
                 android:layout_below="@id/title_and_kanal_detail_content_favorite_layout"
                 android:textSize="16sp"/>
-            <id.co.viva.news.app.component.BounvenoTextView
+            <id.co.viva.news.app.component.RobotoTextView
                 android:id="@+id/reporter_detail_content_favorite"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -75,7 +75,7 @@
                 app:lineWidth="30dp"
                 app:unselectedColor="#FF888888"
                 app:selectedColor="@color/blue"/>
-            <id.co.viva.news.app.component.BounvenoTextView
+            <id.co.viva.news.app.component.RobotoTextView
                 android:id="@+id/content_detail_content_favorite"
                 android:lineSpacingExtra="10px"
                 android:layout_below="@id/indicator"

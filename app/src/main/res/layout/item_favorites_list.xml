@@ -27,7 +27,7 @@
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
             android:layout_height="match_parent">
-            <id.co.viva.news.app.component.BounvenoTextView
+            <id.co.viva.news.app.component.RobotoTextView
                 android:id="@+id/title_item_favorites"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -37,7 +37,7 @@
                 android:textColor="@color/nav_drawer_group_grey"
                 android:textSize="16sp"
                 android:textStyle="bold" />
-            <id.co.viva.news.app.component.BounvenoTextView
+            <id.co.viva.news.app.component.RobotoTextView
                 android:id="@+id/date_item_favorites"
                 android:layout_alignParentBottom="true"
                 android:layout_width="fill_parent"

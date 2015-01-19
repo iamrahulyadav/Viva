@@ -2,6 +2,7 @@
 <com.nirhart.parallaxscroll.views.ParallaxScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    xmlns:wheel="http://schemas.android.com/apk/res-auto"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:ripple="http://schemas.android.com/apk/res-auto"
     app:parallax_factor="1.9">
@@ -35,30 +36,30 @@
                 android:layout_marginBottom="5dp"
                 android:id="@+id/title_and_kanal_detail_latest_layout"
                 android:orientation="horizontal">
-                <id.co.viva.news.app.component.BounvenoTextView
+                <id.co.viva.news.app.component.RobotoBoldTextView
                     android:id="@+id/title_detail_news"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="@color/black"
                     android:textStyle="bold"
-                    android:textSize="24sp"/>
+                    android:textSize="22sp"/>
             </LinearLayout>
-            <id.co.viva.news.app.component.BounvenoTextView
+            <id.co.viva.news.app.component.RobotoTextView
                 android:id="@+id/date_detail_news"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
                 android:textColor="@color/date_color"
                 android:layout_below="@id/title_and_kanal_detail_latest_layout"
-                android:textSize="16sp"/>
-            <id.co.viva.news.app.component.BounvenoTextView
+                android:textSize="12sp"/>
+            <id.co.viva.news.app.component.RobotoTextView
                 android:id="@+id/reporter_detail_news"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/date_detail_news"
                 android:layout_marginBottom="15dp"
                 android:textColor="@color/red"
-                android:textSize="16sp"/>
+                android:textSize="15sp"/>
             <android.support.v4.view.ViewPager
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
@@ -74,15 +75,15 @@
                 app:lineWidth="30dp"
                 app:unselectedColor="#FF888888"
                 app:selectedColor="@color/blue"/>
-            <id.co.viva.news.app.component.BounvenoTextView
+            <id.co.viva.news.app.component.RobotoTextView
                 android:id="@+id/content_detail_news"
                 android:layout_below="@id/indicator"
                 android:layout_width="wrap_content"
-                android:lineSpacingExtra="10px"
-                android:textSize="18sp"
+                android:lineSpacingExtra="6px"
+                android:textSize="16sp"
                 android:textColor="@color/black"
                 android:layout_height="wrap_content"/>
-            <id.co.viva.news.app.component.BounvenoTextView
+            <id.co.viva.news.app.component.RobotoTextView
                 android:id="@+id/text_move_video"
                 android:layout_below="@id/content_detail_news"
                 android:textSize="14sp"
@@ -102,11 +103,11 @@
                 android:background="@color/light_white"
                 android:layout_below="@id/text_move_video"
                 android:id="@+id/layout_preview_comment_list">
-                <id.co.viva.news.app.component.BounvenoTextView
+                <id.co.viva.news.app.component.RobotoTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:textSize="18sp"
+                    android:textSize="16sp"
                     android:textStyle="bold"
                     android:text="Komentar"/>
                 <View
@@ -114,7 +115,7 @@
                     android:layout_height="0.1dp"
                     android:layout_margin="5dp"
                     android:background="@color/transparent"/>
-                <id.co.viva.news.app.component.BounvenoTextView
+                <id.co.viva.news.app.component.RobotoTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
@@ -122,7 +123,7 @@
                     android:textSize="16sp"
                     android:layout_marginLeft="5dp"
                     android:id="@+id/text_preview_comment_user"/>
-                <id.co.viva.news.app.component.BounvenoTextView
+                <id.co.viva.news.app.component.RobotoTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/black"
@@ -137,7 +138,7 @@
                 android:id="@+id/header_related_article"
                 android:layout_below="@id/layout_preview_comment_list"
                 android:background="@color/header_headline_terbaru_new">
-                <id.co.viva.news.app.component.BounvenoTextView
+                <id.co.viva.news.app.component.RobotoBoldTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="16sp"
@@ -151,7 +152,7 @@
                 android:layout_height="fill_parent"
                 android:layout_below="@id/header_related_article"
                 android:id="@+id/list_related_article"/>
-            <id.co.viva.news.app.component.BounvenoTextView
+            <id.co.viva.news.app.component.RobotoTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="14sp"
@@ -160,19 +161,13 @@
                 android:text="@string/label_no_results"
                 android:textColor="@color/header_grey"
                 android:id="@+id/text_no_result_detail_news"/>
-            <RelativeLayout
-                android:id="@+id/loading_progress_layout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:padding="10dp">
-                <id.co.viva.news.app.component.LoadingView
-                    android:id="@+id/loading_progress"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:src="@drawable/ic_action_refresh_light"/>
-            </RelativeLayout>
+            <id.co.viva.news.app.component.ProgressWheel
+                android:id="@+id/progress_wheel"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:layout_centerInParent="true"
+                wheel:barColor="@color/blue"
+                wheel:progressIndeterminate="true" />
             <com.andexert.library.RippleView
                 android:id="@+id/layout_ripple_view_headline_terbaru"
                 android:layout_width="wrap_content"

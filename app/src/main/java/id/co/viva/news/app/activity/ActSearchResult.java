@@ -10,7 +10,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.RelativeLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,11 +28,12 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import id.co.viva.news.app.Global;
+import id.co.viva.news.app.R;
 import id.co.viva.news.app.component.LoadMoreListView;
+import id.co.viva.news.app.component.ProgressWheel;
 import id.co.viva.news.app.interfaces.OnLoadMoreListener;
 import id.co.viva.news.app.services.Analytics;
 import id.co.viva.news.app.Constant;
-import id.co.viva.news.app.R;
 import id.co.viva.news.app.adapter.SearchResultAdapter;
 import id.co.viva.news.app.model.SearchResult;
 
@@ -49,13 +49,13 @@ public class ActSearchResult extends FragmentActivity implements
     private boolean isInternetPresent = false;
     private JSONArray jsonArrayResponses;
     private ArrayList<SearchResult> resultArrayList;
-    private RelativeLayout loading_layout;
     private TextView tvNoResult;
     private AnimationAdapter mAnimAdapter;
     private Analytics analytics;
     private Menu mMenu;
     private int dataSize = 0;
     private String data;
+    private ProgressWheel progressWheel;
     private SearchResultAdapter searchResultAdapter;
 
     private String id ;
@@ -84,15 +84,15 @@ public class ActSearchResult extends FragmentActivity implements
         listSearchResult.setOnItemClickListener(this);
         listSearchResult.setOnLoadMoreListener(this);
         tvNoResult = (TextView)findViewById(R.id.text_no_result);
-        loading_layout = (RelativeLayout)findViewById(R.id.loading_progress_layout);
+        progressWheel = (ProgressWheel)findViewById(R.id.progress_wheel);
 
         if(isInternetPresent) {
             tvNoResult.setVisibility(View.GONE);
-            loading_layout.setVisibility(View.VISIBLE);
+            progressWheel.setVisibility(View.VISIBLE);
             handleIntent(getIntent());
         } else {
             Toast.makeText(this, R.string.title_no_connection, Toast.LENGTH_SHORT).show();
-            loading_layout.setVisibility(View.GONE);
+            progressWheel.setVisibility(View.GONE);
             tvNoResult.setVisibility(View.VISIBLE);
             tvSearchResult.setVisibility(View.GONE);
         }
@@ -143,7 +143,7 @@ public class ActSearchResult extends FragmentActivity implements
                                     mAnimAdapter.setAbsListView(listSearchResult);
                                     listSearchResult.setAdapter(mAnimAdapter);
                                     mAnimAdapter.notifyDataSetChanged();
-                                    loading_layout.setVisibility(View.GONE);
+                                    progressWheel.setVisibility(View.GONE);
                                 }
                             } catch (Exception e) {
                                 e.getMessage();
@@ -153,7 +153,7 @@ public class ActSearchResult extends FragmentActivity implements
                 @Override
                 public void onErrorResponse(VolleyError volleyError) {
                     volleyError.getMessage();
-                    loading_layout.setVisibility(View.GONE);
+                    progressWheel.setVisibility(View.GONE);
                     SearchView searchView =
                             (SearchView) mMenu.findItem(R.id.action_search).getActionView();
                     searchView.setIconified(false);

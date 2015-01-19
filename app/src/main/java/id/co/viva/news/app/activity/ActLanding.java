@@ -1,12 +1,14 @@
 package id.co.viva.news.app.activity;
 
 import android.app.SearchManager;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.FragmentActivity;
@@ -23,6 +25,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -132,6 +135,9 @@ public class ActLanding extends FragmentActivity implements View.OnClickListener
             case 8:
                 fragment =  new AboutFragment();
                 break;
+            case 9:
+                rateApp();
+                break;
             default:
                 break;
         }
@@ -178,6 +184,16 @@ public class ActLanding extends FragmentActivity implements View.OnClickListener
         getActionBar().setDisplayShowTitleEnabled(false);
     }
 
+    private void rateApp() {
+        Uri uri = Uri.parse(getResources().getString(R.string.url_google_play) + getPackageName());
+        Intent myAppLinkToMarket = new Intent(Intent.ACTION_VIEW, uri);
+        try {
+            startActivity(myAppLinkToMarket);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(this, R.string.label_failed_found_store, Toast.LENGTH_LONG).show();
+        }
+    }
+
     private void defineItemList() {
         navDrawerItems = new ArrayList<Item>();
         navDrawerItems.add(new NavigationItem(getResources().getString(R.string.label_item_navigation_headline), R.drawable.icon_terbaru));
@@ -189,6 +205,7 @@ public class ActLanding extends FragmentActivity implements View.OnClickListener
         navDrawerItems.add(new NavigationItem(getResources().getString(R.string.label_item_navigation_life), R.drawable.icon_viva_life));
         navDrawerItems.add(new NavigationSectionItem(getResources().getString(R.string.label_section_navigation_preferences)));
         navDrawerItems.add(new NavigationItem(getResources().getString(R.string.label_item_navigation_about), R.drawable.icon_about));
+        navDrawerItems.add(new NavigationItem(getResources().getString(R.string.label_item_navigation_rateapp), R.drawable.icon_rateapp));
     }
 
     private void defineViews() {

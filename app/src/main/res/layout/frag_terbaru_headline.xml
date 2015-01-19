@@ -13,14 +13,14 @@
             android:paddingLeft="5dp"
             android:paddingTop="3dp"
             android:paddingBottom="3dp">
-            <id.co.viva.news.app.component.BounvenoTextView
+            <id.co.viva.news.app.component.RobotoBoldTextView
                 android:id="@+id/text_terbaru_headline"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/header_headline_terbaru_new"
                 android:textStyle="bold"
                 android:textSize="18sp"/>
-            <id.co.viva.news.app.component.BounvenoTextView
+            <id.co.viva.news.app.component.RobotoBoldTextView
                 android:id="@+id/date_terbaru_headline"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -49,7 +49,7 @@
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_centerInParent="true"/>
-        <id.co.viva.news.app.component.BounvenoTextView
+        <id.co.viva.news.app.component.RobotoTextView
             android:layout_below="@id/loading_progress_layout_headline_terbaru"
             android:id="@+id/text_loading_data"
             android:layout_centerHorizontal="true"

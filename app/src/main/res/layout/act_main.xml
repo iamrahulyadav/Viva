@@ -36,14 +36,14 @@
             android:layout_marginLeft="10dp"
             android:layout_alignTop="@+id/img_profile"
             android:layout_toRightOf="@+id/img_profile">
-            <id.co.viva.news.app.component.BounvenoTextView
+            <id.co.viva.news.app.component.RobotoBoldTextView
                 android:id="@+id/tv_username"
                 android:layout_width="match_parent"
                 android:textStyle="bold"
                 android:textColor="@color/white"
                 android:textSize="16sp"
                 android:layout_height="wrap_content"/>
-            <id.co.viva.news.app.component.BounvenoTextView
+            <id.co.viva.news.app.component.RobotoBoldTextView
                 android:layout_below="@id/tv_username"
                 android:id="@+id/tv_user_email"
                 android:textStyle="bold"

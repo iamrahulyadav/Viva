@@ -7,7 +7,7 @@
         android:id="@+id/header_item_list_comment"
         android:layout_gravity="center_vertical"
         android:layout_height="wrap_content">
-        <id.co.viva.news.app.component.BounvenoTextView
+        <id.co.viva.news.app.component.RobotoTextView
             android:id="@+id/name_item_comment"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -19,7 +19,7 @@
             android:textColor="@color/nav_drawer_group_grey"
             android:textSize="18sp"
             android:textStyle="bold" />
-        <id.co.viva.news.app.component.BounvenoTextView
+        <id.co.viva.news.app.component.RobotoTextView
             android:id="@+id/date_item_comment"
             android:layout_below="@id/name_item_comment"
             android:layout_width="fill_parent"
@@ -29,7 +29,7 @@
             android:layout_height="wrap_content"
             android:textColor="@color/date_color"/>
     </RelativeLayout>
-    <id.co.viva.news.app.component.BounvenoTextView
+    <id.co.viva.news.app.component.RobotoTextView
         android:id="@+id/content_item_comment"
         android:layout_below="@id/header_item_list_comment"
         android:layout_width="fill_parent"

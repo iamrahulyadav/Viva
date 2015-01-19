@@ -13,7 +13,7 @@
             android:layout_width="65dp"
             android:layout_height="65dp"
             android:id="@+id/img_thumb_content_rate"/>
-        <id.co.viva.news.app.component.BounvenoTextView
+        <id.co.viva.news.app.component.RobotoTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="10dp"
@@ -40,7 +40,7 @@
         android:layout_height="45dp"
         android:layout_gravity="center_horizontal"
         android:layout_margin="10dp"/>
-    <id.co.viva.news.app.component.BounvenoTextView
+    <id.co.viva.news.app.component.RobotoTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"

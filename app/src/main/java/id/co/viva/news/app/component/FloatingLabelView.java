@@ -27,7 +27,7 @@ import id.co.viva.news.app.R;
 public class FloatingLabelView extends LinearLayout implements OnFocusChangeListener {
 
     private EditText input;
-    private BounvenoTextView display;
+    private RobotoTextView display;
     private LinearLayout.LayoutParams inpuTextParams;
     private LinearLayout.LayoutParams displayTextParams;
     private Animation bottomUp, bottomDown;
@@ -49,7 +49,7 @@ public class FloatingLabelView extends LinearLayout implements OnFocusChangeList
     private void createLayout(AttributeSet attrs) {
         Context context = getContext();
         input = new EditText(context);
-        display = new BounvenoTextView(context);
+        display = new RobotoTextView(context);
         input.setOnFocusChangeListener(this);
         bottomUp = AnimationUtils.loadAnimation(context, R.anim.txt_bottom_up);
         bottomDown = AnimationUtils.loadAnimation(context, R.anim.txt_bottom_down);

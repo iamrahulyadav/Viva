@@ -9,14 +9,15 @@ import android.widget.TextView;
 /**
  * Created by reza on 5/22/14.
  */
-public class BounvenoTextView extends TextView {
+public class RobotoTextView extends TextView {
+
     private Drawable[] drawables;
 
-    public BounvenoTextView(Context context, AttributeSet as) {
+    public RobotoTextView(Context context, AttributeSet as) {
         super(context, as);
     }
 
-    public BounvenoTextView(Context context) {
+    public RobotoTextView(Context context) {
         super(context);
     }
 

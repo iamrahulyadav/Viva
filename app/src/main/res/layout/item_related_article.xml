@@ -19,7 +19,7 @@
         android:gravity="center_vertical"
         android:layout_marginLeft="5dp"
         android:orientation="vertical">
-        <id.co.viva.news.app.component.BounvenoTextView
+        <id.co.viva.news.app.component.RobotoTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:maxLines="3"

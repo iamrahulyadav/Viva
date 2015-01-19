@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:ripple="http://schemas.android.com/apk/res-auto"
+    xmlns:wheel="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <id.co.viva.news.app.component.BounvenoTextView
+    <id.co.viva.news.app.component.RobotoBoldTextView
         android:layout_width="wrap_content"
         android:text="@string/abc_searchview_description_search"
         android:layout_height="wrap_content"
@@ -24,21 +24,14 @@
         android:dividerHeight="0dp"
         android:layout_height="fill_parent">
     </id.co.viva.news.app.component.LoadMoreListView>
-    <RelativeLayout
-        android:id="@+id/loading_progress_layout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <id.co.viva.news.app.component.ProgressWheel
+        android:id="@+id/progress_wheel"
+        android:layout_width="90dp"
+        android:layout_height="90dp"
         android:layout_centerInParent="true"
-        android:padding="10dp">
-        <id.co.viva.news.app.component.LoadingView
-            android:id="@+id/loading_progress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:src="@drawable/ic_action_refresh_light"/>
-    </RelativeLayout>
-    <id.co.viva.news.app.component.BounvenoTextView
+        wheel:barColor="@color/blue"
+        wheel:progressIndeterminate="true" />
+    <id.co.viva.news.app.component.RobotoTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="14sp"

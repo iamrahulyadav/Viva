@@ -39,16 +39,17 @@ import java.util.ArrayList;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import id.co.viva.news.app.Global;
+import id.co.viva.news.app.R;
 import id.co.viva.news.app.adapter.ImageSliderAdapter;
 import id.co.viva.news.app.coachmark.CoachmarkBuilder;
 import id.co.viva.news.app.coachmark.CoachmarkView;
+import id.co.viva.news.app.component.ProgressWheel;
 import id.co.viva.news.app.model.Comment;
 import id.co.viva.news.app.model.Favorites;
 import id.co.viva.news.app.model.SliderContentImage;
 import id.co.viva.news.app.model.Video;
 import id.co.viva.news.app.services.Analytics;
 import id.co.viva.news.app.Constant;
-import id.co.viva.news.app.R;
 import id.co.viva.news.app.adapter.RelatedAdapter;
 import id.co.viva.news.app.model.RelatedArticle;
 
@@ -98,7 +99,7 @@ public class ActDetailContentDefault extends FragmentActivity
     private ViewPager viewPager;
     private LinePageIndicator linePageIndicator;
     private Analytics analytics;
-    private RelativeLayout loading_layout;
+    private ProgressWheel progressWheel;
     private String favoriteList;
 
     private ArrayList<Favorites> favoritesArrayList;
@@ -148,7 +149,7 @@ public class ActDetailContentDefault extends FragmentActivity
         linePageIndicator = (LinePageIndicator)findViewById(R.id.indicator);
         linePageIndicator.setVisibility(View.GONE);
 
-        loading_layout = (RelativeLayout) findViewById(R.id.loading_progress_layout_default);
+        progressWheel = (ProgressWheel) findViewById(R.id.progress_wheel);
         headerRelated = (RelativeLayout) findViewById(R.id.header_related_article);
         headerRelated.setVisibility(View.GONE);
         tvNoResult = (TextView) findViewById(R.id.text_no_result_detail_content);
@@ -323,7 +324,7 @@ public class ActDetailContentDefault extends FragmentActivity
                                     thread.start();
                                 }
 
-                                loading_layout.setVisibility(View.GONE);
+                                progressWheel.setVisibility(View.GONE);
 
                                 if(urlVideo.length() > 0) {
                                     textLinkVideo.setVisibility(View.VISIBLE);
@@ -474,13 +475,13 @@ public class ActDetailContentDefault extends FragmentActivity
                         thread.start();
                     }
 
-                    loading_layout.setVisibility(View.GONE);
+                    progressWheel.setVisibility(View.GONE);
                 } catch (Exception e) {
                     e.getMessage();
                 }
             } else {
                 Toast.makeText(this, R.string.title_no_connection, Toast.LENGTH_SHORT).show();
-                loading_layout.setVisibility(View.GONE);
+                progressWheel.setVisibility(View.GONE);
                 tvNoResult.setVisibility(View.VISIBLE);
             }
         }
