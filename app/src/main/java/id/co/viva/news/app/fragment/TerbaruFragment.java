@@ -2,6 +2,7 @@ package id.co.viva.news.app.fragment;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -9,12 +10,15 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,8 +39,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 import id.co.viva.news.app.Global;
+import id.co.viva.news.app.coachmark.CoachmarkBuilder;
+import id.co.viva.news.app.coachmark.CoachmarkView;
 import id.co.viva.news.app.component.GoogleMusicDicesDrawable;
 import id.co.viva.news.app.component.LoadMoreListView;
+import id.co.viva.news.app.interfaces.CoachmarkListener;
 import id.co.viva.news.app.interfaces.OnLoadMoreListener;
 import id.co.viva.news.app.services.Analytics;
 import id.co.viva.news.app.Constant;
@@ -68,6 +75,8 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
     private SimpleDateFormat date, time;
     private Analytics analytics;
     private RippleView rippleView;
+    private View coachmarkView, coachmarkViewSearch;
+    private CoachmarkView showtips;
     private FloatingActionButton floatingActionButton;
 
     @Override
@@ -97,6 +106,9 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
 
         loading_layout = (ProgressBar) rootView.findViewById(R.id.loading_progress_layout_headline_terbaru);
         labelLoadData = (TextView) rootView.findViewById(R.id.text_loading_data);
+
+        coachmarkView = rootView.findViewById(R.id.coachmark_nav_toggle);
+        coachmarkViewSearch = rootView.findViewById(R.id.coachmark_search);
 
         Rect bounds = loading_layout.getIndeterminateDrawable().getBounds();
         loading_layout.setIndeterminateDrawable(getProgressDrawable());
@@ -185,6 +197,8 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
                                     loading_layout.setVisibility(View.GONE);
                                     labelLoadData.setVisibility(View.GONE);
                                 }
+
+                                showCoachMark();
 
                                 Calendar cal=Calendar.getInstance();
                                 date = new SimpleDateFormat("dd MMM yyyy");
@@ -369,8 +383,11 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
                         }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError volleyError) {
-                        volleyError.getMessage();
-                        Toast.makeText(getActivity(), R.string.label_error, Toast.LENGTH_SHORT).show();
+                        listView.onLoadMoreComplete();
+                        listView.setSelection(0);
+                        if(getActivity() != null) {
+                            Toast.makeText(getActivity(), R.string.label_error, Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
                 stringRequest.setShouldCache(true);
@@ -381,6 +398,10 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
                 Global.getInstance(getActivity()).getRequestQueue().getCache().invalidate(Constant.NEW_TERBARU + "start/" + data, true);
                 Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_TERBARU + "start/" + data);
                 Global.getInstance(getActivity()).addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
+        } else {
+            listView.onLoadMoreComplete();
+            listView.setSelection(0);
+            Toast.makeText(getActivity(), R.string.title_no_connection, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -430,6 +451,8 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
                                         labelLoadData.setVisibility(View.GONE);
                                         rippleView.setVisibility(View.GONE);
                                     }
+
+                                    showCoachMark();
 
                                     Calendar cal=Calendar.getInstance();
                                     date = new SimpleDateFormat("dd MMM yyyy");
@@ -506,6 +529,57 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
         } else if(view.getId() == R.id.fab) {
             listView.setSelection(0);
         }
+    }
+
+    private void showCoachMark() {
+        if(Global.getInstance(getActivity()).getSharedPreferences(getActivity()).getBoolean(Constant.FIRST_INSTALL, true)) {
+            RelativeLayout relativeLayout = new RelativeLayout(getActivity());
+            relativeLayout.setLayoutParams(new ViewGroup.LayoutParams(50, 50));
+            ((RelativeLayout) coachmarkView).addView(relativeLayout);
+            showtips = new CoachmarkBuilder(getActivity())
+                    .setTarget(relativeLayout, 50, getHeightFocus(), 50)
+                    .setTitle(getResources().getString(R.string.label_navigation_button))
+                    .setDescription(getResources().getString(R.string.label_navigation_button_desc))
+                    .setDelay(2000)
+                    .setCallback(new CoachmarkListener() {
+                        @Override
+                        public void gotItClicked() {
+                            RelativeLayout relativeLayout = new RelativeLayout(getActivity());
+                            relativeLayout.setLayoutParams(new ViewGroup.LayoutParams(75, 75));
+                            ((RelativeLayout) coachmarkViewSearch).addView(relativeLayout);
+                            showtips = new CoachmarkBuilder(getActivity())
+                                    .setTarget(relativeLayout, getWidthFocus(), getHeightFocus(), 65)
+                                    .setTitle(getResources().getString(R.string.label_search_button))
+                                    .setDescription(getResources().getString(R.string.label_search_button_desc))
+                                    .build();
+                            showtips.show(getActivity());
+                        }
+                    })
+                    .build();
+            showtips.show(getActivity());
+            Global.getInstance(getActivity()).getSharedPreferences(getActivity()).
+                    edit().putBoolean(Constant.FIRST_INSTALL, false).commit();
+        }
+    }
+
+    private int getHeightFocus() {
+        int actionBarHeight = 0;
+        int heightFocus;
+        TypedValue typedValue = new TypedValue();
+        if (getActivity().getTheme().resolveAttribute(android.R.attr.actionBarSize, typedValue, true))
+        {
+            actionBarHeight = TypedValue.complexToDimensionPixelSize(typedValue.data,getResources().getDisplayMetrics());
+        }
+        heightFocus = 0 - (actionBarHeight / 2);
+        return heightFocus;
+    }
+
+    private int getWidthFocus() {
+        Display display = getActivity().getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int width = size.x;
+        return width - 75;
     }
 
 }

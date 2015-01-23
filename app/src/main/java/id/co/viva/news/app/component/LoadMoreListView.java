@@ -102,7 +102,7 @@ public class LoadMoreListView extends ListView implements AbsListView.OnScrollLi
     }
 
     public void onLoadMore() {
-        Log.d(Constant.TAG, "onLoadMore");
+        Log.i(Constant.TAG, "onLoadMore");
         if (mOnLoadMoreListener != null) {
             mOnLoadMoreListener.onLoadMore();
         }

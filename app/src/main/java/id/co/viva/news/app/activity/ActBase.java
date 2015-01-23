@@ -110,8 +110,8 @@ public class ActBase extends FragmentActivity implements View.OnClickListener {
 
     private void defineItemList() {
         navDrawerItems = new ArrayList<Item>();
-        navDrawerItems.add(new NavigationItem(getResources().getString(R.string.label_item_navigation_headline), R.drawable.icon_terbaru));
         navDrawerItems.add(new NavigationItem(getResources().getString(R.string.label_item_navigation_terbaru), R.drawable.icon_headline));
+        navDrawerItems.add(new NavigationItem(getResources().getString(R.string.label_item_navigation_headline), R.drawable.icon_terbaru));
         navDrawerItems.add(new NavigationItem(getResources().getString(R.string.label_item_navigation_favorites), R.drawable.icon_favorites));
         navDrawerItems.add(new NavigationSectionItem(getResources().getString(R.string.label_section_navigation_channel)));
         navDrawerItems.add(new NavigationItem(getResources().getString(R.string.label_item_navigation_news), R.drawable.icon_viva_news));
@@ -170,8 +170,12 @@ public class ActBase extends FragmentActivity implements View.OnClickListener {
     private Target target = new Target() {
         @Override
         public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-            BitmapDrawable bitmapDrawable = new BitmapDrawable(Constant.blur(ActBase.this, bitmap));
-            mBackground.setBackgroundDrawable(bitmapDrawable);
+            try {
+                BitmapDrawable bitmapDrawable = new BitmapDrawable(Constant.blur(ActBase.this, bitmap));
+                mBackground.setBackgroundDrawable(bitmapDrawable);
+            } catch (NoClassDefFoundError e) {
+                e.getMessage();
+            }
         }
         @Override
         public void onBitmapFailed(Drawable errorDrawable) {
@@ -186,10 +190,10 @@ public class ActBase extends FragmentActivity implements View.OnClickListener {
     private void displayView(int position) {
         switch (position) {
             case 0:
-                fragment = new HeadlineFragment();
+                fragment = new TerbaruFragment();
                 break;
             case 1:
-                fragment = new TerbaruFragment();
+                fragment = new HeadlineFragment();
                 break;
             case 2:
                 fragment = new FavoritesFragment();

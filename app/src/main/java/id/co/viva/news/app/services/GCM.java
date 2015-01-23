@@ -73,7 +73,7 @@ public class GCM {
         int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(activity);
         if (resultCode != ConnectionResult.SUCCESS) {
             if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
-                GooglePlayServicesUtil.getErrorDialog(resultCode, activity, Constant.PLAY_SERVICES_RESOLUTION_REQUEST).show();
+                Log.e(Constant.TAG_GCM, "Error dialog Play Services Resolution Request");
             } else {
                 Log.i(Constant.TAG_GCM, "This device is not supported.");
             }
@@ -90,6 +90,8 @@ public class GCM {
             Preferences.setGCMRegId("");
             Preferences.setGCMRegGCMServer(false);
             Preferences.setGCMRegBackendServer(false);
+        } else {
+            Log.i(Constant.TAG_GCM, "GCM Reg ID : " + Preferences.getGCMRegId());
         }
     }
 

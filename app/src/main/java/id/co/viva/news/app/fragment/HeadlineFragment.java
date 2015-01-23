@@ -533,8 +533,11 @@ public class HeadlineFragment extends Fragment implements
                     }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError volleyError) {
-                    volleyError.getMessage();
-                    Toast.makeText(getActivity(), R.string.label_error, Toast.LENGTH_SHORT).show();
+                    listView.onLoadMoreComplete();
+                    listView.setSelection(0);
+                    if(getActivity() != null) {
+                        Toast.makeText(getActivity(), R.string.label_error, Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
             stringRequest.setShouldCache(true);
@@ -545,6 +548,10 @@ public class HeadlineFragment extends Fragment implements
             Global.getInstance(getActivity()).getRequestQueue().getCache().invalidate(Constant.NEW_HEADLINE + "start/" + data, true);
             Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_HEADLINE + "start/" + data);
             Global.getInstance(getActivity()).addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
+        } else {
+            listView.onLoadMoreComplete();
+            listView.setSelection(0);
+            Toast.makeText(getActivity(), R.string.title_no_connection, Toast.LENGTH_SHORT).show();
         }
     }
 

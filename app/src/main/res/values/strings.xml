@@ -86,8 +86,8 @@
     <string name="label_item_navigation_life">Life</string>
     <string name="label_item_navigation_about">About</string>
     <string name="label_item_navigation_rateapp">Rate App</string>
-    <string name="label_section_navigation_channel">CHANNELS</string>
-    <string name="label_section_navigation_preferences">PREFERENCES</string>
+    <string name="label_section_navigation_channel">KANAL</string>
+    <string name="label_section_navigation_preferences">PREFERENSI</string>
     <string name="label_loading">Loading...</string>
 
     <!-- Title for Viva Menu -->
