@@ -34,10 +34,12 @@ public class ActDetailTerbaru extends FragmentActivity {
         getActionBar().setTitle("Terbaru");
 
         int position = 0;
-        if(TerbaruFragment.newsArrayList.size() > 0) {
-            for(News news : TerbaruFragment.newsArrayList) {
-                if(news.getId().equals(id)) break;
-                position++;
+        if(TerbaruFragment.newsArrayList != null) {
+            if(TerbaruFragment.newsArrayList.size() > 0) {
+                for(News news : TerbaruFragment.newsArrayList) {
+                    if(news.getId().equals(id)) break;
+                    position++;
+                }
             }
         } else {
             Toast.makeText(this, R.string.label_error, Toast.LENGTH_SHORT).show();

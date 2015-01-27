@@ -1003,14 +1003,16 @@ public class DetailIndexContent extends Fragment implements
                 tvNoResult.setVisibility(View.VISIBLE);
             }
         } else if(view.getId() == R.id.thumb_detail_content) {
-            if(image_url.length() > 0) {
-                Bundle bundle = new Bundle();
-                bundle.putString("photoUrl", image_url);
-                bundle.putString("image_caption", image_caption);
-                Intent intent = new Intent(getActivity(), ActDetailPhotoThumb.class);
-                intent.putExtras(bundle);
-                startActivity(intent);
-                getActivity().overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+            if(image_url != null) {
+                if(image_url.length() > 0) {
+                    Bundle bundle = new Bundle();
+                    bundle.putString("photoUrl", image_url);
+                    bundle.putString("image_caption", image_caption);
+                    Intent intent = new Intent(getActivity(), ActDetailPhotoThumb.class);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                    getActivity().overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+                }
             }
         } else if(view.getId() == R.id.layout_preview_comment_list) {
             moveCommentPage();

@@ -337,8 +337,7 @@ public class ActDetailContentDefault extends FragmentActivity
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError volleyError) {
-                            volleyError.getMessage();
-                            onBackPressed();
+                            finish();
                             Toast.makeText(ActDetailContentDefault.this, R.string.title_no_connection, Toast.LENGTH_SHORT).show();
                         }
                     });

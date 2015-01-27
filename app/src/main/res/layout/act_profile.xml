@@ -24,7 +24,11 @@
                     android:layout_width="110dp"
                     android:layout_height="110dp"
                     android:background="@drawable/ic_profile"
-                    android:layout_centerVertical="true"/>
+                    android:layout_centerVertical="true"
+                    app:border="true"
+                    app:border_color="@color/white"
+                    app:border_width="1dp"
+                    app:shadow="true"/>
                 <View
                     android:layout_toRightOf="@id/img_thumb_profile"
                     android:layout_width="0.1dp"

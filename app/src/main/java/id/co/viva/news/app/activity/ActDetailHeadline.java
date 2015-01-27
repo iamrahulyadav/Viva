@@ -34,10 +34,12 @@ public class ActDetailHeadline extends FragmentActivity {
         getActionBar().setTitle("Headlines");
 
         int position = 0;
-        if(HeadlineFragment.headlineArrayList.size() > 0) {
-            for(Headline headline : HeadlineFragment.headlineArrayList) {
-                if(headline.getId().equals(id)) break;
-                position++;
+        if(HeadlineFragment.headlineArrayList != null) {
+            if(HeadlineFragment.headlineArrayList.size() > 0) {
+                for(Headline headline : HeadlineFragment.headlineArrayList) {
+                    if(headline.getId().equals(id)) break;
+                    position++;
+                }
             }
         } else {
             Toast.makeText(this, R.string.label_error, Toast.LENGTH_SHORT).show();

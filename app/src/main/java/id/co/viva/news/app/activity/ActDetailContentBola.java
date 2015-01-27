@@ -39,11 +39,12 @@ public class ActDetailContentBola extends FragmentActivity {
         getActionBar().setIcon(R.drawable.logo_viva_coid_second);
 
         int position = 0;
-        if(ActDetailChannelBola.channelBolaArrayList.size() > 0) {
-            //TODO Handle go back from open url in browser
-            for(ChannelBola channelBola : ActDetailChannelBola.channelBolaArrayList) {
-                if(channelBola.getId().equals(id)) break;
-                position++;
+        if(ActDetailChannelBola.channelBolaArrayList != null) {
+            if(ActDetailChannelBola.channelBolaArrayList.size() > 0) {
+                for(ChannelBola channelBola : ActDetailChannelBola.channelBolaArrayList) {
+                    if(channelBola.getId().equals(id)) break;
+                    position++;
+                }
             }
         } else {
             Toast.makeText(this, R.string.label_error, Toast.LENGTH_SHORT).show();

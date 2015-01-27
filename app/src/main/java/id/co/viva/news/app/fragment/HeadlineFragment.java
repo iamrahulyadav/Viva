@@ -61,8 +61,10 @@ public class HeadlineFragment extends Fragment implements
     private static String HEADLINES = "headlines";
     public static ArrayList<Headline> headlineArrayList;
 
-    private int dataSize = 0;
-    private String data;
+    private String lastPublished;
+
+//    private int dataSize = 0;
+//    private String data;
     private SwingBottomInAnimationAdapter swingBottomInAnimationAdapter;
     private HeadlineAdapter headlineAdapter;
     private LoadMoreListView listView;
@@ -82,7 +84,8 @@ public class HeadlineFragment extends Fragment implements
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        isInternetPresent = Global.getInstance(getActivity()).getConnectionStatus().isConnectingToInternet();
+        isInternetPresent = Global.getInstance(getActivity())
+                .getConnectionStatus().isConnectingToInternet();
     }
 
     @Override
@@ -185,6 +188,8 @@ public class HeadlineFragment extends Fragment implements
                                         }
                                     }
                                 }
+
+                                lastPublished = headlines.get(headlines.size()-1).getDate_publish();
 
                                 if(headlines.size() > 0 || !headlines.isEmpty()) {
                                     headlineAdapter = new HeadlineAdapter(getActivity(), headlines);
@@ -485,12 +490,15 @@ public class HeadlineFragment extends Fragment implements
 
     @Override
     public void onLoadMore() {
-        data = String.valueOf(dataSize += 12);
+        Log.i(Constant.TAG, "Last Published : " + lastPublished);
+//        data = String.valueOf(dataSize += 12);
         if(isInternetPresent) {
-            analytics.getAnalyticByATInternet(Constant.HEADLINE_PAGE + "_" + data);
-            analytics.getAnalyticByGoogleAnalytic(Constant.HEADLINE_PAGE + "_" + data);
+//            analytics.getAnalyticByATInternet(Constant.HEADLINE_PAGE + "_" + data);
+//            analytics.getAnalyticByGoogleAnalytic(Constant.HEADLINE_PAGE + "_" + data);
 
-            StringRequest stringRequest = new StringRequest(Request.Method.GET, Constant.NEW_HEADLINE + "start/" + data,
+            Log.i(Constant.TAG, Constant.NEW_HEADLINE + "published/" + lastPublished.replace(" ", "%20"));
+
+            StringRequest stringRequest = new StringRequest(Request.Method.GET, Constant.NEW_HEADLINE + "published/" + lastPublished.replace(" ", "%20"),
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String volleyResponse) {
@@ -517,6 +525,8 @@ public class HeadlineFragment extends Fragment implements
                                         }
                                     }
                                 }
+
+                                lastPublished = headlineArrayList.get(headlineArrayList.size()-1).getDate_publish();
 
                                 if(headlineArrayList.size() > 0 || !headlineArrayList.isEmpty()) {
                                     swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(headlineAdapter);
@@ -545,8 +555,8 @@ public class HeadlineFragment extends Fragment implements
                     Constant.TIME_OUT,
                     0,
                     DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-            Global.getInstance(getActivity()).getRequestQueue().getCache().invalidate(Constant.NEW_HEADLINE + "start/" + data, true);
-            Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_HEADLINE + "start/" + data);
+            Global.getInstance(getActivity()).getRequestQueue().getCache().invalidate(Constant.NEW_HEADLINE + "start/" + lastPublished, true);
+            Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_HEADLINE + "start/" + lastPublished);
             Global.getInstance(getActivity()).addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
         } else {
             listView.onLoadMoreComplete();
