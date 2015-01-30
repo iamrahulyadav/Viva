@@ -38,19 +38,19 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.Global;
+import id.co.viva.news.app.R;
+import id.co.viva.news.app.activity.ActDetailTerbaru;
+import id.co.viva.news.app.adapter.TerbaruAdapter;
 import id.co.viva.news.app.coachmark.CoachmarkBuilder;
 import id.co.viva.news.app.coachmark.CoachmarkView;
 import id.co.viva.news.app.component.GoogleMusicDicesDrawable;
 import id.co.viva.news.app.component.LoadMoreListView;
 import id.co.viva.news.app.interfaces.CoachmarkListener;
 import id.co.viva.news.app.interfaces.OnLoadMoreListener;
-import id.co.viva.news.app.services.Analytics;
-import id.co.viva.news.app.Constant;
-import id.co.viva.news.app.R;
-import id.co.viva.news.app.activity.ActDetailTerbaru;
-import id.co.viva.news.app.adapter.TerbaruAdapter;
 import id.co.viva.news.app.model.News;
+import id.co.viva.news.app.services.Analytics;
 
 /**
  * Created by root on 09/10/14.

@@ -38,20 +38,20 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
+import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.Global;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.adapter.ImageSliderAdapter;
+import id.co.viva.news.app.adapter.RelatedAdapter;
 import id.co.viva.news.app.coachmark.CoachmarkBuilder;
 import id.co.viva.news.app.coachmark.CoachmarkView;
 import id.co.viva.news.app.component.ProgressWheel;
 import id.co.viva.news.app.model.Comment;
 import id.co.viva.news.app.model.Favorites;
+import id.co.viva.news.app.model.RelatedArticle;
 import id.co.viva.news.app.model.SliderContentImage;
 import id.co.viva.news.app.model.Video;
 import id.co.viva.news.app.services.Analytics;
-import id.co.viva.news.app.Constant;
-import id.co.viva.news.app.adapter.RelatedAdapter;
-import id.co.viva.news.app.model.RelatedArticle;
 
 /**
  * Created by reza on 27/10/14.

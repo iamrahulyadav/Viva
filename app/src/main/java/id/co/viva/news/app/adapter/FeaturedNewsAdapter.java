@@ -14,7 +14,6 @@ import java.util.ArrayList;
 
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.model.FeaturedNews;
-import id.co.viva.news.app.model.News;
 
 /**
  * Created by reza on 15/10/14.

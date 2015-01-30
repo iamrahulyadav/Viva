@@ -69,6 +69,7 @@
                 android:orientation="vertical"
                 android:background="@color/white"
                 android:id="@+id/layout_profile_user_data"
+                android:focusableInTouchMode="true"
                 android:layout_below="@id/layout_background_profile_photo">
                 <id.co.viva.news.app.component.RobotoTextView
                     android:layout_width="wrap_content"

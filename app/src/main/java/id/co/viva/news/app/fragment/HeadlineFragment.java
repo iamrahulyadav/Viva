@@ -498,7 +498,8 @@ public class HeadlineFragment extends Fragment implements
 
             Log.i(Constant.TAG, Constant.NEW_HEADLINE + "published/" + lastPublished.replace(" ", "%20"));
 
-            StringRequest stringRequest = new StringRequest(Request.Method.GET, Constant.NEW_HEADLINE + "published/" + lastPublished.replace(" ", "%20"),
+            StringRequest stringRequest = new StringRequest(Request.Method.GET, Constant.NEW_HEADLINE +
+                    "published/" + lastPublished.replace(" ", "%20"),
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String volleyResponse) {

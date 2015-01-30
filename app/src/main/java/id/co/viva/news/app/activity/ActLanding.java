@@ -162,10 +162,12 @@ public class ActLanding extends FragmentActivity implements View.OnClickListener
                 Intent intent = new Intent(this, ActUserProfile.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+                mDrawerLayout.closeDrawer(mNavLayout);
             } else {
                 Intent intent = new Intent(this, ActLogin.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+                mDrawerLayout.closeDrawer(mNavLayout);
             }
         }
     }

@@ -40,9 +40,9 @@ import id.co.viva.news.app.fragment.AboutFragment;
 import id.co.viva.news.app.fragment.BolaFragment;
 import id.co.viva.news.app.fragment.FavoritesFragment;
 import id.co.viva.news.app.fragment.HeadlineFragment;
-import id.co.viva.news.app.fragment.TerbaruFragment;
 import id.co.viva.news.app.fragment.LifeFragment;
 import id.co.viva.news.app.fragment.NewsFragment;
+import id.co.viva.news.app.fragment.TerbaruFragment;
 import id.co.viva.news.app.interfaces.Item;
 import id.co.viva.news.app.model.NavigationItem;
 import id.co.viva.news.app.model.NavigationSectionItem;
@@ -237,10 +237,12 @@ public class ActBase extends FragmentActivity implements View.OnClickListener {
                 Intent intent = new Intent(this, ActUserProfile.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+                mDrawerLayout.closeDrawer(mNavLayout);
             } else {
                 Intent intent = new Intent(this, ActLogin.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+                mDrawerLayout.closeDrawer(mNavLayout);
             }
         }
     }

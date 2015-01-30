@@ -6,7 +6,6 @@ import com.google.analytics.tracking.android.Fields;
 import com.google.analytics.tracking.android.MapBuilder;
 
 import id.co.viva.news.app.Global;
-import id.co.viva.news.app.VivaApp;
 
 /**
  * Created by reza on 03/11/14.

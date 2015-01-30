@@ -2,6 +2,7 @@ package id.co.viva.news.app.activity;
 
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
@@ -28,6 +29,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.Global;
@@ -40,10 +42,8 @@ import id.co.viva.news.app.model.Video;
 /**
  * Created by reza on 20/01/15.
  */
-public class ActNotification extends FragmentActivity implements View.OnClickListener {
+public class ActFromUrl extends FragmentActivity implements View.OnClickListener {
 
-    private String kanalFromNotification;
-    private String idFromNotification;
     private boolean isInternetPresent = false;
     private ViewPager viewPager;
     private LinePageIndicator linePageIndicator;
@@ -60,6 +60,7 @@ public class ActNotification extends FragmentActivity implements View.OnClickLis
     private KenBurnsView ivThumbDetail;
     private TextView textLinkVideo;
     private String title;
+    private String kanal;
     private String image_url;
     private String date_publish;
     private String content;
@@ -73,14 +74,7 @@ public class ActNotification extends FragmentActivity implements View.OnClickLis
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Bundle extras = getIntent().getExtras();
-        if(extras != null) {
-            idFromNotification = extras.containsKey("id") ? extras.getString("id") : "";
-            kanalFromNotification = extras.containsKey("kanal") ? extras.getString("kanal") : "";
-        }
-
         setContentView(R.layout.act_notification);
-        setHeaderActionbar(kanalFromNotification);
         defineViews();
 
         isInternetPresent = Global.getInstance(this)
@@ -159,7 +153,7 @@ public class ActNotification extends FragmentActivity implements View.OnClickLis
 
     private void getContent() {
         if(isInternetPresent) {
-            StringRequest request = new StringRequest(Request.Method.GET, Constant.NEW_DETAIL + "/id/" + idFromNotification,
+            StringRequest request = new StringRequest(Request.Method.GET, Constant.NEW_DETAIL + "/id/" + getIdFromUrl(),
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String volleyResponse) {
@@ -174,6 +168,9 @@ public class ActNotification extends FragmentActivity implements View.OnClickLis
                                 content = detail.getString(Constant.content);
                                 reporter_name = detail.getString(Constant.reporter_name);
                                 image_caption = detail.getString(Constant.image_caption);
+                                kanal = detail.getString(Constant.kanal);
+
+                                setHeaderActionbar(kanal);
 
                                 JSONArray sliderImageArray = detail.getJSONArray(Constant.content_images);
                                 if(sliderImageArray != null) {
@@ -199,7 +196,7 @@ public class ActNotification extends FragmentActivity implements View.OnClickLis
                                 tvContentDetail.setText(Html.fromHtml(content).toString());
                                 tvContentDetail.setMovementMethod(LinkMovementMethod.getInstance());
                                 tvReporterDetail.setText(reporter_name);
-                                Picasso.with(ActNotification.this).load(image_url).into(ivThumbDetail);
+                                Picasso.with(ActFromUrl.this).load(image_url).into(ivThumbDetail);
 
                                 if(sliderContentImages.size() > 0) {
                                     imageSliderAdapter = new ImageSliderAdapter(getSupportFragmentManager(), sliderContentImages);
@@ -230,8 +227,7 @@ public class ActNotification extends FragmentActivity implements View.OnClickLis
                             volleyError.getMessage();
                             progressWheel.setVisibility(View.GONE);
                             rippleView.setVisibility(View.VISIBLE);
-                            setButtonRetry(kanalFromNotification);
-
+                            setButtonRetry(kanal);
                         }
                     });
             request.setShouldCache(true);
@@ -239,11 +235,11 @@ public class ActNotification extends FragmentActivity implements View.OnClickLis
                     Constant.TIME_OUT,
                     0,
                     DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-            Global.getInstance(ActNotification.this).getRequestQueue()
-                    .getCache().invalidate(Constant.NEW_DETAIL + "/id/" + idFromNotification, true);
-            Global.getInstance(ActNotification.this)
-                    .getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + idFromNotification);
-            Global.getInstance(ActNotification.this).addToRequestQueue(request, Constant.JSON_REQUEST);
+            Global.getInstance(ActFromUrl.this).getRequestQueue()
+                    .getCache().invalidate(Constant.NEW_DETAIL + "/id/" + getIdFromUrl(), true);
+            Global.getInstance(ActFromUrl.this)
+                    .getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + getIdFromUrl());
+            Global.getInstance(ActFromUrl.this).addToRequestQueue(request, Constant.JSON_REQUEST);
         } else {
             if(tvNoResult.getVisibility() == View.VISIBLE) {
                 tvNoResult.setVisibility(View.GONE);
@@ -310,6 +306,22 @@ public class ActNotification extends FragmentActivity implements View.OnClickLis
     public void onBackPressed() {
         super.onBackPressed();
         goFirstFlow();
+    }
+
+    private String getIdFromUrl() {
+        String idFromUrl = null;
+        Uri data = getIntent().getData();
+        if(data != null) {
+            List params = data.getPathSegments();
+            idFromUrl = params.get(2).toString();
+        }
+        return splitId(idFromUrl);
+    }
+
+    private String splitId(String id) {
+        String[] separated = id.split("-");
+        String ids = separated[0];
+        return ids;
     }
 
 }

@@ -27,15 +27,15 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.Global;
 import id.co.viva.news.app.R;
+import id.co.viva.news.app.adapter.SearchResultAdapter;
 import id.co.viva.news.app.component.LoadMoreListView;
 import id.co.viva.news.app.component.ProgressWheel;
 import id.co.viva.news.app.interfaces.OnLoadMoreListener;
-import id.co.viva.news.app.services.Analytics;
-import id.co.viva.news.app.Constant;
-import id.co.viva.news.app.adapter.SearchResultAdapter;
 import id.co.viva.news.app.model.SearchResult;
+import id.co.viva.news.app.services.Analytics;
 
 /**
  * Created by reza on 13/10/14.
