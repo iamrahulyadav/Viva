@@ -9,10 +9,15 @@ public class Headline {
     private String title;
     private String slug;
     private String kanal;
-    private String sub_kanal;
+    private String timestamp;
     private String image_url;
     private String date_publish;
     private String source;
+    private String url;
+
+    public String getTimestamp() {
+        return timestamp;
+    }
 
     public String getUrl() {
         return url;
@@ -20,16 +25,6 @@ public class Headline {
 
     public void setUrl(String url) {
         this.url = url;
-    }
-
-    private String url;
-
-    public String getSub_kanal() {
-        return sub_kanal;
-    }
-
-    public void setSub_kanal(String sub_kanal) {
-        this.sub_kanal = sub_kanal;
     }
 
     public String getImage_url() {
@@ -54,14 +49,6 @@ public class Headline {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public String getSlug() {
-        return slug;
-    }
-
-    public void setSlug(String slug) {
-        this.slug = slug;
     }
 
     public String getKanal() {
@@ -89,7 +76,8 @@ public class Headline {
     }
 
     public Headline(String id, String title, String slug,
-                String kanal, String image_url, String date_publish, String source, String url) {
+                String kanal, String image_url, String date_publish,
+                String source, String url, String timestamp) {
         this.id = id;
         this.title = title;
         this.slug = slug;
@@ -98,6 +86,7 @@ public class Headline {
         this.date_publish = date_publish;
         this.source = source;
         this.url = url;
+        this.timestamp = timestamp;
     }
 
 }

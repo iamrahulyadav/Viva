@@ -64,7 +64,8 @@ public class Constant {
     public static final String TAG = VivaApp.class.getSimpleName();
     public static final String TAG_GCM = "VIVA-GCM";
 
-    private static String BASE_URL_NEW = "http://api.viva.co.id/app/";
+    private static String BASE_URL_NEW = "http://api.viva.co.sit/app/";
+//    private static String BASE_URL_NEW = "http://api.viva.co.id/app/";
     public static String NEW_HEADLINE = BASE_URL_NEW + "headlinelist/";
     public static String NEW_TERBARU = BASE_URL_NEW + "terbarulist/";
     public static String NEW_NEWS = BASE_URL_NEW + "knews";
@@ -81,10 +82,18 @@ public class Constant {
     public static String NEW_FORGOT_PASSWORD = BASE_URL_NEW + "forgotpass";
     public static final String NEW_GET_PROVINCE = BASE_URL_NEW + "location/";
     public static final String NEW_UPDATE_PROFILE = BASE_URL_NEW + "updateprofile";
+    public static final String ALL_NEWS_URL = "/lv/1/s/0/type/terbaru";
+    public static final String ALL_NEWS_URL_PAGING = "/lv/1/published/";
+    public static final String SUB_CHANNEL_LV_2_URL = "/lv/2/s/0";
+    public static final String SUB_CHANNEL_LV_1_URL = "/lv/1/s/0";
+    public static final String SUB_CHANNEL_LV_2_URL_PAGING = "/lv/2/s/";
+    public static final String SUB_CHANNEL_LV_1_URL_PAGING = "/lv/1/s/";
 
     public static final String JSON_REQUEST = "json_obj_req";
 
+    public static final String AllNews = "Semua Berita";
     public static final String response = "response";
+    public static final String timestamp = "timestamp";
     public static final String headlines = "headlines";
     public static final String comment_list = "comment_list";
     public static final String related_article = "related_article";

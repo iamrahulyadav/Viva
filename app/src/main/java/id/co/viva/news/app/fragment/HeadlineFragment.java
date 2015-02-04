@@ -60,11 +60,7 @@ public class HeadlineFragment extends Fragment implements
 
     private static String HEADLINES = "headlines";
     public static ArrayList<Headline> headlineArrayList;
-
     private String lastPublished;
-
-//    private int dataSize = 0;
-//    private String data;
     private SwingBottomInAnimationAdapter swingBottomInAnimationAdapter;
     private HeadlineAdapter headlineAdapter;
     private LoadMoreListView listView;
@@ -182,14 +178,15 @@ public class HeadlineFragment extends Fragment implements
                                             String image_url = jsonHeadline.getString(Constant.image_url);
                                             String date_publish = jsonHeadline.getString(Constant.date_publish);
                                             String source = jsonHeadline.getString(Constant.source);
+                                            String timestamp = jsonHeadline.getString(Constant.timestamp);
                                             headlines.add(new Headline(id, title, slug, kanal,
-                                                    image_url, date_publish, source, url));
+                                                    image_url, date_publish, source, url, timestamp));
                                             Log.i(Constant.TAG, "HEADLINES : " + headlines.get(i).getTitle());
                                         }
                                     }
                                 }
 
-                                lastPublished = headlines.get(headlines.size()-1).getDate_publish();
+                                lastPublished = headlines.get(headlines.size()-1).getTimestamp();
 
                                 if(headlines.size() > 0 || !headlines.isEmpty()) {
                                     headlineAdapter = new HeadlineAdapter(getActivity(), headlines);
@@ -265,12 +262,15 @@ public class HeadlineFragment extends Fragment implements
                                         String image_url = jsonHeadline.getString(Constant.image_url);
                                         String date_publish = jsonHeadline.getString(Constant.date_publish);
                                         String source = jsonHeadline.getString(Constant.source);
+                                        String timestamp = jsonHeadline.getString(Constant.timestamp);
                                         headlines.add(new Headline(id, title, slug, kanal,
-                                                image_url, date_publish, source, url));
+                                                image_url, date_publish, source, url, timestamp));
                                         Log.i(Constant.TAG, "HEADLINES CACHED : " + headlines.get(i).getTitle());
                                     }
                                 }
                             }
+
+                            lastPublished = headlines.get(headlines.size()-1).getTimestamp();
 
                             if(headlines.size() > 0 || !headlines.isEmpty()) {
                                 headlineAdapter = new HeadlineAdapter(getActivity(), headlines);
@@ -324,12 +324,15 @@ public class HeadlineFragment extends Fragment implements
                                 String image_url = jsonHeadline.getString(Constant.image_url);
                                 String date_publish = jsonHeadline.getString(Constant.date_publish);
                                 String source = jsonHeadline.getString(Constant.source);
+                                String timestamp = jsonHeadline.getString(Constant.timestamp);
                                 headlines.add(new Headline(id, title, slug, kanal,
-                                        image_url, date_publish, source, url));
+                                        image_url, date_publish, source, url, timestamp));
                                 Log.i(Constant.TAG, "HEADLINES CACHED : " + headlines.get(i).getTitle());
                             }
                         }
                     }
+
+                    lastPublished = headlines.get(headlines.size()-1).getTimestamp();
 
                     if(headlines.size() > 0 || !headlines.isEmpty()) {
                         headlineAdapter = new HeadlineAdapter(getActivity(), headlines);
@@ -404,12 +407,15 @@ public class HeadlineFragment extends Fragment implements
                                                 String image_url = jsonHeadline.getString(Constant.image_url);
                                                 String date_publish = jsonHeadline.getString(Constant.date_publish);
                                                 String source = jsonHeadline.getString(Constant.source);
+                                                String timestamp = jsonHeadline.getString(Constant.timestamp);
                                                 headlineArrayList.add(new Headline(id, title, slug, kanal,
-                                                        image_url, date_publish, source, url));
+                                                        image_url, date_publish, source, url, timestamp));
                                                 Log.i(Constant.TAG, "HEADLINES : " + headlineArrayList.get(i).getTitle());
                                             }
                                         }
                                     }
+
+                                    lastPublished = headlineArrayList.get(headlineArrayList.size()-1).getTimestamp();
 
                                     if(headlineArrayList.size() > 0 || !headlineArrayList.isEmpty()) {
                                         headlineAdapter = new HeadlineAdapter(getActivity(), headlineArrayList);
@@ -491,15 +497,11 @@ public class HeadlineFragment extends Fragment implements
     @Override
     public void onLoadMore() {
         Log.i(Constant.TAG, "Last Published : " + lastPublished);
-//        data = String.valueOf(dataSize += 12);
         if(isInternetPresent) {
 //            analytics.getAnalyticByATInternet(Constant.HEADLINE_PAGE + "_" + data);
 //            analytics.getAnalyticByGoogleAnalytic(Constant.HEADLINE_PAGE + "_" + data);
-
-            Log.i(Constant.TAG, Constant.NEW_HEADLINE + "published/" + lastPublished.replace(" ", "%20"));
-
             StringRequest stringRequest = new StringRequest(Request.Method.GET, Constant.NEW_HEADLINE +
-                    "published/" + lastPublished.replace(" ", "%20"),
+                    "published/" + lastPublished,
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String volleyResponse) {
@@ -521,13 +523,14 @@ public class HeadlineFragment extends Fragment implements
                                             String image_url = jsonHeadline.getString(Constant.image_url);
                                             String date_publish = jsonHeadline.getString(Constant.date_publish);
                                             String source = jsonHeadline.getString(Constant.source);
+                                            String timestamp = jsonHeadline.getString(Constant.timestamp);
                                             headlineArrayList.add(new Headline(id, title, slug, kanal,
-                                                    image_url, date_publish, source, url));
+                                                    image_url, date_publish, source, url, timestamp));
                                         }
                                     }
                                 }
 
-                                lastPublished = headlineArrayList.get(headlineArrayList.size()-1).getDate_publish();
+                                lastPublished = headlineArrayList.get(headlineArrayList.size()-1).getTimestamp();
 
                                 if(headlineArrayList.size() > 0 || !headlineArrayList.isEmpty()) {
                                     swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(headlineAdapter);
@@ -556,8 +559,10 @@ public class HeadlineFragment extends Fragment implements
                     Constant.TIME_OUT,
                     0,
                     DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-            Global.getInstance(getActivity()).getRequestQueue().getCache().invalidate(Constant.NEW_HEADLINE + "start/" + lastPublished, true);
-            Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_HEADLINE + "start/" + lastPublished);
+            Global.getInstance(getActivity()).getRequestQueue().getCache().invalidate(Constant.NEW_HEADLINE +
+                    "published/" + lastPublished, true);
+            Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_HEADLINE +
+                    "published/" + lastPublished);
             Global.getInstance(getActivity()).addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
         } else {
             listView.onLoadMoreComplete();
@@ -570,8 +575,7 @@ public class HeadlineFragment extends Fragment implements
         int actionBarHeight = 0;
         int heightFocus;
         TypedValue typedValue = new TypedValue();
-        if (getActivity().getTheme().resolveAttribute(android.R.attr.actionBarSize, typedValue, true))
-        {
+        if (getActivity().getTheme().resolveAttribute(android.R.attr.actionBarSize, typedValue, true)) {
             actionBarHeight = TypedValue.complexToDimensionPixelSize(typedValue.data,getResources().getDisplayMetrics());
         }
         heightFocus = 0 - (actionBarHeight / 2);

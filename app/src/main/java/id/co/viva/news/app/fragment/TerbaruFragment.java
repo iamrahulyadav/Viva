@@ -61,8 +61,6 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
     final private static String NEWS = "terbaru";
     public static ArrayList<News> newsArrayList;
 
-    private int dataSize = 0;
-    private String data;
     private SwingBottomInAnimationAdapter swingBottomInAnimationAdapter;
     private TerbaruAdapter terbaruAdapter;
     private LoadMoreListView listView;
@@ -78,6 +76,7 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
     private View coachmarkView, coachmarkViewSearch;
     private CoachmarkView showtips;
     private FloatingActionButton floatingActionButton;
+    private String lastPublished;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -180,12 +179,15 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
                                             String url = jsonTerbaru.getString(Constant.url);
                                             String image_url = jsonTerbaru.getString(Constant.image_url);
                                             String date_publish = jsonTerbaru.getString(Constant.date_publish);
+                                            String timestamp = jsonTerbaru.getString(Constant.timestamp);
                                             news.add(new News(id, title, slug, kanal, url,
-                                                    image_url, date_publish));
+                                                    image_url, date_publish, timestamp));
                                             Log.i(Constant.TAG, "NEWS : " + news.get(i).getTitle());
                                         }
                                     }
                                 }
+
+                                lastPublished = news.get(news.size()-1).getTimeStamp();
 
                                 if(news.size() > 0 || !news.isEmpty()) {
                                     swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(terbaruAdapter);
@@ -232,12 +234,15 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
                                         String url = jsonTerbaru.getString(Constant.url);
                                         String image_url = jsonTerbaru.getString(Constant.image_url);
                                         String date_publish = jsonTerbaru.getString(Constant.date_publish);
+                                        String timestamp = jsonTerbaru.getString(Constant.timestamp);
                                         news.add(new News(id, title, slug, kanal, url,
-                                                image_url, date_publish));
+                                                image_url, date_publish, timestamp));
                                         Log.i(Constant.TAG, "NEWS CACHED : " + news.get(i).getTitle());
                                     }
                                 }
                             }
+
+                            lastPublished = news.get(news.size()-1).getTimeStamp();
 
                             if(news.size() > 0 || !news.isEmpty()) {
                                 swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(terbaruAdapter);
@@ -289,12 +294,15 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
                                 String url = jsonTerbaru.getString(Constant.url);
                                 String image_url = jsonTerbaru.getString(Constant.image_url);
                                 String date_publish = jsonTerbaru.getString(Constant.date_publish);
+                                String timestamp = jsonTerbaru.getString(Constant.timestamp);
                                 news.add(new News(id, title, slug, kanal, url,
-                                        image_url, date_publish));
+                                        image_url, date_publish, timestamp));
                                 Log.i(Constant.TAG, "NEWS CACHED : " + news.get(i).getTitle());
                             }
                         }
                     }
+
+                    lastPublished = news.get(news.size()-1).getTimeStamp();
 
                     if(news.size() > 0 || !news.isEmpty()) {
                         swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(terbaruAdapter);
@@ -336,12 +344,11 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
 
     @Override
     public void onLoadMore() {
-        data = String.valueOf(dataSize += 10);
         if(isInternetPresent) {
-            analytics.getAnalyticByATInternet(Constant.TERBARU_PAGE + "_" + data);
-            analytics.getAnalyticByGoogleAnalytic(Constant.TERBARU_PAGE + "_" + data);
-
-                StringRequest stringRequest = new StringRequest(Request.Method.GET, Constant.NEW_TERBARU + "start/" + data,
+//            analytics.getAnalyticByATInternet(Constant.TERBARU_PAGE + "_" + data);
+//            analytics.getAnalyticByGoogleAnalytic(Constant.TERBARU_PAGE + "_" + data);
+                StringRequest stringRequest = new StringRequest(Request.Method.GET, Constant.NEW_TERBARU +
+                        "published/" + lastPublished,
                         new Response.Listener<String>() {
                             @Override
                             public void onResponse(String volleyResponse) {
@@ -362,11 +369,14 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
                                                 String url = jsonTerbaru.getString(Constant.url);
                                                 String image_url = jsonTerbaru.getString(Constant.image_url);
                                                 String date_publish = jsonTerbaru.getString(Constant.date_publish);
+                                                String timestamp = jsonTerbaru.getString(Constant.timestamp);
                                                 newsArrayList.add(new News(id, title, slug, kanal, url,
-                                                        image_url, date_publish));
+                                                        image_url, date_publish, timestamp));
                                             }
                                         }
                                     }
+
+                                    lastPublished = newsArrayList.get(newsArrayList.size()-1).getTimeStamp();
 
                                     if(newsArrayList.size() > 0 || !newsArrayList.isEmpty()) {
                                         swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(terbaruAdapter);
@@ -395,8 +405,10 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
                         Constant.TIME_OUT,
                         0,
                         DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-                Global.getInstance(getActivity()).getRequestQueue().getCache().invalidate(Constant.NEW_TERBARU + "start/" + data, true);
-                Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_TERBARU + "start/" + data);
+                Global.getInstance(getActivity()).getRequestQueue().getCache().invalidate(Constant.NEW_TERBARU +
+                        "published/" + lastPublished, true);
+                Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_TERBARU +
+                        "published/" + lastPublished);
                 Global.getInstance(getActivity()).addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
         } else {
             listView.onLoadMoreComplete();
@@ -433,12 +445,15 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
                                                 String url = jsonTerbaru.getString(Constant.url);
                                                 String image_url = jsonTerbaru.getString(Constant.image_url);
                                                 String date_publish = jsonTerbaru.getString(Constant.date_publish);
+                                                String timestamp = jsonTerbaru.getString(Constant.timestamp);
                                                 newsArrayList.add(new News(id, title, slug, kanal, url,
-                                                        image_url, date_publish));
+                                                        image_url, date_publish, timestamp));
                                                 Log.i(Constant.TAG, "NEWS : " + newsArrayList.get(i).getTitle());
                                             }
                                         }
                                     }
+
+                                    lastPublished = newsArrayList.get(newsArrayList.size()-1).getTimeStamp();
 
                                     if(newsArrayList.size() > 0 || !newsArrayList.isEmpty()) {
                                         swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(terbaruAdapter);
@@ -469,7 +484,8 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
                     public void onErrorResponse(VolleyError volleyError) {
                         try {
                             if(Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_TERBARU) != null) {
-                                String cachedResponse = new String(Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_TERBARU).data);
+                                String cachedResponse = new String(Global.getInstance(getActivity()).getRequestQueue()
+                                        .getCache().get(Constant.NEW_TERBARU).data);
                                 Log.i(Constant.TAG, "From Cached : " + cachedResponse);
                                 JSONObject jsonObject = new JSONObject(cachedResponse);
                                 jsonArrayResponses = jsonObject.getJSONArray(Constant.response);
@@ -486,12 +502,15 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
                                             String url = jsonTerbaru.getString(Constant.url);
                                             String image_url = jsonTerbaru.getString(Constant.image_url);
                                             String date_publish = jsonTerbaru.getString(Constant.date_publish);
+                                            String timestamp = jsonTerbaru.getString(Constant.timestamp);
                                             newsArrayList.add(new News(id, title, slug, kanal, url,
-                                                    image_url, date_publish));
+                                                    image_url, date_publish,timestamp));
                                             Log.i(Constant.TAG, "NEWS CACHED : " + newsArrayList.get(i).getTitle());
                                         }
                                     }
                                 }
+
+                                lastPublished = newsArrayList.get(newsArrayList.size()-1).getTimeStamp();
 
                                 if(newsArrayList.size() > 0 || !newsArrayList.isEmpty()) {
                                     swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(terbaruAdapter);

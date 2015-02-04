@@ -11,7 +11,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.GridView;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,6 +23,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.nhaarman.listviewanimations.appearance.simple.SwingBottomInAnimationAdapter;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -33,6 +35,7 @@ import id.co.viva.news.app.Global;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.activity.ActDetailChannelBola;
 import id.co.viva.news.app.adapter.FeaturedBolaAdapter;
+import id.co.viva.news.app.component.ExpandableHeightGridView;
 import id.co.viva.news.app.component.ProgressWheel;
 import id.co.viva.news.app.model.FeaturedBola;
 import id.co.viva.news.app.services.Analytics;
@@ -44,13 +47,19 @@ public class BolaFragment extends Fragment implements View.OnClickListener {
 
     public static ArrayList<FeaturedBola> featuredNewsArrayList;
     private boolean isInternetPresent = false;
-    private GridView gridNews;
+    private ExpandableHeightGridView gridNews;
     private String cachedResponse;
     private SwingBottomInAnimationAdapter swingBottomInAnimationAdapter;
     private ProgressWheel progressWheel;
     private TextView tvNoResult;
+    private TextView textHeader;
     private Analytics analytics;
     private RippleView rippleView;
+    private ImageView imageHeader;
+    private String channel_title_header_grid;
+    private String id_header_grid;
+    private String image_url_header_grid;
+    private RelativeLayout layoutTransparentHeader;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -78,6 +87,13 @@ public class BolaFragment extends Fragment implements View.OnClickListener {
         tvNoResult = (TextView) rootView.findViewById(R.id.text_no_result);
         tvNoResult.setVisibility(View.GONE);
 
+        textHeader = (TextView) rootView.findViewById(R.id.header_title_kanal_bola);
+        imageHeader = (ImageView) rootView.findViewById(R.id.header_grid_bola);
+        imageHeader.setOnClickListener(this);
+
+        layoutTransparentHeader = (RelativeLayout) rootView.findViewById(R.id.header_grid_bola_transparent);
+        layoutTransparentHeader.setVisibility(View.GONE);
+
         progressWheel = (ProgressWheel) rootView.findViewById(R.id.progress_wheel);
         progressWheel.setVisibility(View.VISIBLE);
 
@@ -85,7 +101,8 @@ public class BolaFragment extends Fragment implements View.OnClickListener {
         rippleView.setVisibility(View.GONE);
         rippleView.setOnClickListener(this);
 
-        gridNews = (GridView) rootView.findViewById(R.id.grid_bola);
+        gridNews = (ExpandableHeightGridView) rootView.findViewById(R.id.grid_bola);
+        gridNews.setExpanded(true);
         gridNews.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
@@ -114,7 +131,23 @@ public class BolaFragment extends Fragment implements View.OnClickListener {
                             try {
                                 JSONObject jsonObject = new JSONObject(s);
                                 JSONArray response = jsonObject.getJSONArray(Constant.response);
-                                for(int i=0; i<response.length(); i++) {
+
+                                int lastIndex = response.length() - 1;
+                                JSONObject objs = response.getJSONObject(lastIndex);
+                                if(objs != null) {
+                                    JSONArray objKanal = objs.getJSONArray("all");
+                                    for(int j=0; j<objKanal.length(); j++) {
+                                        JSONObject field = objKanal.getJSONObject(j);
+                                        id_header_grid = field.getString("channel_id");
+                                        channel_title_header_grid = field.getString("channel_title");
+                                        image_url_header_grid = field.getString("image_url");
+                                    }
+                                    textHeader.setText(channel_title_header_grid.toUpperCase());
+                                    layoutTransparentHeader.setVisibility(View.VISIBLE);
+                                    Picasso.with(getActivity()).load(image_url_header_grid).into(imageHeader);
+                                }
+
+                                for(int i=0; i<response.length()-1; i++) {
                                     JSONObject obj = response.getJSONObject(i);
                                     if(obj != null) {
                                         JSONArray objKanal = obj.getJSONArray("news");
@@ -127,12 +160,14 @@ public class BolaFragment extends Fragment implements View.OnClickListener {
                                             String title = field.getString("title");
                                             String kanal = field.getString("kanal");
                                             String image_url = field.getString("image_url");
-                                            featuredNewsArrayList.add(new FeaturedBola(channel_title, id,
-                                                    channel_id, level, title, kanal, image_url));
-                                            Log.i(Constant.TAG, "Channel Title : " + featuredNewsArrayList.get(i).getChannel_title());
+                                            if(!channel_title.equalsIgnoreCase("Semua Berita")) {
+                                                featuredNewsArrayList.add(new FeaturedBola(channel_title, id,
+                                                        channel_id, level, title, kanal, image_url));
+                                            }
                                         }
                                     }
                                 }
+
                                 if(featuredNewsArrayList.size() > 0 || !featuredNewsArrayList.isEmpty()) {
                                     swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(
                                             new FeaturedBolaAdapter(getActivity(), featuredNewsArrayList));
@@ -172,7 +207,23 @@ public class BolaFragment extends Fragment implements View.OnClickListener {
                 try {
                     JSONObject jsonObject = new JSONObject(cachedResponse);
                     JSONArray response = jsonObject.getJSONArray(Constant.response);
-                    for(int i=0; i<response.length(); i++) {
+
+                    int lastIndex = response.length() - 1;
+                    JSONObject objs = response.getJSONObject(lastIndex);
+                    if(objs != null) {
+                        JSONArray objKanal = objs.getJSONArray("all");
+                        for(int j=0; j<objKanal.length(); j++) {
+                            JSONObject field = objKanal.getJSONObject(j);
+                            id_header_grid = field.getString("channel_id");
+                            channel_title_header_grid = field.getString("channel_title");
+                            image_url_header_grid = field.getString("image_url");
+                        }
+                        textHeader.setText(channel_title_header_grid.toUpperCase());
+                        layoutTransparentHeader.setVisibility(View.VISIBLE);
+                        Picasso.with(getActivity()).load(image_url_header_grid).into(imageHeader);
+                    }
+
+                    for(int i=0; i<response.length()-1; i++) {
                         JSONObject obj = response.getJSONObject(i);
                         if(obj != null) {
                             JSONArray objKanal = obj.getJSONArray("news");
@@ -185,12 +236,14 @@ public class BolaFragment extends Fragment implements View.OnClickListener {
                                 String title = field.getString("title");
                                 String kanal = field.getString("kanal");
                                 String image_url = field.getString("image_url");
-                                featuredNewsArrayList.add(new FeaturedBola(channel_title, id,
-                                        channel_id, level, title, kanal, image_url));
-                                Log.i(Constant.TAG, "Channel Title : " + featuredNewsArrayList.get(i).getChannel_title());
+                                if(!channel_title.equalsIgnoreCase("Semua Berita")) {
+                                    featuredNewsArrayList.add(new FeaturedBola(channel_title, id,
+                                            channel_id, level, title, kanal, image_url));
+                                }
                             }
                         }
                     }
+
                     if(featuredNewsArrayList.size() > 0 || !featuredNewsArrayList.isEmpty()) {
                         swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(
                                 new FeaturedBolaAdapter(getActivity(), featuredNewsArrayList));
@@ -227,7 +280,23 @@ public class BolaFragment extends Fragment implements View.OnClickListener {
                                 try {
                                     JSONObject jsonObject = new JSONObject(s);
                                     JSONArray response = jsonObject.getJSONArray(Constant.response);
-                                    for(int i=0; i<response.length(); i++) {
+
+                                    int lastIndex = response.length() - 1;
+                                    JSONObject objs = response.getJSONObject(lastIndex);
+                                    if(objs != null) {
+                                        JSONArray objKanal = objs.getJSONArray("all");
+                                        for(int j=0; j<objKanal.length(); j++) {
+                                            JSONObject field = objKanal.getJSONObject(j);
+                                            id_header_grid = field.getString("channel_id");
+                                            channel_title_header_grid = field.getString("channel_title");
+                                            image_url_header_grid = field.getString("image_url");
+                                        }
+                                        textHeader.setText(channel_title_header_grid.toUpperCase());
+                                        layoutTransparentHeader.setVisibility(View.VISIBLE);
+                                        Picasso.with(getActivity()).load(image_url_header_grid).into(imageHeader);
+                                    }
+
+                                    for(int i=0; i<response.length()-1; i++) {
                                         JSONObject obj = response.getJSONObject(i);
                                         if(obj != null) {
                                             JSONArray objKanal = obj.getJSONArray("news");
@@ -240,12 +309,14 @@ public class BolaFragment extends Fragment implements View.OnClickListener {
                                                 String title = field.getString("title");
                                                 String kanal = field.getString("kanal");
                                                 String image_url = field.getString("image_url");
-                                                featuredNewsArrayList.add(new FeaturedBola(channel_title, id,
-                                                        channel_id, level, title, kanal, image_url));
-                                                Log.i(Constant.TAG, "Channel Title : " + featuredNewsArrayList.get(i).getChannel_title());
+                                                if(!channel_title.equalsIgnoreCase("Semua Berita")) {
+                                                    featuredNewsArrayList.add(new FeaturedBola(channel_title, id,
+                                                            channel_id, level, title, kanal, image_url));
+                                                }
                                             }
                                         }
                                     }
+
                                     if(featuredNewsArrayList.size() > 0 || !featuredNewsArrayList.isEmpty()) {
                                         swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(
                                                 new FeaturedBolaAdapter(getActivity(), featuredNewsArrayList));
@@ -279,6 +350,14 @@ public class BolaFragment extends Fragment implements View.OnClickListener {
             } else {
                 Toast.makeText(getActivity(), R.string.title_no_connection, Toast.LENGTH_SHORT).show();
             }
+        } else if(view.getId() == R.id.header_grid_bola) {
+            Bundle bundle = new Bundle();
+            bundle.putString("id", id_header_grid);
+            bundle.putString("channel_title", channel_title_header_grid);
+            Intent intent = new Intent(getActivity(), ActDetailChannelBola.class);
+            intent.putExtras(bundle);
+            getActivity().startActivity(intent);
+            getActivity().overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
         }
     }
 

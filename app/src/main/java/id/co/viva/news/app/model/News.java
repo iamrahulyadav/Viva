@@ -12,6 +12,11 @@ public class News {
     private String url;
     private String image_url;
     private String date_publish;
+    private String timeStamp;
+
+    public String getTimeStamp() {
+        return timeStamp;
+    }
 
     public String getUrl() {
         return url;
@@ -45,14 +50,6 @@ public class News {
         this.title = title;
     }
 
-    public String getSlug() {
-        return slug;
-    }
-
-    public void setSlug(String slug) {
-        this.slug = slug;
-    }
-
     public String getKanal() {
         return kanal;
     }
@@ -70,7 +67,7 @@ public class News {
     }
 
     public News(String id, String title, String slug,
-                String kanal, String url, String image_url, String date_publish) {
+                String kanal, String url, String image_url, String date_publish, String timeStamp) {
         this.id = id;
         this.title = title;
         this.slug = slug;
@@ -78,6 +75,7 @@ public class News {
         this.url = url;
         this.image_url = image_url;
         this.date_publish = date_publish;
+        this.timeStamp = timeStamp;
     }
 
 }

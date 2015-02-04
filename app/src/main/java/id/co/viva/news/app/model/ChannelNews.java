@@ -11,6 +11,11 @@ public class ChannelNews {
     private String image_url;
     private String date_publish;
     private String url;
+    private String timestamp;
+
+    public String getTimestamp() {
+        return timestamp;
+    }
 
     public String getId() {
         return id;
@@ -61,13 +66,14 @@ public class ChannelNews {
     }
 
     public ChannelNews(String id, String title, String kanal,
-                       String image_url, String date_publish, String url) {
+                       String image_url, String date_publish, String url, String timestamp) {
         this.id = id;
         this.title = title;
         this.kanal = kanal;
         this.image_url = image_url;
         this.date_publish = date_publish;
         this.url = url;
+        this.timestamp = timestamp;
     }
 
 }

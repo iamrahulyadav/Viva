@@ -51,6 +51,7 @@ public class ActDetailChannelLife extends ActBase implements
     public static ArrayList<ChannelLife> channelLifeArrayList;
     private String id;
     private String channel_title;
+    private String timeStamp;
     private boolean isInternetPresent = false;
     private ProgressWheel progressWheel;
     private TextView tvNoResult;
@@ -69,67 +70,28 @@ public class ActDetailChannelLife extends ActBase implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         LayoutInflater inflater = (LayoutInflater)
                 getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View contentView = inflater.inflate(R.layout.item_detail_channel_life, null, false);
         mDrawerLayout.addView(contentView, 0);
 
-        isInternetPresent = Global.getInstance(this).getConnectionStatus().isConnectingToInternet();
+        isInternetPresent = Global.getInstance(this)
+                .getConnectionStatus().isConnectingToInternet();
 
-        analytics = new Analytics(this);
-        analytics.getAnalyticByATInternet(Constant.SUBKANAL_LIFE_PAGE);
-        analytics.getAnalyticByGoogleAnalytic(Constant.SUBKANAL_LIFE_PAGE);
+        //Get Intent Data
+        getIntentData();
 
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
-        ColorDrawable colorDrawable = new ColorDrawable();
-        colorDrawable.setColor(getResources().getColor(R.color.color_life));
-        getActionBar().setBackgroundDrawable(colorDrawable);
-        getActionBar().setDisplayShowTitleEnabled(false);
-        getActionBar().setIcon(R.drawable.logo_viva_coid_second);
+        //Send Analytics
+        setAnalytics();
 
-        Bundle bundle = getIntent().getExtras();
-        id = bundle.getString("id");
-        channel_title = bundle.getString("channel_title");
+        //Set Theme
+        setActionBarTheme();
 
-        progressWheel = (ProgressWheel) findViewById(R.id.progress_wheel);
-
-        rippleView = (RippleView) findViewById(R.id.layout_ripple_view);
-        rippleView.setVisibility(View.GONE);
-        rippleView.setOnClickListener(this);
-
-        tvChannel = (TextView) findViewById(R.id.text_channel);
-        tvChannel.setText(channel_title.toUpperCase());
-
-        tvNoResult = (TextView) findViewById(R.id.text_no_result_detail_channel_life);
-        tvNoResult.setVisibility(View.GONE);
-
-        channelLifeArrayList = new ArrayList<ChannelLife>();
-        adapter = new ChannelLifeAdapter(this, channelLifeArrayList);
-
-        listView = (LoadMoreListView) findViewById(R.id.list_channel_life);
-        listView.setOnItemClickListener(this);
-        listView.setOnLoadMoreListener(this);
-
-        floatingActionButton = (FloatingActionButton) findViewById(R.id.fab);
-        floatingActionButton.setVisibility(View.GONE);
-        floatingActionButton.attachToListView(listView, new FloatingActionButton.FabOnScrollListener() {
-            @Override
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                super.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
-                int firstIndex = listView.getFirstVisiblePosition();
-                if(firstIndex > Constant.NUMBER_OF_TOP_LIST_ITEMS) {
-                    floatingActionButton.setVisibility(View.VISIBLE);
-                } else {
-                    floatingActionButton.setVisibility(View.GONE);
-                }
-            }
-        });
-        floatingActionButton.setOnClickListener(this);
+        //Define All Views
+        defineViews();
 
         if(isInternetPresent) {
-            StringRequest stringRequest = new StringRequest(Request.Method.GET, Constant.NEW_KANAL + "ch/" + id + "/lv/2/s/0",
+            StringRequest stringRequest = new StringRequest(Request.Method.GET, getUrl(channel_title),
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String volleyResponse) {
@@ -149,12 +111,16 @@ public class ActDetailChannelLife extends ActBase implements
                                             String image_url = jsonHeadline.getString(Constant.image_url);
                                             String date_publish = jsonHeadline.getString(Constant.date_publish);
                                             String url = jsonHeadline.getString(Constant.url);
+                                            String timestamp = jsonHeadline.getString(Constant.timestamp);
                                             channelLifeArrayList.add(new ChannelLife(id, title, kanal,
-                                                    image_url, date_publish, url));
+                                                    image_url, date_publish, url, timestamp));
                                             Log.i(Constant.TAG, "CHANNEL LIFE : " + channelLifeArrayList.get(i).getTitle());
                                         }
                                     }
                                 }
+
+                                timeStamp = channelLifeArrayList.get(channelLifeArrayList.size()-1).getTimeStamp();
+
                                 if (channelLifeArrayList.size() > 0 || !channelLifeArrayList.isEmpty()) {
                                     mAnimAdapter = new ScaleInAnimationAdapter(adapter);
                                     mAnimAdapter.setAbsListView(listView);
@@ -180,14 +146,14 @@ public class ActDetailChannelLife extends ActBase implements
                     Constant.TIME_OUT,
                     0,
                     DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-            Global.getInstance(this).getRequestQueue().getCache().invalidate(Constant.NEW_KANAL + "ch/" + id + "/lv/2/s/0", true);
-            Global.getInstance(this).getRequestQueue().getCache().get(Constant.NEW_KANAL + "ch/" + id + "/lv/2/s/0");
+            Global.getInstance(this).getRequestQueue().getCache().invalidate(getUrl(channel_title), true);
+            Global.getInstance(this).getRequestQueue().getCache().get(getUrl(channel_title));
             Global.getInstance(this).addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
         } else {
             Toast.makeText(this, R.string.title_no_connection, Toast.LENGTH_SHORT).show();
-            if(Global.getInstance(this).getRequestQueue().getCache().get(Constant.NEW_KANAL + "ch/" + id + "/lv/2/s/0") != null) {
+            if(Global.getInstance(this).getRequestQueue().getCache().get(getUrl(channel_title)) != null) {
                 cachedResponse = new String(Global.getInstance(this).
-                        getRequestQueue().getCache().get(Constant.NEW_KANAL + "ch/" + id + "/lv/2/s/0").data);
+                        getRequestQueue().getCache().get(getUrl(channel_title)).data);
                 Log.i(Constant.TAG, "CHANNEL LIFE CACHED RESPONSE : " + cachedResponse);
                 try{
                     JSONObject jsonObject = new JSONObject(cachedResponse);
@@ -204,12 +170,16 @@ public class ActDetailChannelLife extends ActBase implements
                                 String image_url = jsonHeadline.getString(Constant.image_url);
                                 String date_publish = jsonHeadline.getString(Constant.date_publish);
                                 String url = jsonHeadline.getString(Constant.url);
+                                String timestamp = jsonHeadline.getString(Constant.timestamp);
                                 channelLifeArrayList.add(new ChannelLife(id, title, kanal,
-                                        image_url, date_publish, url));
+                                        image_url, date_publish, url, timestamp));
                                 Log.i(Constant.TAG, "CHANNEL LIFE CACHED : " + channelLifeArrayList.get(i).getTitle());
                             }
                         }
                     }
+
+                    timeStamp = channelLifeArrayList.get(channelLifeArrayList.size()-1).getTimeStamp();
+
                     if(channelLifeArrayList.size() > 0 || !channelLifeArrayList.isEmpty()) {
                         mAnimAdapter = new ScaleInAnimationAdapter(adapter);
                         mAnimAdapter.setAbsListView(listView);
@@ -268,10 +238,8 @@ public class ActDetailChannelLife extends ActBase implements
     public void onLoadMore() {
         data = String.valueOf(dataSize += 10);
         if(isInternetPresent) {
-            analytics.getAnalyticByATInternet(Constant.SUBKANAL_LIFE_PAGE + "_" + data);
-            analytics.getAnalyticByGoogleAnalytic(Constant.SUBKANAL_LIFE_PAGE + "_" + data);
-
-            StringRequest stringRequest = new StringRequest(Request.Method.GET, Constant.NEW_KANAL + "ch/" + id + "/lv/2/s/" + data,
+            setAnalytics(data);
+            StringRequest stringRequest = new StringRequest(Request.Method.GET, getPagingUrl(channel_title, data, timeStamp),
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String volleyResponse) {
@@ -291,11 +259,15 @@ public class ActDetailChannelLife extends ActBase implements
                                             String image_url = jsonHeadline.getString(Constant.image_url);
                                             String date_publish = jsonHeadline.getString(Constant.date_publish);
                                             String url = jsonHeadline.getString(Constant.url);
+                                            String timestamp = jsonHeadline.getString(Constant.timestamp);
                                             channelLifeArrayList.add(new ChannelLife(id, title, kanal,
-                                                    image_url, date_publish, url));
+                                                    image_url, date_publish, url, timestamp));
                                         }
                                     }
                                 }
+
+                                timeStamp = channelLifeArrayList.get(channelLifeArrayList.size()-1).getTimeStamp();
+
                                 if (channelLifeArrayList.size() > 0 || !channelLifeArrayList.isEmpty()) {
                                     mAnimAdapter = new ScaleInAnimationAdapter(adapter);
                                     mAnimAdapter.setAbsListView(listView);
@@ -318,8 +290,8 @@ public class ActDetailChannelLife extends ActBase implements
                     Constant.TIME_OUT,
                     0,
                     DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-            Global.getInstance(this).getRequestQueue().getCache().invalidate(Constant.NEW_KANAL + "ch/" + id + "/lv/2/s/" + data, true);
-            Global.getInstance(this).getRequestQueue().getCache().get(Constant.NEW_KANAL + "ch/" + id + "/lv/2/s/" + data);
+            Global.getInstance(this).getRequestQueue().getCache().invalidate(getPagingUrl(channel_title, data, timeStamp), true);
+            Global.getInstance(this).getRequestQueue().getCache().get(getPagingUrl(channel_title, data, timeStamp));
             Global.getInstance(this).addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
         }
     }
@@ -330,7 +302,7 @@ public class ActDetailChannelLife extends ActBase implements
             if(isInternetPresent) {
                 rippleView.setVisibility(View.GONE);
                 progressWheel.setVisibility(View.VISIBLE);
-                StringRequest stringRequest = new StringRequest(Request.Method.GET, Constant.NEW_KANAL + "ch/" + id + "/lv/2/s/0",
+                StringRequest stringRequest = new StringRequest(Request.Method.GET, getUrl(channel_title),
                         new Response.Listener<String>() {
                             @Override
                             public void onResponse(String volleyResponse) {
@@ -350,12 +322,16 @@ public class ActDetailChannelLife extends ActBase implements
                                                 String image_url = jsonHeadline.getString(Constant.image_url);
                                                 String date_publish = jsonHeadline.getString(Constant.date_publish);
                                                 String url = jsonHeadline.getString(Constant.url);
+                                                String timestamp = jsonHeadline.getString(Constant.timestamp);
                                                 channelLifeArrayList.add(new ChannelLife(id, title, kanal,
-                                                        image_url, date_publish, url));
+                                                        image_url, date_publish, url, timestamp));
                                                 Log.i(Constant.TAG, "CHANNEL LIFE : " + channelLifeArrayList.get(i).getTitle());
                                             }
                                         }
                                     }
+
+                                    timeStamp = channelLifeArrayList.get(channelLifeArrayList.size()-1).getTimeStamp();
+
                                     if (channelLifeArrayList.size() > 0 || !channelLifeArrayList.isEmpty()) {
                                         mAnimAdapter = new ScaleInAnimationAdapter(adapter);
                                         mAnimAdapter.setAbsListView(listView);
@@ -384,13 +360,104 @@ public class ActDetailChannelLife extends ActBase implements
                         Constant.TIME_OUT,
                         0,
                         DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-                Global.getInstance(this).getRequestQueue().getCache().invalidate(Constant.NEW_KANAL + "ch/" + id + "/lv/2/s/0", true);
-                Global.getInstance(this).getRequestQueue().getCache().get(Constant.NEW_KANAL + "ch/" + id + "/lv/2/s/0");
+                Global.getInstance(this).getRequestQueue().getCache().invalidate(getUrl(channel_title), true);
+                Global.getInstance(this).getRequestQueue().getCache().get(getUrl(channel_title));
                 Global.getInstance(this).addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
             }
         } else if(view.getId() == R.id.fab) {
             listView.setSelection(0);
         }
+    }
+
+    private void defineViews() {
+        progressWheel = (ProgressWheel) findViewById(R.id.progress_wheel);
+
+        rippleView = (RippleView) findViewById(R.id.layout_ripple_view);
+        rippleView.setVisibility(View.GONE);
+        rippleView.setOnClickListener(this);
+
+        tvChannel = (TextView) findViewById(R.id.text_channel);
+        tvChannel.setText(channel_title.toUpperCase());
+
+        tvNoResult = (TextView) findViewById(R.id.text_no_result_detail_channel_life);
+        tvNoResult.setVisibility(View.GONE);
+
+        channelLifeArrayList = new ArrayList<ChannelLife>();
+        adapter = new ChannelLifeAdapter(this, channelLifeArrayList);
+
+        listView = (LoadMoreListView) findViewById(R.id.list_channel_life);
+        listView.setOnItemClickListener(this);
+        listView.setOnLoadMoreListener(this);
+
+        floatingActionButton = (FloatingActionButton) findViewById(R.id.fab);
+        floatingActionButton.setVisibility(View.GONE);
+        floatingActionButton.attachToListView(listView, new FloatingActionButton.FabOnScrollListener() {
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                super.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
+                int firstIndex = listView.getFirstVisiblePosition();
+                if(firstIndex > Constant.NUMBER_OF_TOP_LIST_ITEMS) {
+                    floatingActionButton.setVisibility(View.VISIBLE);
+                } else {
+                    floatingActionButton.setVisibility(View.GONE);
+                }
+            }
+        });
+        floatingActionButton.setOnClickListener(this);
+    }
+
+    private void setActionBarTheme() {
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setHomeButtonEnabled(true);
+        ColorDrawable colorDrawable = new ColorDrawable();
+        colorDrawable.setColor(getResources().getColor(R.color.color_life));
+        getActionBar().setBackgroundDrawable(colorDrawable);
+        getActionBar().setDisplayShowTitleEnabled(false);
+        getActionBar().setIcon(R.drawable.logo_viva_coid_second);
+    }
+
+    private void setAnalytics() {
+        analytics = new Analytics(this);
+        analytics.getAnalyticByATInternet(Constant.SUBKANAL_LIFE_PAGE + "_" + channel_title.toUpperCase());
+        analytics.getAnalyticByGoogleAnalytic(Constant.SUBKANAL_LIFE_PAGE + "_" + channel_title.toUpperCase());
+    }
+
+    private void setAnalytics(String page) {
+        if(analytics == null) {
+            analytics = new Analytics(this);
+        }
+        analytics.getAnalyticByATInternet(Constant.SUBKANAL_LIFE_PAGE
+                + "_" + channel_title.toUpperCase()
+                + "_" + page);
+        analytics.getAnalyticByGoogleAnalytic(Constant.SUBKANAL_LIFE_PAGE
+                + "_" + channel_title.toUpperCase()
+                + "_" + page);
+    }
+
+    private void getIntentData() {
+        Bundle bundle = getIntent().getExtras();
+        id = bundle.getString("id");
+        channel_title = bundle.getString("channel_title");
+    }
+
+    private String getUrl(String channelTitle) {
+        String url_channel;
+        if(channelTitle.equalsIgnoreCase(Constant.AllNews)) {
+            url_channel = Constant.NEW_KANAL + "ch/" + id + Constant.ALL_NEWS_URL;
+        } else {
+            url_channel = Constant.NEW_KANAL + "ch/" + id + Constant.SUB_CHANNEL_LV_2_URL;
+        }
+        return url_channel;
+    }
+
+    private String getPagingUrl(String channelTitle, String page, String timeStamp) {
+        String url_channel_paging;
+        if(channelTitle.equalsIgnoreCase(Constant.AllNews)) {
+            url_channel_paging = Constant.NEW_KANAL + "ch/" + id + Constant.ALL_NEWS_URL_PAGING + timeStamp + "/type/terbaru";
+        } else {
+            url_channel_paging = Constant.NEW_KANAL + "ch/" + id + Constant.SUB_CHANNEL_LV_2_URL_PAGING + page;
+        }
+        return url_channel_paging;
     }
 
 }

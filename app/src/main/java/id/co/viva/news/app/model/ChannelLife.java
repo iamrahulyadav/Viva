@@ -11,6 +11,11 @@ public class ChannelLife {
     private String image_url;
     private String date_publish;
     private String url;
+    private String timeStamp;
+
+    public String getTimeStamp() {
+        return timeStamp;
+    }
 
     public String getId() {
         return id;
@@ -61,13 +66,15 @@ public class ChannelLife {
     }
 
     public ChannelLife(String id, String title, String kanal,
-                       String image_url, String date_publish, String url) {
+                       String image_url, String date_publish,
+                       String url, String timeStamp) {
         this.id = id;
         this.title = title;
         this.kanal = kanal;
         this.image_url = image_url;
         this.date_publish = date_publish;
         this.url = url;
+        this.timeStamp = timeStamp;
     }
 
 }
