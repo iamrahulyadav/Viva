@@ -35,6 +35,7 @@ import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.Global;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.adapter.ImageSliderAdapter;
+import id.co.viva.news.app.component.CropSquareTransformation;
 import id.co.viva.news.app.component.ProgressWheel;
 import id.co.viva.news.app.model.SliderContentImage;
 import id.co.viva.news.app.model.Video;
@@ -110,9 +111,7 @@ public class ActFromUrl extends FragmentActivity implements View.OnClickListener
 
         ivThumbDetail = (KenBurnsView) findViewById(R.id.thumb_detail_content);
         ivThumbDetail.setOnClickListener(this);
-        ivThumbDetail.setFocusable(true);
         ivThumbDetail.setFocusableInTouchMode(true);
-        ivThumbDetail.requestFocus();
 
         textLinkVideo = (TextView) findViewById(R.id.text_move_video);
         textLinkVideo.setOnClickListener(this);
@@ -196,7 +195,7 @@ public class ActFromUrl extends FragmentActivity implements View.OnClickListener
                                 tvContentDetail.setText(Html.fromHtml(content).toString());
                                 tvContentDetail.setMovementMethod(LinkMovementMethod.getInstance());
                                 tvReporterDetail.setText(reporter_name);
-                                Picasso.with(ActFromUrl.this).load(image_url).into(ivThumbDetail);
+                                Picasso.with(ActFromUrl.this).load(image_url).transform(new CropSquareTransformation()).into(ivThumbDetail);
 
                                 if(sliderContentImages.size() > 0) {
                                     imageSliderAdapter = new ImageSliderAdapter(getSupportFragmentManager(), sliderContentImages);

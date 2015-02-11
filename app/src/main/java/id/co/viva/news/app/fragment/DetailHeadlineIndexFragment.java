@@ -53,6 +53,7 @@ import id.co.viva.news.app.adapter.ImageSliderAdapter;
 import id.co.viva.news.app.adapter.RelatedAdapter;
 import id.co.viva.news.app.coachmark.CoachmarkBuilder;
 import id.co.viva.news.app.coachmark.CoachmarkView;
+import id.co.viva.news.app.component.CropSquareTransformation;
 import id.co.viva.news.app.component.ProgressWheel;
 import id.co.viva.news.app.model.Comment;
 import id.co.viva.news.app.model.Favorites;
@@ -133,49 +134,163 @@ public class DetailHeadlineIndexFragment extends Fragment implements View.OnClic
     }
 
     private void defineViews(View view) {
-        viewPager = (ViewPager) view.findViewById(R.id.horizontal_list);
+        //Viewpager Image
+        if(viewPager == null) {
+            viewPager = (ViewPager) view.findViewById(R.id.horizontal_list);
+            view.setTag(viewPager);
+        } else {
+            viewPager = (ViewPager) view.getTag();
+        }
         viewPager.setVisibility(View.GONE);
-        linePageIndicator = (LinePageIndicator) view.findViewById(R.id.indicator);
+
+        //Indicator Slider Image
+        if(linePageIndicator == null) {
+            linePageIndicator = (LinePageIndicator) view.findViewById(R.id.indicator);
+            view.setTag(linePageIndicator);
+        } else {
+            linePageIndicator = (LinePageIndicator) view.getTag();
+        }
         linePageIndicator.setVisibility(View.GONE);
-        layoutCommentPreview = (LinearLayout) view.findViewById(R.id.layout_preview_comment_list);
+
+        //Layout Comment
+        if(layoutCommentPreview == null) {
+            layoutCommentPreview = (LinearLayout) view.findViewById(R.id.layout_preview_comment_list);
+            view.setTag(layoutCommentPreview);
+        } else {
+            layoutCommentPreview = (LinearLayout) view.getTag();
+        }
         layoutCommentPreview.setOnClickListener(this);
         layoutCommentPreview.setVisibility(View.GONE);
-        tvPreviewCommentContent = (TextView) view.findViewById(R.id.text_preview_comment_content);
-        tvPreviewCommentUser = (TextView) view.findViewById(R.id.text_preview_comment_user);
-        relatedArticleArrayList = new ArrayList<RelatedArticle>();
-        commentArrayList = new ArrayList<Comment>();
-        sliderContentImages = new ArrayList<SliderContentImage>();
-        videoArrayList = new ArrayList<Video>();
-        progressWheel = (ProgressWheel) view.findViewById(R.id.progress_wheel);
-        headerRelated = (RelativeLayout) view.findViewById(R.id.header_related_article_headline);
+
+        //Preview Comment
+        if(tvPreviewCommentContent == null) {
+            tvPreviewCommentContent = (TextView) view.findViewById(R.id.text_preview_comment_content);
+            view.setTag(tvPreviewCommentContent);
+        } else {
+            tvPreviewCommentContent = (TextView) view.getTag();
+        }
+
+        //Preview Comment User
+        if(tvPreviewCommentUser == null) {
+            tvPreviewCommentUser = (TextView) view.findViewById(R.id.text_preview_comment_user);
+            view.setTag(tvPreviewCommentUser);
+        } else {
+            tvPreviewCommentUser = (TextView) view.getTag();
+        }
+
+        if(relatedArticleArrayList == null) {
+            relatedArticleArrayList = new ArrayList<RelatedArticle>();
+        }
+
+        if(commentArrayList == null) {
+            commentArrayList = new ArrayList<Comment>();
+        }
+
+        if(sliderContentImages == null) {
+            sliderContentImages = new ArrayList<SliderContentImage>();
+        }
+
+        if(videoArrayList == null) {
+            videoArrayList = new ArrayList<Video>();
+        }
+
+        if(progressWheel == null) {
+            progressWheel = (ProgressWheel) view.findViewById(R.id.progress_wheel);
+            view.setTag(progressWheel);
+        } else {
+            progressWheel = (ProgressWheel) view.getTag();
+        }
+
+        //Header Related Article
+        if(headerRelated == null) {
+            headerRelated = (RelativeLayout) view.findViewById(R.id.header_related_article_headline);
+            view.setTag(headerRelated);
+        } else {
+            headerRelated = (RelativeLayout) view.getTag();
+        }
         headerRelated.setVisibility(View.GONE);
-        tvNoResult = (TextView) view.findViewById(R.id.text_no_result_detail_headline);
+
+        if(tvNoResult == null) {
+            tvNoResult = (TextView) view.findViewById(R.id.text_no_result_detail_headline);
+            view.setTag(tvNoResult);
+        } else {
+            tvNoResult = (TextView) view.getTag();
+        }
         tvNoResult.setVisibility(View.GONE);
-        rippleView = (RippleView) view.findViewById(R.id.layout_ripple_view_headline_terbaru);
+
+        //Material Effect View
+        if(rippleView == null) {
+            rippleView = (RippleView) view.findViewById(R.id.layout_ripple_view_headline_terbaru);
+            view.setTag(rippleView);
+        } else {
+            rippleView = (RippleView) view.getTag();
+        }
         rippleView.setVisibility(View.GONE);
         rippleView.setOnClickListener(this);
-        listView = (ListView) view.findViewById(R.id.list_related_article_headline);
+
+        //List Related Article
+        if(listView == null) {
+            listView = (ListView) view.findViewById(R.id.list_related_article_headline);
+            view.setTag(listView);
+        } else {
+            listView = (ListView) view.getTag();
+        }
         listView.setOnItemClickListener(this);
-        coachmarkView = view.findViewById(R.id.coachmark_detail);
-        tvTitleHeadlineDetail = (TextView) view.findViewById(R.id.title_detail_headline);
-        tvDateHeadlineDetail = (TextView) view.findViewById(R.id.date_detail_headline);
-        tvReporterHeadlineDetail = (TextView) view.findViewById(R.id.reporter_detail_headline);
-        tvContentHeadlineDetail = (TextView) view.findViewById(R.id.content_detail_headline);
-        ivThumbDetailHeadline = (KenBurnsView) view.findViewById(R.id.thumb_detail_headline);
+
+        if(coachmarkView == null) {
+            coachmarkView = view.findViewById(R.id.coachmark_detail);
+            view.setTag(coachmarkView);
+        } else {
+            coachmarkView = (RelativeLayout) view.getTag();
+        }
+
+        if(tvTitleHeadlineDetail == null) {
+            tvTitleHeadlineDetail = (TextView) view.findViewById(R.id.title_detail_headline);
+            view.setTag(tvTitleHeadlineDetail);
+        } else {
+            tvTitleHeadlineDetail = (TextView) view.getTag();
+        }
+
+        if(tvDateHeadlineDetail == null) {
+            tvDateHeadlineDetail = (TextView) view.findViewById(R.id.date_detail_headline);
+            view.setTag(tvDateHeadlineDetail);
+        } else {
+            tvDateHeadlineDetail = (TextView) view.getTag();
+        }
+
+        if(tvReporterHeadlineDetail == null) {
+            tvReporterHeadlineDetail = (TextView) view.findViewById(R.id.reporter_detail_headline);
+            view.setTag(tvReporterHeadlineDetail);
+        } else {
+            tvReporterHeadlineDetail = (TextView) view.getTag();
+        }
+
+        if(tvContentHeadlineDetail == null) {
+            tvContentHeadlineDetail = (TextView) view.findViewById(R.id.content_detail_headline);
+            view.setTag(tvContentHeadlineDetail);
+        } else {
+            tvContentHeadlineDetail = (TextView) view.getTag();
+        }
+
+        if(ivThumbDetailHeadline == null) {
+            ivThumbDetailHeadline = (KenBurnsView) view.findViewById(R.id.thumb_detail_headline);
+            view.setTag(ivThumbDetailHeadline);
+        } else {
+            ivThumbDetailHeadline = (KenBurnsView) view.getTag();
+        }
         ivThumbDetailHeadline.setOnClickListener(this);
-        ivThumbDetailHeadline.setFocusable(true);
         ivThumbDetailHeadline.setFocusableInTouchMode(true);
-        ivThumbDetailHeadline.requestFocus();
-        textLinkVideo = (TextView) view.findViewById(R.id.text_move_video);
+
+        if(textLinkVideo == null) {
+            textLinkVideo = (TextView) view.findViewById(R.id.text_move_video);
+            view.setTag(textLinkVideo);
+        } else {
+            textLinkVideo = (TextView) view.getTag();
+        }
         textLinkVideo.setOnClickListener(this);
         textLinkVideo.setVisibility(View.GONE);
-        showCoachMark();
-    }
 
-    private void getAnalytics() {
-        analytics = new Analytics(getActivity());
-        analytics.getAnalyticByATInternet(Constant.HEADLINE_DETAIL_PAGE);
-        analytics.getAnalyticByGoogleAnalytic(Constant.HEADLINE_DETAIL_PAGE);
+        showCoachMark();
     }
 
     private void showCoachMark() {
@@ -198,8 +313,7 @@ public class DetailHeadlineIndexFragment extends Fragment implements View.OnClic
         int actionBarHeight = 0;
         int heightFocus;
         TypedValue typedValue = new TypedValue();
-        if (getActivity().getTheme().resolveAttribute(android.R.attr.actionBarSize, typedValue, true))
-        {
+        if (getActivity().getTheme().resolveAttribute(android.R.attr.actionBarSize, typedValue, true)) {
             actionBarHeight = TypedValue.complexToDimensionPixelSize(typedValue.data,getResources().getDisplayMetrics());
         }
         heightFocus = 0 - (actionBarHeight / 2);
@@ -220,7 +334,6 @@ public class DetailHeadlineIndexFragment extends Fragment implements View.OnClic
 
         setHasOptionsMenu(true);
         defineViews(view);
-        getAnalytics();
 
         if(isInternetPresent) {
             StringRequest request = new StringRequest(Request.Method.GET, Constant.NEW_DETAIL + "/id/" + id,
@@ -292,12 +405,14 @@ public class DetailHeadlineIndexFragment extends Fragment implements View.OnClic
                                     Log.i(Constant.TAG, "COMMENTS PREVIEW : " + commentArrayList.get(i).getComment_text());
                                 }
 
+                                setAnalytics(ids, title);
+
                                 tvTitleHeadlineDetail.setText(title);
                                 tvDateHeadlineDetail.setText(date_publish);
                                 tvContentHeadlineDetail.setText(Html.fromHtml(content).toString());
                                 tvContentHeadlineDetail.setMovementMethod(LinkMovementMethod.getInstance());
                                 tvReporterHeadlineDetail.setText(reporter_name);
-                                Picasso.with(getActivity()).load(image_url).into(ivThumbDetailHeadline);
+                                Picasso.with(getActivity()).load(image_url).transform(new CropSquareTransformation()).into(ivThumbDetailHeadline);
 
                                 if(sliderContentImages.size() > 0) {
                                     imageSliderAdapter = new ImageSliderAdapter(getFragmentManager(), sliderContentImages);
@@ -427,7 +542,7 @@ public class DetailHeadlineIndexFragment extends Fragment implements View.OnClic
                                     tvContentHeadlineDetail.setText(Html.fromHtml(content).toString());
                                     tvContentHeadlineDetail.setMovementMethod(LinkMovementMethod.getInstance());
                                     tvReporterHeadlineDetail.setText(reporter_name);
-                                    Picasso.with(getActivity()).load(image_url).into(ivThumbDetailHeadline);
+                                    Picasso.with(getActivity()).load(image_url).transform(new CropSquareTransformation()).into(ivThumbDetailHeadline);
 
                                     if(sliderContentImages.size() > 0) {
                                         imageSliderAdapter = new ImageSliderAdapter(getFragmentManager(), sliderContentImages);
@@ -559,7 +674,7 @@ public class DetailHeadlineIndexFragment extends Fragment implements View.OnClic
                     tvContentHeadlineDetail.setText(Html.fromHtml(content).toString());
                     tvContentHeadlineDetail.setMovementMethod(LinkMovementMethod.getInstance());
                     tvReporterHeadlineDetail.setText(reporter_name);
-                    Picasso.with(getActivity()).load(image_url).into(ivThumbDetailHeadline);
+                    Picasso.with(getActivity()).load(image_url).transform(new CropSquareTransformation()).into(ivThumbDetailHeadline);
 
                     if(sliderContentImages.size() > 0) {
                         imageSliderAdapter = new ImageSliderAdapter(getFragmentManager(), sliderContentImages);
@@ -813,12 +928,14 @@ public class DetailHeadlineIndexFragment extends Fragment implements View.OnClic
                                         Log.i(Constant.TAG, "COMMENTS PREVIEW : " + commentArrayList.get(i).getComment_text());
                                     }
 
+                                    setAnalytics(ids, title);
+
                                     tvTitleHeadlineDetail.setText(title);
                                     tvDateHeadlineDetail.setText(date_publish);
                                     tvContentHeadlineDetail.setText(Html.fromHtml(content).toString());
                                     tvContentHeadlineDetail.setMovementMethod(LinkMovementMethod.getInstance());
                                     tvReporterHeadlineDetail.setText(reporter_name);
-                                    Picasso.with(getActivity()).load(image_url).into(ivThumbDetailHeadline);
+                                    Picasso.with(getActivity()).load(image_url).transform(new CropSquareTransformation()).into(ivThumbDetailHeadline);
 
                                     if(sliderContentImages.size() > 0) {
                                         imageSliderAdapter = new ImageSliderAdapter(getFragmentManager(), sliderContentImages);
@@ -935,6 +1052,12 @@ public class DetailHeadlineIndexFragment extends Fragment implements View.OnClic
             getActivity().startActivity(intent);
             getActivity().overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
         }
+    }
+
+    private void setAnalytics(String id, String title) {
+        analytics = new Analytics(getActivity());
+        analytics.getAnalyticByATInternet(Constant.HEADLINE_DETAIL_PAGE + id + "_" + title.toUpperCase());
+        analytics.getAnalyticByGoogleAnalytic(Constant.HEADLINE_DETAIL_PAGE + id + "_" + title.toUpperCase());
     }
 
 }

@@ -54,6 +54,7 @@ import id.co.viva.news.app.adapter.ImageSliderAdapter;
 import id.co.viva.news.app.adapter.RelatedAdapter;
 import id.co.viva.news.app.coachmark.CoachmarkBuilder;
 import id.co.viva.news.app.coachmark.CoachmarkView;
+import id.co.viva.news.app.component.CropSquareTransformation;
 import id.co.viva.news.app.component.ProgressWheel;
 import id.co.viva.news.app.model.Comment;
 import id.co.viva.news.app.model.Favorites;
@@ -116,7 +117,6 @@ public class DetailIndexContent extends Fragment implements
     private String image_caption;
     private String sliderPhotoUrl;
     private String sliderTitle;
-
     private View coachmarkView;
     private CoachmarkView showtips;
     private TextView textLinkVideo;
@@ -181,65 +181,158 @@ public class DetailIndexContent extends Fragment implements
 
         setHasOptionsMenu(true);
 
-        if(kanals != null) {
-            if(kanals.equalsIgnoreCase("bola")) {
-                analytics.getAnalyticByATInternet(Constant.DETAIL_CONTENT_BOLA_PAGE);
-                analytics.getAnalyticByGoogleAnalytic(Constant.DETAIL_CONTENT_BOLA_PAGE);
-            } else if(kanals.equalsIgnoreCase("vivalife")) {
-                analytics.getAnalyticByATInternet(Constant.DETAIL_CONTENT_LIFE_PAGE);
-                analytics.getAnalyticByGoogleAnalytic(Constant.DETAIL_CONTENT_LIFE_PAGE);
-            } else {
-                analytics.getAnalyticByATInternet(Constant.DETAIL_CONTENT_NEWS_PAGE);
-                analytics.getAnalyticByGoogleAnalytic(Constant.DETAIL_CONTENT_NEWS_PAGE);
-            }
+        if(coachmarkView == null) {
+            coachmarkView = view.findViewById(R.id.coachmark_detail);
+            view.setTag(coachmarkView);
+        } else {
+            coachmarkView = (RelativeLayout) view.getTag();
         }
 
-        coachmarkView = view.findViewById(R.id.coachmark_detail);
-        viewPager = (ViewPager) view.findViewById(R.id.horizontal_list);
+        if(viewPager == null) {
+            viewPager = (ViewPager) view.findViewById(R.id.horizontal_list);
+            view.setTag(viewPager);
+        } else {
+            viewPager = (ViewPager) view.getTag();
+        }
         viewPager.setVisibility(View.GONE);
 
-        linePageIndicator = (LinePageIndicator) view.findViewById(R.id.indicator);
+        if(linePageIndicator == null) {
+            linePageIndicator = (LinePageIndicator) view.findViewById(R.id.indicator);
+            view.setTag(linePageIndicator);
+        } else {
+            linePageIndicator = (LinePageIndicator) view.getTag();
+        }
         linePageIndicator.setVisibility(View.GONE);
 
-        progressWheel = (ProgressWheel) view.findViewById(R.id.progress_wheel);
-        headerRelated = (RelativeLayout) view.findViewById(R.id.header_related_article);
+        if(progressWheel == null) {
+            progressWheel = (ProgressWheel) view.findViewById(R.id.progress_wheel);
+            view.setTag(progressWheel);
+        } else {
+            progressWheel = (ProgressWheel) view.getTag();
+        }
+
+        if(headerRelated == null) {
+            headerRelated = (RelativeLayout) view.findViewById(R.id.header_related_article);
+            view.setTag(headerRelated);
+        } else {
+            headerRelated = (RelativeLayout) view.getTag();
+        }
         headerRelated.setVisibility(View.GONE);
 
-        rippleView = (RippleView) view.findViewById(R.id.layout_ripple_view_detail_subkanal);
+        if(rippleView == null) {
+            rippleView = (RippleView) view.findViewById(R.id.layout_ripple_view_detail_subkanal);
+            view.setTag(rippleView);
+        } else {
+            rippleView = (RippleView) view.getTag();
+        }
         rippleView.setVisibility(View.GONE);
         rippleView.setOnClickListener(this);
 
-        btnRetry = (Button) view.findViewById(R.id.btn_retry);
+        if(btnRetry == null) {
+            btnRetry = (Button) view.findViewById(R.id.btn_retry);
+            view.setTag(btnRetry);
+        } else {
+            btnRetry = (Button) view.getTag();
+        }
 
-        tvNoResult = (TextView) view.findViewById(R.id.text_no_result_detail_content);
+        if(tvNoResult == null) {
+            tvNoResult = (TextView) view.findViewById(R.id.text_no_result_detail_content);
+            view.setTag(tvNoResult);
+        } else {
+            tvNoResult = (TextView) view.getTag();
+        }
         tvNoResult.setVisibility(View.GONE);
 
-        listView = (ListView) view.findViewById(R.id.list_related_article);
+        if(listView == null) {
+            listView = (ListView) view.findViewById(R.id.list_related_article);
+            view.setTag(listView);
+        } else {
+            listView = (ListView) view.getTag();
+        }
         listView.setOnItemClickListener(this);
 
-        relatedArticleArrayList = new ArrayList<RelatedArticle>();
-        commentArrayList = new ArrayList<Comment>();
-        sliderContentImages = new ArrayList<SliderContentImage>();
-        videoArrayList = new ArrayList<Video>();
+        if(relatedArticleArrayList == null) {
+            relatedArticleArrayList = new ArrayList<RelatedArticle>();
+        }
 
-        layoutCommentPreview = (LinearLayout) view.findViewById(R.id.layout_preview_comment_list);
+        if(commentArrayList == null) {
+            commentArrayList = new ArrayList<Comment>();
+        }
+
+        if(sliderContentImages == null) {
+            sliderContentImages = new ArrayList<SliderContentImage>();
+        }
+
+        if(videoArrayList == null) {
+            videoArrayList = new ArrayList<Video>();
+        }
+
+        if(layoutCommentPreview == null) {
+            layoutCommentPreview = (LinearLayout) view.findViewById(R.id.layout_preview_comment_list);
+            view.setTag(layoutCommentPreview);
+        } else {
+            layoutCommentPreview = (LinearLayout) view.getTag();
+        }
         layoutCommentPreview.setOnClickListener(this);
         layoutCommentPreview.setVisibility(View.GONE);
-        tvPreviewCommentContent = (TextView) view.findViewById(R.id.text_preview_comment_content);
-        tvPreviewCommentUser = (TextView) view.findViewById(R.id.text_preview_comment_user);
 
-        tvTitleDetail = (TextView) view.findViewById(R.id.title_detail_content);
-        tvDateDetail = (TextView) view.findViewById(R.id.date_detail_content);
-        tvReporterDetail = (TextView) view.findViewById(R.id.reporter_detail_content);
-        tvContentDetail = (TextView) view.findViewById(R.id.content_detail_content);
+        if(tvPreviewCommentContent == null) {
+            tvPreviewCommentContent = (TextView) view.findViewById(R.id.text_preview_comment_content);
+            view.setTag(tvPreviewCommentContent);
+        } else {
+            tvPreviewCommentContent = (TextView) view.getTag();
+        }
 
-        ivThumbDetail = (KenBurnsView) view.findViewById(R.id.thumb_detail_content);
+        if(tvPreviewCommentUser == null) {
+            tvPreviewCommentUser = (TextView) view.findViewById(R.id.text_preview_comment_user);
+            view.setTag(tvPreviewCommentUser);
+        } else {
+            tvPreviewCommentUser = (TextView) view.getTag();
+        }
+
+        if(tvTitleDetail == null) {
+            tvTitleDetail = (TextView) view.findViewById(R.id.title_detail_content);
+            view.setTag(tvTitleDetail);
+        } else {
+            tvTitleDetail = (TextView) view.getTag();
+        }
+
+        if(tvDateDetail == null) {
+            tvDateDetail = (TextView) view.findViewById(R.id.date_detail_content);
+            view.setTag(tvDateDetail);
+        } else {
+            tvDateDetail = (TextView) view.getTag();
+        }
+
+        if(tvReporterDetail == null) {
+            tvReporterDetail = (TextView) view.findViewById(R.id.reporter_detail_content);
+            view.setTag(tvReporterDetail);
+        } else {
+            tvReporterDetail = (TextView) view.getTag();
+        }
+
+        if(tvContentDetail == null) {
+            tvContentDetail = (TextView) view.findViewById(R.id.content_detail_content);
+            view.setTag(tvContentDetail);
+        } else {
+            tvContentDetail = (TextView) view.getTag();
+        }
+
+        if(ivThumbDetail == null) {
+            ivThumbDetail = (KenBurnsView) view.findViewById(R.id.thumb_detail_content);
+            view.setTag(ivThumbDetail);
+        } else {
+            ivThumbDetail = (KenBurnsView) view.getTag();
+        }
         ivThumbDetail.setOnClickListener(this);
-        ivThumbDetail.setFocusable(true);
         ivThumbDetail.setFocusableInTouchMode(true);
-        ivThumbDetail.requestFocus();
 
-        textLinkVideo = (TextView) view.findViewById(R.id.text_move_video);
+        if(textLinkVideo == null) {
+            textLinkVideo = (TextView) view.findViewById(R.id.text_move_video);
+            view.setTag(textLinkVideo);
+        } else {
+            textLinkVideo = (TextView) view.getTag();
+        }
         textLinkVideo.setOnClickListener(this);
         textLinkVideo.setVisibility(View.GONE);
 
@@ -315,12 +408,14 @@ public class DetailIndexContent extends Fragment implements
                                     Log.i(Constant.TAG, "COMMENTS PREVIEW : " + commentArrayList.get(i).getComment_text());
                                 }
 
+                                setAnalytics(kanal, ids, title);
+
                                 tvTitleDetail.setText(title);
                                 tvDateDetail.setText(date_publish);
                                 tvContentDetail.setText(Html.fromHtml(content).toString());
                                 tvContentDetail.setMovementMethod(LinkMovementMethod.getInstance());
                                 tvReporterDetail.setText(reporter_name);
-                                Picasso.with(getActivity()).load(image_url).into(ivThumbDetail);
+                                Picasso.with(getActivity()).load(image_url).transform(new CropSquareTransformation()).into(ivThumbDetail);
 
                                 if(sliderContentImages.size() > 0) {
                                     imageSliderAdapter = new ImageSliderAdapter(getFragmentManager(), sliderContentImages);
@@ -460,7 +555,7 @@ public class DetailIndexContent extends Fragment implements
                                     tvContentDetail.setText(Html.fromHtml(content).toString());
                                     tvContentDetail.setMovementMethod(LinkMovementMethod.getInstance());
                                     tvReporterDetail.setText(reporter_name);
-                                    Picasso.with(getActivity()).load(image_url).into(ivThumbDetail);
+                                    Picasso.with(getActivity()).load(image_url).transform(new CropSquareTransformation()).into(ivThumbDetail);
 
                                     if(sliderContentImages.size() > 0) {
                                         imageSliderAdapter = new ImageSliderAdapter(getFragmentManager(), sliderContentImages);
@@ -612,7 +707,7 @@ public class DetailIndexContent extends Fragment implements
                     tvContentDetail.setText(Html.fromHtml(content).toString());
                     tvContentDetail.setMovementMethod(LinkMovementMethod.getInstance());
                     tvReporterDetail.setText(reporter_name);
-                    Picasso.with(getActivity()).load(image_url).into(ivThumbDetail);
+                    Picasso.with(getActivity()).load(image_url).transform(new CropSquareTransformation()).into(ivThumbDetail);
 
                     if(sliderContentImages.size() > 0) {
                         imageSliderAdapter = new ImageSliderAdapter(getFragmentManager(), sliderContentImages);
@@ -894,12 +989,14 @@ public class DetailIndexContent extends Fragment implements
                                         Log.i(Constant.TAG, "COMMENTS PREVIEW : " + commentArrayList.get(i).getComment_text());
                                     }
 
+                                    setAnalytics(kanal, ids, title);
+
                                     tvTitleDetail.setText(title);
                                     tvDateDetail.setText(date_publish);
                                     tvContentDetail.setText(Html.fromHtml(content).toString());
                                     tvContentDetail.setMovementMethod(LinkMovementMethod.getInstance());
                                     tvReporterDetail.setText(reporter_name);
-                                    Picasso.with(getActivity()).load(image_url).into(ivThumbDetail);
+                                    Picasso.with(getActivity()).load(image_url).transform(new CropSquareTransformation()).into(ivThumbDetail);
 
                                     if(sliderContentImages.size() > 0) {
                                         imageSliderAdapter = new ImageSliderAdapter(getFragmentManager(), sliderContentImages);
@@ -1018,6 +1115,51 @@ public class DetailIndexContent extends Fragment implements
             moveCommentPage();
         } else if(view.getId() == R.id.text_move_video) {
             moveVideoPage();
+        }
+    }
+
+    private void setAnalytics(String channel_title, String id, String title) {
+        if(kanals != null) {
+            if(kanals.equalsIgnoreCase("bola")) {
+                analytics.getAnalyticByATInternet(Constant.DETAIL_CONTENT_BOLA_PAGE
+                        + channel_title.toUpperCase()
+                        + "_"
+                        + id
+                        + "_"
+                        + title.toUpperCase());
+                analytics.getAnalyticByGoogleAnalytic(Constant.DETAIL_CONTENT_BOLA_PAGE
+                        + channel_title.toUpperCase()
+                        + "_"
+                        + id
+                        + "_"
+                        + title.toUpperCase());
+            } else if(kanals.equalsIgnoreCase("vivalife")) {
+                analytics.getAnalyticByATInternet(Constant.DETAIL_CONTENT_LIFE_PAGE
+                        + channel_title.toUpperCase()
+                        + "_"
+                        + id
+                        + "_"
+                        + title.toUpperCase());
+                analytics.getAnalyticByGoogleAnalytic(Constant.DETAIL_CONTENT_LIFE_PAGE
+                        + channel_title.toUpperCase()
+                        + "_"
+                        + id
+                        + "_"
+                        + title.toUpperCase());
+            } else {
+                analytics.getAnalyticByATInternet(Constant.DETAIL_CONTENT_NEWS_PAGE
+                        + channel_title.toUpperCase()
+                        + "_"
+                        + id
+                        + "_"
+                        + title.toUpperCase());
+                analytics.getAnalyticByGoogleAnalytic(Constant.DETAIL_CONTENT_NEWS_PAGE
+                        + channel_title.toUpperCase()
+                        + "_"
+                        + id
+                        + "_"
+                        + title.toUpperCase());
+            }
         }
     }
 

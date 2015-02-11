@@ -76,6 +76,7 @@ public class HeadlineFragment extends Fragment implements
     private CoachmarkView showtips;
     private ProgressBar loading_layout;
     private FloatingActionButton floatingActionButton;
+    private int page = 1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -121,8 +122,8 @@ public class HeadlineFragment extends Fragment implements
         rippleView.setOnClickListener(this);
 
         analytics = new Analytics(getActivity());
-        analytics.getAnalyticByATInternet(Constant.HEADLINE_PAGE);
-        analytics.getAnalyticByGoogleAnalytic(Constant.HEADLINE_PAGE);
+        analytics.getAnalyticByATInternet(Constant.HEADLINE_PAGE + String.valueOf(page));
+        analytics.getAnalyticByGoogleAnalytic(Constant.HEADLINE_PAGE + String.valueOf(page));
 
         lastUpdate = (TextView) rootView.findViewById(R.id.date_terbaru_headline);
         labelText = (TextView) rootView.findViewById(R.id.text_terbaru_headline);
@@ -497,9 +498,10 @@ public class HeadlineFragment extends Fragment implements
     @Override
     public void onLoadMore() {
         Log.i(Constant.TAG, "Last Published : " + lastPublished);
+        page += 1;
         if(isInternetPresent) {
-//            analytics.getAnalyticByATInternet(Constant.HEADLINE_PAGE + "_" + data);
-//            analytics.getAnalyticByGoogleAnalytic(Constant.HEADLINE_PAGE + "_" + data);
+            analytics.getAnalyticByATInternet(Constant.HEADLINE_PAGE + String.valueOf(page));
+            analytics.getAnalyticByGoogleAnalytic(Constant.HEADLINE_PAGE + String.valueOf(page));
             StringRequest stringRequest = new StringRequest(Request.Method.GET, Constant.NEW_HEADLINE +
                     "published/" + lastPublished,
                     new Response.Listener<String>() {

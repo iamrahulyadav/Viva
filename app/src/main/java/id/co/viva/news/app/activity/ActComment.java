@@ -26,6 +26,7 @@ import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.Global;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.adapter.CommentAdapter;
+import id.co.viva.news.app.component.CropSquareTransformation;
 import id.co.viva.news.app.interfaces.OnCompleteListener;
 import id.co.viva.news.app.interfaces.OnDoneListener;
 import id.co.viva.news.app.model.Comment;
@@ -95,7 +96,7 @@ public class ActComment extends FragmentActivity implements View.OnClickListener
         }
 
         if(mImageUrl.length() > 0) {
-            Picasso.with(this).load(mImageUrl).into(image_content);
+            Picasso.with(this).load(mImageUrl).transform(new CropSquareTransformation()).into(image_content);
         }
 
         if(isInternetPresent) {

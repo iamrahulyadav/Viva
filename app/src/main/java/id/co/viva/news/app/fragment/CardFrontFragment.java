@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import com.squareup.picasso.Picasso;
 
 import id.co.viva.news.app.R;
+import id.co.viva.news.app.component.CropSquareTransformation;
 
 /**
  * Created by reza on 19/12/14.
@@ -32,7 +33,8 @@ public class CardFrontFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_card_front, container, false);
         mFrontImage = (ImageView) v.findViewById(R.id.image_card_front);
         if(photoUrl.length() > 0) {
-            Picasso.with(context).load(photoUrl).into(mFrontImage);
+            Picasso.with(context).load(photoUrl)
+                    .transform(new CropSquareTransformation()).into(mFrontImage);
         }
         return v;
     }

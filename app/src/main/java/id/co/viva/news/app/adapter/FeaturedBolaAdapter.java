@@ -13,6 +13,7 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
 import id.co.viva.news.app.R;
+import id.co.viva.news.app.component.CropSquareTransformation;
 import id.co.viva.news.app.model.FeaturedBola;
 
 /**
@@ -61,7 +62,8 @@ public class FeaturedBolaAdapter extends BaseAdapter {
         FeaturedBola featuredBola = subNewsArrayList.get(position);
         holder.title_kanal.setText(featuredBola.getChannel_title().toUpperCase());
         if(featuredBola.getImage_url().length() > 0) {
-            Picasso.with(context).load(featuredBola.getImage_url()).into(holder.thumb_featured);
+            Picasso.with(context).load(featuredBola.getImage_url())
+                    .transform(new CropSquareTransformation()).into(holder.thumb_featured);
         } else {
             holder.thumb_featured.setImageResource(R.drawable.default_image);
         }

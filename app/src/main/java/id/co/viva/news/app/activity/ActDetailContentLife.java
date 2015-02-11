@@ -46,17 +46,16 @@ public class ActDetailContentLife extends FragmentActivity {
                     position++;
                 }
             }
+            adapter = new DetailContentAdapterLife(getSupportFragmentManager(), ActDetailChannelLife.channelLifeArrayList);
+            viewPager = (ViewPager)findViewById(R.id.vp_detail_content);
+            viewPager.setAdapter(adapter);
+            viewPager.setPageTransformer(true, new ZoomOutPageTransformer());
+            viewPager.setCurrentItem(position);
+            adapter.notifyDataSetChanged();
         } else {
             Toast.makeText(this, R.string.label_error, Toast.LENGTH_SHORT).show();
             onBackPressed();
         }
-
-        adapter = new DetailContentAdapterLife(getSupportFragmentManager(), ActDetailChannelLife.channelLifeArrayList);
-        viewPager = (ViewPager)findViewById(R.id.vp_detail_content);
-        viewPager.setAdapter(adapter);
-        viewPager.setPageTransformer(true, new ZoomOutPageTransformer());
-        viewPager.setCurrentItem(position);
-        adapter.notifyDataSetChanged();
     }
 
     @Override

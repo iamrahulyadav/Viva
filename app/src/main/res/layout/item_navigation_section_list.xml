@@ -13,10 +13,10 @@
         android:layout_marginLeft="5dp"
         android:textStyle="bold"
         android:textSize="16sp"
-        android:textColor="@color/black"/>
+        android:textColor="@color/header_headline_terbaru_new"/>
     <View
         android:layout_width="match_parent"
         android:layout_marginTop="2dp"
         android:layout_height="1dp"
-        android:background="@color/date_color"/>
+        android:background="@color/header_headline_terbaru_new"/>
 </LinearLayout>

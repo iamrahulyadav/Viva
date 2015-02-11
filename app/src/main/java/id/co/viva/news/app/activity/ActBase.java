@@ -36,6 +36,7 @@ import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.Global;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.adapter.NavigationAdapter;
+import id.co.viva.news.app.component.CropSquareTransformation;
 import id.co.viva.news.app.fragment.AboutFragment;
 import id.co.viva.news.app.fragment.BolaFragment;
 import id.co.viva.news.app.fragment.FavoritesFragment;
@@ -152,13 +153,12 @@ public class ActBase extends FragmentActivity implements View.OnClickListener {
             mNameProfile.setText(fullname);
             mEmailProfile.setText(email);
         } else {
-            mNameProfile.setText("Anda Belum");
-            mEmailProfile.setText(R.string.label_login);
+            mNameProfile.setText(getResources().getString(R.string.label_not_logged_in));
         }
         if(photourl.length() > 0) {
             if(isInternetPresent) {
-                Picasso.with(this).load(photourl).into(mImgProfile);
-                Picasso.with(this).load(photourl).into(target);
+                Picasso.with(this).load(photourl).transform(new CropSquareTransformation()).into(mImgProfile);
+                Picasso.with(this).load(photourl).transform(new CropSquareTransformation()).into(target);
             } else {
                 mImgProfile.setImageResource(R.drawable.ic_profile);
             }

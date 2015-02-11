@@ -41,17 +41,16 @@ public class ActDetailHeadline extends FragmentActivity {
                     position++;
                 }
             }
+            adapter = new DetailHeadlineAdapter(getSupportFragmentManager(), HeadlineFragment.headlineArrayList);
+            viewPager = (ViewPager)findViewById(R.id.vp_headline_detail);
+            viewPager.setAdapter(adapter);
+            viewPager.setPageTransformer(true, new ZoomOutPageTransformer());
+            viewPager.setCurrentItem(position);
+            adapter.notifyDataSetChanged();
         } else {
             Toast.makeText(this, R.string.label_error, Toast.LENGTH_SHORT).show();
             onBackPressed();
         }
-
-        adapter = new DetailHeadlineAdapter(getSupportFragmentManager(), HeadlineFragment.headlineArrayList);
-        viewPager = (ViewPager)findViewById(R.id.vp_headline_detail);
-        viewPager.setAdapter(adapter);
-        viewPager.setPageTransformer(true, new ZoomOutPageTransformer());
-        viewPager.setCurrentItem(position);
-        adapter.notifyDataSetChanged();
     }
 
     @Override

@@ -53,6 +53,7 @@ import id.co.viva.news.app.adapter.ImageSliderAdapter;
 import id.co.viva.news.app.adapter.RelatedAdapter;
 import id.co.viva.news.app.coachmark.CoachmarkBuilder;
 import id.co.viva.news.app.coachmark.CoachmarkView;
+import id.co.viva.news.app.component.CropSquareTransformation;
 import id.co.viva.news.app.component.ProgressWheel;
 import id.co.viva.news.app.model.Comment;
 import id.co.viva.news.app.model.Favorites;
@@ -118,11 +119,11 @@ public class DetailTerbaruIndexFragment extends Fragment implements View.OnClick
     private TextView textLinkVideo;
 
     public static DetailTerbaruIndexFragment newInstance(String id) {
-        DetailTerbaruIndexFragment detailHeadlineIndexFragment = new DetailTerbaruIndexFragment();
+        DetailTerbaruIndexFragment detailTerbaruIndexFragment = new DetailTerbaruIndexFragment();
         Bundle bundle = new Bundle();
         bundle.putString("id", id);
-        detailHeadlineIndexFragment.setArguments(bundle);
-        return detailHeadlineIndexFragment;
+        detailTerbaruIndexFragment.setArguments(bundle);
+        return detailTerbaruIndexFragment;
     }
 
     private void showCoachMark() {
@@ -168,40 +169,100 @@ public class DetailTerbaruIndexFragment extends Fragment implements View.OnClick
     }
 
     @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.item_detail_latest, container, false);
 
         setHasOptionsMenu(true);
 
-        analytics = new Analytics(getActivity());
-        analytics.getAnalyticByATInternet(Constant.TERBARU_DETAIL_PAGE);
-        analytics.getAnalyticByGoogleAnalytic(Constant.TERBARU_DETAIL_PAGE);
+        if(coachmarkView == null) {
+            coachmarkView = view.findViewById(R.id.coachmark_detail);
+            view.setTag(coachmarkView);
+        } else {
+            coachmarkView = (RelativeLayout) view.getTag();
+        }
 
-        coachmarkView = view.findViewById(R.id.coachmark_detail);
-        viewPager = (ViewPager) view.findViewById(R.id.horizontal_list);
+        if(viewPager == null) {
+            viewPager = (ViewPager) view.findViewById(R.id.horizontal_list);
+            view.setTag(viewPager);
+        } else {
+            viewPager = (ViewPager) view.getTag();
+        }
         viewPager.setVisibility(View.GONE);
 
-        linePageIndicator = (LinePageIndicator) view.findViewById(R.id.indicator);
+        if(linePageIndicator == null) {
+            linePageIndicator = (LinePageIndicator) view.findViewById(R.id.indicator);
+            view.setTag(linePageIndicator);
+        } else {
+            linePageIndicator = (LinePageIndicator) view.getTag();
+        }
         linePageIndicator.setVisibility(View.GONE);
 
-        layoutCommentPreview = (LinearLayout) view.findViewById(R.id.layout_preview_comment_list);
+        if(layoutCommentPreview == null) {
+            layoutCommentPreview = (LinearLayout) view.findViewById(R.id.layout_preview_comment_list);
+            view.setTag(layoutCommentPreview);
+        } else {
+            layoutCommentPreview = (LinearLayout) view.getTag();
+        }
         layoutCommentPreview.setOnClickListener(this);
         layoutCommentPreview.setVisibility(View.GONE);
-        tvPreviewCommentContent = (TextView) view.findViewById(R.id.text_preview_comment_content);
-        tvPreviewCommentUser = (TextView) view.findViewById(R.id.text_preview_comment_user);
 
-        progressWheel = (ProgressWheel) view.findViewById(R.id.progress_wheel);
-        headerRelated = (RelativeLayout) view.findViewById(R.id.header_related_article);
+        if(tvPreviewCommentContent == null) {
+            tvPreviewCommentContent = (TextView) view.findViewById(R.id.text_preview_comment_content);
+            view.setTag(tvPreviewCommentContent);
+        } else {
+            tvPreviewCommentContent = (TextView) view.getTag();
+        }
+
+        if(tvPreviewCommentUser == null) {
+            tvPreviewCommentUser = (TextView) view.findViewById(R.id.text_preview_comment_user);
+            view.setTag(tvPreviewCommentUser);
+        } else {
+            tvPreviewCommentUser = (TextView) view.getTag();
+        }
+
+        if(progressWheel == null) {
+            progressWheel = (ProgressWheel) view.findViewById(R.id.progress_wheel);
+            view.setTag(progressWheel);
+        } else {
+            progressWheel = (ProgressWheel) view.getTag();
+        }
+
+        if(headerRelated == null) {
+            headerRelated = (RelativeLayout) view.findViewById(R.id.header_related_article);
+            view.setTag(headerRelated);
+        } else {
+            headerRelated = (RelativeLayout) view.getTag();
+        }
         headerRelated.setVisibility(View.GONE);
 
-        tvNoResult = (TextView) view.findViewById(R.id.text_no_result_detail_news);
+        if(tvNoResult == null) {
+            tvNoResult = (TextView) view.findViewById(R.id.text_no_result_detail_news);
+            view.setTag(tvNoResult);
+        } else {
+            tvNoResult = (TextView) view.getTag();
+        }
         tvNoResult.setVisibility(View.GONE);
 
-        rippleView = (RippleView) view.findViewById(R.id.layout_ripple_view_headline_terbaru);
+        if(rippleView == null) {
+            rippleView = (RippleView) view.findViewById(R.id.layout_ripple_view_headline_terbaru);
+            view.setTag(rippleView);
+        } else {
+            rippleView = (RippleView) view.getTag();
+        }
         rippleView.setVisibility(View.GONE);
         rippleView.setOnClickListener(this);
 
-        listView = (ListView) view.findViewById(R.id.list_related_article);
+        if(listView == null) {
+            listView = (ListView) view.findViewById(R.id.list_related_article);
+            view.setTag(listView);
+        } else {
+            listView = (ListView) view.getTag();
+        }
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
@@ -220,23 +281,65 @@ public class DetailTerbaruIndexFragment extends Fragment implements View.OnClick
             }
         });
 
-        relatedArticleArrayList = new ArrayList<RelatedArticle>();
-        commentArrayList = new ArrayList<Comment>();
-        sliderContentImages = new ArrayList<SliderContentImage>();
-        videoArrayList = new ArrayList<Video>();
+        if(relatedArticleArrayList == null) {
+            relatedArticleArrayList = new ArrayList<RelatedArticle>();
+        }
 
-        tvTitleNewsDetail = (TextView) view.findViewById(R.id.title_detail_news);
-        tvDateNewsDetail = (TextView) view.findViewById(R.id.date_detail_news);
-        tvReporterNewsDetail = (TextView) view.findViewById(R.id.reporter_detail_news);
-        tvContentNewsDetail = (TextView) view.findViewById(R.id.content_detail_news);
+        if(commentArrayList == null) {
+            commentArrayList = new ArrayList<Comment>();
+        }
 
-        ivThumbDetailNews = (KenBurnsView) view.findViewById(R.id.thumb_detail_news);
+        if(sliderContentImages == null) {
+            sliderContentImages = new ArrayList<SliderContentImage>();
+        }
+
+        if(videoArrayList == null) {
+            videoArrayList = new ArrayList<Video>();
+        }
+
+        if(tvTitleNewsDetail == null) {
+            tvTitleNewsDetail = (TextView) view.findViewById(R.id.title_detail_news);
+            view.setTag(tvTitleNewsDetail);
+        } else {
+            tvTitleNewsDetail = (TextView) view.getTag();
+        }
+
+        if(tvDateNewsDetail == null) {
+            tvDateNewsDetail = (TextView) view.findViewById(R.id.date_detail_news);
+            view.setTag(tvDateNewsDetail);
+        } else {
+            tvDateNewsDetail = (TextView) view.getTag();
+        }
+
+        if(tvReporterNewsDetail == null) {
+            tvReporterNewsDetail = (TextView) view.findViewById(R.id.reporter_detail_news);
+            view.setTag(tvReporterNewsDetail);
+        } else {
+            tvReporterNewsDetail = (TextView) view.getTag();
+        }
+
+        if(tvContentNewsDetail == null) {
+            tvContentNewsDetail = (TextView) view.findViewById(R.id.content_detail_news);
+            view.setTag(tvContentNewsDetail);
+        } else {
+            tvContentNewsDetail = (TextView) view.getTag();
+        }
+
+        if(ivThumbDetailNews == null) {
+            ivThumbDetailNews = (KenBurnsView) view.findViewById(R.id.thumb_detail_news);
+            view.setTag(ivThumbDetailNews);
+        } else {
+            ivThumbDetailNews = (KenBurnsView) view.getTag();
+        }
         ivThumbDetailNews.setOnClickListener(this);
-        ivThumbDetailNews.setFocusable(true);
         ivThumbDetailNews.setFocusableInTouchMode(true);
-        ivThumbDetailNews.requestFocus();
 
-        textLinkVideo = (TextView) view.findViewById(R.id.text_move_video);
+        if(textLinkVideo == null) {
+            textLinkVideo = (TextView) view.findViewById(R.id.text_move_video);
+            view.setTag(textLinkVideo);
+        } else {
+            textLinkVideo = (TextView) view.getTag();
+        }
         textLinkVideo.setOnClickListener(this);
         textLinkVideo.setVisibility(View.GONE);
 
@@ -312,12 +415,14 @@ public class DetailTerbaruIndexFragment extends Fragment implements View.OnClick
                                     Log.i(Constant.TAG, "COMMENTS PREVIEW : " + commentArrayList.get(i).getComment_text());
                                 }
 
+                                setAnalytics(ids, title);
+
                                 tvTitleNewsDetail.setText(title);
                                 tvDateNewsDetail.setText(date_publish);
                                 tvContentNewsDetail.setText(Html.fromHtml(content).toString());
                                 tvContentNewsDetail.setMovementMethod(LinkMovementMethod.getInstance());
                                 tvReporterNewsDetail.setText(reporter_name);
-                                Picasso.with(getActivity()).load(image_url).into(ivThumbDetailNews);
+                                Picasso.with(getActivity()).load(image_url).transform(new CropSquareTransformation()).into(ivThumbDetailNews);
 
                                 if(sliderContentImages.size() > 0) {
                                     imageSliderAdapter = new ImageSliderAdapter(getFragmentManager(), sliderContentImages);
@@ -447,7 +552,7 @@ public class DetailTerbaruIndexFragment extends Fragment implements View.OnClick
                                     tvContentNewsDetail.setText(Html.fromHtml(content).toString());
                                     tvContentNewsDetail.setMovementMethod(LinkMovementMethod.getInstance());
                                     tvReporterNewsDetail.setText(reporter_name);
-                                    Picasso.with(getActivity()).load(image_url).into(ivThumbDetailNews);
+                                    Picasso.with(getActivity()).load(image_url).transform(new CropSquareTransformation()).into(ivThumbDetailNews);
 
                                     if(sliderContentImages.size() > 0) {
                                         imageSliderAdapter = new ImageSliderAdapter(getFragmentManager(), sliderContentImages);
@@ -579,7 +684,7 @@ public class DetailTerbaruIndexFragment extends Fragment implements View.OnClick
                     tvContentNewsDetail.setText(Html.fromHtml(content).toString());
                     tvContentNewsDetail.setMovementMethod(LinkMovementMethod.getInstance());
                     tvReporterNewsDetail.setText(reporter_name);
-                    Picasso.with(getActivity()).load(image_url).into(ivThumbDetailNews);
+                    Picasso.with(getActivity()).load(image_url).transform(new CropSquareTransformation()).into(ivThumbDetailNews);
 
                     if(sliderContentImages.size() > 0) {
                         imageSliderAdapter = new ImageSliderAdapter(getFragmentManager(), sliderContentImages);
@@ -832,12 +937,14 @@ public class DetailTerbaruIndexFragment extends Fragment implements View.OnClick
                                         Log.i(Constant.TAG, "COMMENTS PREVIEW : " + commentArrayList.get(i).getComment_text());
                                     }
 
+                                    setAnalytics(ids, title);
+
                                     tvTitleNewsDetail.setText(title);
                                     tvDateNewsDetail.setText(date_publish);
                                     tvContentNewsDetail.setText(Html.fromHtml(content).toString());
                                     tvContentNewsDetail.setMovementMethod(LinkMovementMethod.getInstance());
                                     tvReporterNewsDetail.setText(reporter_name);
-                                    Picasso.with(getActivity()).load(image_url).into(ivThumbDetailNews);
+                                    Picasso.with(getActivity()).load(image_url).transform(new CropSquareTransformation()).into(ivThumbDetailNews);
 
                                     if(sliderContentImages.size() > 0) {
                                         imageSliderAdapter = new ImageSliderAdapter(getFragmentManager(), sliderContentImages);
@@ -937,6 +1044,12 @@ public class DetailTerbaruIndexFragment extends Fragment implements View.OnClick
         } else if(view.getId() == R.id.text_move_video) {
             moveVideoPage();
         }
+    }
+
+    private void setAnalytics(String id, String title) {
+        analytics = new Analytics(getActivity());
+        analytics.getAnalyticByATInternet(Constant.TERBARU_DETAIL_PAGE + id + "_" + title.toUpperCase());
+        analytics.getAnalyticByGoogleAnalytic(Constant.TERBARU_DETAIL_PAGE + id + "_" + title.toUpperCase());
     }
 
 }

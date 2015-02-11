@@ -36,6 +36,7 @@ import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.Global;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.adapter.NavigationAdapter;
+import id.co.viva.news.app.component.CropSquareTransformation;
 import id.co.viva.news.app.fragment.AboutFragment;
 import id.co.viva.news.app.fragment.BolaFragment;
 import id.co.viva.news.app.fragment.FavoritesFragment;
@@ -223,13 +224,12 @@ public class ActLanding extends FragmentActivity implements View.OnClickListener
             mNameProfile.setText(fullname);
             mEmailProfile.setText(email);
         } else {
-            mNameProfile.setText("Anda Belum");
-            mEmailProfile.setText(R.string.label_login);
+            mNameProfile.setText(getResources().getString(R.string.label_not_logged_in));
         }
         if(photourl.length() > 0) {
             if(isInternetPresent) {
-                Picasso.with(this).load(photourl).into(mImgProfile);
-                Picasso.with(this).load(photourl).into(target);
+                Picasso.with(this).load(photourl).transform(new CropSquareTransformation()).into(mImgProfile);
+                Picasso.with(this).load(photourl).transform(new CropSquareTransformation()).into(target);
             } else {
                 mImgProfile.setImageResource(R.drawable.ic_profile);
             }
@@ -316,18 +316,22 @@ public class ActLanding extends FragmentActivity implements View.OnClickListener
         if(mDrawerLayout.isDrawerOpen(mNavLayout)) {
             mDrawerLayout.closeDrawer(mNavLayout);
         } else {
-            if(fragment.getClass().toString().equals(Constant.fragment_terbaru)) {
-                getSupportFragmentManager().beginTransaction().remove(fragment).commit();
-                finish();
+            if(fragment != null) {
+                if(fragment.getClass().toString().equals(Constant.fragment_terbaru)) {
+                    getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+                    finish();
+                } else {
+                    fragment = new TerbaruFragment();
+                    fragmentManager = getSupportFragmentManager();
+                    fragmentManager.beginTransaction()
+                            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                            .replace(R.id.frame_container, fragment, "fragment")
+                            .commit();
+                    mDrawerList.setItemChecked(0, true);
+                    mDrawerList.setSelection(0);
+                }
             } else {
-                fragment = new TerbaruFragment();
-                fragmentManager = getSupportFragmentManager();
-                fragmentManager.beginTransaction()
-                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                        .replace(R.id.frame_container, fragment, "fragment")
-                        .commit();
-                mDrawerList.setItemChecked(0, true);
-                mDrawerList.setSelection(0);
+                finish();
             }
         }
     }

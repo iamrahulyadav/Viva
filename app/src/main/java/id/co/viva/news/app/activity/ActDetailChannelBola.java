@@ -52,6 +52,7 @@ public class ActDetailChannelBola extends ActBase implements
     private String id;
     private String channel_title;
     private String timeStamp;
+    private int paging = 1;
     private boolean isInternetPresent = false;
     private ProgressWheel progressWheel;
     private TextView tvNoResult;
@@ -223,8 +224,9 @@ public class ActDetailChannelBola extends ActBase implements
     @Override
     public void onLoadMore() {
         data = String.valueOf(dataSize += 10);
+        paging += 1;
         if(isInternetPresent) {
-            setAnalytics(data);
+            setAnalytics(String.valueOf(paging));
             StringRequest stringRequest = new StringRequest(Request.Method.GET, getPagingUrl(channel_title, data, timeStamp),
                     new Response.Listener<String>() {
                         @Override
@@ -391,8 +393,16 @@ public class ActDetailChannelBola extends ActBase implements
 
     private void setAnalytics() {
         analytics = new Analytics(this);
-        analytics.getAnalyticByATInternet(Constant.SUBKANAL_BOLA_PAGE + "_" + channel_title.toUpperCase());
-        analytics.getAnalyticByGoogleAnalytic(Constant.SUBKANAL_BOLA_PAGE + "_" + channel_title.toUpperCase());
+        analytics.getAnalyticByATInternet(Constant.SUBKANAL_BOLA_PAGE
+                + channel_title.toUpperCase()
+                + "_"
+                + "HAL_"
+                + paging);
+        analytics.getAnalyticByGoogleAnalytic(Constant.SUBKANAL_BOLA_PAGE
+                + channel_title.toUpperCase()
+                + "_"
+                + "HAL_"
+                + paging);
     }
 
     private void setAnalytics(String page) {
@@ -400,11 +410,15 @@ public class ActDetailChannelBola extends ActBase implements
             analytics = new Analytics(this);
         }
         analytics.getAnalyticByATInternet(Constant.SUBKANAL_BOLA_PAGE
-                + "_" + channel_title.toUpperCase()
-                + "_" + page);
+                + channel_title.toUpperCase()
+                + "_"
+                + "HAL_"
+                + page);
         analytics.getAnalyticByGoogleAnalytic(Constant.SUBKANAL_BOLA_PAGE
-                + "_" + channel_title.toUpperCase()
-                + "_" + page);
+                + channel_title.toUpperCase()
+                + "_"
+                + "HAL_"
+                + page);
     }
 
     private void getIntentData() {

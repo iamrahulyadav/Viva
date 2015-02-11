@@ -19,6 +19,7 @@ import com.squareup.picasso.Picasso;
 import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.Global;
 import id.co.viva.news.app.R;
+import id.co.viva.news.app.component.CropSquareTransformation;
 import id.co.viva.news.app.interfaces.OnCompleteListener;
 import id.co.viva.news.app.services.Analytics;
 import id.co.viva.news.app.services.UserAccount;
@@ -70,12 +71,16 @@ public class ActRating extends FragmentActivity implements OnCompleteListener,
         btnRate.setOnClickListener(this);
         ratingBar.setOnRatingBarChangeListener(this);
 
-        if(mTitle.length() > 0) {
-            text_title.setText(mTitle);
+        if(mTitle != null) {
+            if(mTitle.length() > 0) {
+                text_title.setText(mTitle);
+            }
         }
 
-        if(mImageUrl.length() > 0) {
-            Picasso.with(this).load(mImageUrl).into(image_content);
+        if(mImageUrl != null) {
+            if(mImageUrl.length() > 0) {
+                Picasso.with(this).load(mImageUrl).transform(new CropSquareTransformation()).into(image_content);
+            }
         }
     }
 

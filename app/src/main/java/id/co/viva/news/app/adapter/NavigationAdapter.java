@@ -44,28 +44,47 @@ public class NavigationAdapter extends ArrayAdapter<Item> {
     @Override
     public View getView(int position, View view, ViewGroup viewGroup) {
         View v = view;
+        ViewHolder holder;
         Item item = navItems.get(position);
         if(item != null) {
             if(item.isSection()) {
                 NavigationSectionItem navigationSectionItem = (NavigationSectionItem) item;
-                v = vi.inflate(R.layout.item_navigation_section_list, null);
+                if(v == null) {
+                    v = vi.inflate(R.layout.item_navigation_section_list, null);
+                    holder = new ViewHolder();
+                    holder.sectionView = (TextView) v.findViewById(R.id.list_item_section_text);
+                    v.setTag(holder);
+                } else {
+                    holder = (ViewHolder) v.getTag();
+                }
                 v.setOnClickListener(null);
                 v.setOnLongClickListener(null);
                 v.setLongClickable(false);
-                TextView sectionView = (TextView) v.findViewById(R.id.list_item_section_text);
-                sectionView.setText(navigationSectionItem.getTitle());
+                holder.sectionView.setText(navigationSectionItem.getTitle());
             } else {
                 NavigationItem ei = (NavigationItem) item;
-                v = vi.inflate(R.layout.item_navigation_list, null);
-                TextView title = (TextView) v.findViewById(R.id.text_navigation_list);
-                ImageView image = (ImageView) v.findViewById(R.id.list_item_entry_drawable);
-                if(title != null)
-                    title.setText(ei.getTitle());
-                if(image != null)
-                    image.setImageResource(ei.getIcon());
+                if(v == null) {
+                    v = vi.inflate(R.layout.item_navigation_list, null);
+                    holder = new ViewHolder();
+                    holder.title = (TextView) v.findViewById(R.id.text_navigation_list);
+                    holder.image = (ImageView) v.findViewById(R.id.list_item_entry_drawable);
+                    v.setTag(holder);
+                } else {
+                    holder = (ViewHolder) v.getTag();
+                }
+                if(holder.title != null)
+                    holder.title.setText(ei.getTitle());
+                if(holder.image != null)
+                    holder.image.setImageResource(ei.getIcon());
             }
         }
         return v;
+    }
+
+    private static class ViewHolder {
+        public TextView sectionView;
+        public TextView title;
+        public ImageView image;
     }
 
 }

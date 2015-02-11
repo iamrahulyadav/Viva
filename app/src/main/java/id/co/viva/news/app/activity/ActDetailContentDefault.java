@@ -45,6 +45,7 @@ import id.co.viva.news.app.adapter.ImageSliderAdapter;
 import id.co.viva.news.app.adapter.RelatedAdapter;
 import id.co.viva.news.app.coachmark.CoachmarkBuilder;
 import id.co.viva.news.app.coachmark.CoachmarkView;
+import id.co.viva.news.app.component.CropSquareTransformation;
 import id.co.viva.news.app.component.ProgressWheel;
 import id.co.viva.news.app.model.Comment;
 import id.co.viva.news.app.model.Favorites;
@@ -124,20 +125,6 @@ public class ActDetailContentDefault extends FragmentActivity
         isInternetPresent = Global.getInstance(this).
                 getConnectionStatus().isConnectingToInternet();
 
-        analytics = new Analytics(this);
-        if(typeFrom != null) {
-            if(typeFrom.equalsIgnoreCase("search")) {
-                analytics.getAnalyticByATInternet(Constant.FROM_SEARCH_RESULT_DETAIL_CONTENT + fromkanal.toUpperCase());
-                analytics.getAnalyticByGoogleAnalytic(Constant.FROM_SEARCH_RESULT_DETAIL_CONTENT + fromkanal.toUpperCase());
-            } else if(typeFrom.equalsIgnoreCase("editor_choice")) {
-                analytics.getAnalyticByATInternet(Constant.FROM_EDITOR_CHOICE + "EDITOR_CHOICE");
-                analytics.getAnalyticByGoogleAnalytic(Constant.FROM_EDITOR_CHOICE + "EDITOR_CHOICE");
-            }
-        } else {
-            analytics.getAnalyticByATInternet(Constant.FROM_RELATED_ARTICLE_DETAIL_CONTENT + "RELATED_ARTICLE");
-            analytics.getAnalyticByGoogleAnalytic(Constant.FROM_RELATED_ARTICLE_DETAIL_CONTENT + "RELATED_ARTICLE");
-        }
-
         setContentView(R.layout.item_detail_content_default);
 
         setHeaderActionbar();
@@ -176,9 +163,7 @@ public class ActDetailContentDefault extends FragmentActivity
 
         ivThumbDetail = (KenBurnsView) findViewById(R.id.thumb_detail_content_default);
         ivThumbDetail.setOnClickListener(this);
-        ivThumbDetail.setFocusable(true);
         ivThumbDetail.setFocusableInTouchMode(true);
-        ivThumbDetail.requestFocus();
 
         textLinkVideo = (TextView)findViewById(R.id.text_move_video);
         textLinkVideo.setOnClickListener(this);
@@ -256,12 +241,14 @@ public class ActDetailContentDefault extends FragmentActivity
                                     Log.i(Constant.TAG, "COMMENTS PREVIEW : " + commentArrayList.get(i).getComment_text());
                                 }
 
+                                setAnalytics(title, ids);
+
                                 tvTitleDetail.setText(title);
                                 tvDateDetail.setText(date_publish);
                                 tvContentDetail.setText(Html.fromHtml(content).toString());
                                 tvContentDetail.setMovementMethod(LinkMovementMethod.getInstance());
                                 tvReporterDetail.setText(reporter_name);
-                                Picasso.with(ActDetailContentDefault.this).load(image_url).into(ivThumbDetail);
+                                Picasso.with(ActDetailContentDefault.this).load(image_url).transform(new CropSquareTransformation()).into(ivThumbDetail);
 
                                 if(sliderContentImages.size() > 0) {
                                     imageSliderAdapter = new ImageSliderAdapter(getSupportFragmentManager(), sliderContentImages);
@@ -412,7 +399,7 @@ public class ActDetailContentDefault extends FragmentActivity
                     tvContentDetail.setText(Html.fromHtml(content).toString());
                     tvContentDetail.setMovementMethod(LinkMovementMethod.getInstance());
                     tvReporterDetail.setText(reporter_name);
-                    Picasso.with(this).load(image_url).into(ivThumbDetail);
+                    Picasso.with(this).load(image_url).transform(new CropSquareTransformation()).into(ivThumbDetail);
 
                     if(sliderContentImages.size() > 0) {
                         imageSliderAdapter = new ImageSliderAdapter(getSupportFragmentManager(), sliderContentImages);
@@ -673,13 +660,31 @@ public class ActDetailContentDefault extends FragmentActivity
     @Override
     public void onClick(View view) {
         if(view.getId() == R.id.thumb_detail_content_default) {
-            if(image_url.length() > 0) {
-                toDetailThumbnail();
+            if(image_url != null) {
+                if(image_url.length() > 0) {
+                    toDetailThumbnail();
+                }
             }
         } else if(view.getId() == R.id.layout_preview_comment_list) {
             moveCommentPage();
         } else if(view.getId() == R.id.text_move_video) {
             moveVideoPage();
+        }
+    }
+
+    private void setAnalytics(String title, String id) {
+        analytics = new Analytics(this);
+        if(typeFrom != null) {
+            if(typeFrom.equalsIgnoreCase("search")) {
+                analytics.getAnalyticByATInternet(Constant.FROM_SEARCH_RESULT_DETAIL_CONTENT + fromkanal.toUpperCase() + "_" + id + "_" + title);
+                analytics.getAnalyticByGoogleAnalytic(Constant.FROM_SEARCH_RESULT_DETAIL_CONTENT + fromkanal.toUpperCase() + "_" + id + "_" + title);
+            } else if(typeFrom.equalsIgnoreCase("editor_choice")) {
+                analytics.getAnalyticByATInternet(Constant.FROM_EDITOR_CHOICE + id + "_" + title);
+                analytics.getAnalyticByGoogleAnalytic(Constant.FROM_EDITOR_CHOICE + id + "_" + title);
+            }
+        } else {
+            analytics.getAnalyticByATInternet(Constant.FROM_RELATED_ARTICLE_DETAIL_CONTENT + id + "_" + title);
+            analytics.getAnalyticByGoogleAnalytic(Constant.FROM_RELATED_ARTICLE_DETAIL_CONTENT + id + "_" + title);
         }
     }
 

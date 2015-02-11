@@ -13,6 +13,7 @@ import com.squareup.picasso.Picasso;
 
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.activity.ActDetailPhotoThumb;
+import id.co.viva.news.app.component.CropSquareTransformation;
 
 /**
  * Created by reza on 06/01/15.
@@ -45,7 +46,7 @@ public class ImageSliderFragment extends Fragment implements View.OnClickListene
         imageView = (ImageView) rootView.findViewById(R.id.image_item_slider_detail);
         imageView.setOnClickListener(this);
         if(mPhotoUrl.length() > 0) {
-            Picasso.with(getActivity()).load(mPhotoUrl).into(imageView);
+            Picasso.with(getActivity()).load(mPhotoUrl).transform(new CropSquareTransformation()).into(imageView);
         }
         return rootView;
     }

@@ -48,12 +48,20 @@
                 android:textSize="16sp"
                 android:text="@string/label_amount_comments"/>
         </LinearLayout>
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:layout_below="@id/background_label_comment"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:id="@+id/list_comments">
+        </ListView>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/send_comment_layout"
             android:paddingBottom="10dp"
-            android:layout_below="@id/background_label_comment"
+            android:layout_below="@id/list_comments"
             android:orientation="vertical">
             <EditText
                 android:layout_width="match_parent"
@@ -80,13 +88,5 @@
                 custom:pb_textComplete="Terkirim!"
                 custom:pb_textProgress="@string/label_loading"/>
         </LinearLayout>
-        <ListView
-            android:layout_width="match_parent"
-            android:layout_height="fill_parent"
-            android:layout_below="@id/send_comment_layout"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:id="@+id/list_comments">
-        </ListView>
     </RelativeLayout>
 </ScrollView>

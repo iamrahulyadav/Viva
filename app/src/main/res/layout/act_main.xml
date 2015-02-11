@@ -19,16 +19,16 @@
         <ImageView
             android:id="@+id/profile_bg"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="130dp"
             android:scaleType="fitXY"
             android:background="@drawable/profile_bg"/>
         <com.pkmmte.view.CircularImageView
             android:id="@+id/img_profile"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
             android:layout_alignParentLeft="true"
+            android:layout_marginLeft="15dp"
             android:scaleType="centerCrop"
             app:border="true"
             app:border_color="@color/white"
@@ -37,24 +37,24 @@
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginLeft="10dp"
-            android:layout_alignTop="@+id/img_profile"
-            android:layout_toRightOf="@+id/img_profile">
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="5dp"
+            android:layout_below="@+id/img_profile">
             <id.co.viva.news.app.component.RobotoBoldTextView
                 android:id="@+id/tv_username"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:textStyle="bold"
                 android:textColor="@color/white"
-                android:textSize="16sp"
+                android:textSize="15sp"
                 android:layout_height="wrap_content"/>
             <id.co.viva.news.app.component.RobotoBoldTextView
                 android:layout_below="@id/tv_username"
                 android:id="@+id/tv_user_email"
                 android:textStyle="bold"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:textColor="@color/white"
-                android:textSize="16sp"
+                android:textSize="15sp"
                 android:layout_height="wrap_content"/>
         </RelativeLayout>
         <ListView

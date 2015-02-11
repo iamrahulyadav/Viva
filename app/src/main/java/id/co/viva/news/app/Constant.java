@@ -64,8 +64,8 @@ public class Constant {
     public static final String TAG = VivaApp.class.getSimpleName();
     public static final String TAG_GCM = "VIVA-GCM";
 
-    private static String BASE_URL_NEW = "http://api.viva.co.sit/app/";
-//    private static String BASE_URL_NEW = "http://api.viva.co.id/app/";
+//    private static String BASE_URL_NEW = "http://api.viva.co.sit/app/";
+    private static String BASE_URL_NEW = "http://api.viva.co.id/app/";
     public static String NEW_HEADLINE = BASE_URL_NEW + "headlinelist/";
     public static String NEW_TERBARU = BASE_URL_NEW + "terbarulist/";
     public static String NEW_NEWS = BASE_URL_NEW + "knews";
@@ -150,19 +150,23 @@ public class Constant {
     public static final String ATTRIBUTE_PATH_ACCESS_TOKEN = "access_token";
     public static final String ATTRIBUTE_PATH_USER_ID = "user_id";
 
-    public static final String HEADLINE_PAGE = "HEADLINE_PAGE";
-    public static final String HEADLINE_DETAIL_PAGE = "HEADLINE_DETAIL_PAGE_";
-    public static final String TERBARU_PAGE = "TERBARU_PAGE";
+    public static final String HEADLINE_PAGE = "HEADLINE_HAL_";
+    public static final String HEADLINE_DETAIL_PAGE = "HEADLINE_DETAIL_";
+    public static final String TERBARU_PAGE = "TERBARU_HAL_";
     public static final String TERBARU_DETAIL_PAGE = "TERBARU_DETAIL_PAGE_";
+
     public static final String KANAL_NEWS_PAGE = "KANAL_NEWS_PAGE";
-    public static final String SUBKANAL_NEWS_PAGE = "SUBKANAL_NEWS_PAGE";
-    public static final String DETAIL_CONTENT_NEWS_PAGE = "DETAIL_CONTENT_NEWS_PAGE_";
+    public static final String SUBKANAL_NEWS_PAGE = "SUBKANAL_NEWS_";
+    public static final String DETAIL_CONTENT_NEWS_PAGE = "DetailArticle_NEWS_";
+
     public static final String KANAL_BOLA_PAGE = "KANAL_BOLA_PAGE";
-    public static final String SUBKANAL_BOLA_PAGE = "SUBKANAL_BOLA_PAGE";
-    public static final String DETAIL_CONTENT_BOLA_PAGE = "DETAIL_CONTENT_BOLA_PAGE_";
+    public static final String SUBKANAL_BOLA_PAGE = "SUBKANAL_BOLA_";
+    public static final String DETAIL_CONTENT_BOLA_PAGE = "DetailArticle_BOLA_";
+
     public static final String KANAL_LIFE_PAGE = "KANAL_LIFE_PAGE";
-    public static final String SUBKANAL_LIFE_PAGE = "SUBKANAL_LIFE_PAGE";
-    public static final String DETAIL_CONTENT_LIFE_PAGE = "DETAIL_CONTENT_LIFE_PAGE_";
+    public static final String SUBKANAL_LIFE_PAGE = "SUBKANAL_LIFE_";
+    public static final String DETAIL_CONTENT_LIFE_PAGE = "DetailArticle_LIFE_";
+
     public static final String SEARCH_RESULT_PAGE = "SEARCH_RESULT_PAGE_";
     public static final String FROM_SEARCH_RESULT_DETAIL_CONTENT = "FROM_SEARCH_RESULT_DETAIL_CONTENT_";
     public static final String FROM_RELATED_ARTICLE_DETAIL_CONTENT = "FROM_RELATED_ARTICLE_DETAIL_CONTENT_";

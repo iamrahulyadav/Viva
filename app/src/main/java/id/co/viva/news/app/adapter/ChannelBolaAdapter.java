@@ -17,6 +17,7 @@ import java.util.Date;
 
 import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.R;
+import id.co.viva.news.app.component.CropSquareTransformation;
 import id.co.viva.news.app.model.ChannelBola;
 
 /**
@@ -75,7 +76,8 @@ public class ChannelBolaAdapter extends BaseAdapter {
         }
 
         if(channelBola.getImage_url().length() > 0) {
-            Picasso.with(context).load(channelBola.getImage_url()).into(holder.image_item_channel_bola);
+            Picasso.with(context).load(channelBola.getImage_url())
+                    .transform(new CropSquareTransformation()).into(holder.image_item_channel_bola);
         }
 
         return view;

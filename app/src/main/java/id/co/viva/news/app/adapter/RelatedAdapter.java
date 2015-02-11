@@ -13,6 +13,7 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
 import id.co.viva.news.app.R;
+import id.co.viva.news.app.component.CropSquareTransformation;
 import id.co.viva.news.app.model.RelatedArticle;
 
 /**
@@ -61,7 +62,8 @@ public class RelatedAdapter extends BaseAdapter {
         RelatedArticle relatedArticle = relatedArticleArrayList.get(position);
         holder.title_item_related.setText(relatedArticle.getRelated_title());
         if(relatedArticle.getImage().length() > 0) {
-            Picasso.with(context).load(relatedArticle.getImage()).into(holder.image_item_related);
+            Picasso.with(context).load(relatedArticle.getImage())
+                    .transform(new CropSquareTransformation()).into(holder.image_item_related);
         }
         return view;
     }

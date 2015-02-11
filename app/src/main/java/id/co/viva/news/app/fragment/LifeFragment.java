@@ -36,6 +36,7 @@ import id.co.viva.news.app.R;
 import id.co.viva.news.app.activity.ActDetailChannelLife;
 import id.co.viva.news.app.activity.ActDetailContentDefault;
 import id.co.viva.news.app.adapter.FeaturedLifeAdapter;
+import id.co.viva.news.app.component.CropSquareTransformation;
 import id.co.viva.news.app.component.ExpandableHeightGridView;
 import id.co.viva.news.app.component.ProgressWheel;
 import id.co.viva.news.app.model.FeaturedLife;
@@ -91,6 +92,7 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
         textHeader = (TextView) rootView.findViewById(R.id.header_title_kanal_life);
         imageHeader = (ImageView) rootView.findViewById(R.id.header_grid_life);
         imageHeader.setOnClickListener(this);
+        imageHeader.setFocusableInTouchMode(true);
 
         layoutTransparentHeader = (RelativeLayout) rootView.findViewById(R.id.header_grid_life_transparent);
         layoutTransparentHeader.setVisibility(View.GONE);
@@ -157,7 +159,7 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
                                     }
                                     textHeader.setText(channel_title_header_grid.toUpperCase());
                                     layoutTransparentHeader.setVisibility(View.VISIBLE);
-                                    Picasso.with(getActivity()).load(image_url_header_grid).into(imageHeader);
+                                    Picasso.with(getActivity()).load(image_url_header_grid).transform(new CropSquareTransformation()).into(imageHeader);
                                 }
 
                                 for(int i=0; i<response.length()-1; i++) {
@@ -233,7 +235,7 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
                         }
                         textHeader.setText(channel_title_header_grid.toUpperCase());
                         layoutTransparentHeader.setVisibility(View.VISIBLE);
-                        Picasso.with(getActivity()).load(image_url_header_grid).into(imageHeader);
+                        Picasso.with(getActivity()).load(image_url_header_grid).transform(new CropSquareTransformation()).into(imageHeader);
                     }
 
                     for(int i=0; i<response.length()-1; i++) {
@@ -306,7 +308,7 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
                                         }
                                         textHeader.setText(channel_title_header_grid.toUpperCase());
                                         layoutTransparentHeader.setVisibility(View.VISIBLE);
-                                        Picasso.with(getActivity()).load(image_url_header_grid).into(imageHeader);
+                                        Picasso.with(getActivity()).load(image_url_header_grid).transform(new CropSquareTransformation()).into(imageHeader);
                                     }
 
                                     for(int i=0; i<response.length()-1; i++) {

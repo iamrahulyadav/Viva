@@ -37,6 +37,7 @@ import id.co.viva.news.app.R;
 import id.co.viva.news.app.adapter.ProCityAdapter;
 import id.co.viva.news.app.coachmark.CoachmarkBuilder;
 import id.co.viva.news.app.coachmark.CoachmarkView;
+import id.co.viva.news.app.component.CropSquareTransformation;
 import id.co.viva.news.app.component.ProgressGenerator;
 import id.co.viva.news.app.component.ZoomFlip;
 import id.co.viva.news.app.fragment.CardBackFragment;
@@ -122,6 +123,7 @@ public class ActUserProfile extends FragmentActivity implements View.OnClickList
         if(photourl.length() > 0) {
             Picasso.with(ActUserProfile.this)
                     .load(photourl)
+                    .transform(new CropSquareTransformation())
                     .into(mprofileThumb);
         } else {
             mprofileThumb.setImageResource(R.drawable.ic_profile);

@@ -17,6 +17,7 @@ import java.util.Date;
 
 import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.R;
+import id.co.viva.news.app.component.CropSquareTransformation;
 import id.co.viva.news.app.model.News;
 
 /**
@@ -66,7 +67,7 @@ public class TerbaruAdapter extends BaseAdapter {
 
         News news = newsArrayList.get(position);
         if(news.getImage_url().length() > 0) {
-            Picasso.with(context).load(news.getImage_url()).into(holder.icon_item_news);
+            Picasso.with(context).load(news.getImage_url()).transform(new CropSquareTransformation()).into(holder.icon_item_news);
         }
         holder.title_item_news.setText(news.getTitle());
 

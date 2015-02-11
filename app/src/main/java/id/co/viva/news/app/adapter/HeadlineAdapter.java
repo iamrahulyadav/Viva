@@ -17,6 +17,7 @@ import java.util.Date;
 
 import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.R;
+import id.co.viva.news.app.component.CropSquareTransformation;
 import id.co.viva.news.app.model.Headline;
 
 /**
@@ -66,7 +67,8 @@ public class HeadlineAdapter extends BaseAdapter {
 
         Headline headline = headlineArrayList.get(position);
         if(headline.getImage_url().length() > 0) {
-            Picasso.with(context).load(headline.getImage_url()).into(holder.icon_item_news);
+            Picasso.with(context).load(headline.getImage_url())
+                    .transform(new CropSquareTransformation()).into(holder.icon_item_news);
         }
         holder.title_item_news.setText(headline.getTitle());
 

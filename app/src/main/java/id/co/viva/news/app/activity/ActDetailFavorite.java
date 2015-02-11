@@ -19,6 +19,7 @@ import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.Global;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.adapter.ImageSliderAdapter;
+import id.co.viva.news.app.component.CropSquareTransformation;
 import id.co.viva.news.app.model.SliderContentImage;
 import id.co.viva.news.app.services.Analytics;
 
@@ -67,7 +68,7 @@ public class ActDetailFavorite extends FragmentActivity implements View.OnClickL
 
         try {
             if(image_url != null) {
-                Picasso.with(this).load(image_url).into(imageDetail);
+                Picasso.with(this).load(image_url).transform(new CropSquareTransformation()).into(imageDetail);
             }
         } catch (Exception e) {
             e.getMessage();

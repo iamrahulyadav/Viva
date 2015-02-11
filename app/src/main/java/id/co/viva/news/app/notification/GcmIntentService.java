@@ -82,8 +82,8 @@ public class GcmIntentService extends IntentService {
     private void getContent(Bundle extras) {
         String id = extras.containsKey("id") ? extras.getString("id") : "";
         String title = extras.containsKey("title") ? extras.getString("title") : "";
-        String kanal = extras.containsKey("kanal") ? extras.getString("kanal") : "";
-        String type = extras.containsKey("type") ? extras.getString("type") : "";
+        String kanal = extras.containsKey("cat") ? extras.getString("cat") : "";
+        String type = extras.containsKey("act") ? extras.getString("act") : "";
         String nid = extras.containsKey("nid") ? extras.getString("nid") : "0";
         int notification_id = Integer.parseInt(nid);
         if(notification_id != 0) {

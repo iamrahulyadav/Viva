@@ -77,6 +77,7 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
     private CoachmarkView showtips;
     private FloatingActionButton floatingActionButton;
     private String lastPublished;
+    private int page = 1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -121,8 +122,8 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
         rippleView.setOnClickListener(this);
 
         analytics = new Analytics(getActivity());
-        analytics.getAnalyticByATInternet(Constant.TERBARU_PAGE);
-        analytics.getAnalyticByGoogleAnalytic(Constant.TERBARU_PAGE);
+        analytics.getAnalyticByATInternet(Constant.TERBARU_PAGE + String.valueOf(page));
+        analytics.getAnalyticByGoogleAnalytic(Constant.TERBARU_PAGE + String.valueOf(page));
 
         labelText = (TextView) rootView.findViewById(R.id.text_terbaru_headline);
         labelText.setText(getString(R.string.label_terbaru));
@@ -344,9 +345,11 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
 
     @Override
     public void onLoadMore() {
+        Log.i(Constant.TAG, "Last Published : " + lastPublished);
+        page += 1;
         if(isInternetPresent) {
-//            analytics.getAnalyticByATInternet(Constant.TERBARU_PAGE + "_" + data);
-//            analytics.getAnalyticByGoogleAnalytic(Constant.TERBARU_PAGE + "_" + data);
+            analytics.getAnalyticByATInternet(Constant.TERBARU_PAGE + String.valueOf(page));
+            analytics.getAnalyticByGoogleAnalytic(Constant.TERBARU_PAGE + String.valueOf(page));
                 StringRequest stringRequest = new StringRequest(Request.Method.GET, Constant.NEW_TERBARU +
                         "published/" + lastPublished,
                         new Response.Listener<String>() {
