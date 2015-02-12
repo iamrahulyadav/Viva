@@ -64,8 +64,8 @@ public class Constant {
     public static final String TAG = VivaApp.class.getSimpleName();
     public static final String TAG_GCM = "VIVA-GCM";
 
-//    private static String BASE_URL_NEW = "http://api.viva.co.sit/app/";
-    private static String BASE_URL_NEW = "http://api.viva.co.id/app/";
+    private static String BASE_URL_NEW = "http://api.viva.co.id/v/207/";
+//    private static String BASE_URL_NEW = "http://api.viva.co.id/app/";
     public static String NEW_HEADLINE = BASE_URL_NEW + "headlinelist/";
     public static String NEW_TERBARU = BASE_URL_NEW + "terbarulist/";
     public static String NEW_NEWS = BASE_URL_NEW + "knews";
