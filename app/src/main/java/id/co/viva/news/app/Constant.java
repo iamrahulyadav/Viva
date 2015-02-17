@@ -37,6 +37,9 @@ public class Constant {
 
     public static final String ADAPTER_PROVINCE = "adapter_province";
     public static final String ADAPTER_CITY = "adapter_city";
+    public static final String ADAPTER_CHANNEL_BOLA = "adapter_channel_bola";
+    public static final String ADAPTER_CHANNEL_LIFE = "adapter_channel_life";
+    public static final String ADAPTER_CHANNEL_NEWS = "adapter_channel_news";
 
     public static final String fragment_terbaru = "class id.co.viva.news.app.fragment.TerbaruFragment";
     public static final String FIRST_INSTALL = "first_install_main";
@@ -65,7 +68,6 @@ public class Constant {
     public static final String TAG_GCM = "VIVA-GCM";
 
     private static String BASE_URL_NEW = "http://api.viva.co.id/v/207/";
-//    private static String BASE_URL_NEW = "http://api.viva.co.id/app/";
     public static String NEW_HEADLINE = BASE_URL_NEW + "headlinelist/";
     public static String NEW_TERBARU = BASE_URL_NEW + "terbarulist/";
     public static String NEW_NEWS = BASE_URL_NEW + "knews";

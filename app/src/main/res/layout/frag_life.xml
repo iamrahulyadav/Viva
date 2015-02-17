@@ -47,6 +47,10 @@
             android:layout_marginBottom="3dp"
             android:gravity="center"
             android:stretchMode="columnWidth"/>
+        <ListView
+            android:id="@+id/list_life"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"></ListView>
         <id.co.viva.news.app.component.ProgressWheel
             android:id="@+id/progress_wheel"
             android:layout_width="90dp"

@@ -60,7 +60,9 @@ public class NavigationAdapter extends ArrayAdapter<Item> {
                 v.setOnClickListener(null);
                 v.setOnLongClickListener(null);
                 v.setLongClickable(false);
-                holder.sectionView.setText(navigationSectionItem.getTitle());
+                if(holder.sectionView != null) {
+                    holder.sectionView.setText(navigationSectionItem.getTitle());
+                }
             } else {
                 NavigationItem ei = (NavigationItem) item;
                 if(v == null) {

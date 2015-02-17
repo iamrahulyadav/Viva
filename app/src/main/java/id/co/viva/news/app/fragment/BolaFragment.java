@@ -8,10 +8,14 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,6 +38,7 @@ import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.Global;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.activity.ActDetailChannelBola;
+import id.co.viva.news.app.adapter.ChannelListTypeAdapter;
 import id.co.viva.news.app.adapter.FeaturedBolaAdapter;
 import id.co.viva.news.app.component.CropSquareTransformation;
 import id.co.viva.news.app.component.ExpandableHeightGridView;
@@ -46,11 +51,14 @@ import id.co.viva.news.app.services.Analytics;
  */
 public class BolaFragment extends Fragment implements View.OnClickListener {
 
-    public static ArrayList<FeaturedBola> featuredNewsArrayList;
+    private ArrayList<FeaturedBola> featuredNewsArrayList;
+    private ArrayList<FeaturedBola> featuredNewsArrayListTypeList;
     private boolean isInternetPresent = false;
-    private ExpandableHeightGridView gridNews;
+    private ExpandableHeightGridView gridBola;
+    private ListView listBola;
     private String cachedResponse;
     private SwingBottomInAnimationAdapter swingBottomInAnimationAdapter;
+    private ChannelListTypeAdapter channelListTypeAdapter;
     private ProgressWheel progressWheel;
     private TextView tvNoResult;
     private TextView textHeader;
@@ -65,7 +73,8 @@ public class BolaFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        isInternetPresent = Global.getInstance(getActivity()).getConnectionStatus().isConnectingToInternet();
+        isInternetPresent = Global.getInstance(getActivity())
+                .getConnectionStatus().isConnectingToInternet();
     }
 
     @Override
@@ -80,6 +89,8 @@ public class BolaFragment extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.frag_bola, container, false);
+
+        setHasOptionsMenu(true);
 
         analytics = new Analytics(getActivity());
         analytics.getAnalyticByATInternet(Constant.KANAL_BOLA_PAGE);
@@ -103,14 +114,31 @@ public class BolaFragment extends Fragment implements View.OnClickListener {
         rippleView.setVisibility(View.GONE);
         rippleView.setOnClickListener(this);
 
-        gridNews = (ExpandableHeightGridView) rootView.findViewById(R.id.grid_bola);
-        gridNews.setExpanded(true);
-        gridNews.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        listBola = (ListView) rootView.findViewById(R.id.list_bola);
+        listBola.setVisibility(View.GONE);
+        listBola.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                if(featuredNewsArrayList.size() > 0) {
+                if (featuredNewsArrayListTypeList.size() > 0) {
+                    FeaturedBola featuredBola = featuredNewsArrayListTypeList.get(position);
+                    Bundle bundle = new Bundle();
+                    bundle.putString("id", featuredBola.getChannel_id());
+                    bundle.putString("channel_title", featuredBola.getChannel_title());
+                    Intent intent = new Intent(getActivity(), ActDetailChannelBola.class);
+                    intent.putExtras(bundle);
+                    getActivity().startActivity(intent);
+                    getActivity().overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+                }
+            }
+        });
+
+        gridBola = (ExpandableHeightGridView) rootView.findViewById(R.id.grid_bola);
+        gridBola.setExpanded(true);
+        gridBola.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                if (featuredNewsArrayList.size() > 0) {
                     FeaturedBola featuredBola = featuredNewsArrayList.get(position);
-                    Log.i(Constant.TAG, "ID : " + featuredBola.getChannel_id());
                     Bundle bundle = new Bundle();
                     bundle.putString("id", featuredBola.getChannel_id());
                     bundle.putString("channel_title", featuredBola.getChannel_title());
@@ -123,6 +151,7 @@ public class BolaFragment extends Fragment implements View.OnClickListener {
         });
 
         featuredNewsArrayList = new ArrayList<FeaturedBola>();
+        featuredNewsArrayListTypeList = new ArrayList<FeaturedBola>();
 
         if(isInternetPresent) {
             StringRequest request = new StringRequest(Request.Method.GET, Constant.NEW_BOLA,
@@ -134,6 +163,7 @@ public class BolaFragment extends Fragment implements View.OnClickListener {
                                 JSONObject jsonObject = new JSONObject(s);
                                 JSONArray response = jsonObject.getJSONArray(Constant.response);
 
+                                //Get Ready For Header
                                 int lastIndex = response.length() - 1;
                                 JSONObject objs = response.getJSONObject(lastIndex);
                                 if(objs != null) {
@@ -146,9 +176,11 @@ public class BolaFragment extends Fragment implements View.OnClickListener {
                                     }
                                     textHeader.setText(channel_title_header_grid.toUpperCase());
                                     layoutTransparentHeader.setVisibility(View.VISIBLE);
-                                    Picasso.with(getActivity()).load(image_url_header_grid).transform(new CropSquareTransformation()).into(imageHeader);
+                                    Picasso.with(getActivity()).load(image_url_header_grid)
+                                            .transform(new CropSquareTransformation()).into(imageHeader);
                                 }
 
+                                //Get Grid
                                 for(int i=0; i<response.length()-1; i++) {
                                     JSONObject obj = response.getJSONObject(i);
                                     if(obj != null) {
@@ -165,18 +197,53 @@ public class BolaFragment extends Fragment implements View.OnClickListener {
                                             if(!channel_title.equalsIgnoreCase("Semua Berita")) {
                                                 featuredNewsArrayList.add(new FeaturedBola(channel_title, id,
                                                         channel_id, level, title, kanal, image_url));
+                                                Log.i(Constant.TAG, "Title Grid : " + featuredNewsArrayList.get(j).getChannel_title());
                                             }
                                         }
                                     }
                                 }
 
+                                //Get Content List
+                                for(int i=0; i<response.length()-1; i++) {
+                                    JSONObject obj = response.getJSONObject(i);
+                                    if(obj != null) {
+                                        JSONArray objKanal = obj.getJSONArray("news");
+                                        for(int j=0; j<objKanal.length(); j++) {
+                                            JSONObject field = objKanal.getJSONObject(j);
+                                            String channel_title = field.getString("channel_title");
+                                            String id = field.getString("id");
+                                            String channel_id = field.getString("channel_id");
+                                            String level = field.getString("level");
+                                            String title = field.getString("title");
+                                            String kanal = field.getString("kanal");
+                                            String image_url = field.getString("image_url");
+                                            featuredNewsArrayListTypeList.add(new FeaturedBola(channel_title, id,
+                                                    channel_id, level, title, kanal, image_url));
+                                            Log.i(Constant.TAG, "Title List : " + featuredNewsArrayListTypeList.get(j).getChannel_title());
+                                        }
+                                    }
+                                }
+
+                                featuredNewsArrayListTypeList.add(0, new FeaturedBola(channel_title_header_grid,
+                                        null, id_header_grid, null, null, null, image_url_header_grid));
+
                                 if(featuredNewsArrayList.size() > 0 || !featuredNewsArrayList.isEmpty()) {
                                     swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(
                                             new FeaturedBolaAdapter(getActivity(), featuredNewsArrayList));
-                                    swingBottomInAnimationAdapter.setAbsListView(gridNews);
+                                    swingBottomInAnimationAdapter.setAbsListView(gridBola);
                                     assert swingBottomInAnimationAdapter.getViewAnimator() != null;
                                     swingBottomInAnimationAdapter.getViewAnimator().setInitialDelayMillis(0000);
-                                    gridNews.setAdapter(swingBottomInAnimationAdapter);
+                                    gridBola.setAdapter(swingBottomInAnimationAdapter);
+                                }
+
+                                if(featuredNewsArrayListTypeList.size() > 0 || !featuredNewsArrayListTypeList.isEmpty()) {
+                                    if(channelListTypeAdapter == null) {
+                                        channelListTypeAdapter = new ChannelListTypeAdapter(
+                                                getActivity(), featuredNewsArrayListTypeList, null, null, Constant.ADAPTER_CHANNEL_BOLA);
+                                    }
+                                    listBola.setAdapter(channelListTypeAdapter);
+                                    Constant.setListViewHeightBasedOnChildren(listBola);
+                                    channelListTypeAdapter.notifyDataSetChanged();
                                     progressWheel.setVisibility(View.GONE);
                                 }
                             } catch (Exception e) {
@@ -210,6 +277,7 @@ public class BolaFragment extends Fragment implements View.OnClickListener {
                     JSONObject jsonObject = new JSONObject(cachedResponse);
                     JSONArray response = jsonObject.getJSONArray(Constant.response);
 
+                    //Get Ready For Header Cache
                     int lastIndex = response.length() - 1;
                     JSONObject objs = response.getJSONObject(lastIndex);
                     if(objs != null) {
@@ -225,6 +293,7 @@ public class BolaFragment extends Fragment implements View.OnClickListener {
                         Picasso.with(getActivity()).load(image_url_header_grid).transform(new CropSquareTransformation()).into(imageHeader);
                     }
 
+                    //Get Grid Cache
                     for(int i=0; i<response.length()-1; i++) {
                         JSONObject obj = response.getJSONObject(i);
                         if(obj != null) {
@@ -246,13 +315,47 @@ public class BolaFragment extends Fragment implements View.OnClickListener {
                         }
                     }
 
+                    //Get Content List Cache
+                    for(int i=0; i<response.length()-1; i++) {
+                        JSONObject obj = response.getJSONObject(i);
+                        if(obj != null) {
+                            JSONArray objKanal = obj.getJSONArray("news");
+                            for(int j=0; j<objKanal.length(); j++) {
+                                JSONObject field = objKanal.getJSONObject(j);
+                                String channel_title = field.getString("channel_title");
+                                String id = field.getString("id");
+                                String channel_id = field.getString("channel_id");
+                                String level = field.getString("level");
+                                String title = field.getString("title");
+                                String kanal = field.getString("kanal");
+                                String image_url = field.getString("image_url");
+                                featuredNewsArrayListTypeList.add(new FeaturedBola(channel_title, id,
+                                        channel_id, level, title, kanal, image_url));
+                                Log.i(Constant.TAG, "Title List : " + featuredNewsArrayListTypeList.get(j).getChannel_title());
+                            }
+                        }
+                    }
+
+                    featuredNewsArrayListTypeList.add(0, new FeaturedBola(channel_title_header_grid,
+                            null, id_header_grid, null, null, null, image_url_header_grid));
+
                     if(featuredNewsArrayList.size() > 0 || !featuredNewsArrayList.isEmpty()) {
                         swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(
                                 new FeaturedBolaAdapter(getActivity(), featuredNewsArrayList));
-                        swingBottomInAnimationAdapter.setAbsListView(gridNews);
+                        swingBottomInAnimationAdapter.setAbsListView(gridBola);
                         assert swingBottomInAnimationAdapter.getViewAnimator() != null;
                         swingBottomInAnimationAdapter.getViewAnimator().setInitialDelayMillis(0000);
-                        gridNews.setAdapter(swingBottomInAnimationAdapter);
+                        gridBola.setAdapter(swingBottomInAnimationAdapter);
+                    }
+
+                    if(featuredNewsArrayListTypeList.size() > 0 || !featuredNewsArrayListTypeList.isEmpty()) {
+                        if(channelListTypeAdapter == null) {
+                            channelListTypeAdapter = new ChannelListTypeAdapter(
+                                    getActivity(), featuredNewsArrayListTypeList, null, null, Constant.ADAPTER_CHANNEL_BOLA);
+                        }
+                        listBola.setAdapter(channelListTypeAdapter);
+                        Constant.setListViewHeightBasedOnChildren(listBola);
+                        channelListTypeAdapter.notifyDataSetChanged();
                         progressWheel.setVisibility(View.GONE);
                     }
                 } catch (Exception e) {
@@ -266,6 +369,54 @@ public class BolaFragment extends Fragment implements View.OnClickListener {
         }
 
         return rootView;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == R.id.action_change_layout) {
+            if(getActivity() != null) {
+                getActivity().invalidateOptionsMenu();
+            }
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        if(listBola.getVisibility() == View.VISIBLE) {
+            listBola.setVisibility(View.GONE);
+            gridBola.setVisibility(View.VISIBLE);
+            imageHeader.setVisibility(View.VISIBLE);
+            textHeader.setVisibility(View.VISIBLE);
+            if(menu != null) {
+                if(menu.hasVisibleItems()) {
+                    menu.removeItem(R.id.action_change_layout);
+                }
+            }
+            MenuItem mi = menu.add(Menu.NONE, R.id.action_change_layout, 2, "");
+            mi.setIcon(R.drawable.ic_preview_small);
+            mi.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        } else {
+            listBola.setVisibility(View.VISIBLE);
+            gridBola.setVisibility(View.GONE);
+            imageHeader.setVisibility(View.GONE);
+            textHeader.setVisibility(View.GONE);
+            if(menu != null) {
+                if(menu.hasVisibleItems()) {
+                    menu.removeItem(R.id.action_change_layout);
+                }
+            }
+            MenuItem mi = menu.add(Menu.NONE, R.id.action_change_layout, 2, "");
+            mi.setIcon(R.drawable.ic_preview_big);
+            mi.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        }
+        super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_frag_channel, menu);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
@@ -319,13 +470,45 @@ public class BolaFragment extends Fragment implements View.OnClickListener {
                                         }
                                     }
 
+                                    for(int i=0; i<response.length()-1; i++) {
+                                        JSONObject obj = response.getJSONObject(i);
+                                        if(obj != null) {
+                                            JSONArray objKanal = obj.getJSONArray("news");
+                                            for(int j=0; j<objKanal.length(); j++) {
+                                                JSONObject field = objKanal.getJSONObject(j);
+                                                String channel_title = field.getString("channel_title");
+                                                String id = field.getString("id");
+                                                String channel_id = field.getString("channel_id");
+                                                String level = field.getString("level");
+                                                String title = field.getString("title");
+                                                String kanal = field.getString("kanal");
+                                                String image_url = field.getString("image_url");
+                                                featuredNewsArrayListTypeList.add(new FeaturedBola(channel_title, id,
+                                                        channel_id, level, title, kanal, image_url));
+                                            }
+                                        }
+                                    }
+
+                                    featuredNewsArrayListTypeList.add(0, new FeaturedBola(channel_title_header_grid,
+                                            null, id_header_grid, null, null, null, image_url_header_grid));
+
                                     if(featuredNewsArrayList.size() > 0 || !featuredNewsArrayList.isEmpty()) {
                                         swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(
                                                 new FeaturedBolaAdapter(getActivity(), featuredNewsArrayList));
-                                        swingBottomInAnimationAdapter.setAbsListView(gridNews);
+                                        swingBottomInAnimationAdapter.setAbsListView(gridBola);
                                         assert swingBottomInAnimationAdapter.getViewAnimator() != null;
                                         swingBottomInAnimationAdapter.getViewAnimator().setInitialDelayMillis(0000);
-                                        gridNews.setAdapter(swingBottomInAnimationAdapter);
+                                        gridBola.setAdapter(swingBottomInAnimationAdapter);
+                                    }
+
+                                    if(featuredNewsArrayListTypeList.size() > 0 || !featuredNewsArrayListTypeList.isEmpty()) {
+                                        if(channelListTypeAdapter == null) {
+                                            channelListTypeAdapter = new ChannelListTypeAdapter(
+                                                    getActivity(), featuredNewsArrayListTypeList, null, null, Constant.ADAPTER_CHANNEL_BOLA);
+                                        }
+                                        listBola.setAdapter(channelListTypeAdapter);
+                                        Constant.setListViewHeightBasedOnChildren(listBola);
+                                        channelListTypeAdapter.notifyDataSetChanged();
                                         progressWheel.setVisibility(View.GONE);
                                     }
                                 } catch (Exception e) {

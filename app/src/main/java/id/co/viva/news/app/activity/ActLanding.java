@@ -300,6 +300,7 @@ public class ActLanding extends FragmentActivity implements View.OnClickListener
         int searchTextViewId = searchView.getContext().getResources().getIdentifier("android:id/search_src_text", null, null);
         TextView searchTextView = (TextView) searchView.findViewById(searchTextViewId);
         searchTextView.setHintTextColor(getResources().getColor(R.color.white));
+
         return true;
     }
 
