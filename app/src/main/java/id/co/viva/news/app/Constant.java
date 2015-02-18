@@ -42,6 +42,10 @@ public class Constant {
     public static final String ADAPTER_CHANNEL_NEWS = "adapter_channel_news";
 
     public static final String fragment_terbaru = "class id.co.viva.news.app.fragment.TerbaruFragment";
+    public static final String fragment_bola = "class id.co.viva.news.app.fragment.BolaFragment";
+    public static final String fragment_life = "class id.co.viva.news.app.fragment.LifeFragment";
+    public static final String fragment_news = "class id.co.viva.news.app.fragment.NewsFragment";
+
     public static final String FIRST_INSTALL = "first_install_main";
     public static final String FIRST_INSTALL_PROFILE = "first_install_profile";
     public static final String FIRST_INSTALL_DETAIL = "first_install_detail";
@@ -62,7 +66,7 @@ public class Constant {
     public static final String LOGIN_STATES_COUNTRY = "login_states_country";
 
     public static final String GCM_SENDER_ID = "702339857576";
-    public static final String GCM_URL_BACKEND_SERVER = "http://apps.vivall.tv/gcm_registration.php";
+    public static final String GCM_URL_BACKEND_SERVER = "http://api.vivall.tv/rest/gcmreg";
 
     public static final String TAG = VivaApp.class.getSimpleName();
     public static final String TAG_GCM = "VIVA-GCM";

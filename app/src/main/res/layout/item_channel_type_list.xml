@@ -4,14 +4,14 @@
     android:layout_height="match_parent">
     <ImageView
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="220dp"
         android:id="@+id/item_image_channel_list_type"
         android:scaleType="fitXY"/>
     <RelativeLayout
         android:id="@+id/item_image_channel_list_type_transparent"
         android:layout_width="match_parent"
         android:background="@color/transparent"
-        android:layout_height="200dp"
+        android:layout_height="220dp"
         android:scaleType="fitXY">
         <id.co.viva.news.app.component.RobotoBoldTextView
             android:id="@+id/item_title_channel_list_type"

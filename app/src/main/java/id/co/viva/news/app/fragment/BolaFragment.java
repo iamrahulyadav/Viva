@@ -385,9 +385,11 @@ public class BolaFragment extends Fragment implements View.OnClickListener {
     public void onPrepareOptionsMenu(Menu menu) {
         if(listBola.getVisibility() == View.VISIBLE) {
             listBola.setVisibility(View.GONE);
+            layoutTransparentHeader.setVisibility(View.VISIBLE);
             gridBola.setVisibility(View.VISIBLE);
             imageHeader.setVisibility(View.VISIBLE);
             textHeader.setVisibility(View.VISIBLE);
+            imageHeader.requestFocus();
             if(menu != null) {
                 if(menu.hasVisibleItems()) {
                     menu.removeItem(R.id.action_change_layout);
@@ -401,6 +403,7 @@ public class BolaFragment extends Fragment implements View.OnClickListener {
             gridBola.setVisibility(View.GONE);
             imageHeader.setVisibility(View.GONE);
             textHeader.setVisibility(View.GONE);
+            layoutTransparentHeader.setVisibility(View.GONE);
             if(menu != null) {
                 if(menu.hasVisibleItems()) {
                     menu.removeItem(R.id.action_change_layout);

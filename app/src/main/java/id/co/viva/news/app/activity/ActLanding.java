@@ -95,11 +95,9 @@ public class ActLanding extends FragmentActivity implements View.OnClickListener
                 R.string.app_name) {
             public void onDrawerClosed(View view) {
                 getActionBar().setTitle(mTitle);
-                invalidateOptionsMenu();
             }
             public void onDrawerOpened(View drawerView) {
                 getActionBar().setTitle(mDrawerTitle);
-                invalidateOptionsMenu();
             }
             @Override
             public void setDrawerIndicatorEnabled(boolean enable) {
@@ -270,6 +268,17 @@ public class ActLanding extends FragmentActivity implements View.OnClickListener
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
+        if(fragment != null) {
+            if(fragment.getClass().toString().equals(Constant.fragment_bola)
+            || fragment.getClass().toString().equals(Constant.fragment_life)
+            || fragment.getClass().toString().equals(Constant.fragment_news)) {
+                if(mDrawerLayout.isDrawerOpen(mNavLayout)) {
+                    menu.findItem(R.id.action_change_layout).setEnabled(false);
+                } else {
+                    menu.findItem(R.id.action_change_layout).setEnabled(true);
+                }
+            }
+        }
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -308,6 +317,11 @@ public class ActLanding extends FragmentActivity implements View.OnClickListener
     public boolean onOptionsItemSelected(MenuItem item) {
         if (mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
+        }
+        if(item.getItemId() == R.id.action_change_layout) {
+            if(this != null) {
+                invalidateOptionsMenu();
+            }
         }
         return false;
     }

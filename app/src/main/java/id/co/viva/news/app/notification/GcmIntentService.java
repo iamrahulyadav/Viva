@@ -46,7 +46,7 @@ public class GcmIntentService extends IntentService {
         GcmBroadcastReceiver.completeWakefulIntent(intent);
     }
 
-    private void sendNotification(String id, String title, String kanal, int notification_id, String type) {
+    private void sendNotification(String id, String title, String kanal, int notification_id, String type, String message) {
         mNotificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
         Intent intent;
         if(type.equals("browse")) {
@@ -71,8 +71,9 @@ public class GcmIntentService extends IntentService {
             builder.setSmallIcon(R.drawable.icon_viva_news);
         }
         builder.setContentTitle(title)
+                .setContentText(message)
                 .setAutoCancel(true)
-                .setTicker(title)
+                .setTicker(title + "\n" + message)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(title))
                 .setSound(sound)
                 .setContentIntent(contentIntent);
@@ -82,12 +83,13 @@ public class GcmIntentService extends IntentService {
     private void getContent(Bundle extras) {
         String id = extras.containsKey("id") ? extras.getString("id") : "";
         String title = extras.containsKey("title") ? extras.getString("title") : "";
+        String message = extras.containsKey("msg") ? extras.getString("msg") : "";
         String kanal = extras.containsKey("cat") ? extras.getString("cat") : "";
         String type = extras.containsKey("act") ? extras.getString("act") : "";
         String nid = extras.containsKey("nid") ? extras.getString("nid") : "0";
         int notification_id = Integer.parseInt(nid);
         if(notification_id != 0) {
-            sendNotification(id, title, kanal, notification_id, type);
+            sendNotification(id, title, kanal, notification_id, type, message);
         }
     }
 

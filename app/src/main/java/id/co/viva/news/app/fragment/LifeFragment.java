@@ -539,9 +539,11 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
     public void onPrepareOptionsMenu(Menu menu) {
         if(listLife.getVisibility() == View.VISIBLE) {
             listLife.setVisibility(View.GONE);
+            layoutTransparentHeader.setVisibility(View.VISIBLE);
             gridLife.setVisibility(View.VISIBLE);
             imageHeader.setVisibility(View.VISIBLE);
             textHeader.setVisibility(View.VISIBLE);
+            imageHeader.requestFocus();
             if(menu != null) {
                 if(menu.hasVisibleItems()) {
                     menu.removeItem(R.id.action_change_layout);
@@ -552,6 +554,7 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
             mi.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_IF_ROOM);
         } else {
             listLife.setVisibility(View.VISIBLE);
+            layoutTransparentHeader.setVisibility(View.GONE);
             gridLife.setVisibility(View.GONE);
             imageHeader.setVisibility(View.GONE);
             textHeader.setVisibility(View.GONE);

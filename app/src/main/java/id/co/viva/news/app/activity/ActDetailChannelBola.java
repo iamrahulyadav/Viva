@@ -5,8 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -45,7 +45,7 @@ import id.co.viva.news.app.services.Analytics;
 /**
  * Created by reza on 27/10/14.
  */
-public class ActDetailChannelBola extends ActBase implements
+public class ActDetailChannelBola extends FragmentActivity implements
         OnLoadMoreListener, AdapterView.OnItemClickListener, View.OnClickListener {
 
     public static ArrayList<ChannelBola> channelBolaArrayList;
@@ -71,10 +71,7 @@ public class ActDetailChannelBola extends ActBase implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        LayoutInflater inflater = (LayoutInflater)
-                getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View contentView = inflater.inflate(R.layout.item_detail_channel_bola, null, false);
-        mDrawerLayout.addView(contentView, 0);
+        setContentView(R.layout.item_detail_channel_bola);
 
         isInternetPresent = Global.getInstance(this)
                 .getConnectionStatus().isConnectingToInternet();
