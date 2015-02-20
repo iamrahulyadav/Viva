@@ -502,6 +502,7 @@ public class NewsFragment extends Fragment implements View.OnClickListener {
         if(listNews.getVisibility() == View.VISIBLE) {
             listNews.setVisibility(View.GONE);
             layoutTransparentHeader.setVisibility(View.VISIBLE);
+            layoutTransparentHeader.setBackgroundColor(getResources().getColor(R.color.transparent));
             gridNews.setVisibility(View.VISIBLE);
             imageHeader.setVisibility(View.VISIBLE);
             textHeader.setVisibility(View.VISIBLE);

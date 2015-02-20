@@ -5,6 +5,9 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,6 +15,10 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 
 import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.R;
@@ -23,6 +30,8 @@ import id.co.viva.news.app.activity.ActNotification;
 public class GcmIntentService extends IntentService {
 
     private NotificationManager mNotificationManager;
+    private Intent intent;
+    private Bitmap remote_picture = null;
 
     public GcmIntentService() {
         super("GcmIntentService");
@@ -46,23 +55,53 @@ public class GcmIntentService extends IntentService {
         GcmBroadcastReceiver.completeWakefulIntent(intent);
     }
 
-    private void sendNotification(String id, String title, String kanal, int notification_id, String type, String message) {
+    private void sendNotification(String id, String title, String kanal, int notification_id, String type, String message, String image) {
         mNotificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
-        Intent intent;
-        if(type.equals("browse")) {
+
+        if(type.equalsIgnoreCase("browse")) {
             Uri uri = Uri.parse(getResources().getString(R.string.url_google_play) + getPackageName());
             intent = new Intent(Intent.ACTION_VIEW, uri);
+        } else if(type.equalsIgnoreCase("open")) {
+            PackageManager manager = getPackageManager();
+            try {
+                intent = manager.getLaunchIntentForPackage(getPackageName());
+                if(intent == null) {
+                    throw new PackageManager.NameNotFoundException();
+                }
+            } catch (PackageManager.NameNotFoundException e) {
+                e.getMessage();
+            }
         } else {
             intent = new Intent(this, ActNotification.class);
             intent.putExtra("id", id);
             intent.putExtra("kanal", kanal);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         }
+
         int requestID = (int) System.currentTimeMillis();
         PendingIntent contentIntent = PendingIntent.getActivity(this, requestID,
                 intent, PendingIntent.FLAG_UPDATE_CURRENT);
         Uri sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+
+        final NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+
+        if(image != null) {
+            if(image.length() > 0) {
+                try {
+                    remote_picture = BitmapFactory.decodeStream(
+                            (InputStream) new URL(image).getContent());
+                    builder.setLargeIcon(remote_picture);
+                    builder.setStyle(new NotificationCompat
+                            .BigPictureStyle()
+                            .bigPicture(remote_picture)
+                            .setBigContentTitle(title)
+                            .setSummaryText(message));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
         if(kanal.equals("vivalife")) {
             builder.setSmallIcon(R.drawable.icon_viva_life);
         } else if(kanal.equals("bola")) {
@@ -70,11 +109,12 @@ public class GcmIntentService extends IntentService {
         } else {
             builder.setSmallIcon(R.drawable.icon_viva_news);
         }
+
         builder.setContentTitle(title)
                 .setContentText(message)
+                .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setAutoCancel(true)
                 .setTicker(title + "\n" + message)
-                .setStyle(new NotificationCompat.BigTextStyle().bigText(title))
                 .setSound(sound)
                 .setContentIntent(contentIntent);
         mNotificationManager.notify(notification_id, builder.build());
@@ -84,12 +124,13 @@ public class GcmIntentService extends IntentService {
         String id = extras.containsKey("id") ? extras.getString("id") : "";
         String title = extras.containsKey("title") ? extras.getString("title") : "";
         String message = extras.containsKey("msg") ? extras.getString("msg") : "";
+        String image = extras.containsKey("img") ? extras.getString("img") : "";
         String kanal = extras.containsKey("cat") ? extras.getString("cat") : "";
         String type = extras.containsKey("act") ? extras.getString("act") : "";
         String nid = extras.containsKey("nid") ? extras.getString("nid") : "0";
         int notification_id = Integer.parseInt(nid);
         if(notification_id != 0) {
-            sendNotification(id, title, kanal, notification_id, type, message);
+            sendNotification(id, title, kanal, notification_id, type, message, image);
         }
     }
 

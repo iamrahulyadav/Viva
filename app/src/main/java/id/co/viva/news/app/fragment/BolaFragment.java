@@ -386,6 +386,7 @@ public class BolaFragment extends Fragment implements View.OnClickListener {
         if(listBola.getVisibility() == View.VISIBLE) {
             listBola.setVisibility(View.GONE);
             layoutTransparentHeader.setVisibility(View.VISIBLE);
+            layoutTransparentHeader.setBackgroundColor(getResources().getColor(R.color.transparent));
             gridBola.setVisibility(View.VISIBLE);
             imageHeader.setVisibility(View.VISIBLE);
             textHeader.setVisibility(View.VISIBLE);

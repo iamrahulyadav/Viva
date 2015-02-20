@@ -540,6 +540,7 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
         if(listLife.getVisibility() == View.VISIBLE) {
             listLife.setVisibility(View.GONE);
             layoutTransparentHeader.setVisibility(View.VISIBLE);
+            layoutTransparentHeader.setBackgroundColor(getResources().getColor(R.color.transparent));
             gridLife.setVisibility(View.VISIBLE);
             imageHeader.setVisibility(View.VISIBLE);
             textHeader.setVisibility(View.VISIBLE);
