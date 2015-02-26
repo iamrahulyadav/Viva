@@ -2,6 +2,8 @@
 <resources>
 
     <string name="app_name">Viva</string>
+    <string name="title_failed_get_location">Gagal mendapatkan berita di sekitar anda!</string>
+    <string name="title_no_connection_and_no_gps">Periksa kembali koneksi anda dan aktifkan GPS.</string>
     <string name="title_validate_rate">Anda belum melakukan rate artikel!</string>
     <string name="title_no_connection">Terjadi kesalahan pada koneksi anda!</string>
     <string name="search_hint">Pencarian</string>
@@ -10,9 +12,11 @@
     <string name="label_related_article">Artikel Terkait</string>
     <string name="label_terbaru">TERBARU</string>
     <string name="label_headline">HEADLINES</string>
+    <string name="label_berita_sekitar">BERITA SEKITAR</string>
     <string name="label_content_not_update">Gagal memperbaharui konten.</string>
     <string name="label_error">Terjadi kesalahan!</string>
     <string name="label_loading_data">Memuat data...</string>
+    <string name="label_get_location">Mencari lokasi anda...</string>
     <string name="label_navigation_button">Navigation Button</string>
     <string name="label_navigation_favorite">Favorite Articles</string>
     <string name="label_navigation_favorite_desc">Nikmati pengalaman membaca anda dengan menggunakan fitur Favorites.
@@ -54,6 +58,10 @@
     <string name="url_google_play">market://details?id=</string>
     <string name="label_failed_found_store">Unable to find market app!</string>
 
+    <string name="label_title_gps">Aktifkan GPS anda untuk mendapatkan lokasi?</string>
+    <string name="label_option_yes">Ya</string>
+    <string name="label_option_no">Tidak</string>
+
     <string name="label_registrasi_username">Username</string>
     <string name="label_registrasi_password">Password</string>
     <string name="label_registrasi_email">Email</string>
@@ -80,6 +88,7 @@
     <!-- Navigation -->
     <string name="label_item_navigation_headline">Headlines</string>
     <string name="label_item_navigation_terbaru">Terbaru</string>
+    <string name="label_item_navigation_search_by_location">Berita Sekitar</string>
     <string name="label_item_navigation_favorites">Favorites</string>
     <string name="label_item_navigation_news">Berita</string>
     <string name="label_item_navigation_bola">Bola</string>
@@ -89,14 +98,6 @@
     <string name="label_section_navigation_channel">KANAL</string>
     <string name="label_section_navigation_preferences">PREFERENSI</string>
     <string name="label_loading">Loading...</string>
-
-    <!-- Title for Viva Menu -->
-    <string name="title_viva_bola">Viva Bola</string>
-    <string name="title_viva_socio">Viva Socio</string>
-    <string name="title_viva_forum">Viva Forum</string>
-    <string name="title_viva_life">Viva Life</string>
-    <string name="title_viva_log">Viva Log</string>
-    <string name="title_viva_news">Viva News</string>
 
     <string name="label_amount_rating">Jumlah Rating</string>
     <string name="label_hint_email">Email</string>

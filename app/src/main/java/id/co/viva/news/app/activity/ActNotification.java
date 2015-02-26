@@ -37,6 +37,7 @@ import id.co.viva.news.app.component.CropSquareTransformation;
 import id.co.viva.news.app.component.ProgressWheel;
 import id.co.viva.news.app.model.SliderContentImage;
 import id.co.viva.news.app.model.Video;
+import id.co.viva.news.app.services.Analytics;
 
 /**
  * Created by reza on 20/01/15.
@@ -70,6 +71,7 @@ public class ActNotification extends FragmentActivity implements View.OnClickLis
     private String sliderTitle;
     private String urlVideo;
     private ImageSliderAdapter imageSliderAdapter;
+    private Analytics analytics;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -195,6 +197,8 @@ public class ActNotification extends FragmentActivity implements View.OnClickLis
                                     }
                                 }
 
+                                getAnalytics(title);
+
                                 tvTitleDetail.setText(title);
                                 tvDateDetail.setText(date_publish);
                                 tvContentDetail.setText(Html.fromHtml(content).toString());
@@ -311,6 +315,12 @@ public class ActNotification extends FragmentActivity implements View.OnClickLis
     public void onBackPressed() {
         super.onBackPressed();
         goFirstFlow();
+    }
+
+    private void getAnalytics(String title) {
+        analytics = new Analytics(this);
+        analytics.getAnalyticByATInternet(Constant.ARTICLE_FROM_NOTIFICATION + "_" + title.toUpperCase());
+        analytics.getAnalyticByGoogleAnalytic(Constant.ARTICLE_FROM_NOTIFICATION + "_" + title.toUpperCase());
     }
 
 }

@@ -38,6 +38,7 @@ import id.co.viva.news.app.R;
 import id.co.viva.news.app.adapter.NavigationAdapter;
 import id.co.viva.news.app.component.CropSquareTransformation;
 import id.co.viva.news.app.fragment.AboutFragment;
+import id.co.viva.news.app.fragment.BeritaSekitarFragment;
 import id.co.viva.news.app.fragment.BolaFragment;
 import id.co.viva.news.app.fragment.FavoritesFragment;
 import id.co.viva.news.app.fragment.HeadlineFragment;
@@ -120,21 +121,24 @@ public class ActLanding extends FragmentActivity implements View.OnClickListener
                 fragment = new HeadlineFragment();
                 break;
             case 2:
+                fragment = new BeritaSekitarFragment();
+                break;
+            case 3:
                 fragment = new FavoritesFragment();
                 break;
-            case 4:
+            case 5:
                 fragment =  new NewsFragment();
                 break;
-            case 5:
+            case 6:
                 fragment =  new BolaFragment();
                 break;
-            case 6:
+            case 7:
                 fragment =  new LifeFragment();
                 break;
-            case 8:
+            case 9:
                 fragment =  new AboutFragment();
                 break;
-            case 9:
+            case 10:
                 rateApp();
                 break;
             default:
@@ -199,6 +203,7 @@ public class ActLanding extends FragmentActivity implements View.OnClickListener
         navDrawerItems = new ArrayList<Item>();
         navDrawerItems.add(new NavigationItem(getResources().getString(R.string.label_item_navigation_terbaru), R.drawable.icon_headline));
         navDrawerItems.add(new NavigationItem(getResources().getString(R.string.label_item_navigation_headline), R.drawable.icon_terbaru));
+        navDrawerItems.add(new NavigationItem(getResources().getString(R.string.label_item_navigation_search_by_location), R.drawable.icon_search_location));
         navDrawerItems.add(new NavigationItem(getResources().getString(R.string.label_item_navigation_favorites), R.drawable.icon_favorites));
         navDrawerItems.add(new NavigationSectionItem(getResources().getString(R.string.label_section_navigation_channel)));
         navDrawerItems.add(new NavigationItem(getResources().getString(R.string.label_item_navigation_news), R.drawable.icon_viva_news));
@@ -336,19 +341,23 @@ public class ActLanding extends FragmentActivity implements View.OnClickListener
                     getSupportFragmentManager().beginTransaction().remove(fragment).commit();
                     finish();
                 } else {
-                    fragment = new TerbaruFragment();
-                    fragmentManager = getSupportFragmentManager();
-                    fragmentManager.beginTransaction()
-                            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                            .replace(R.id.frame_container, fragment, "fragment")
-                            .commit();
-                    mDrawerList.setItemChecked(0, true);
-                    mDrawerList.setSelection(0);
+                    backToFirst();
                 }
             } else {
                 finish();
             }
         }
+    }
+
+    private void backToFirst() {
+        fragment = new TerbaruFragment();
+        fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                .replace(R.id.frame_container, fragment, "fragment")
+                .commit();
+        mDrawerList.setItemChecked(0, true);
+        mDrawerList.setSelection(0);
     }
 
 }

@@ -31,6 +31,8 @@ public class Constant {
     public static final String CODE_PATH = "12";
     public static final String CODE_GPLUS = "13";
 
+    public static final int MIN_TIME_BW_UPDATES = 10000;
+
     public static final String TAG_LOCATION_NAME = "nama";
     public static final String TAG_LOCATION_PROVINCE_ID = "id_propinsi";
     public static final String TAG_LOCATION_KABUPATEN_ID = "id_kabupaten";
@@ -156,6 +158,8 @@ public class Constant {
     public static final String ATTRIBUTE_PATH_ACCESS_TOKEN = "access_token";
     public static final String ATTRIBUTE_PATH_USER_ID = "user_id";
 
+    public static final String BERITA_SEKITAR_PAGE = "BERITA_SEKITAR_HAL_";
+
     public static final String HEADLINE_PAGE = "HEADLINE_HAL_";
     public static final String HEADLINE_DETAIL_PAGE = "HEADLINE_DETAIL_";
     public static final String TERBARU_PAGE = "TERBARU_HAL_";
@@ -181,6 +185,7 @@ public class Constant {
     public static final String FAVORITES_PAGE_DETAIL = "FAVORITES_PAGE_DETAIL_";
     public static final String COMMENTED_ARTICLE = "COMMENTED_ARTICLE";
     public static final String RATING_ARTICLE = "RATING_ARTICLE";
+    public static final String ARTICLE_FROM_NOTIFICATION = "ARTICLE_FROM_NOTIFICATION";
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     public static Bitmap blur(Context ctx, Bitmap image) {
