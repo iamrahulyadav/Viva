@@ -42,6 +42,7 @@ import java.util.Locale;
 import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.Global;
 import id.co.viva.news.app.R;
+import id.co.viva.news.app.activity.ActDetailBeritaSekitar;
 import id.co.viva.news.app.adapter.BeritaSekitarAdapter;
 import id.co.viva.news.app.component.GoogleMusicDicesDrawable;
 import id.co.viva.news.app.component.LoadMoreListView;
@@ -58,6 +59,7 @@ import id.co.viva.news.app.location.LocationFinder;
 public class BeritaSekitarFragment extends Fragment implements View.OnClickListener,
         OnLoadMoreListener, AdapterView.OnItemClickListener, LocationResult, OnGPSListener {
 
+    public static ArrayList<BeritaSekitar> beritaSekitarArrayList;
     private boolean isInternetPresent = false;
     private boolean isResume;
     private String lastPaging;
@@ -71,7 +73,6 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
     private FloatingActionButton floatingActionButton;
     private TextView labelText;
     private TextView lastUpdate;
-    private ArrayList<BeritaSekitar> beritaSekitarArrayList;
     private LocationFinder locationFinder;
     private JSONArray jsonArrayResponses;
     private BeritaSekitarAdapter adapter;
@@ -126,13 +127,11 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
 
     private void setViews(View rootView) {
         labelLoadData = (TextView) rootView.findViewById(R.id.text_loading_data);
-//        labelLoadData.setVisibility(View.GONE);
 
         loading_layout = (ProgressBar) rootView.findViewById(R.id.loading_progress_layout_berita_sekitar);
         Rect bounds = loading_layout.getIndeterminateDrawable().getBounds();
         loading_layout.setIndeterminateDrawable(getProgressDrawable());
         loading_layout.getIndeterminateDrawable().setBounds(bounds);
-//        loading_layout.setVisibility(View.GONE);
 
         rippleView = (RippleView) rootView.findViewById(R.id.layout_ripple_view_berita_sekitar);
         rippleView.setVisibility(View.GONE);
@@ -345,8 +344,16 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
     }
 
     @Override
-    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
+    public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+        if(beritaSekitarArrayList.size() > 0) {
+            BeritaSekitar beritaSekitar = beritaSekitarArrayList.get(position);
+            Bundle bundle = new Bundle();
+            bundle.putString("id", beritaSekitar.getId());
+            Intent intent = new Intent(getActivity(), ActDetailBeritaSekitar.class);
+            intent.putExtras(bundle);
+            getActivity().startActivity(intent);
+            getActivity().overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+        }
     }
 
     private void getLocationFinder() {

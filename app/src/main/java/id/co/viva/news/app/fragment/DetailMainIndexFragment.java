@@ -65,13 +65,11 @@ import id.co.viva.news.app.services.Analytics;
 /**
  * Created by root on 07/10/14.
  */
-public class DetailHeadlineIndexFragment extends Fragment implements View.OnClickListener,
+public class DetailMainIndexFragment extends Fragment implements View.OnClickListener,
         AdapterView.OnItemClickListener {
 
-    private String id;
     private RelativeLayout headerRelated;
     private boolean isInternetPresent = false;
-    private String cachedResponse;
     private ProgressWheel progressWheel;
     private TextView tvNoResult;
     private ArrayList<RelatedArticle> relatedArticleArrayList;
@@ -83,7 +81,6 @@ public class DetailHeadlineIndexFragment extends Fragment implements View.OnClic
     private ListView listView;
     private Analytics analytics;
     private RippleView rippleView;
-    private String favoriteList;
     private ArrayList<Favorites> favoritesArrayList;
 
     private TextView tvTitleHeadlineDetail;
@@ -103,33 +100,31 @@ public class DetailHeadlineIndexFragment extends Fragment implements View.OnClic
     private TextView textLinkVideo;
 
     private String ids;
+    private String id;
     private String image_caption;
     private String title;
     private String channel_id;
     private String urlVideo;
-    private String widthVideo;
-    private String heightVideo;
     private String kanal;
     private String image_url;
     private String date_publish;
     private String content;
     private String reporter_name;
     private String url_shared;
-    private String sliderPhotoUrl;
-    private String sliderTitle ;
 
-    public static DetailHeadlineIndexFragment newInstance(String id) {
-        DetailHeadlineIndexFragment detailHeadlineIndexFragment = new DetailHeadlineIndexFragment();
+    public static DetailMainIndexFragment newInstance(String id) {
+        DetailMainIndexFragment detailMainIndexFragment = new DetailMainIndexFragment();
         Bundle bundle = new Bundle();
         bundle.putString("id", id);
-        detailHeadlineIndexFragment.setArguments(bundle);
-        return detailHeadlineIndexFragment;
+        detailMainIndexFragment.setArguments(bundle);
+        return detailMainIndexFragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        isInternetPresent = Global.getInstance(getActivity()).getConnectionStatus().isConnectingToInternet();
+        isInternetPresent = Global.getInstance(getActivity())
+                .getConnectionStatus().isConnectingToInternet();
         id = getArguments().getString("id");
     }
 
@@ -203,7 +198,7 @@ public class DetailHeadlineIndexFragment extends Fragment implements View.OnClic
 
         //Header Related Article
         if(headerRelated == null) {
-            headerRelated = (RelativeLayout) view.findViewById(R.id.header_related_article_headline);
+            headerRelated = (RelativeLayout) view.findViewById(R.id.header_related_article);
             view.setTag(headerRelated);
         } else {
             headerRelated = (RelativeLayout) view.getTag();
@@ -211,7 +206,7 @@ public class DetailHeadlineIndexFragment extends Fragment implements View.OnClic
         headerRelated.setVisibility(View.GONE);
 
         if(tvNoResult == null) {
-            tvNoResult = (TextView) view.findViewById(R.id.text_no_result_detail_headline);
+            tvNoResult = (TextView) view.findViewById(R.id.text_no_result_detail);
             view.setTag(tvNoResult);
         } else {
             tvNoResult = (TextView) view.getTag();
@@ -220,7 +215,7 @@ public class DetailHeadlineIndexFragment extends Fragment implements View.OnClic
 
         //Material Effect View
         if(rippleView == null) {
-            rippleView = (RippleView) view.findViewById(R.id.layout_ripple_view_headline_terbaru);
+            rippleView = (RippleView) view.findViewById(R.id.layout_ripple_view);
             view.setTag(rippleView);
         } else {
             rippleView = (RippleView) view.getTag();
@@ -230,7 +225,7 @@ public class DetailHeadlineIndexFragment extends Fragment implements View.OnClic
 
         //List Related Article
         if(listView == null) {
-            listView = (ListView) view.findViewById(R.id.list_related_article_headline);
+            listView = (ListView) view.findViewById(R.id.list_related_article);
             view.setTag(listView);
         } else {
             listView = (ListView) view.getTag();
@@ -245,35 +240,35 @@ public class DetailHeadlineIndexFragment extends Fragment implements View.OnClic
         }
 
         if(tvTitleHeadlineDetail == null) {
-            tvTitleHeadlineDetail = (TextView) view.findViewById(R.id.title_detail_headline);
+            tvTitleHeadlineDetail = (TextView) view.findViewById(R.id.title_detail);
             view.setTag(tvTitleHeadlineDetail);
         } else {
             tvTitleHeadlineDetail = (TextView) view.getTag();
         }
 
         if(tvDateHeadlineDetail == null) {
-            tvDateHeadlineDetail = (TextView) view.findViewById(R.id.date_detail_headline);
+            tvDateHeadlineDetail = (TextView) view.findViewById(R.id.date_detail);
             view.setTag(tvDateHeadlineDetail);
         } else {
             tvDateHeadlineDetail = (TextView) view.getTag();
         }
 
         if(tvReporterHeadlineDetail == null) {
-            tvReporterHeadlineDetail = (TextView) view.findViewById(R.id.reporter_detail_headline);
+            tvReporterHeadlineDetail = (TextView) view.findViewById(R.id.reporter_detail);
             view.setTag(tvReporterHeadlineDetail);
         } else {
             tvReporterHeadlineDetail = (TextView) view.getTag();
         }
 
         if(tvContentHeadlineDetail == null) {
-            tvContentHeadlineDetail = (TextView) view.findViewById(R.id.content_detail_headline);
+            tvContentHeadlineDetail = (TextView) view.findViewById(R.id.content_detail);
             view.setTag(tvContentHeadlineDetail);
         } else {
             tvContentHeadlineDetail = (TextView) view.getTag();
         }
 
         if(ivThumbDetailHeadline == null) {
-            ivThumbDetailHeadline = (KenBurnsView) view.findViewById(R.id.thumb_detail_headline);
+            ivThumbDetailHeadline = (KenBurnsView) view.findViewById(R.id.thumb_detail);
             view.setTag(ivThumbDetailHeadline);
         } else {
             ivThumbDetailHeadline = (KenBurnsView) view.getTag();
@@ -330,7 +325,7 @@ public class DetailHeadlineIndexFragment extends Fragment implements View.OnClic
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.item_detail_headline, container, false);
+        View view = inflater.inflate(R.layout.item_detail, container, false);
 
         setHasOptionsMenu(true);
         defineViews(view);
@@ -360,8 +355,8 @@ public class DetailHeadlineIndexFragment extends Fragment implements View.OnClic
                                 if(sliderImageArray != null) {
                                     for(int i=0; i<sliderImageArray.length(); i++) {
                                         JSONObject objSlider = sliderImageArray.getJSONObject(i);
-                                        sliderPhotoUrl = objSlider.getString("src");
-                                        sliderTitle = objSlider.getString("title");
+                                        String sliderPhotoUrl = objSlider.getString("src");
+                                        String sliderTitle = objSlider.getString("title");
                                         sliderContentImages.add(new SliderContentImage(sliderPhotoUrl, sliderTitle));
                                     }
                                 }
@@ -371,8 +366,8 @@ public class DetailHeadlineIndexFragment extends Fragment implements View.OnClic
                                     for(int i=0; i<content_video.length(); i++) {
                                         JSONObject objVideo = content_video.getJSONObject(i);
                                         urlVideo = objVideo.getString("src_1");
-                                        widthVideo = objVideo.getString("src_2");
-                                        heightVideo = objVideo.getString("src_3");
+                                        String widthVideo = objVideo.getString("src_2");
+                                        String heightVideo = objVideo.getString("src_3");
                                         videoArrayList.add(new Video(urlVideo, widthVideo, heightVideo));
                                     }
                                 }
@@ -385,14 +380,13 @@ public class DetailHeadlineIndexFragment extends Fragment implements View.OnClic
                                     String related_article_id = objRelated.getString(Constant.related_article_id);
                                     String related_title = objRelated.getString(Constant.related_title);
                                     String related_channel_level_1_id = objRelated.getString(Constant.related_channel_level_1_id);
-                                    String channel_id = objRelated.getString(Constant.channel_id);
+                                    String channel_id_related_article = objRelated.getString(Constant.channel_id);
                                     String related_date_publish = objRelated.getString(Constant.related_date_publish);
                                     String image = objRelated.getString(Constant.image);
-                                    String kanal = objRelated.getString(Constant.kanal);
+                                    String kanal_related_article = objRelated.getString(Constant.kanal);
                                     String shared_url = objRelated.getString(Constant.url);
                                     relatedArticleArrayList.add(new RelatedArticle(id, article_id, related_article_id, related_title,
-                                            related_channel_level_1_id, channel_id, related_date_publish, image, kanal, shared_url));
-                                    Log.i(Constant.TAG, "RELATED ARTICLE HEADLNE : " + relatedArticleArrayList.get(i).getRelated_title());
+                                            related_channel_level_1_id, channel_id_related_article, related_date_publish, image, kanal_related_article, shared_url));
                                 }
 
                                 JSONArray comment_list = response.getJSONArray(Constant.comment_list);
@@ -402,7 +396,6 @@ public class DetailHeadlineIndexFragment extends Fragment implements View.OnClic
                                     String name = objRelated.getString(Constant.name);
                                     String comment_text = objRelated.getString(Constant.comment_text);
                                     commentArrayList.add(new Comment(id, null, name, null, comment_text, null, null, null));
-                                    Log.i(Constant.TAG, "COMMENTS PREVIEW : " + commentArrayList.get(i).getComment_text());
                                 }
 
                                 setAnalytics(ids, title);
@@ -478,12 +471,9 @@ public class DetailHeadlineIndexFragment extends Fragment implements View.OnClic
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError volleyError) {
-                            volleyError.getMessage();
-
                             if(Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + id) != null) {
-                                cachedResponse = new String(Global.getInstance(getActivity()).
+                                String cachedResponse = new String(Global.getInstance(getActivity()).
                                         getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + id).data);
-                                Log.i(Constant.TAG, "HEADLINES DETAIL CACHED : " + cachedResponse);
                                 try {
                                     JSONObject jsonObject = new JSONObject(cachedResponse);
                                     JSONObject response = jsonObject.getJSONObject(Constant.response);
@@ -503,8 +493,8 @@ public class DetailHeadlineIndexFragment extends Fragment implements View.OnClic
                                     if(sliderImageArray != null) {
                                         for(int i=0; i<sliderImageArray.length(); i++) {
                                             JSONObject objSlider = sliderImageArray.getJSONObject(i);
-                                            sliderPhotoUrl = objSlider.getString("src");
-                                            sliderTitle = objSlider.getString("title");
+                                            String sliderPhotoUrl = objSlider.getString("src");
+                                            String sliderTitle = objSlider.getString("title");
                                             sliderContentImages.add(new SliderContentImage(sliderPhotoUrl, sliderTitle));
                                         }
                                     }
@@ -613,9 +603,8 @@ public class DetailHeadlineIndexFragment extends Fragment implements View.OnClic
             Global.getInstance(getActivity()).addToRequestQueue(request, Constant.JSON_REQUEST);
         } else {
             if(Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + id) != null) {
-                cachedResponse = new String(Global.getInstance(getActivity()).
+                String cachedResponse = new String(Global.getInstance(getActivity()).
                         getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + id).data);
-                Log.i(Constant.TAG, "HEADLINES DETAIL CACHED : " + cachedResponse);
                 try {
                     JSONObject jsonObject = new JSONObject(cachedResponse);
                     JSONObject response = jsonObject.getJSONObject(Constant.response);
@@ -635,8 +624,8 @@ public class DetailHeadlineIndexFragment extends Fragment implements View.OnClic
                     if(sliderImageArray != null) {
                         for(int i=0; i<sliderImageArray.length(); i++) {
                             JSONObject objSlider = sliderImageArray.getJSONObject(i);
-                            sliderPhotoUrl = objSlider.getString("src");
-                            sliderTitle = objSlider.getString("title");
+                            String sliderPhotoUrl = objSlider.getString("src");
+                            String sliderTitle = objSlider.getString("title");
                             sliderContentImages.add(new SliderContentImage(sliderPhotoUrl, sliderTitle));
                         }
                     }
@@ -772,7 +761,7 @@ public class DetailHeadlineIndexFragment extends Fragment implements View.OnClic
     }
 
     private void doFavorite() {
-        favoriteList = Global.getInstance(getActivity()).getSharedPreferences(getActivity())
+        String favoriteList = Global.getInstance(getActivity()).getSharedPreferences(getActivity())
                 .getString(Constant.FAVORITES_LIST, "");
         if(favoriteList == null || favoriteList.length() <= 0) {
             favoritesArrayList = Global.getInstance(getActivity()).getFavoritesList();
@@ -809,7 +798,7 @@ public class DetailHeadlineIndexFragment extends Fragment implements View.OnClic
         if(url_shared == null || url_shared.length() < 1) {
             try {
                 if(Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + id) != null) {
-                    cachedResponse = new String(Global.getInstance(getActivity()).
+                    String cachedResponse = new String(Global.getInstance(getActivity()).
                             getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + id).data);
                     JSONObject jsonObject = new JSONObject(cachedResponse);
                     JSONObject response = jsonObject.getJSONObject(Constant.response);
@@ -855,7 +844,7 @@ public class DetailHeadlineIndexFragment extends Fragment implements View.OnClic
 
     @Override
     public void onClick(View view) {
-        if(view.getId() == R.id.layout_ripple_view_headline_terbaru) {
+        if(view.getId() == R.id.layout_ripple_view) {
             if(isInternetPresent) {
                 rippleView.setVisibility(View.GONE);
                 progressWheel.setVisibility(View.VISIBLE);
@@ -883,8 +872,8 @@ public class DetailHeadlineIndexFragment extends Fragment implements View.OnClic
                                     if(sliderImageArray != null) {
                                         for(int i=0; i<sliderImageArray.length(); i++) {
                                             JSONObject objSlider = sliderImageArray.getJSONObject(i);
-                                            sliderPhotoUrl = objSlider.getString("src");
-                                            sliderTitle = objSlider.getString("title");
+                                            String sliderPhotoUrl = objSlider.getString("src");
+                                            String sliderTitle = objSlider.getString("title");
                                             sliderContentImages.add(new SliderContentImage(sliderPhotoUrl, sliderTitle));
                                         }
                                     }
@@ -894,8 +883,8 @@ public class DetailHeadlineIndexFragment extends Fragment implements View.OnClic
                                         for(int i=0; i<content_video.length(); i++) {
                                             JSONObject objVideo = content_video.getJSONObject(i);
                                             urlVideo = objVideo.getString("src_1");
-                                            widthVideo = objVideo.getString("src_2");
-                                            heightVideo = objVideo.getString("src_3");
+                                            String widthVideo = objVideo.getString("src_2");
+                                            String heightVideo = objVideo.getString("src_3");
                                             videoArrayList.add(new Video(urlVideo, widthVideo, heightVideo));
                                         }
                                     }
@@ -1019,7 +1008,7 @@ public class DetailHeadlineIndexFragment extends Fragment implements View.OnClic
                 progressWheel.setVisibility(View.GONE);
                 tvNoResult.setVisibility(View.VISIBLE);
             }
-        } else if(view.getId() == R.id.thumb_detail_headline) {
+        } else if(view.getId() == R.id.thumb_detail) {
             if(image_url != null) {
                 if(image_url.length() > 0) {
                     Bundle bundle = new Bundle();

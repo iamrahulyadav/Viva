@@ -14,9 +14,9 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/thumb_detail_headline_layout">
+            android:id="@+id/thumb_detail_layout">
             <com.flaviofaria.kenburnsview.KenBurnsView
-                android:id="@+id/thumb_detail_headline"
+                android:id="@+id/thumb_detail"
                 android:layout_width="match_parent"
                 android:layout_height="220dp"
                 android:scaleType="fitXY"/>
@@ -29,7 +29,7 @@
             android:paddingRight="10dp"
             android:paddingBottom="10dp"
             android:background="@color/white"
-            android:layout_below="@id/thumb_detail_headline_layout">
+            android:layout_below="@id/thumb_detail_layout">
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -37,7 +37,7 @@
                 android:layout_marginBottom="5dp"
                 android:orientation="horizontal">
                 <id.co.viva.news.app.component.RobotoBoldTextView
-                    android:id="@+id/title_detail_headline"
+                    android:id="@+id/title_detail"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="@color/black"
@@ -45,7 +45,7 @@
                     android:textSize="22sp"/>
             </LinearLayout>
             <id.co.viva.news.app.component.RobotoTextView
-                android:id="@+id/date_detail_headline"
+                android:id="@+id/date_detail"
                 android:layout_marginBottom="5dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -53,17 +53,17 @@
                 android:layout_below="@id/title_and_kanal_detail_layout"
                 android:textSize="12sp"/>
             <id.co.viva.news.app.component.RobotoTextView
-                android:id="@+id/reporter_detail_headline"
+                android:id="@+id/reporter_detail"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/date_detail_headline"
+                android:layout_below="@id/date_detail"
                 android:layout_marginBottom="15dp"
                 android:textColor="@color/red"
                 android:textSize="15sp"/>
             <android.support.v4.view.ViewPager
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
-                android:layout_below="@id/reporter_detail_headline"
+                android:layout_below="@id/reporter_detail"
                 android:id="@+id/horizontal_list"/>
             <com.viewpagerindicator.LinePageIndicator
                 android:id="@+id/indicator"
@@ -76,7 +76,7 @@
                 app:unselectedColor="#FF888888"
                 app:selectedColor="@color/blue"/>
             <id.co.viva.news.app.component.RobotoTextView
-                android:id="@+id/content_detail_headline"
+                android:id="@+id/content_detail"
                 android:layout_below="@id/indicator"
                 android:layout_width="wrap_content"
                 android:lineSpacingExtra="6px"
@@ -85,7 +85,7 @@
                 android:layout_height="wrap_content"/>
             <id.co.viva.news.app.component.RobotoTextView
                 android:id="@+id/text_move_video"
-                android:layout_below="@id/content_detail_headline"
+                android:layout_below="@id/content_detail"
                 android:textSize="14sp"
                 android:textStyle="bold"
                 android:layout_centerHorizontal="true"
@@ -135,7 +135,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:id="@+id/header_related_article_headline"
+                android:id="@+id/header_related_article"
                 android:layout_below="@id/layout_preview_comment_list"
                 android:background="@color/header_headline_terbaru_new">
                 <id.co.viva.news.app.component.RobotoBoldTextView
@@ -150,8 +150,8 @@
             <ListView
                 android:layout_width="match_parent"
                 android:layout_height="fill_parent"
-                android:layout_below="@id/header_related_article_headline"
-                android:id="@+id/list_related_article_headline"/>
+                android:layout_below="@id/header_related_article"
+                android:id="@+id/list_related_article"/>
             <id.co.viva.news.app.component.RobotoTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -160,7 +160,7 @@
                 android:layout_centerHorizontal="true"
                 android:text="@string/label_no_results"
                 android:textColor="@color/header_grey"
-                android:id="@+id/text_no_result_detail_headline"/>
+                android:id="@+id/text_no_result_detail"/>
             <id.co.viva.news.app.component.ProgressWheel
                 android:id="@+id/progress_wheel"
                 android:layout_width="90dp"
@@ -169,7 +169,7 @@
                 wheel:barColor="@color/blue"
                 wheel:progressIndeterminate="true" />
             <com.andexert.library.RippleView
-                android:id="@+id/layout_ripple_view_headline_terbaru"
+                android:id="@+id/layout_ripple_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
@@ -181,7 +181,7 @@
                     android:layout_height="50dp"
                     android:textColor="@color/white"
                     android:text="Retry"
-                    android:background="@drawable/shadow_button_headline_terbaru"/>
+                    android:background="@drawable/shadow_button"/>
             </com.andexert.library.RippleView>
         </RelativeLayout>
         <RelativeLayout

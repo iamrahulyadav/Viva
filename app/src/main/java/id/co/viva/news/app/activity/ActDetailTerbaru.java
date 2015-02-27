@@ -27,7 +27,7 @@ public class ActDetailTerbaru extends FragmentActivity {
         Bundle bundle = getIntent().getExtras();
         id = bundle.getString("id");
 
-        setContentView(R.layout.frag_detail_terbaru);
+        setContentView(R.layout.act_detail_main_article);
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
         getActionBar().setDisplayShowTitleEnabled(true);
@@ -42,7 +42,7 @@ public class ActDetailTerbaru extends FragmentActivity {
                 }
             }
             adapter = new DetailTerbaruAdapter(getSupportFragmentManager(), TerbaruFragment.newsArrayList);
-            viewPager = (ViewPager)findViewById(R.id.vp_news_detail);
+            viewPager = (ViewPager)findViewById(R.id.vp_detail_main_article);
             viewPager.setAdapter(adapter);
             viewPager.setPageTransformer(true, new ZoomOutPageTransformer());
             viewPager.setCurrentItem(position);

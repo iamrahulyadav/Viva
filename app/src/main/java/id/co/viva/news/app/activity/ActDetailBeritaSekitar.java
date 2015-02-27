@@ -7,19 +7,19 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import id.co.viva.news.app.R;
-import id.co.viva.news.app.adapter.DetailHeadlineAdapter;
+import id.co.viva.news.app.adapter.DetailBeritaSekitarAdapter;
 import id.co.viva.news.app.component.ZoomOutPageTransformer;
-import id.co.viva.news.app.fragment.HeadlineFragment;
-import id.co.viva.news.app.model.Headline;
+import id.co.viva.news.app.fragment.BeritaSekitarFragment;
+import id.co.viva.news.app.model.BeritaSekitar;
 
 /**
- * Created by rezarachman on 07/10/14.
+ * Created by reza on 27/02/15.
  */
-public class ActDetailHeadline extends FragmentActivity {
+public class ActDetailBeritaSekitar extends FragmentActivity {
 
     private String id;
     private ViewPager viewPager;
-    private DetailHeadlineAdapter adapter;
+    private DetailBeritaSekitarAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,20 +28,18 @@ public class ActDetailHeadline extends FragmentActivity {
         id = bundle.getString("id");
 
         setContentView(R.layout.act_detail_main_article);
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
-        getActionBar().setDisplayShowTitleEnabled(true);
-        getActionBar().setTitle("Headlines");
+
+        setActionBar();
 
         int position = 0;
-        if(HeadlineFragment.headlineArrayList != null) {
-            if(HeadlineFragment.headlineArrayList.size() > 0) {
-                for(Headline headline : HeadlineFragment.headlineArrayList) {
-                    if(headline.getId().equals(id)) break;
+        if(BeritaSekitarFragment.beritaSekitarArrayList != null) {
+            if(BeritaSekitarFragment.beritaSekitarArrayList.size() > 0) {
+                for(BeritaSekitar beritaSekitar : BeritaSekitarFragment.beritaSekitarArrayList) {
+                    if(beritaSekitar.getId().equals(id)) break;
                     position++;
                 }
             }
-            adapter = new DetailHeadlineAdapter(getSupportFragmentManager(), HeadlineFragment.headlineArrayList);
+            adapter = new DetailBeritaSekitarAdapter(getSupportFragmentManager(), BeritaSekitarFragment.beritaSekitarArrayList);
             viewPager = (ViewPager)findViewById(R.id.vp_detail_main_article);
             viewPager.setAdapter(adapter);
             viewPager.setPageTransformer(true, new ZoomOutPageTransformer());
@@ -51,6 +49,13 @@ public class ActDetailHeadline extends FragmentActivity {
             Toast.makeText(this, R.string.label_error, Toast.LENGTH_SHORT).show();
             onBackPressed();
         }
+    }
+
+    private void setActionBar() {
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setHomeButtonEnabled(true);
+        getActionBar().setDisplayShowTitleEnabled(true);
+        getActionBar().setTitle("Berita Sekitar");
     }
 
     @Override

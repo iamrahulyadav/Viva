@@ -78,6 +78,11 @@
             android:theme="@style/AppTheme"/>
 
         <activity
+            android:name=".activity.ActDetailBeritaSekitar"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"/>
+
+        <activity
             android:name=".activity.ActRating"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"/>

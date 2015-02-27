@@ -117,7 +117,7 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
         labelLoadData.setVisibility(View.VISIBLE);
         loading_layout.setVisibility(View.VISIBLE);
 
-        rippleView = (RippleView) rootView.findViewById(R.id.layout_ripple_view_headline_terbaru);
+        rippleView = (RippleView) rootView.findViewById(R.id.layout_ripple_view);
         rippleView.setVisibility(View.GONE);
         rippleView.setOnClickListener(this);
 
@@ -422,7 +422,7 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
 
     @Override
     public void onClick(View view) {
-        if(view.getId() == R.id.layout_ripple_view_headline_terbaru) {
+        if(view.getId() == R.id.layout_ripple_view) {
             if(isInternetPresent) {
                 loading_layout.setVisibility(View.VISIBLE);
                 labelLoadData.setVisibility(View.VISIBLE);

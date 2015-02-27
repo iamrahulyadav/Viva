@@ -70,7 +70,7 @@
             android:layout_height="50dp"
             android:textColor="@color/white"
             android:text="Retry"
-            android:background="@drawable/shadow_button_headline_terbaru"/>
+            android:background="@drawable/shadow_button"/>
     </com.andexert.library.RippleView>
     <com.melnykov.fab.FloatingActionButton
         android:id="@+id/fab"

@@ -14,34 +14,34 @@ import java.util.ArrayList;
 
 import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.fragment.DetailMainIndexFragment;
-import id.co.viva.news.app.model.Headline;
+import id.co.viva.news.app.model.BeritaSekitar;
 
 /**
- * Created by root on 07/10/14.
+ * Created by reza on 27/02/15.
  */
-public class DetailHeadlineAdapter extends FragmentStatePagerAdapter {
+public class DetailBeritaSekitarAdapter extends FragmentStatePagerAdapter {
 
-    private ArrayList<Headline> headlineList;
+    private ArrayList<BeritaSekitar> beritaSekitarArrayList;
     private ArrayList<Fragment> mFragments = new ArrayList<Fragment>();
     private FragmentTransaction mCurTransaction = null;
     private final FragmentManager mFragmentManager;
     private ArrayList<Fragment.SavedState> mSavedState = new ArrayList<Fragment.SavedState>();
 
-    public DetailHeadlineAdapter(FragmentManager fragmentManager, ArrayList<Headline> headlineList) {
+    public DetailBeritaSekitarAdapter(FragmentManager fragmentManager, ArrayList<BeritaSekitar> beritaSekitarArrayList) {
         super(fragmentManager);
         mFragmentManager = fragmentManager;
-        this.headlineList = headlineList;
+        this.beritaSekitarArrayList = beritaSekitarArrayList;
     }
 
     @Override
     public Fragment getItem(int position) {
         return DetailMainIndexFragment
-                .newInstance(headlineList.get(position).getId());
+                .newInstance(beritaSekitarArrayList.get(position).getId());
     }
 
     @Override
     public int getCount() {
-        return headlineList.size();
+        return beritaSekitarArrayList.size();
     }
 
     @Override

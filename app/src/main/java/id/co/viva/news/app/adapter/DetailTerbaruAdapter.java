@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 
 import id.co.viva.news.app.Constant;
-import id.co.viva.news.app.fragment.DetailTerbaruIndexFragment;
+import id.co.viva.news.app.fragment.DetailMainIndexFragment;
 import id.co.viva.news.app.model.News;
 
 /**
@@ -35,7 +35,7 @@ public class DetailTerbaruAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        return DetailTerbaruIndexFragment
+        return DetailMainIndexFragment
                 .newInstance(newsArrayList.get(position).getId());
     }
 

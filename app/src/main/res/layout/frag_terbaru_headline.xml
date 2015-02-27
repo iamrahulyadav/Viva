@@ -59,7 +59,7 @@
             android:layout_height="wrap_content"
             android:text="@string/label_loading_data"/>
         <com.andexert.library.RippleView
-            android:id="@+id/layout_ripple_view_headline_terbaru"
+            android:id="@+id/layout_ripple_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
@@ -71,7 +71,7 @@
                 android:layout_height="50dp"
                 android:textColor="@color/white"
                 android:text="Retry"
-                android:background="@drawable/shadow_button_headline_terbaru"/>
+                android:background="@drawable/shadow_button"/>
         </com.andexert.library.RippleView>
         <com.melnykov.fab.FloatingActionButton
             android:id="@+id/fab"
