@@ -43,50 +43,45 @@ public class NavigationAdapter extends ArrayAdapter<Item> {
 
     @Override
     public View getView(int position, View view, ViewGroup viewGroup) {
-        View v = view;
         ViewHolder holder;
+        ViewHolderSection holderSection;
         Item item = navItems.get(position);
-        if(item != null) {
-            if(item.isSection()) {
-                NavigationSectionItem navigationSectionItem = (NavigationSectionItem) item;
-                if(v == null) {
-                    v = vi.inflate(R.layout.item_navigation_section_list, null);
-                    holder = new ViewHolder();
-                    holder.sectionView = (TextView) v.findViewById(R.id.list_item_section_text);
-                    v.setTag(holder);
-                } else {
-                    holder = (ViewHolder) v.getTag();
+        if (item != null) {
+            if(!item.isSection()) {
+                NavigationItem ei = (NavigationItem) item;
+                view = vi.inflate(R.layout.item_navigation_list, null);
+                holder = new ViewHolder();
+                holder.title = (TextView) view.findViewById(R.id.text_navigation_list);
+                holder.image = (ImageView) view.findViewById(R.id.list_item_entry_drawable);
+                if(holder.title != null) {
+                    holder.title.setText(ei.getTitle());
                 }
-                v.setOnClickListener(null);
-                v.setOnLongClickListener(null);
-                v.setLongClickable(false);
-                if(holder.sectionView != null) {
-                    holder.sectionView.setText(navigationSectionItem.getTitle());
+                if(holder.image != null) {
+                    holder.image.setImageResource(ei.getIcon());
                 }
             } else {
-                NavigationItem ei = (NavigationItem) item;
-                if(v == null) {
-                    v = vi.inflate(R.layout.item_navigation_list, null);
-                    holder = new ViewHolder();
-                    holder.title = (TextView) v.findViewById(R.id.text_navigation_list);
-                    holder.image = (ImageView) v.findViewById(R.id.list_item_entry_drawable);
-                    v.setTag(holder);
-                } else {
-                    holder = (ViewHolder) v.getTag();
+                NavigationSectionItem navigationSectionItem = (NavigationSectionItem) item;
+                view = vi.inflate(R.layout.item_navigation_section_list, null);
+                holderSection = new ViewHolderSection();
+                holderSection.sectionView = (TextView) view.findViewById(R.id.list_item_section_text);
+                view.setOnClickListener(null);
+                view.setOnLongClickListener(null);
+                view.setLongClickable(false);
+                if(holderSection.sectionView != null) {
+                    holderSection.sectionView.setText(navigationSectionItem.getTitleSection());
                 }
-                if(holder.title != null)
-                    holder.title.setText(ei.getTitle());
-                if(holder.image != null)
-                    holder.image.setImageResource(ei.getIcon());
             }
         }
-        return v;
+        return view;
     }
 
     private static class ViewHolder {
-        public TextView sectionView;
         public TextView title;
         public ImageView image;
+    }
+
+    private static class ViewHolderSection {
+        public TextView sectionView;
     }
 
 }

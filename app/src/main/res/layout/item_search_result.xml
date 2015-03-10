@@ -39,6 +39,7 @@
                 android:id="@+id/date_item_search_result"
                 android:layout_alignParentBottom="true"
                 android:layout_width="fill_parent"
+                android:textSize="12sp"
                 android:text="@android:string/unknownName"
                 android:layout_height="wrap_content"
                 android:paddingBottom="7dp"

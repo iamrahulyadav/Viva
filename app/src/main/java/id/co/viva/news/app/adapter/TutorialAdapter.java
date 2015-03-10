@@ -13,36 +13,34 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 
 import id.co.viva.news.app.Constant;
-import id.co.viva.news.app.fragment.DetailMainIndexFragment;
-import id.co.viva.news.app.model.BeritaSekitar;
+import id.co.viva.news.app.fragment.TutorialFragment;
 
 /**
- * Created by reza on 27/02/15.
+ * Created by reza on 09/03/15.
  */
-public class DetailBeritaSekitarAdapter extends FragmentStatePagerAdapter {
+public class TutorialAdapter extends FragmentStatePagerAdapter {
 
-    private ArrayList<BeritaSekitar> beritaSekitarArrayList;
+    private ArrayList<String> tutorialImages;
     private ArrayList<Fragment> mFragments = new ArrayList<Fragment>();
     private FragmentTransaction mCurTransaction = null;
     private final FragmentManager mFragmentManager;
     private ArrayList<Fragment.SavedState> mSavedState = new ArrayList<Fragment.SavedState>();
 
-    public DetailBeritaSekitarAdapter(FragmentManager fragmentManager, ArrayList<BeritaSekitar> beritaSekitarArrayList) {
+    public TutorialAdapter(FragmentManager fragmentManager, ArrayList<String> tutorialImages) {
         super(fragmentManager);
         mFragmentManager = fragmentManager;
-        this.beritaSekitarArrayList = beritaSekitarArrayList;
+        this.tutorialImages = tutorialImages;
     }
 
     @Override
     public Fragment getItem(int position) {
-        return DetailMainIndexFragment
-                .newInstance(beritaSekitarArrayList.get(position).getId(),
-                        Constant.BERITA_SEKITAR_DETAIL_PAGE);
+        return TutorialFragment
+                .newInstance(tutorialImages.get(position));
     }
 
     @Override
     public int getCount() {
-        return beritaSekitarArrayList.size();
+        return tutorialImages.size();
     }
 
     @Override

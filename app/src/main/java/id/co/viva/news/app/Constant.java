@@ -48,10 +48,11 @@ public class Constant {
     public static final String fragment_life = "class id.co.viva.news.app.fragment.LifeFragment";
     public static final String fragment_news = "class id.co.viva.news.app.fragment.NewsFragment";
 
-    public static final String FIRST_INSTALL = "first_install_main";
     public static final String FIRST_INSTALL_PROFILE = "first_install_profile";
-    public static final String FIRST_INSTALL_DETAIL = "first_install_detail";
-    public static final String FIRST_INSTALL_FAVORITES = "first_install_favorites";
+    public static final String FIRST_INSTALL_TUTORIAL = "first_install_tutorial";
+
+    public static final String MOVE_TUTORIAL = "move_tutorial";
+    public static final String MOVE_APPLICATION = "move_application";
 
     public static final String FAVORITES_LIST = "favorites_list";
     public static final String FAVORITES_LIST_SIZE = "favorites_list_size";
@@ -74,6 +75,7 @@ public class Constant {
     public static final String TAG_GCM = "VIVA-GCM";
 
     private static String BASE_URL_NEW = "http://api.viva.co.id/v/207/";
+    public static String TUTORIAL_IMAGES_URL = BASE_URL_NEW + "coach";
     public static String NEW_HEADLINE = BASE_URL_NEW + "headlinelist/";
     public static String NEW_TERBARU = BASE_URL_NEW + "terbarulist/";
     public static String NEW_NEWS = BASE_URL_NEW + "knews";
@@ -117,6 +119,7 @@ public class Constant {
     public static final String source = "source";
     public static final String reporter_name = "reporter_name";
     public static final String content = "content";
+    public static final String data = "data";
 
     public static final String name = "name";
     public static final String parent_id = "parent_id";
@@ -159,11 +162,11 @@ public class Constant {
     public static final String ATTRIBUTE_PATH_USER_ID = "user_id";
 
     public static final String BERITA_SEKITAR_PAGE = "BERITA_SEKITAR_HAL_";
-
+    public static final String BERITA_SEKITAR_DETAIL_PAGE = "BERITA_SEKITAR_DETAIL_";
     public static final String HEADLINE_PAGE = "HEADLINE_HAL_";
     public static final String HEADLINE_DETAIL_PAGE = "HEADLINE_DETAIL_";
     public static final String TERBARU_PAGE = "TERBARU_HAL_";
-    public static final String TERBARU_DETAIL_PAGE = "TERBARU_DETAIL_PAGE_";
+    public static final String TERBARU_DETAIL_PAGE = "TERBARU_DETAIL_";
 
     public static final String KANAL_NEWS_PAGE = "KANAL_NEWS_PAGE";
     public static final String SUBKANAL_NEWS_PAGE = "SUBKANAL_NEWS_";

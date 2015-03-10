@@ -14,7 +14,8 @@
             android:layout_marginTop="3dp"
             android:layout_marginLeft="3dp"
             android:layout_marginRight="3dp"
-            android:scaleType="fitXY"/>
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop"/>
         <RelativeLayout
             android:id="@+id/header_grid_news_transparent"
             android:layout_width="match_parent"
@@ -22,7 +23,8 @@
             android:layout_marginTop="3dp"
             android:layout_marginLeft="3dp"
             android:layout_marginRight="3dp"
-            android:scaleType="fitXY">
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop">
             <id.co.viva.news.app.component.RobotoBoldTextView
                 android:id="@+id/header_title_kanal_news"
                 android:layout_width="wrap_content"
@@ -48,6 +50,9 @@
             android:stretchMode="columnWidth"/>
         <ListView
             android:id="@+id/list_news"
+            android:dividerHeight="0dp"
+            android:divider="@null"
+            android:layout_marginBottom="3dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"></ListView>
         <id.co.viva.news.app.component.ProgressWheel

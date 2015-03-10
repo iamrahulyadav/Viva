@@ -9,6 +9,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
+import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.Global;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.services.GCM;
@@ -41,14 +42,25 @@ public class ActSplashScreen extends Activity {
             new Handler().postDelayed(
                     new Runnable() {
                         public void run() {
-                            Intent intent = new Intent(getApplicationContext(), ActLanding.class);
-                            startActivity(intent);
-                            overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
-                            finish();
+                            goToApplication(Constant.MOVE_APPLICATION);
                         }
-                    }, 3000);
+                    }, 2000);
         }
 
+    }
+
+    private void goToApplication(String intentType) {
+        if (intentType.equals(Constant.MOVE_APPLICATION)) {
+            Intent intents = new Intent(getApplicationContext(), ActLanding.class);
+            startActivity(intents);
+            overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+            finish();
+        } else if (intentType.equals(Constant.MOVE_TUTORIAL)) {
+            Intent intent = new Intent(getApplicationContext(), ActTutorial.class);
+            startActivity(intent);
+            overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+            finish();
+        }
     }
 
     private class GetRegistrationID extends AsyncTask {
@@ -63,11 +75,16 @@ public class ActSplashScreen extends Activity {
             new Handler().postDelayed(
                     new Runnable() {
                         public void run() {
-                            Intent intent = new Intent(getApplicationContext(), ActLanding.class);
-                            startActivity(intent);
-                            finish();
+                            if (Global.getInstance(ActSplashScreen.this).getSharedPreferences(ActSplashScreen.this)
+                                    .getBoolean(Constant.FIRST_INSTALL_TUTORIAL, true)) {
+                                goToApplication(Constant.MOVE_TUTORIAL);
+                                Global.getInstance(ActSplashScreen.this).getSharedPreferences(ActSplashScreen.this).
+                                        edit().putBoolean(Constant.FIRST_INSTALL_TUTORIAL, false).commit();
+                            } else {
+                                goToApplication(Constant.MOVE_APPLICATION);
+                            }
                         }
-                    }, 3000);
+                    }, 2000);
         }
     }
 

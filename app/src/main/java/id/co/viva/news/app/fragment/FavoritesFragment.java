@@ -12,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.nhaarman.listviewanimations.itemmanipulation.DynamicListView;
@@ -26,8 +25,6 @@ import id.co.viva.news.app.Global;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.activity.ActDetailFavorite;
 import id.co.viva.news.app.adapter.FavoriteAdapter;
-import id.co.viva.news.app.coachmark.CoachmarkBuilder;
-import id.co.viva.news.app.coachmark.CoachmarkView;
 import id.co.viva.news.app.model.Favorites;
 import id.co.viva.news.app.model.SliderContentImage;
 import id.co.viva.news.app.services.Analytics;
@@ -45,8 +42,6 @@ public class FavoritesFragment extends Fragment implements AdapterView.OnItemCli
     private DynamicListView listFavorite;
     private TextView textNoResult;
     private SimpleSwipeUndoAdapter simpleSwipeUndoAdapter;
-    private View coachmarkView;
-    private CoachmarkView showtips;
     private Analytics analytics;
 
     @Override
@@ -62,9 +57,6 @@ public class FavoritesFragment extends Fragment implements AdapterView.OnItemCli
         View rootView = inflater.inflate(R.layout.frag_favorites, container, false);
 
         getAnalytics();
-
-        coachmarkView = rootView.findViewById(R.id.coachmark_favorite_list);
-        showCoachMark();
 
         textNoResult = (TextView) rootView.findViewById(R.id.text_no_result_detail_content_favorite);
         textNoResult.setVisibility(View.GONE);
@@ -127,23 +119,6 @@ public class FavoritesFragment extends Fragment implements AdapterView.OnItemCli
         analytics = new Analytics(getActivity());
         analytics.getAnalyticByATInternet(Constant.FAVORITES_PAGE);
         analytics.getAnalyticByGoogleAnalytic(Constant.FAVORITES_PAGE);
-    }
-
-    private void showCoachMark() {
-        if(Global.getInstance(getActivity()).getSharedPreferences(getActivity()).getBoolean(Constant.FIRST_INSTALL_FAVORITES, true)) {
-            RelativeLayout relativeLayout = new RelativeLayout(getActivity());
-            relativeLayout.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-            ((RelativeLayout) coachmarkView).addView(relativeLayout);
-            showtips = new CoachmarkBuilder(getActivity())
-                    .setTarget(relativeLayout, 0, 0, 0)
-                    .setTitle(getResources().getString(R.string.label_navigation_favorite))
-                    .setDescription(getResources().getString(R.string.label_navigation_favorite_desc))
-                    .setDelay(1000)
-                    .build();
-            showtips.show(getActivity());
-            Global.getInstance(getActivity()).getSharedPreferences(getActivity()).
-                    edit().putBoolean(Constant.FIRST_INSTALL_FAVORITES, false).commit();
-        }
     }
 
     @Override

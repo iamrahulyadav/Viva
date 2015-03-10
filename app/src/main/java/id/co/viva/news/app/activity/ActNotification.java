@@ -8,9 +8,11 @@ import android.support.v4.view.ViewPager;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ShareActionProvider;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,12 +31,14 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.Global;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.adapter.ImageSliderAdapter;
 import id.co.viva.news.app.component.CropSquareTransformation;
 import id.co.viva.news.app.component.ProgressWheel;
+import id.co.viva.news.app.model.Favorites;
 import id.co.viva.news.app.model.SliderContentImage;
 import id.co.viva.news.app.model.Video;
 import id.co.viva.news.app.services.Analytics;
@@ -54,6 +58,7 @@ public class ActNotification extends FragmentActivity implements View.OnClickLis
     private Button btnRetry;
     private TextView tvNoResult;
     private ArrayList<SliderContentImage> sliderContentImages;
+    private ArrayList<Favorites> favoritesArrayList;
     private ArrayList<Video> videoArrayList;
     private TextView tvTitleDetail;
     private TextView tvDateDetail;
@@ -61,6 +66,9 @@ public class ActNotification extends FragmentActivity implements View.OnClickLis
     private TextView tvContentDetail;
     private KenBurnsView ivThumbDetail;
     private TextView textLinkVideo;
+    private ImageSliderAdapter imageSliderAdapter;
+    private Analytics analytics;
+
     private String title;
     private String image_url;
     private String date_publish;
@@ -70,8 +78,8 @@ public class ActNotification extends FragmentActivity implements View.OnClickLis
     private String sliderPhotoUrl;
     private String sliderTitle;
     private String urlVideo;
-    private ImageSliderAdapter imageSliderAdapter;
-    private Analytics analytics;
+    private String shared_url;
+    private String channel_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,14 +137,16 @@ public class ActNotification extends FragmentActivity implements View.OnClickLis
     }
 
     private void goDetailPhoto() {
-        if(image_url.length() > 0) {
-            Bundle bundle = new Bundle();
-            bundle.putString("photoUrl", image_url);
-            bundle.putString("image_caption", image_caption);
-            Intent intent = new Intent(this, ActDetailPhotoThumb.class);
-            intent.putExtras(bundle);
-            startActivity(intent);
-            overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+        if (image_url != null) {
+            if (image_url.length() > 0) {
+                Bundle bundle = new Bundle();
+                bundle.putString("photoUrl", image_url);
+                bundle.putString("image_caption", image_caption);
+                Intent intent = new Intent(this, ActDetailPhotoThumb.class);
+                intent.putExtras(bundle);
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+            }
         }
     }
 
@@ -177,6 +187,8 @@ public class ActNotification extends FragmentActivity implements View.OnClickLis
                                 content = detail.getString(Constant.content);
                                 reporter_name = detail.getString(Constant.reporter_name);
                                 image_caption = detail.getString(Constant.image_caption);
+                                shared_url = detail.getString(Constant.url);
+                                channel_id = detail.getString((Constant.channel_id));
 
                                 JSONArray sliderImageArray = detail.getJSONArray(Constant.content_images);
                                 if(sliderImageArray != null) {
@@ -219,7 +231,11 @@ public class ActNotification extends FragmentActivity implements View.OnClickLis
                                 if(rippleView.getVisibility() == View.VISIBLE) {
                                     rippleView.setVisibility(View.GONE);
                                 }
+
                                 progressWheel.setVisibility(View.GONE);
+
+                                //For updating content
+                                invalidateOptionsMenu();
 
                                 if(urlVideo.length() > 0) {
                                     textLinkVideo.setVisibility(View.VISIBLE);
@@ -262,8 +278,8 @@ public class ActNotification extends FragmentActivity implements View.OnClickLis
     private void setHeaderActionbar(String fromkanal) {
         ColorDrawable colorDrawable = new ColorDrawable();
         getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
         getActionBar().setDisplayShowTitleEnabled(false);
+        getActionBar().setHomeButtonEnabled(true);
         getActionBar().setIcon(R.drawable.logo_viva_coid_second);
         if(fromkanal != null) {
             if(fromkanal.equalsIgnoreCase("bola")) {
@@ -301,14 +317,112 @@ public class ActNotification extends FragmentActivity implements View.OnClickLis
         startActivity(intent);
     }
 
+    private void moveCommentPage() {
+        Bundle bundle = new Bundle();
+        bundle.putString("imageurl", image_url);
+        bundle.putString("title", title);
+        bundle.putString("article_id", idFromNotification);
+        bundle.putString("type_kanal", kanalFromNotification);
+        Intent intent = new Intent(this, ActComment.class);
+        intent.putExtras(bundle);
+        startActivity(intent);
+        overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+    }
+
+    private void moveRatingPage() {
+        Bundle bundles = new Bundle();
+        bundles.putString("imageurl", image_url);
+        bundles.putString("title", title);
+        bundles.putString("article_id", idFromNotification);
+        bundles.putString("type_kanal", kanalFromNotification);
+        Intent intents = new Intent(this, ActRating.class);
+        intents.putExtras(bundles);
+        startActivity(intents);
+        overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+    }
+
+    private void doFavorites() {
+        String favoriteList = Global.getInstance(this).getSharedPreferences(this)
+                .getString(Constant.FAVORITES_LIST, "");
+        if(favoriteList == null || favoriteList.length() <= 0) {
+            favoritesArrayList = Global.getInstance(this).getFavoritesList();
+        } else {
+            favoritesArrayList = Global.getInstance(this).getInstanceGson().
+                    fromJson(favoriteList, Global.getInstance(this).getType());
+        }
+        new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE)
+                .setTitleText(getResources().getString(R.string.label_favorite_navigation_title))
+                .setContentText(title)
+                .setConfirmText(getResources().getString(R.string.label_favorite_ok))
+                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sDialog) {
+                        favoritesArrayList.add(new Favorites(idFromNotification, title, channel_id, kanalFromNotification,
+                                image_url, date_publish, reporter_name, shared_url, content, image_caption, sliderContentImages));
+                        String favorite = Global.getInstance(ActNotification.this).getInstanceGson().toJson(favoritesArrayList);
+                        Global.getInstance(ActNotification.this).getDefaultEditor().putString(Constant.FAVORITES_LIST, favorite);
+                        Global.getInstance(ActNotification.this).getDefaultEditor().putInt(Constant.FAVORITES_LIST_SIZE, favoritesArrayList.size());
+                        Global.getInstance(ActNotification.this).getDefaultEditor().commit();
+                        sDialog.setTitleText(getResources().getString(R.string.label_favorite_navigation_title_confirm))
+                                .setContentText(getResources().getString(R.string.label_favorite_navigation_content))
+                                .setConfirmText(getResources().getString(R.string.label_favorite_ok))
+                                .setConfirmClickListener(null)
+                                .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+                    }
+                })
+                .show();
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                goFirstFlow();
+                finish();
                 return true;
+            case R.id.subaction_rate:
+                moveRatingPage();
+                return true;
+            case R.id.subaction_comments:
+                moveCommentPage();
+                return true;
+            case R.id.subaction_favorites:
+                doFavorites();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if(shared_url == null || shared_url.length() < 1) {
+            try {
+                if(Global.getInstance(this).getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + idFromNotification) != null) {
+                    String cachedResponse = new String(Global.getInstance(this).
+                            getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + idFromNotification).data);
+                    JSONObject jsonObject = new JSONObject(cachedResponse);
+                    JSONObject response = jsonObject.getJSONObject(Constant.response);
+                    JSONObject detail = response.getJSONObject(Constant.detail);
+                    shared_url = detail.getString(Constant.url);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_frag_detail, menu);
+        MenuItem item = menu.findItem(R.id.action_share);
+        ShareActionProvider myShareActionProvider = (ShareActionProvider) item.getActionProvider();
+        Intent myIntent = new Intent();
+        myIntent.setAction(Intent.ACTION_SEND);
+        myIntent.putExtra(Intent.EXTRA_TEXT, shared_url);
+        myIntent.setType("text/plain");
+        myShareActionProvider.setShareIntent(myIntent);
+        return true;
     }
 
     @Override

@@ -7,14 +7,14 @@ import id.co.viva.news.app.interfaces.Item;
  */
 public class NavigationSectionItem implements Item {
 
-    private String title;
+    private String titleSection;
 
-    public NavigationSectionItem(String title) {
-        this.title = title;
+    public NavigationSectionItem(String titleSection) {
+        this.titleSection = titleSection;
     }
 
-    public String getTitle() {
-        return title;
+    public String getTitleSection() {
+        return this.titleSection;
     }
 
     @Override

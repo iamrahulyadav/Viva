@@ -1,7 +1,6 @@
 package id.co.viva.news.app.fragment;
 
 import android.content.Intent;
-import android.graphics.Point;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -9,8 +8,6 @@ import android.support.v4.view.ViewPager;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
-import android.util.TypedValue;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -51,8 +48,6 @@ import id.co.viva.news.app.activity.ActRating;
 import id.co.viva.news.app.activity.ActVideo;
 import id.co.viva.news.app.adapter.ImageSliderAdapter;
 import id.co.viva.news.app.adapter.RelatedAdapter;
-import id.co.viva.news.app.coachmark.CoachmarkBuilder;
-import id.co.viva.news.app.coachmark.CoachmarkView;
 import id.co.viva.news.app.component.CropSquareTransformation;
 import id.co.viva.news.app.component.ProgressWheel;
 import id.co.viva.news.app.model.Comment;
@@ -94,9 +89,6 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
     private ViewPager viewPager;
     private LinePageIndicator linePageIndicator;
     private int count = 0;
-
-    private View coachmarkView;
-    private CoachmarkView showtips;
     private TextView textLinkVideo;
 
     private String ids;
@@ -111,11 +103,13 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
     private String content;
     private String reporter_name;
     private String url_shared;
+    private String analyticType;
 
-    public static DetailMainIndexFragment newInstance(String id) {
+    public static DetailMainIndexFragment newInstance(String id, String analyticType) {
         DetailMainIndexFragment detailMainIndexFragment = new DetailMainIndexFragment();
         Bundle bundle = new Bundle();
         bundle.putString("id", id);
+        bundle.putString("analytic", analyticType);
         detailMainIndexFragment.setArguments(bundle);
         return detailMainIndexFragment;
     }
@@ -126,6 +120,7 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
         isInternetPresent = Global.getInstance(getActivity())
                 .getConnectionStatus().isConnectingToInternet();
         id = getArguments().getString("id");
+        analyticType = getArguments().getString("analytic");
     }
 
     private void defineViews(View view) {
@@ -232,13 +227,6 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
         }
         listView.setOnItemClickListener(this);
 
-        if(coachmarkView == null) {
-            coachmarkView = view.findViewById(R.id.coachmark_detail);
-            view.setTag(coachmarkView);
-        } else {
-            coachmarkView = (RelativeLayout) view.getTag();
-        }
-
         if(tvTitleHeadlineDetail == null) {
             tvTitleHeadlineDetail = (TextView) view.findViewById(R.id.title_detail);
             view.setTag(tvTitleHeadlineDetail);
@@ -285,42 +273,6 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
         textLinkVideo.setOnClickListener(this);
         textLinkVideo.setVisibility(View.GONE);
 
-        showCoachMark();
-    }
-
-    private void showCoachMark() {
-        if(Global.getInstance(getActivity()).getSharedPreferences(getActivity()).getBoolean(Constant.FIRST_INSTALL_DETAIL, true)) {
-            RelativeLayout relativeLayout = new RelativeLayout(getActivity());
-            relativeLayout.setLayoutParams(new ViewGroup.LayoutParams(70, 70));
-            ((RelativeLayout) coachmarkView).addView(relativeLayout);
-            showtips = new CoachmarkBuilder(getActivity())
-                    .setTarget(relativeLayout, getWidthFocus(), getHeightFocus(), 60)
-                    .setTitle(getResources().getString(R.string.label_action_menu))
-                    .setDescription(getResources().getString(R.string.label_action_menu_desc))
-                    .build();
-            showtips.show(getActivity());
-            Global.getInstance(getActivity()).getSharedPreferences(getActivity()).
-                    edit().putBoolean(Constant.FIRST_INSTALL_DETAIL, false).commit();
-        }
-    }
-
-    private int getHeightFocus() {
-        int actionBarHeight = 0;
-        int heightFocus;
-        TypedValue typedValue = new TypedValue();
-        if (getActivity().getTheme().resolveAttribute(android.R.attr.actionBarSize, typedValue, true)) {
-            actionBarHeight = TypedValue.complexToDimensionPixelSize(typedValue.data,getResources().getDisplayMetrics());
-        }
-        heightFocus = 0 - (actionBarHeight / 2);
-        return heightFocus;
-    }
-
-    private int getWidthFocus() {
-        Display display = getActivity().getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        int width = size.x;
-        return width - 75;
     }
 
     @Override
@@ -398,7 +350,7 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
                                     commentArrayList.add(new Comment(id, null, name, null, comment_text, null, null, null));
                                 }
 
-                                setAnalytics(ids, title);
+                                setAnalytics(ids, title, analyticType);
 
                                 tvTitleHeadlineDetail.setText(title);
                                 tvDateHeadlineDetail.setText(date_publish);
@@ -917,7 +869,7 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
                                         Log.i(Constant.TAG, "COMMENTS PREVIEW : " + commentArrayList.get(i).getComment_text());
                                     }
 
-                                    setAnalytics(ids, title);
+                                    setAnalytics(ids, title, analyticType);
 
                                     tvTitleHeadlineDetail.setText(title);
                                     tvDateHeadlineDetail.setText(date_publish);
@@ -1043,10 +995,21 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
         }
     }
 
-    private void setAnalytics(String id, String title) {
-        analytics = new Analytics(getActivity());
-        analytics.getAnalyticByATInternet(Constant.HEADLINE_DETAIL_PAGE + id + "_" + title.toUpperCase());
-        analytics.getAnalyticByGoogleAnalytic(Constant.HEADLINE_DETAIL_PAGE + id + "_" + title.toUpperCase());
+    private void setAnalytics(String id, String title, String analytic) {
+        if (analytics == null) {
+            analytics = new Analytics(getActivity());
+        }
+
+        if (analytic.equalsIgnoreCase(Constant.HEADLINE_DETAIL_PAGE)) {
+            analytics.getAnalyticByATInternet(Constant.HEADLINE_DETAIL_PAGE + id + "_" + title.toUpperCase());
+            analytics.getAnalyticByGoogleAnalytic(Constant.HEADLINE_DETAIL_PAGE + id + "_" + title.toUpperCase());
+        } else if (analytic.equalsIgnoreCase(Constant.TERBARU_DETAIL_PAGE)) {
+            analytics.getAnalyticByATInternet(Constant.TERBARU_DETAIL_PAGE + id + "_" + title.toUpperCase());
+            analytics.getAnalyticByGoogleAnalytic(Constant.TERBARU_DETAIL_PAGE + id + "_" + title.toUpperCase());
+        } else if (analytic.equalsIgnoreCase(Constant.BERITA_SEKITAR_DETAIL_PAGE)) {
+            analytics.getAnalyticByATInternet(Constant.BERITA_SEKITAR_DETAIL_PAGE + id + "_" + title.toUpperCase());
+            analytics.getAnalyticByGoogleAnalytic(Constant.BERITA_SEKITAR_DETAIL_PAGE + id + "_" + title.toUpperCase());
+        }
     }
 
 }

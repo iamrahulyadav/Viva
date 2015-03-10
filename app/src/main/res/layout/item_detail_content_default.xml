@@ -169,9 +169,5 @@
                 wheel:barColor="@color/blue"
                 wheel:progressIndeterminate="true" />
         </RelativeLayout>
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/coachmark_detail"></RelativeLayout>
     </RelativeLayout>
 </com.nirhart.parallaxscroll.views.ParallaxScrollView>

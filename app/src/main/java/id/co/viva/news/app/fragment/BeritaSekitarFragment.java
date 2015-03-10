@@ -49,9 +49,9 @@ import id.co.viva.news.app.component.LoadMoreListView;
 import id.co.viva.news.app.interfaces.LocationResult;
 import id.co.viva.news.app.interfaces.OnGPSListener;
 import id.co.viva.news.app.interfaces.OnLoadMoreListener;
+import id.co.viva.news.app.location.LocationFinder;
 import id.co.viva.news.app.model.BeritaSekitar;
 import id.co.viva.news.app.services.Analytics;
-import id.co.viva.news.app.location.LocationFinder;
 
 /**
  * Created by reza on 23/02/15.

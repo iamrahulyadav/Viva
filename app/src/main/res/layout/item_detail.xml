@@ -184,9 +184,5 @@
                     android:background="@drawable/shadow_button"/>
             </com.andexert.library.RippleView>
         </RelativeLayout>
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/coachmark_detail"></RelativeLayout>
     </RelativeLayout>
 </com.nirhart.parallaxscroll.views.ParallaxScrollView>

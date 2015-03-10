@@ -12,15 +12,7 @@ public class NavigationItem implements Item {
         this.icon = icon;
     }
 
-    public NavigationItem(String title) {
-        this.title = title;
-    }
-
-    public NavigationItem(int icon) {
-        this.icon = icon;
-    }
-
-    public String getTitle(){
+    public String getTitle() {
         return this.title;
     }
 

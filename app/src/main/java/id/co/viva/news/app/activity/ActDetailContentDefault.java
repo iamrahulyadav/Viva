@@ -1,7 +1,6 @@
 package id.co.viva.news.app.activity;
 
 import android.content.Intent;
-import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -9,12 +8,9 @@ import android.support.v4.view.ViewPager;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
-import android.util.TypedValue;
-import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -43,8 +39,6 @@ import id.co.viva.news.app.Global;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.adapter.ImageSliderAdapter;
 import id.co.viva.news.app.adapter.RelatedAdapter;
-import id.co.viva.news.app.coachmark.CoachmarkBuilder;
-import id.co.viva.news.app.coachmark.CoachmarkView;
 import id.co.viva.news.app.component.CropSquareTransformation;
 import id.co.viva.news.app.component.ProgressWheel;
 import id.co.viva.news.app.model.Comment;
@@ -74,7 +68,6 @@ public class ActDetailContentDefault extends FragmentActivity
     private String widthVideo;
     private String heightVideo;
     private String id;
-    private String cachedResponse;
     private String typeFrom;
     private String fromkanal;
     private String shared_url;
@@ -102,16 +95,13 @@ public class ActDetailContentDefault extends FragmentActivity
     private Analytics analytics;
     private ProgressWheel progressWheel;
     private String favoriteList;
+    private TextView textLinkVideo;
 
     private ArrayList<Favorites> favoritesArrayList;
     private ArrayList<RelatedArticle> relatedArticleArrayList;
     private ArrayList<Comment> commentArrayList;
     private ArrayList<SliderContentImage> sliderContentImages;
     private ArrayList<Video> videoArrayList;
-
-    private View coachmarkView;
-    private CoachmarkView showtips;
-    private TextView textLinkVideo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,7 +119,6 @@ public class ActDetailContentDefault extends FragmentActivity
 
         setHeaderActionbar();
 
-        coachmarkView = findViewById(R.id.coachmark_detail);
         viewPager = (ViewPager) findViewById(R.id.horizontal_list);
         viewPager.setVisibility(View.GONE);
 
@@ -168,8 +157,6 @@ public class ActDetailContentDefault extends FragmentActivity
         textLinkVideo = (TextView)findViewById(R.id.text_move_video);
         textLinkVideo.setOnClickListener(this);
         textLinkVideo.setVisibility(View.GONE);
-
-        showCoachMark();
 
         if(isInternetPresent) {
             StringRequest request = new StringRequest(Request.Method.GET, Constant.NEW_DETAIL + "/id/" + id,
@@ -338,7 +325,7 @@ public class ActDetailContentDefault extends FragmentActivity
             Global.getInstance(this).addToRequestQueue(request, Constant.JSON_REQUEST);
         } else {
             if(Global.getInstance(this).getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + id) != null) {
-                cachedResponse = new String(Global.getInstance(this).
+                String cachedResponse = new String(Global.getInstance(this).
                         getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + id).data);
                 Log.i(Constant.TAG, "CONTENT DETAIL CACHED : " + cachedResponse);
                 try {
@@ -494,42 +481,6 @@ public class ActDetailContentDefault extends FragmentActivity
             colorDrawable.setColor(getResources().getColor(R.color.header_headline_terbaru_new));
             getActionBar().setBackgroundDrawable(colorDrawable);
         }
-    }
-
-    private void showCoachMark() {
-        if(Global.getInstance(this).getSharedPreferences(this).getBoolean(Constant.FIRST_INSTALL_DETAIL, true)) {
-            RelativeLayout relativeLayout = new RelativeLayout(this);
-            relativeLayout.setLayoutParams(new ViewGroup.LayoutParams(70, 70));
-            ((RelativeLayout) coachmarkView).addView(relativeLayout);
-            showtips = new CoachmarkBuilder(this)
-                    .setTarget(relativeLayout, getWidthFocus(), getHeightFocus(), 60)
-                    .setTitle(getResources().getString(R.string.label_action_menu))
-                    .setDescription(getResources().getString(R.string.label_action_menu_desc))
-                    .build();
-            showtips.show(this);
-            Global.getInstance(this).getSharedPreferences(this).
-                    edit().putBoolean(Constant.FIRST_INSTALL_DETAIL, false).commit();
-        }
-    }
-
-    private int getHeightFocus() {
-        int actionBarHeight = 0;
-        int heightFocus;
-        TypedValue typedValue = new TypedValue();
-        if (getTheme().resolveAttribute(android.R.attr.actionBarSize, typedValue, true))
-        {
-            actionBarHeight = TypedValue.complexToDimensionPixelSize(typedValue.data,getResources().getDisplayMetrics());
-        }
-        heightFocus = 0 - (actionBarHeight / 2);
-        return heightFocus;
-    }
-
-    private int getWidthFocus() {
-        Display display = getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        int width = size.x;
-        return width - 75;
     }
 
     private void moveVideoPage() {

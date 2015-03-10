@@ -7,6 +7,8 @@
     <string name="title_validate_rate">Anda belum melakukan rate artikel!</string>
     <string name="title_no_connection">Terjadi kesalahan pada koneksi anda!</string>
     <string name="search_hint">Pencarian</string>
+    <string name="label_process_get_image_tutorial">Memproses gambar...</string>
+    <string name="label_fail_get_image_tutorial">Gagal memproses gambar!</string>
     <string name="label_no_results">Tidak ada hasil.</string>
     <string name="label_no_results_favorite">Daftar favorite kosong.</string>
     <string name="label_related_article">Artikel Terkait</string>
@@ -17,6 +19,7 @@
     <string name="label_error">Terjadi kesalahan!</string>
     <string name="label_loading_data">Memuat data...</string>
     <string name="label_get_location">Mencari lokasi anda...</string>
+    <string name="label_button_skip_tutorial">Skip</string>
     <string name="label_navigation_button">Navigation Button</string>
     <string name="label_navigation_favorite">Favorite Articles</string>
     <string name="label_navigation_favorite_desc">Nikmati pengalaman membaca anda dengan menggunakan fitur Favorites.
@@ -128,8 +131,7 @@
     <string name="label_send_email">Kirim</string>
     <string name="label_video_click"><u>Klik untuk melihat video.</u></string>
     <string name="label_success_send_email">Email telah berhasil dikirim. Silahkan cek email anda untuk melihat password.</string>
-
-    <string name="label_not_logged_in">Anda Belum Login.</string>
+    <string name="label_not_logged_in">Anda Belum Login</string>
 
     <string name="title_copyright">Copyright © 2008 - 2015 PT. Viva Media Baru</string>
     <string name="wording_about_indo">Aplikasi mobile VIVA.co.id ini dirancang khusus untuk Android ​agar pengguna dapat menikmati beragam konten bermutu dari VIVA.co.id dengan kemudahan navigasi dan kekayaan fitur Android. Konten dalam bentuk teks, foto dan video diperbarui terus-menerus dan disajikan secara kreatif sehingga memperkaya pengalaman pengguna.</string>

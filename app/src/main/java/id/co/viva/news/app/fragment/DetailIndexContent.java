@@ -1,7 +1,6 @@
 package id.co.viva.news.app.fragment;
 
 import android.content.Intent;
-import android.graphics.Point;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -9,8 +8,6 @@ import android.support.v4.view.ViewPager;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
-import android.util.TypedValue;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -52,8 +49,6 @@ import id.co.viva.news.app.activity.ActRating;
 import id.co.viva.news.app.activity.ActVideo;
 import id.co.viva.news.app.adapter.ImageSliderAdapter;
 import id.co.viva.news.app.adapter.RelatedAdapter;
-import id.co.viva.news.app.coachmark.CoachmarkBuilder;
-import id.co.viva.news.app.coachmark.CoachmarkView;
 import id.co.viva.news.app.component.CropSquareTransformation;
 import id.co.viva.news.app.component.ProgressWheel;
 import id.co.viva.news.app.model.Comment;
@@ -117,8 +112,6 @@ public class DetailIndexContent extends Fragment implements
     private String image_caption;
     private String sliderPhotoUrl;
     private String sliderTitle;
-    private View coachmarkView;
-    private CoachmarkView showtips;
     private TextView textLinkVideo;
 
     public static DetailIndexContent newInstance(String id, String kanals) {
@@ -128,42 +121,6 @@ public class DetailIndexContent extends Fragment implements
         bundle.putString("kanals", kanals);
         detailIndexContent.setArguments(bundle);
         return detailIndexContent;
-    }
-
-    private void showCoachMark() {
-        if(Global.getInstance(getActivity()).getSharedPreferences(getActivity()).getBoolean(Constant.FIRST_INSTALL_DETAIL, true)) {
-            RelativeLayout relativeLayout = new RelativeLayout(getActivity());
-            relativeLayout.setLayoutParams(new ViewGroup.LayoutParams(70, 70));
-            ((RelativeLayout) coachmarkView).addView(relativeLayout);
-            showtips = new CoachmarkBuilder(getActivity())
-                    .setTarget(relativeLayout, getWidthFocus(), getHeightFocus(), 60)
-                    .setTitle(getResources().getString(R.string.label_action_menu))
-                    .setDescription(getResources().getString(R.string.label_action_menu_desc))
-                    .build();
-            showtips.show(getActivity());
-            Global.getInstance(getActivity()).getSharedPreferences(getActivity()).
-                    edit().putBoolean(Constant.FIRST_INSTALL_DETAIL, false).commit();
-        }
-    }
-
-    private int getHeightFocus() {
-        int actionBarHeight = 0;
-        int heightFocus;
-        TypedValue typedValue = new TypedValue();
-        if (getActivity().getTheme().resolveAttribute(android.R.attr.actionBarSize, typedValue, true))
-        {
-            actionBarHeight = TypedValue.complexToDimensionPixelSize(typedValue.data,getResources().getDisplayMetrics());
-        }
-        heightFocus = 0 - (actionBarHeight / 2);
-        return heightFocus;
-    }
-
-    private int getWidthFocus() {
-        Display display = getActivity().getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        int width = size.x;
-        return width - 75;
     }
 
     @Override
@@ -180,13 +137,6 @@ public class DetailIndexContent extends Fragment implements
         View view = inflater.inflate(R.layout.item_detail_content, container, false);
 
         setHasOptionsMenu(true);
-
-        if(coachmarkView == null) {
-            coachmarkView = view.findViewById(R.id.coachmark_detail);
-            view.setTag(coachmarkView);
-        } else {
-            coachmarkView = (RelativeLayout) view.getTag();
-        }
 
         if(viewPager == null) {
             viewPager = (ViewPager) view.findViewById(R.id.horizontal_list);
@@ -335,8 +285,6 @@ public class DetailIndexContent extends Fragment implements
         }
         textLinkVideo.setOnClickListener(this);
         textLinkVideo.setVisibility(View.GONE);
-
-        showCoachMark();
 
         if(isInternetPresent) {
             StringRequest request = new StringRequest(Request.Method.GET, Constant.NEW_DETAIL + "/id/" + id,

@@ -36,7 +36,8 @@ public class DetailTerbaruAdapter extends FragmentStatePagerAdapter {
     @Override
     public Fragment getItem(int position) {
         return DetailMainIndexFragment
-                .newInstance(newsArrayList.get(position).getId());
+                .newInstance(newsArrayList.get(position).getId(),
+                        Constant.TERBARU_DETAIL_PAGE);
     }
 
     @Override

@@ -311,6 +311,10 @@ public class ActLanding extends FragmentActivity implements View.OnClickListener
         searchView.setSearchableInfo(
                 searchManager.getSearchableInfo(getComponentName()));
 
+        int searchImgId = getResources().getIdentifier("android:id/search_button", null, null);
+        ImageView v = (ImageView) searchView.findViewById(searchImgId);
+        v.setImageResource(R.drawable.ic_action_search);
+
         int searchTextViewId = searchView.getContext().getResources().getIdentifier("android:id/search_src_text", null, null);
         TextView searchTextView = (TextView) searchView.findViewById(searchTextViewId);
         searchTextView.setHintTextColor(getResources().getColor(R.color.white));
