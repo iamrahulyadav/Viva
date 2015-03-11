@@ -493,4 +493,10 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
         }
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        locationFinder.removeLocationListener();
+    }
+
 }

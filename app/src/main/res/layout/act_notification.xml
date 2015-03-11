@@ -96,6 +96,26 @@
                 android:layout_marginBottom="5dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:id="@+id/header_related_article"
+                android:layout_below="@id/text_move_video">
+                <id.co.viva.news.app.component.RobotoBoldTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:layout_margin="5dp"
+                    android:text="@string/label_related_article"/>
+            </RelativeLayout>
+            <ListView
+                android:layout_width="match_parent"
+                android:layout_height="fill_parent"
+                android:layout_below="@id/header_related_article"
+                android:id="@+id/list_related_article_notification"/>
             <id.co.viva.news.app.component.RobotoTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

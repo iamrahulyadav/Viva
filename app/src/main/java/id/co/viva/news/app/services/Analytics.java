@@ -2,6 +2,7 @@ package id.co.viva.news.app.services;
 
 import android.content.Context;
 
+import com.at.ATParams;
 import com.google.analytics.tracking.android.Fields;
 import com.google.analytics.tracking.android.MapBuilder;
 
@@ -20,6 +21,12 @@ public class Analytics {
 
     public void getAnalyticByATInternet(String page) {
         Global.getInstance(mContext).getAtParams().setPage(page);
+        Global.getInstance(mContext).getAtParams().xt_sendTag();
+    }
+
+    public void getAnalyticByATInternetFromNotification(String page, String key) {
+        Global.getInstance(mContext).getAtParams().setPage(page);
+        Global.getInstance(mContext).getAtParams().xt_click("", key, ATParams.clicType.navigation);
         Global.getInstance(mContext).getAtParams().xt_sendTag();
     }
 

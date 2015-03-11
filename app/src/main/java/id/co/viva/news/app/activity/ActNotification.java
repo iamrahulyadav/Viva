@@ -11,7 +11,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.ShareActionProvider;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,9 +39,11 @@ import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.Global;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.adapter.ImageSliderAdapter;
+import id.co.viva.news.app.adapter.RelatedAdapter;
 import id.co.viva.news.app.component.CropSquareTransformation;
 import id.co.viva.news.app.component.ProgressWheel;
 import id.co.viva.news.app.model.Favorites;
+import id.co.viva.news.app.model.RelatedArticle;
 import id.co.viva.news.app.model.SliderContentImage;
 import id.co.viva.news.app.model.Video;
 import id.co.viva.news.app.services.Analytics;
@@ -46,10 +51,11 @@ import id.co.viva.news.app.services.Analytics;
 /**
  * Created by reza on 20/01/15.
  */
-public class ActNotification extends FragmentActivity implements View.OnClickListener {
+public class ActNotification extends FragmentActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
 
     private String kanalFromNotification;
     private String idFromNotification;
+
     private boolean isInternetPresent = false;
     private ViewPager viewPager;
     private LinePageIndicator linePageIndicator;
@@ -59,13 +65,17 @@ public class ActNotification extends FragmentActivity implements View.OnClickLis
     private TextView tvNoResult;
     private ArrayList<SliderContentImage> sliderContentImages;
     private ArrayList<Favorites> favoritesArrayList;
+    private ArrayList<RelatedArticle> relatedArticleArrayList;
     private ArrayList<Video> videoArrayList;
     private TextView tvTitleDetail;
     private TextView tvDateDetail;
     private TextView tvReporterDetail;
     private TextView tvContentDetail;
     private KenBurnsView ivThumbDetail;
+    private RelativeLayout headerRelated;
+    private RelatedAdapter adapter;
     private TextView textLinkVideo;
+    private ListView listView;
     private ImageSliderAdapter imageSliderAdapter;
     private Analytics analytics;
 
@@ -86,8 +96,8 @@ public class ActNotification extends FragmentActivity implements View.OnClickLis
         super.onCreate(savedInstanceState);
         Bundle extras = getIntent().getExtras();
         if(extras != null) {
-            idFromNotification = extras.containsKey("id") ? extras.getString("id") : "";
-            kanalFromNotification = extras.containsKey("kanal") ? extras.getString("kanal") : "";
+            idFromNotification = extras.containsKey(Constant.id) ? extras.getString(Constant.id) : "";
+            kanalFromNotification = extras.containsKey(Constant.kanal) ? extras.getString(Constant.kanal) : "";
         }
 
         setContentView(R.layout.act_notification);
@@ -117,8 +127,15 @@ public class ActNotification extends FragmentActivity implements View.OnClickLis
         tvNoResult = (TextView) findViewById(R.id.text_no_result_detail_content);
         tvNoResult.setVisibility(View.GONE);
 
+        relatedArticleArrayList = new ArrayList<RelatedArticle>();
         sliderContentImages = new ArrayList<SliderContentImage>();
         videoArrayList = new ArrayList<Video>();
+
+        listView = (ListView) findViewById(R.id.list_related_article_notification);
+        listView.setOnItemClickListener(this);
+
+        headerRelated = (RelativeLayout) findViewById(R.id.header_related_article);
+        headerRelated.setVisibility(View.GONE);
 
         tvTitleDetail = (TextView) findViewById(R.id.title_detail_content);
         tvDateDetail = (TextView) findViewById(R.id.date_detail_content);
@@ -209,6 +226,23 @@ public class ActNotification extends FragmentActivity implements View.OnClickLis
                                     }
                                 }
 
+                                JSONArray related_article = response.getJSONArray(Constant.related_article);
+                                for(int i=0; i<related_article.length(); i++) {
+                                    JSONObject objRelated = related_article.getJSONObject(i);
+                                    String id = objRelated.getString(Constant.id);
+                                    String article_id = objRelated.getString(Constant.article_id);
+                                    String related_article_id = objRelated.getString(Constant.related_article_id);
+                                    String related_title = objRelated.getString(Constant.related_title);
+                                    String related_channel_level_1_id = objRelated.getString(Constant.related_channel_level_1_id);
+                                    String channel_id = objRelated.getString(Constant.channel_id);
+                                    String related_date_publish = objRelated.getString(Constant.related_date_publish);
+                                    String image = objRelated.getString(Constant.image);
+                                    String kanal = objRelated.getString(Constant.kanal);
+                                    String shared_url = objRelated.getString(Constant.url);
+                                    relatedArticleArrayList.add(new RelatedArticle(id, article_id, related_article_id, related_title,
+                                            related_channel_level_1_id, channel_id, related_date_publish, image, kanal, shared_url));
+                                }
+
                                 getAnalytics(title);
 
                                 tvTitleDetail.setText(title);
@@ -226,6 +260,25 @@ public class ActNotification extends FragmentActivity implements View.OnClickLis
                                     linePageIndicator.setViewPager(viewPager);
                                     viewPager.setVisibility(View.VISIBLE);
                                     linePageIndicator.setVisibility(View.VISIBLE);
+                                }
+
+                                if(relatedArticleArrayList.size() > 0 || !relatedArticleArrayList.isEmpty()) {
+                                    adapter = new RelatedAdapter(ActNotification.this, relatedArticleArrayList);
+                                    listView.setAdapter(adapter);
+                                    Constant.setListViewHeightBasedOnChildren(listView);
+                                    adapter.notifyDataSetChanged();
+                                    headerRelated.setVisibility(View.VISIBLE);
+                                    if(kanalFromNotification != null) {
+                                        if(kanalFromNotification.equalsIgnoreCase("bola")) {
+                                            headerRelated.setBackgroundResource(R.color.color_bola);
+                                        } else if(kanalFromNotification.equalsIgnoreCase("vivalife")) {
+                                            headerRelated.setBackgroundResource(R.color.color_life);
+                                        } else {
+                                            headerRelated.setBackgroundResource(R.color.color_news);
+                                        }
+                                    } else {
+                                        headerRelated.setBackgroundResource(R.color.header_grey);
+                                    }
                                 }
 
                                 if(rippleView.getVisibility() == View.VISIBLE) {
@@ -433,8 +486,23 @@ public class ActNotification extends FragmentActivity implements View.OnClickLis
 
     private void getAnalytics(String title) {
         analytics = new Analytics(this);
-        analytics.getAnalyticByATInternet(Constant.ARTICLE_FROM_NOTIFICATION + "_" + title.toUpperCase());
+        analytics.getAnalyticByATInternetFromNotification(Constant.ARTICLE_FROM_NOTIFICATION + "_" + title.toUpperCase(), "Push Notification");
         analytics.getAnalyticByGoogleAnalytic(Constant.ARTICLE_FROM_NOTIFICATION + "_" + title.toUpperCase());
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+        if(relatedArticleArrayList.size() > 0) {
+            RelatedArticle relatedArticles = relatedArticleArrayList.get(position);
+            Bundle bundle = new Bundle();
+            bundle.putString("id", relatedArticles.getRelated_article_id());
+            bundle.putString("kanal", relatedArticles.getKanal());
+            bundle.putString("shared_url", relatedArticles.getShared_url());
+            Intent intent = new Intent(this, ActDetailContentDefault.class);
+            intent.putExtras(bundle);
+            startActivity(intent);
+            overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+        }
     }
 
 }

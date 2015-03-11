@@ -215,7 +215,6 @@ public class ActDetailContentDefault extends FragmentActivity
                                     String shared_url = objRelated.getString(Constant.url);
                                     relatedArticleArrayList.add(new RelatedArticle(id, article_id, related_article_id, related_title,
                                             related_channel_level_1_id, channel_id, related_date_publish, image, kanal, shared_url));
-                                    Log.i(Constant.TAG, "RELATED ARTICLE : " + relatedArticleArrayList.get(i).getRelated_title());
                                 }
 
                                 JSONArray comment_list = response.getJSONArray(Constant.comment_list);
@@ -585,7 +584,6 @@ public class ActDetailContentDefault extends FragmentActivity
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
         if(relatedArticleArrayList.size() > 0) {
             RelatedArticle relatedArticles = relatedArticleArrayList.get(position);
-            Log.i(Constant.TAG, "ID : " + relatedArticles.getId());
             Bundle bundle = new Bundle();
             bundle.putString("id", relatedArticles.getRelated_article_id());
             bundle.putString("type", typeFrom);

@@ -73,6 +73,14 @@ public class LocationFinder {
         return true;
     }
 
+    public void removeLocationListener() {
+        if (locationManager != null) {
+            locationManager.removeUpdates(locationListenerNetwork);
+            locationManager.removeUpdates(locationListenerGps);
+            locationManager = null;
+        }
+    }
+
     LocationListener locationListenerGps = new LocationListener() {
         public void onLocationChanged(Location location) {
             timer.cancel();
