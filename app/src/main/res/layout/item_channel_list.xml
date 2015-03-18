@@ -3,7 +3,7 @@
     android:layout_height="wrap_content"
     android:layout_width="match_parent">
     <LinearLayout
-        android:id="@+id/item_index_news_layout"
+        android:id="@+id/item_index_layout"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -16,7 +16,7 @@
             android:gravity="center"
             android:layout_height="100dp">
             <ImageView
-                android:id="@+id/image_item_channel_news"
+                android:id="@+id/image_item_channel"
                 android:layout_width="90dp"
                 android:layout_height="90dp"
                 android:scaleType="fitXY"/>
@@ -27,7 +27,7 @@
             android:layout_marginRight="5dp"
             android:layout_height="match_parent">
             <id.co.viva.news.app.component.RobotoTextView
-                android:id="@+id/title_item_channel_news"
+                android:id="@+id/title_item_channel"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:paddingBottom="2dp"
@@ -37,7 +37,7 @@
                 android:textSize="18sp"
                 android:textStyle="bold" />
             <id.co.viva.news.app.component.RobotoTextView
-                android:id="@+id/date_item_channel_news"
+                android:id="@+id/date_item_channel"
                 android:layout_alignParentBottom="true"
                 android:layout_width="fill_parent"
                 android:text="@android:string/unknownName"

@@ -25,14 +25,17 @@ public class ActVideo extends YouTubeBaseActivity implements YouTubePlayer.OnIni
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //Set Header
         getWindow().requestFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
         getHeaderActionBar();
 
+        //Get Parameter
         Bundle bundle = getIntent().getExtras();
         urlVideo = bundle.getString("urlVideo");
 
         setContentView(R.layout.act_video);
 
+        //Play Video
         youTubePlayerView = (YouTubePlayerView)findViewById(R.id.youtube_player);
         youTubePlayerView.initialize(getResources().getString(R.string.public_api_key_google), this);
     }
@@ -42,12 +45,6 @@ public class ActVideo extends YouTubeBaseActivity implements YouTubePlayer.OnIni
         getActionBar().setHomeButtonEnabled(true);
         getActionBar().setDisplayShowTitleEnabled(true);
         getActionBar().setTitle("Video");
-    }
-
-    private String getVideoId(String urlVideo) {
-        String[] separated = urlVideo.split("/");
-        String url = separated[4];
-        return  url;
     }
 
     @Override
@@ -63,8 +60,16 @@ public class ActVideo extends YouTubeBaseActivity implements YouTubePlayer.OnIni
     @Override
     public void onInitializationSuccess(YouTubePlayer.Provider provider,
                                         YouTubePlayer youTubePlayer, boolean wasRestored) {
-        if (!wasRestored) {
-            youTubePlayer.cueVideo(getVideoId(urlVideo));
+        String[] separated = urlVideo.split("/");
+        String url;
+        if (separated.length < 5) {
+            onBackPressed();
+            Toast.makeText(this, R.string.label_error, Toast.LENGTH_SHORT).show();
+        } else {
+            url = separated[4];
+            if (!wasRestored) {
+                youTubePlayer.cueVideo(url);
+            }
         }
     }
 

@@ -1,12 +1,16 @@
 package id.co.viva.news.app.fragment;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.text.Html;
+import android.text.SpannableStringBuilder;
 import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
+import android.text.style.URLSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -41,6 +45,7 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.Global;
 import id.co.viva.news.app.R;
+import id.co.viva.news.app.activity.ActBrowser;
 import id.co.viva.news.app.activity.ActComment;
 import id.co.viva.news.app.activity.ActDetailContentDefault;
 import id.co.viva.news.app.activity.ActDetailPhotoThumb;
@@ -67,16 +72,19 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
     private boolean isInternetPresent = false;
     private ProgressWheel progressWheel;
     private TextView tvNoResult;
+    private Activity mActivity;
+
     private ArrayList<RelatedArticle> relatedArticleArrayList;
     private ArrayList<Comment> commentArrayList;
     private ArrayList<SliderContentImage> sliderContentImages;
     private ArrayList<Video> videoArrayList;
+    private ArrayList<Favorites> favoritesArrayList;
+
     private RelatedAdapter adapter;
     private ImageSliderAdapter imageSliderAdapter;
     private ListView listView;
     private Analytics analytics;
     private RippleView rippleView;
-    private ArrayList<Favorites> favoritesArrayList;
 
     private TextView tvTitleHeadlineDetail;
     private TextView tvDateHeadlineDetail;
@@ -112,6 +120,12 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
         bundle.putString("analytic", analyticType);
         detailMainIndexFragment.setArguments(bundle);
         return detailMainIndexFragment;
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mActivity = activity;
     }
 
     @Override
@@ -191,7 +205,6 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
             progressWheel = (ProgressWheel) view.getTag();
         }
 
-        //Header Related Article
         if(headerRelated == null) {
             headerRelated = (RelativeLayout) view.findViewById(R.id.header_related_article);
             view.setTag(headerRelated);
@@ -354,8 +367,7 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
 
                                 tvTitleHeadlineDetail.setText(title);
                                 tvDateHeadlineDetail.setText(date_publish);
-                                tvContentHeadlineDetail.setText(Html.fromHtml(content).toString());
-                                tvContentHeadlineDetail.setMovementMethod(LinkMovementMethod.getInstance());
+                                setTextViewHTML(tvContentHeadlineDetail, content);
                                 tvReporterHeadlineDetail.setText(reporter_name);
                                 Picasso.with(getActivity()).load(image_url).transform(new CropSquareTransformation()).into(ivThumbDetailHeadline);
 
@@ -481,8 +493,7 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
 
                                     tvTitleHeadlineDetail.setText(title);
                                     tvDateHeadlineDetail.setText(date_publish);
-                                    tvContentHeadlineDetail.setText(Html.fromHtml(content).toString());
-                                    tvContentHeadlineDetail.setMovementMethod(LinkMovementMethod.getInstance());
+                                    setTextViewHTML(tvContentHeadlineDetail, content);
                                     tvReporterHeadlineDetail.setText(reporter_name);
                                     Picasso.with(getActivity()).load(image_url).transform(new CropSquareTransformation()).into(ivThumbDetailHeadline);
 
@@ -612,8 +623,7 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
 
                     tvTitleHeadlineDetail.setText(title);
                     tvDateHeadlineDetail.setText(date_publish);
-                    tvContentHeadlineDetail.setText(Html.fromHtml(content).toString());
-                    tvContentHeadlineDetail.setMovementMethod(LinkMovementMethod.getInstance());
+                    setTextViewHTML(tvContentHeadlineDetail, content);
                     tvReporterHeadlineDetail.setText(reporter_name);
                     Picasso.with(getActivity()).load(image_url).transform(new CropSquareTransformation()).into(ivThumbDetailHeadline);
 
@@ -692,13 +702,22 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
         getActivity().overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
     }
 
-    private void moveVideoPage() {
+    private void moveVideoPage(String mUrl) {
         Bundle bundle = new Bundle();
-        bundle.putString("urlVideo", urlVideo);
+        bundle.putString("urlVideo", mUrl);
         Intent intent = new Intent(getActivity(), ActVideo.class);
         intent.putExtras(bundle);
         startActivity(intent);
         getActivity().overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+    }
+
+    private void moveBrowserPage(String url) {
+        Bundle bundle = new Bundle();
+        bundle.putString("url", url);
+        Intent intent = new Intent(mActivity, ActBrowser.class);
+        intent.putExtras(bundle);
+        startActivity(intent);
+        mActivity.overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
     }
 
     private void moveRatePage() {
@@ -873,8 +892,7 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
 
                                     tvTitleHeadlineDetail.setText(title);
                                     tvDateHeadlineDetail.setText(date_publish);
-                                    tvContentHeadlineDetail.setText(Html.fromHtml(content).toString());
-                                    tvContentHeadlineDetail.setMovementMethod(LinkMovementMethod.getInstance());
+                                    setTextViewHTML(tvContentHeadlineDetail, content);
                                     tvReporterHeadlineDetail.setText(reporter_name);
                                     Picasso.with(getActivity()).load(image_url).transform(new CropSquareTransformation()).into(ivThumbDetailHeadline);
 
@@ -975,23 +993,25 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
         } else if(view.getId() == R.id.layout_preview_comment_list) {
             moveCommentPage();
         } else if(view.getId() == R.id.text_move_video) {
-            moveVideoPage();
+            moveVideoPage(urlVideo);
         }
     }
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-        if(relatedArticleArrayList.size() > 0) {
-            RelatedArticle relatedArticle = relatedArticleArrayList.get(position);
-            Log.i(Constant.TAG, "ID : " + relatedArticle.getId());
-            Bundle bundle = new Bundle();
-            bundle.putString("id", relatedArticle.getRelated_article_id());
-            bundle.putString("kanal", relatedArticle.getKanal());
-            bundle.putString("shared_url", relatedArticle.getShared_url());
-            Intent intent = new Intent(getActivity(), ActDetailContentDefault.class);
-            intent.putExtras(bundle);
-            getActivity().startActivity(intent);
-            getActivity().overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+        ListView listview = (ListView) adapterView;
+        if (listview.getId() == R.id.list_related_article) {
+            if(relatedArticleArrayList.size() > 0) {
+                RelatedArticle relatedArticles = relatedArticleArrayList.get(position);
+                Bundle bundle = new Bundle();
+                bundle.putString("id", relatedArticles.getRelated_article_id());
+                bundle.putString("kanal", relatedArticles.getKanal());
+                bundle.putString("shared_url", relatedArticles.getShared_url());
+                Intent intent = new Intent(mActivity, ActDetailContentDefault.class);
+                intent.putExtras(bundle);
+                startActivity(intent);
+                mActivity.overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+            }
         }
     }
 
@@ -999,7 +1019,6 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
         if (analytics == null) {
             analytics = new Analytics(getActivity());
         }
-
         if (analytic.equalsIgnoreCase(Constant.HEADLINE_DETAIL_PAGE)) {
             analytics.getAnalyticByATInternet(Constant.HEADLINE_DETAIL_PAGE + id + "_" + title.toUpperCase());
             analytics.getAnalyticByGoogleAnalytic(Constant.HEADLINE_DETAIL_PAGE + id + "_" + title.toUpperCase());
@@ -1009,6 +1028,56 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
         } else if (analytic.equalsIgnoreCase(Constant.BERITA_SEKITAR_DETAIL_PAGE)) {
             analytics.getAnalyticByATInternet(Constant.BERITA_SEKITAR_DETAIL_PAGE + id + "_" + title.toUpperCase());
             analytics.getAnalyticByGoogleAnalytic(Constant.BERITA_SEKITAR_DETAIL_PAGE + id + "_" + title.toUpperCase());
+        }
+    }
+
+    private void setTextViewHTML(TextView text, String html) {
+        CharSequence sequence = Html.fromHtml(html);
+        SpannableStringBuilder strBuilder = new SpannableStringBuilder(sequence);
+        URLSpan[] urls = strBuilder.getSpans(0, sequence.length(), URLSpan.class);
+        for(URLSpan span : urls) {
+            makeLinkClickable(strBuilder, span);
+        }
+        text.setText(strBuilder);
+        text.setMovementMethod(LinkMovementMethod.getInstance());
+    }
+
+    private void makeLinkClickable(SpannableStringBuilder strBuilder, final URLSpan span) {
+        int start = strBuilder.getSpanStart(span);
+        int end = strBuilder.getSpanEnd(span);
+        int flags = strBuilder.getSpanFlags(span);
+        ClickableSpan clickable = new ClickableSpan() {
+            public void onClick(View view) {
+                String url = span.getURL();
+                handleClickBodyText(url);
+            }
+        };
+        strBuilder.setSpan(clickable, start, end, flags);
+        strBuilder.removeSpan(span);
+    }
+
+    private void handleClickBodyText(String url) {
+        if (isInternetPresent) {
+            if (url.contains(Constant.LINK_YOUTUBE)) {
+                moveVideoPage(url);
+            } else if (url.contains(Constant.LINK_ARTICLE_VIVA)) {
+                if (url != null) {
+                    if (url.length() > 0) {
+                        Bundle bundle = new Bundle();
+                        bundle.putString("id", Constant.getArticleViva(url));
+                        Intent intent = new Intent(mActivity, ActDetailContentDefault.class);
+                        intent.putExtras(bundle);
+                        startActivity(intent);
+                        getActivity().overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+                    }
+                }
+            } else if (url.contains(Constant.LINK_VIDEO_VIVA)) {
+                moveBrowserPage(url);
+            } else {
+                moveBrowserPage(url);
+            }
+        } else {
+            Toast.makeText(mActivity, R.string.title_no_connection, Toast.LENGTH_SHORT).show();
         }
     }
 

@@ -16,7 +16,7 @@
     <string name="label_headline">HEADLINES</string>
     <string name="label_berita_sekitar">BERITA SEKITAR</string>
     <string name="label_content_not_update">Gagal memperbaharui konten.</string>
-    <string name="label_error">Terjadi kesalahan!</string>
+    <string name="label_error">Terjadi Kesalahan!</string>
     <string name="label_loading_data">Memuat data...</string>
     <string name="label_get_location">Mencari lokasi anda...</string>
     <string name="label_button_skip_tutorial">Skip</string>
@@ -25,6 +25,7 @@
     <string name="label_navigation_favorite_desc">Nikmati pengalaman membaca anda dengan menggunakan fitur Favorites.
         Simple and Off-line Mode!</string>
     <string name="label_image_profile">Profile Photo</string>
+    <string name="label_reference_article">Referensi Artikel</string>
     <string name="label_image_profile_desc">Tap untuk melihat detail foto.</string>
     <string name="label_navigation_button_desc">Eksplorasi anda dimulai dari sini.</string>
     <string name="label_search_button">Search Button</string>

@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="fill_parent">
     <id.co.viva.news.app.component.SquareImageView
-        android:id="@+id/item_thumb_bola"
+        android:id="@+id/item_thumb"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"/>
@@ -12,7 +12,7 @@
         android:layout_height="match_parent"
         android:background="@color/transparent">
         <id.co.viva.news.app.component.RobotoBoldTextView
-            android:id="@+id/item_title_kanal_bola"
+            android:id="@+id/item_title_kanal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"

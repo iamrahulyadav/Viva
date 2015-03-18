@@ -53,11 +53,11 @@ public class ChannelNewsAdapter extends BaseAdapter {
 
         if(view == null) {
             LayoutInflater inflater = LayoutInflater.from(context);
-            view = inflater.inflate(R.layout.item_channel_news_list, null);
+            view = inflater.inflate(R.layout.item_channel_list, null);
             holder = new ViewHolder();
-            holder.image_item_channel_news = (ImageView) view.findViewById(R.id.image_item_channel_news);
-            holder.title_item_channel_news = (TextView) view.findViewById(R.id.title_item_channel_news);
-            holder.date_item_channel_news = (TextView) view.findViewById(R.id.date_item_channel_news);
+            holder.image_item_channel_news = (ImageView) view.findViewById(R.id.image_item_channel);
+            holder.title_item_channel_news = (TextView) view.findViewById(R.id.title_item_channel);
+            holder.date_item_channel_news = (TextView) view.findViewById(R.id.date_item_channel);
             view.setTag(holder);
         } else {
             holder = (ViewHolder) view.getTag();

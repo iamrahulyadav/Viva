@@ -98,6 +98,11 @@
             android:theme="@style/AppTheme"/>
 
         <activity
+            android:name=".activity.ActBrowser"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"/>
+
+        <activity
             android:name=".activity.ActForgotPassword"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"/>

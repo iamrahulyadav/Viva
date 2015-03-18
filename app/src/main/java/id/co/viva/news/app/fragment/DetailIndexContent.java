@@ -1,12 +1,16 @@
 package id.co.viva.news.app.fragment;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.text.Html;
+import android.text.SpannableStringBuilder;
 import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
+import android.text.style.URLSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -42,6 +46,7 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.Global;
 import id.co.viva.news.app.R;
+import id.co.viva.news.app.activity.ActBrowser;
 import id.co.viva.news.app.activity.ActComment;
 import id.co.viva.news.app.activity.ActDetailContentDefault;
 import id.co.viva.news.app.activity.ActDetailPhotoThumb;
@@ -68,10 +73,8 @@ public class DetailIndexContent extends Fragment implements
     private String kanals;
     private RelativeLayout headerRelated;
     private boolean isInternetPresent = false;
-    private String cachedResponse;
     private ProgressWheel progressWheel;
     private TextView tvNoResult;
-    private ArrayList<RelatedArticle> relatedArticleArrayList;
     private RelatedAdapter adapter;
     private ImageSliderAdapter imageSliderAdapter;
     private ListView listView;
@@ -79,6 +82,7 @@ public class DetailIndexContent extends Fragment implements
     private RippleView rippleView;
     private String favoriteList;
 
+    private ArrayList<RelatedArticle> relatedArticleArrayList;
     private ArrayList<Favorites> favoritesArrayList;
     private ArrayList<Comment> commentArrayList;
     private ArrayList<SliderContentImage> sliderContentImages;
@@ -96,6 +100,7 @@ public class DetailIndexContent extends Fragment implements
     private TextView tvPreviewCommentContent;
     private LinearLayout layoutCommentPreview;
     private int count = 0;
+    private Activity mActivity;
 
     private String ids;
     private String title;
@@ -124,12 +129,19 @@ public class DetailIndexContent extends Fragment implements
     }
 
     @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mActivity = activity;
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         id = getArguments().getString("id");
         kanals = getArguments().getString("kanals");
         analytics = new Analytics(getActivity());
-        isInternetPresent = Global.getInstance(getActivity()).getConnectionStatus().isConnectingToInternet();
+        isInternetPresent = Global.getInstance(getActivity())
+                .getConnectionStatus().isConnectingToInternet();
     }
 
     @Override
@@ -343,7 +355,6 @@ public class DetailIndexContent extends Fragment implements
                                     String shared_url = objRelated.getString(Constant.url);
                                     relatedArticleArrayList.add(new RelatedArticle(id, article_id, related_article_id, related_title,
                                             related_channel_level_1_id, channel_id, related_date_publish, image, kanal, shared_url));
-                                    Log.i(Constant.TAG, "RELATED ARTICLE : " + relatedArticleArrayList.get(i).getRelated_title());
                                 }
 
                                 JSONArray comment_list = response.getJSONArray(Constant.comment_list);
@@ -353,15 +364,13 @@ public class DetailIndexContent extends Fragment implements
                                     String name = objRelated.getString(Constant.name);
                                     String comment_text = objRelated.getString(Constant.comment_text);
                                     commentArrayList.add(new Comment(id, null, name, null, comment_text, null, null, null));
-                                    Log.i(Constant.TAG, "COMMENTS PREVIEW : " + commentArrayList.get(i).getComment_text());
                                 }
 
                                 setAnalytics(kanal, ids, title);
 
                                 tvTitleDetail.setText(title);
                                 tvDateDetail.setText(date_publish);
-                                tvContentDetail.setText(Html.fromHtml(content).toString());
-                                tvContentDetail.setMovementMethod(LinkMovementMethod.getInstance());
+                                setTextViewHTML(tvContentDetail, content);
                                 tvReporterDetail.setText(reporter_name);
                                 Picasso.with(getActivity()).load(image_url).transform(new CropSquareTransformation()).into(ivThumbDetail);
 
@@ -442,9 +451,8 @@ public class DetailIndexContent extends Fragment implements
                             volleyError.getMessage();
 
                             if(Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + id) != null) {
-                                cachedResponse = new String(Global.getInstance(getActivity()).
+                                String cachedResponse = new String(Global.getInstance(getActivity()).
                                         getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + id).data);
-                                Log.i(Constant.TAG, "CONTENT DETAIL CACHED : " + cachedResponse);
                                 try {
                                     JSONObject jsonObject = new JSONObject(cachedResponse);
                                     JSONObject response = jsonObject.getJSONObject(Constant.response);
@@ -485,7 +493,6 @@ public class DetailIndexContent extends Fragment implements
                                         String shared_url = objRelated.getString(Constant.url);
                                         relatedArticleArrayList.add(new RelatedArticle(id, article_id, related_article_id, related_title,
                                                 related_channel_level_1_id, channel_id, related_date_publish, image, kanal, shared_url));
-                                        Log.i(Constant.TAG, "RELATED ARTICLE CACHED : " + relatedArticleArrayList.get(i).getRelated_title());
                                     }
 
                                     JSONArray comment_list = response.getJSONArray(Constant.comment_list);
@@ -495,13 +502,11 @@ public class DetailIndexContent extends Fragment implements
                                         String name = objRelated.getString(Constant.name);
                                         String comment_text = objRelated.getString(Constant.comment_text);
                                         commentArrayList.add(new Comment(id, null, name, null, comment_text, null, null, null));
-                                        Log.i(Constant.TAG, "COMMENTS PREVIEW : " + commentArrayList.get(i).getComment_text());
                                     }
 
                                     tvTitleDetail.setText(title);
                                     tvDateDetail.setText(date_publish);
-                                    tvContentDetail.setText(Html.fromHtml(content).toString());
-                                    tvContentDetail.setMovementMethod(LinkMovementMethod.getInstance());
+                                    setTextViewHTML(tvContentDetail, content);
                                     tvReporterDetail.setText(reporter_name);
                                     Picasso.with(getActivity()).load(image_url).transform(new CropSquareTransformation()).into(ivThumbDetail);
 
@@ -594,9 +599,8 @@ public class DetailIndexContent extends Fragment implements
             Global.getInstance(getActivity()).addToRequestQueue(request, Constant.JSON_REQUEST);
         } else {
             if(Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + id) != null) {
-                cachedResponse = new String(Global.getInstance(getActivity()).
+                String cachedResponse = new String(Global.getInstance(getActivity()).
                         getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + id).data);
-                Log.i(Constant.TAG, "CONTENT DETAIL CACHED : " + cachedResponse);
                 try {
                     JSONObject jsonObject = new JSONObject(cachedResponse);
                     JSONObject response = jsonObject.getJSONObject(Constant.response);
@@ -637,7 +641,6 @@ public class DetailIndexContent extends Fragment implements
                         String shared_url = objRelated.getString(Constant.url);
                         relatedArticleArrayList.add(new RelatedArticle(id, article_id, related_article_id, related_title,
                                 related_channel_level_1_id, channel_id, related_date_publish, image, kanal, shared_url));
-                        Log.i(Constant.TAG, "RELATED ARTICLE CACHED : " + relatedArticleArrayList.get(i).getRelated_title());
                     }
 
                     JSONArray comment_list = response.getJSONArray(Constant.comment_list);
@@ -647,13 +650,11 @@ public class DetailIndexContent extends Fragment implements
                         String name = objRelated.getString(Constant.name);
                         String comment_text = objRelated.getString(Constant.comment_text);
                         commentArrayList.add(new Comment(id, null, name, null, comment_text, null, null, null));
-                        Log.i(Constant.TAG, "COMMENTS PREVIEW : " + commentArrayList.get(i).getComment_text());
                     }
 
                     tvTitleDetail.setText(title);
                     tvDateDetail.setText(date_publish);
-                    tvContentDetail.setText(Html.fromHtml(content).toString());
-                    tvContentDetail.setMovementMethod(LinkMovementMethod.getInstance());
+                    setTextViewHTML(tvContentDetail, content);
                     tvReporterDetail.setText(reporter_name);
                     Picasso.with(getActivity()).load(image_url).transform(new CropSquareTransformation()).into(ivThumbDetail);
 
@@ -787,9 +788,18 @@ public class DetailIndexContent extends Fragment implements
                 .show();
     }
 
-    private void moveVideoPage() {
+    private void moveBrowserPage(String url) {
         Bundle bundle = new Bundle();
-        bundle.putString("urlVideo", urlVideo);
+        bundle.putString("url", url);
+        Intent intent = new Intent(mActivity, ActBrowser.class);
+        intent.putExtras(bundle);
+        startActivity(intent);
+        mActivity.overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+    }
+
+    private void moveVideoPage(String url) {
+        Bundle bundle = new Bundle();
+        bundle.putString("urlVideo", url);
         Intent intent = new Intent(getActivity(), ActVideo.class);
         intent.putExtras(bundle);
         startActivity(intent);
@@ -815,17 +825,19 @@ public class DetailIndexContent extends Fragment implements
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-        if(relatedArticleArrayList.size() > 0) {
-            RelatedArticle relatedArticle = relatedArticleArrayList.get(position);
-            Log.i(Constant.TAG, "ID : " + relatedArticle.getRelated_article_id());
-            Bundle bundle = new Bundle();
-            bundle.putString("id", relatedArticle.getRelated_article_id());
-            bundle.putString("kanal", relatedArticle.getKanal());
-            bundle.putString("shared_url", relatedArticle.getShared_url());
-            Intent intent = new Intent(getActivity(), ActDetailContentDefault.class);
-            intent.putExtras(bundle);
-            startActivity(intent);
-            getActivity().overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+        ListView listview = (ListView) adapterView;
+        if (listview.getId() == R.id.list_related_article) {
+            if(relatedArticleArrayList.size() > 0) {
+                RelatedArticle relatedArticles = relatedArticleArrayList.get(position);
+                Bundle bundle = new Bundle();
+                bundle.putString("id", relatedArticles.getRelated_article_id());
+                bundle.putString("kanal", relatedArticles.getKanal());
+                bundle.putString("shared_url", relatedArticles.getShared_url());
+                Intent intent = new Intent(mActivity, ActDetailContentDefault.class);
+                intent.putExtras(bundle);
+                startActivity(intent);
+                mActivity.overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+            }
         }
     }
 
@@ -835,7 +847,7 @@ public class DetailIndexContent extends Fragment implements
         if(url_shared == null || url_shared.length() < 1) {
             try {
                 if(Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + id) != null) {
-                    cachedResponse = new String(Global.getInstance(getActivity()).
+                    String cachedResponse = new String(Global.getInstance(getActivity()).
                             getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + id).data);
                     JSONObject jsonObject = new JSONObject(cachedResponse);
                     JSONObject response = jsonObject.getJSONObject(Constant.response);
@@ -924,7 +936,6 @@ public class DetailIndexContent extends Fragment implements
                                         String shared_url = objRelated.getString(Constant.url);
                                         relatedArticleArrayList.add(new RelatedArticle(id, article_id, related_article_id, related_title,
                                                 related_channel_level_1_id, channel_id, related_date_publish, image, kanal, shared_url));
-                                        Log.i(Constant.TAG, "RELATED ARTICLE : " + relatedArticleArrayList.get(i).getRelated_title());
                                     }
 
                                     JSONArray comment_list = response.getJSONArray(Constant.comment_list);
@@ -934,15 +945,13 @@ public class DetailIndexContent extends Fragment implements
                                         String name = objRelated.getString(Constant.name);
                                         String comment_text = objRelated.getString(Constant.comment_text);
                                         commentArrayList.add(new Comment(id, null, name, null, comment_text, null, null, null));
-                                        Log.i(Constant.TAG, "COMMENTS PREVIEW : " + commentArrayList.get(i).getComment_text());
                                     }
 
                                     setAnalytics(kanal, ids, title);
 
                                     tvTitleDetail.setText(title);
                                     tvDateDetail.setText(date_publish);
-                                    tvContentDetail.setText(Html.fromHtml(content).toString());
-                                    tvContentDetail.setMovementMethod(LinkMovementMethod.getInstance());
+                                    setTextViewHTML(tvContentDetail, content);
                                     tvReporterDetail.setText(reporter_name);
                                     Picasso.with(getActivity()).load(image_url).transform(new CropSquareTransformation()).into(ivThumbDetail);
 
@@ -1062,7 +1071,7 @@ public class DetailIndexContent extends Fragment implements
         } else if(view.getId() == R.id.layout_preview_comment_list) {
             moveCommentPage();
         } else if(view.getId() == R.id.text_move_video) {
-            moveVideoPage();
+            moveVideoPage(urlVideo);
         }
     }
 
@@ -1108,6 +1117,56 @@ public class DetailIndexContent extends Fragment implements
                         + "_"
                         + title.toUpperCase());
             }
+        }
+    }
+
+    private void setTextViewHTML(TextView text, String html) {
+        CharSequence sequence = Html.fromHtml(html);
+        SpannableStringBuilder strBuilder = new SpannableStringBuilder(sequence);
+        URLSpan[] urls = strBuilder.getSpans(0, sequence.length(), URLSpan.class);
+        for(URLSpan span : urls) {
+            makeLinkClickable(strBuilder, span);
+        }
+        text.setText(strBuilder);
+        text.setMovementMethod(LinkMovementMethod.getInstance());
+    }
+
+    private void makeLinkClickable(SpannableStringBuilder strBuilder, final URLSpan span) {
+        int start = strBuilder.getSpanStart(span);
+        int end = strBuilder.getSpanEnd(span);
+        int flags = strBuilder.getSpanFlags(span);
+        ClickableSpan clickable = new ClickableSpan() {
+            public void onClick(View view) {
+                String url = span.getURL();
+                handleClickBodyText(url);
+            }
+        };
+        strBuilder.setSpan(clickable, start, end, flags);
+        strBuilder.removeSpan(span);
+    }
+
+    private void handleClickBodyText(String url) {
+        if (isInternetPresent) {
+            if (url.contains(Constant.LINK_YOUTUBE)) {
+                moveVideoPage(url);
+            } else if (url.contains(Constant.LINK_ARTICLE_VIVA)) {
+                if (url != null) {
+                    if (url.length() > 0) {
+                        Bundle bundle = new Bundle();
+                        bundle.putString("id", Constant.getArticleViva(url));
+                        Intent intent = new Intent(mActivity, ActDetailContentDefault.class);
+                        intent.putExtras(bundle);
+                        startActivity(intent);
+                        getActivity().overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+                    }
+                }
+            } else if (url.contains(Constant.LINK_VIDEO_VIVA)) {
+                moveBrowserPage(url);
+            } else {
+                moveBrowserPage(url);
+            }
+        } else {
+            Toast.makeText(mActivity, R.string.title_no_connection, Toast.LENGTH_SHORT).show();
         }
     }
 

@@ -1,0 +1,172 @@
+package id.co.viva.news.app.activity;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.webkit.WebChromeClient;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+import android.widget.ShareActionProvider;
+import android.widget.Toast;
+
+import java.lang.reflect.InvocationTargetException;
+
+import id.co.viva.news.app.Global;
+import id.co.viva.news.app.R;
+import id.co.viva.news.app.component.ProgressWheel;
+
+/**
+ * Created by reza on 13/03/15.
+ */
+public class ActBrowser extends FragmentActivity {
+
+    private WebView webView;
+    private String mUrl;
+    private ProgressWheel progressWheel;
+    private boolean isInternetPresent = false;
+    private boolean isFirstShow = false;
+    private String clickedUrl;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        //Get URL
+        getParameterUrl();
+
+        setContentView(R.layout.act_browser);
+
+        isInternetPresent = Global.getInstance(this)
+                .getConnectionStatus().isConnectingToInternet();
+
+        //Set Header
+        setActionBarTheme();
+
+        //Define Views
+        defineViews();
+
+        //Show Web Page
+        if (isInternetPresent) {
+            if (mUrl != null) {
+                if (mUrl.length() > 0) {
+                    startLoadWeb(mUrl);
+                    isFirstShow = true;
+                }
+            } else {
+                onBackPressed();
+                Toast.makeText(this, R.string.label_error, Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            onBackPressed();
+            Toast.makeText(this, R.string.title_no_connection, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void defineViews() {
+        webView = (WebView) findViewById(R.id.web_view_from_link);
+        progressWheel = (ProgressWheel) findViewById(R.id.progress_wheel);
+    }
+
+    private void getParameterUrl() {
+        Intent intent = getIntent();
+        mUrl = intent.getStringExtra("url");
+    }
+
+    private void startLoadWeb(String url) {
+        webView.setWebChromeClient(new WebChromeClient());
+        webView.getSettings().setBuiltInZoomControls(true);
+        webView.getSettings().setDisplayZoomControls(false);
+        webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                view.loadUrl(url);
+                clickedUrl = url;
+                invalidateOptionsMenu();
+                return true;
+            }
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                progressWheel.setVisibility(View.GONE);
+            }
+        });
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.loadUrl(url);
+    }
+
+    private void setActionBarTheme() {
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setHomeButtonEnabled(true);
+        getActionBar().setDisplayShowTitleEnabled(true);
+        getActionBar().setTitle(getResources().getString(R.string.label_reference_article));
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        try {
+            Class.forName("android.webkit.WebView")
+                    .getMethod("onPause", (Class[]) null)
+                    .invoke(webView, (Object[]) null);
+        } catch (ClassNotFoundException cnfe) {
+            cnfe.getMessage();
+        } catch (NoSuchMethodException nsme) {
+            nsme.getMessage();
+        } catch (InvocationTargetException ite) {
+            ite.getMessage();
+        } catch (IllegalAccessException iae) {
+            iae.getMessage();
+        }
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        isFirstShow = false;
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_browser, menu);
+        MenuItem item = menu.findItem(R.id.action_share);
+        ShareActionProvider myShareActionProvider = (ShareActionProvider) item.getActionProvider();
+        Intent myIntent = new Intent();
+        myIntent.setAction(Intent.ACTION_SEND);
+        if (isFirstShow) {
+            myIntent.putExtra(Intent.EXTRA_TEXT, mUrl);
+        } else {
+            myIntent.putExtra(Intent.EXTRA_TEXT, clickedUrl);
+        }
+        myIntent.setType("text/plain");
+        myShareActionProvider.setShareIntent(myIntent);
+        return true;
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (event.getAction() == KeyEvent.ACTION_DOWN) {
+            switch(keyCode) {
+                case KeyEvent.KEYCODE_BACK:
+                    finish();
+                    onBackPressed();
+                return true;
+            }
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+}

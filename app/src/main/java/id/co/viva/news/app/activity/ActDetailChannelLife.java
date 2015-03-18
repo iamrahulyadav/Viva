@@ -293,6 +293,11 @@ public class ActDetailChannelLife extends FragmentActivity implements
                         @Override
                         public void onErrorResponse(VolleyError volleyError) {
                             volleyError.getMessage();
+                            listView.onLoadMoreComplete();
+                            listView.setSelection(0);
+                            if(this != null) {
+                                Toast.makeText(ActDetailChannelLife.this, R.string.label_error, Toast.LENGTH_SHORT).show();
+                            }
                         }
                     });
             stringRequest.setShouldCache(true);

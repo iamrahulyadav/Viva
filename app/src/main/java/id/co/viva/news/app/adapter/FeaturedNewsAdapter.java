@@ -50,10 +50,10 @@ public class FeaturedNewsAdapter extends BaseAdapter {
 
         if(view == null) {
             LayoutInflater inflater = LayoutInflater.from(context);
-            view = inflater.inflate(R.layout.item_grid_news, null);
+            view = inflater.inflate(R.layout.item_grid, null);
             holder = new ViewHolder();
-            holder.thumb_featured = (ImageView) view.findViewById(R.id.item_thumb_news);
-            holder.title_kanal = (TextView) view.findViewById(R.id.item_title_kanal_news);
+            holder.thumb_featured = (ImageView) view.findViewById(R.id.item_thumb);
+            holder.title_kanal = (TextView) view.findViewById(R.id.item_title_kanal);
             view.setTag(holder);
         } else {
             holder = (ViewHolder) view.getTag();

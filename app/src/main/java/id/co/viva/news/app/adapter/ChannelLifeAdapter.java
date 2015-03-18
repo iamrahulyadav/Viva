@@ -54,11 +54,11 @@ public class ChannelLifeAdapter extends BaseAdapter {
 
         if(view == null) {
             LayoutInflater inflater = LayoutInflater.from(context);
-            view = inflater.inflate(R.layout.item_channel_life_list, null);
+            view = inflater.inflate(R.layout.item_channel_list, null);
             holder = new ViewHolder();
-            holder.image_item_channel_life = (ImageView) view.findViewById(R.id.image_item_channel_life);
-            holder.title_item_channel_life = (TextView) view.findViewById(R.id.title_item_channel_life);
-            holder.date_item_channel_life = (TextView) view.findViewById(R.id.date_item_channel_life);
+            holder.image_item_channel_life = (ImageView) view.findViewById(R.id.image_item_channel);
+            holder.title_item_channel_life = (TextView) view.findViewById(R.id.title_item_channel);
+            holder.date_item_channel_life = (TextView) view.findViewById(R.id.date_item_channel);
             view.setTag(holder);
         } else {
             holder = (ViewHolder) view.getTag();

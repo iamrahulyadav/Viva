@@ -9,6 +9,7 @@ import android.renderscript.Allocation;
 import android.renderscript.Element;
 import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListAdapter;
@@ -68,13 +69,18 @@ public class Constant {
     public static final String LOGIN_STATES_PROVINCE = "login_states_province";
     public static final String LOGIN_STATES_COUNTRY = "login_states_country";
 
+    public static final String LINK_YOUTUBE = "www.youtube.com";
+    public static final String LINK_VIDEO_VIVA = "video.viva.co.id";
+    public static final String LINK_ARTICLE_VIVA = "viva.co.id/news/read";
+
     public static final String GCM_SENDER_ID = "702339857576";
     public static final String GCM_URL_BACKEND_SERVER = "http://api.vivall.tv/rest/gcmreg";
 
     public static final String TAG = VivaApp.class.getSimpleName();
     public static final String TAG_GCM = "VIVA-GCM";
 
-    private static String BASE_URL_NEW = "http://api.viva.co.id/v/207/";
+//    private static String BASE_URL_NEW = "http://api.viva.co.id/v/207/";
+    private static String BASE_URL_NEW = "http://api.viva.co.id/v/2071/";
     public static String TUTORIAL_IMAGES_URL = BASE_URL_NEW + "coach";
     public static String NEW_HEADLINE = BASE_URL_NEW + "headlinelist/";
     public static String NEW_TERBARU = BASE_URL_NEW + "terbarulist/";
@@ -129,6 +135,9 @@ public class Constant {
     public static final String status = "status";
     public static final String image_caption = "image_caption";
     public static final String content_video = "content_video";
+    public static final String content_links = "content_links";
+    public static final String href = "href";
+    public static final String text = "text";
 
     public static final String article_id = "article_id";
     public static final String related_article_id = "related_article_id";
@@ -251,6 +260,22 @@ public class Constant {
         } else {
             return diff / DAY_MILLIS + " hari yang lalu";
         }
+    }
+
+    public static String getArticleViva(String url) {
+        Log.i(Constant.TAG, "URL : " + url);
+        String[] separated = url.split("/");
+        String urlSplit;
+        if (separated.length < 5) {
+            urlSplit = separated[3];
+        } else {
+            urlSplit = separated[5];
+        }
+        Log.i(Constant.TAG, "URL Split : " + urlSplit);
+        String[] splitter = urlSplit.split("-");
+        String article_id = splitter[0];
+        Log.i(Constant.TAG, "Article Id : " + article_id);
+        return  article_id;
     }
 
 }

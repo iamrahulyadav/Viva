@@ -253,6 +253,8 @@ public class ActSearchResult extends FragmentActivity implements
                     }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError volleyError) {
+                    listSearchResult.onLoadMoreComplete();
+                    listSearchResult.setSelection(0);
                     Toast.makeText(ActSearchResult.this, R.string.label_error, Toast.LENGTH_SHORT).show();
                 }
             });

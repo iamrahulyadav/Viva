@@ -68,7 +68,8 @@ public class ActDetailFavorite extends FragmentActivity implements View.OnClickL
 
         try {
             if(image_url != null) {
-                Picasso.with(this).load(image_url).transform(new CropSquareTransformation()).into(imageDetail);
+                Picasso.with(this).load(image_url)
+                        .transform(new CropSquareTransformation()).into(imageDetail);
             }
         } catch (Exception e) {
             e.getMessage();

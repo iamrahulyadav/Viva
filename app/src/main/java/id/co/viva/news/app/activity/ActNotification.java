@@ -6,7 +6,10 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.text.Html;
+import android.text.SpannableStringBuilder;
 import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
+import android.text.style.URLSpan;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -63,10 +66,12 @@ public class ActNotification extends FragmentActivity implements View.OnClickLis
     private RippleView rippleView;
     private Button btnRetry;
     private TextView tvNoResult;
+
     private ArrayList<SliderContentImage> sliderContentImages;
     private ArrayList<Favorites> favoritesArrayList;
     private ArrayList<RelatedArticle> relatedArticleArrayList;
     private ArrayList<Video> videoArrayList;
+
     private TextView tvTitleDetail;
     private TextView tvDateDetail;
     private TextView tvReporterDetail;
@@ -167,10 +172,19 @@ public class ActNotification extends FragmentActivity implements View.OnClickLis
         }
     }
 
-    private void moveVideoPage() {
+    private void moveVideoPage(String mUrl) {
         Bundle bundle = new Bundle();
-        bundle.putString("urlVideo", urlVideo);
+        bundle.putString("urlVideo", mUrl);
         Intent intent = new Intent(this, ActVideo.class);
+        intent.putExtras(bundle);
+        startActivity(intent);
+        overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+    }
+
+    private void moveBrowserPage(String url) {
+        Bundle bundle = new Bundle();
+        bundle.putString("url", url);
+        Intent intent = new Intent(this, ActBrowser.class);
         intent.putExtras(bundle);
         startActivity(intent);
         overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
@@ -183,7 +197,7 @@ public class ActNotification extends FragmentActivity implements View.OnClickLis
         } else if(view.getId() == R.id.thumb_detail_content) {
             goDetailPhoto();
         } else if(view.getId() == R.id.text_move_video) {
-            moveVideoPage();
+            moveVideoPage(urlVideo);
         }
     }
 
@@ -247,8 +261,7 @@ public class ActNotification extends FragmentActivity implements View.OnClickLis
 
                                 tvTitleDetail.setText(title);
                                 tvDateDetail.setText(date_publish);
-                                tvContentDetail.setText(Html.fromHtml(content).toString());
-                                tvContentDetail.setMovementMethod(LinkMovementMethod.getInstance());
+                                setTextViewHTML(tvContentDetail, content);
                                 tvReporterDetail.setText(reporter_name);
                                 Picasso.with(ActNotification.this).load(image_url).transform(new CropSquareTransformation()).into(ivThumbDetail);
 
@@ -319,10 +332,11 @@ public class ActNotification extends FragmentActivity implements View.OnClickLis
                     .getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + idFromNotification);
             Global.getInstance(ActNotification.this).addToRequestQueue(request, Constant.JSON_REQUEST);
         } else {
-            if(tvNoResult.getVisibility() == View.VISIBLE) {
+            if (tvNoResult.getVisibility() == View.VISIBLE) {
                 tvNoResult.setVisibility(View.GONE);
             } else {
                 tvNoResult.setVisibility(View.VISIBLE);
+                progressWheel.setVisibility(View.GONE);
             }
             Toast.makeText(this, R.string.title_no_connection, Toast.LENGTH_SHORT).show();
         }
@@ -492,16 +506,69 @@ public class ActNotification extends FragmentActivity implements View.OnClickLis
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-        if(relatedArticleArrayList.size() > 0) {
-            RelatedArticle relatedArticles = relatedArticleArrayList.get(position);
-            Bundle bundle = new Bundle();
-            bundle.putString("id", relatedArticles.getRelated_article_id());
-            bundle.putString("kanal", relatedArticles.getKanal());
-            bundle.putString("shared_url", relatedArticles.getShared_url());
-            Intent intent = new Intent(this, ActDetailContentDefault.class);
-            intent.putExtras(bundle);
-            startActivity(intent);
-            overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+        ListView listview = (ListView) adapterView;
+        if (listview.getId() == R.id.list_related_article_notification) {
+            if(relatedArticleArrayList.size() > 0) {
+                RelatedArticle relatedArticles = relatedArticleArrayList.get(position);
+                Bundle bundle = new Bundle();
+                bundle.putString("id", relatedArticles.getRelated_article_id());
+                bundle.putString("kanal", relatedArticles.getKanal());
+                bundle.putString("shared_url", relatedArticles.getShared_url());
+                Intent intent = new Intent(this, ActDetailContentDefault.class);
+                intent.putExtras(bundle);
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+            }
+        }
+    }
+
+    private void setTextViewHTML(TextView text, String html) {
+        CharSequence sequence = Html.fromHtml(html);
+        SpannableStringBuilder strBuilder = new SpannableStringBuilder(sequence);
+        URLSpan[] urls = strBuilder.getSpans(0, sequence.length(), URLSpan.class);
+        for(URLSpan span : urls) {
+            makeLinkClickable(strBuilder, span);
+        }
+        text.setText(strBuilder);
+        text.setMovementMethod(LinkMovementMethod.getInstance());
+    }
+
+    private void makeLinkClickable(SpannableStringBuilder strBuilder, final URLSpan span) {
+        int start = strBuilder.getSpanStart(span);
+        int end = strBuilder.getSpanEnd(span);
+        int flags = strBuilder.getSpanFlags(span);
+        ClickableSpan clickable = new ClickableSpan() {
+            public void onClick(View view) {
+                String url = span.getURL();
+                handleClickBodyText(url);
+            }
+        };
+        strBuilder.setSpan(clickable, start, end, flags);
+        strBuilder.removeSpan(span);
+    }
+
+    private void handleClickBodyText(String url) {
+        if (isInternetPresent) {
+            if (url.contains(Constant.LINK_YOUTUBE)) {
+                moveVideoPage(url);
+            } else if (url.contains(Constant.LINK_ARTICLE_VIVA)) {
+                if (url != null) {
+                    if (url.length() > 0) {
+                        Bundle bundle = new Bundle();
+                        bundle.putString("id", Constant.getArticleViva(url));
+                        Intent intent = new Intent(ActNotification.this, ActDetailContentDefault.class);
+                        intent.putExtras(bundle);
+                        startActivity(intent);
+                        overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+                    }
+                }
+            } else if (url.contains(Constant.LINK_VIDEO_VIVA)) {
+                moveBrowserPage(url);
+            } else {
+                moveBrowserPage(url);
+            }
+        } else {
+            Toast.makeText(this, R.string.title_no_connection, Toast.LENGTH_SHORT).show();
         }
     }
 
