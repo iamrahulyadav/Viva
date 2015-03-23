@@ -68,12 +68,14 @@ public class FavoriteAdapter extends BaseAdapter implements UndoAdapter {
         Favorites favorites = favoritesArrayList.get(position);
         holder.title_item_favorite.setText(favorites.getTitle());
         holder.date_item_favorite.setText(favorites.getDate_publish());
-        if(favorites.getKanal().equalsIgnoreCase("bola")) {
-            holder.image_item_favorite.setImageResource(R.drawable.icon_viva_bola);
-        } else if(favorites.getKanal().equalsIgnoreCase("vivalife")) {
-            holder.image_item_favorite.setImageResource(R.drawable.icon_viva_life);
-        } else {
-            holder.image_item_favorite.setImageResource(R.drawable.icon_viva_news);
+        if (favorites.getKanal() != null) {
+            if (favorites.getKanal().equalsIgnoreCase("bola")) {
+                holder.image_item_favorite.setImageResource(R.drawable.icon_viva_bola);
+            } else if(favorites.getKanal().equalsIgnoreCase("vivalife")) {
+                holder.image_item_favorite.setImageResource(R.drawable.icon_viva_life);
+            } else {
+                holder.image_item_favorite.setImageResource(R.drawable.icon_viva_news);
+            }
         }
 
         return view;

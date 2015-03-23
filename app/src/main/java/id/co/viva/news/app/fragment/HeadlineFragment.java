@@ -52,6 +52,7 @@ public class HeadlineFragment extends Fragment implements
         AdapterView.OnItemClickListener, View.OnClickListener, OnLoadMoreListener {
 
     private static String HEADLINES = "headlines";
+    private Activity mActivity;
     public static ArrayList<Headline> headlineArrayList;
     private String lastPublished;
     private SwingBottomInAnimationAdapter swingBottomInAnimationAdapter;
@@ -79,6 +80,7 @@ public class HeadlineFragment extends Fragment implements
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        mActivity = activity;
         ColorDrawable colorDrawable = new ColorDrawable();
         colorDrawable.setColor(getResources().getColor(R.color.header_headline_terbaru_new));
         activity.getActionBar().setBackgroundDrawable(colorDrawable);
@@ -315,7 +317,7 @@ public class HeadlineFragment extends Fragment implements
             } catch (Exception e) {
                 e.getMessage();
             }
-            Toast.makeText(getActivity(), R.string.title_no_connection, Toast.LENGTH_SHORT).show();
+            Toast.makeText(mActivity, R.string.title_no_connection, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -418,7 +420,7 @@ public class HeadlineFragment extends Fragment implements
                 Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_HEADLINE);
                 Global.getInstance(getActivity()).addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
             } else {
-                Toast.makeText(getActivity(), R.string.title_no_connection, Toast.LENGTH_SHORT).show();
+                Toast.makeText(mActivity, R.string.title_no_connection, Toast.LENGTH_SHORT).show();
             }
         } else if(view.getId() == R.id.fab) {
             listView.setSelection(0);
@@ -481,9 +483,7 @@ public class HeadlineFragment extends Fragment implements
                 public void onErrorResponse(VolleyError volleyError) {
                     listView.onLoadMoreComplete();
                     listView.setSelection(0);
-                    if(getActivity() != null) {
-                        Toast.makeText(getActivity(), R.string.label_error, Toast.LENGTH_SHORT).show();
-                    }
+                    Toast.makeText(mActivity, R.string.label_error, Toast.LENGTH_SHORT).show();
                 }
             });
             stringRequest.setShouldCache(true);
@@ -499,7 +499,7 @@ public class HeadlineFragment extends Fragment implements
         } else {
             listView.onLoadMoreComplete();
             listView.setSelection(0);
-            Toast.makeText(getActivity(), R.string.title_no_connection, Toast.LENGTH_SHORT).show();
+            Toast.makeText(mActivity, R.string.title_no_connection, Toast.LENGTH_SHORT).show();
         }
     }
 

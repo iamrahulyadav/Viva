@@ -91,12 +91,17 @@ public class ActComment extends FragmentActivity implements View.OnClickListener
         etComment.setOnClickListener(this);
         btnSubmit.setOnClickListener(this);
 
-        if(mTitle.length() > 0) {
-            text_title.setText(mTitle);
+        if (mTitle != null) {
+            if(mTitle.length() > 0) {
+                text_title.setText(mTitle);
+            }
         }
 
-        if(mImageUrl.length() > 0) {
-            Picasso.with(this).load(mImageUrl).transform(new CropSquareTransformation()).into(image_content);
+        if (mImageUrl != null) {
+            if(mImageUrl.length() > 0) {
+                Picasso.with(this).load(mImageUrl)
+                        .transform(new CropSquareTransformation()).into(image_content);
+            }
         }
 
         if(isInternetPresent) {
