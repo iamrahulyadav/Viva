@@ -12,6 +12,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
+import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.component.CropSquareTransformation;
 import id.co.viva.news.app.model.BeritaSekitar;
@@ -66,6 +67,10 @@ public class BeritaSekitarAdapter extends BaseAdapter {
         if(beritaSekitar.getImage_url().length() > 0) {
             Picasso.with(context).load(beritaSekitar.getImage_url())
                     .transform(new CropSquareTransformation()).into(holder.icon_item_news);
+            if (Constant.isTablet(context)) {
+                holder.icon_item_news.getLayoutParams().height = Constant.getDynamicImageSize(context);
+                holder.icon_item_news.requestLayout();
+            }
         }
 
         holder.title_item_news.setText(beritaSekitar.getTitle());

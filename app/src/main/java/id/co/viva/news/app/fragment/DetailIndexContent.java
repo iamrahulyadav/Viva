@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.method.LinkMovementMethod;
@@ -23,7 +25,6 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
-import android.widget.ShareActionProvider;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -100,7 +101,7 @@ public class DetailIndexContent extends Fragment implements
     private TextView tvPreviewCommentContent;
     private LinearLayout layoutCommentPreview;
     private int count = 0;
-    private Activity mActivity;
+    private ActionBarActivity mActivity;
 
     private String ids;
     private String title;
@@ -131,7 +132,7 @@ public class DetailIndexContent extends Fragment implements
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        mActivity = activity;
+        mActivity = (ActionBarActivity) activity;
     }
 
     @Override
@@ -674,7 +675,6 @@ public class DetailIndexContent extends Fragment implements
                         Constant.setListViewHeightBasedOnChildren(listView);
                         adapter.notifyDataSetChanged();
                         headerRelated.setVisibility(View.VISIBLE);
-                        Log.i(Constant.TAG, "KANALS : " + kanals);
                         if(kanals != null) {
                             if(kanals.equalsIgnoreCase("bola")) {
                                 headerRelated.setBackgroundResource(R.color.color_bola);
@@ -864,8 +864,8 @@ public class DetailIndexContent extends Fragment implements
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_frag_detail, menu);
         MenuItem item = menu.findItem(R.id.action_share);
-        ShareActionProvider myShareActionProvider = (ShareActionProvider)
-                item.getActionProvider();
+        android.support.v7.widget.ShareActionProvider myShareActionProvider =
+                (android.support.v7.widget.ShareActionProvider) MenuItemCompat.getActionProvider(item);
         Intent myIntent = new Intent();
         myIntent.setAction(Intent.ACTION_SEND);
         myIntent.putExtra(Intent.EXTRA_TEXT, url_shared);

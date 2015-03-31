@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.method.LinkMovementMethod;
@@ -22,7 +24,6 @@ import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
-import android.widget.ShareActionProvider;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -72,7 +73,7 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
     private boolean isInternetPresent = false;
     private ProgressWheel progressWheel;
     private TextView tvNoResult;
-    private Activity mActivity;
+    private ActionBarActivity mActivity;
 
     private ArrayList<RelatedArticle> relatedArticleArrayList;
     private ArrayList<Comment> commentArrayList;
@@ -125,7 +126,7 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        mActivity = activity;
+        mActivity = (ActionBarActivity) activity;
     }
 
     @Override
@@ -786,8 +787,8 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_frag_detail, menu);
         MenuItem item = menu.findItem(R.id.action_share);
-        ShareActionProvider myShareActionProvider = (ShareActionProvider)
-                item.getActionProvider();
+        android.support.v7.widget.ShareActionProvider myShareActionProvider = (android.support.v7.widget.ShareActionProvider)
+                MenuItemCompat.getActionProvider(item);
         Intent myIntent = new Intent();
         myIntent.setAction(Intent.ACTION_SEND);
         myIntent.putExtra(Intent.EXTRA_TEXT, url_shared);

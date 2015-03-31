@@ -95,7 +95,7 @@
         <activity
             android:name=".activity.ActVideo"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme"/>
+            android:theme="@style/YouTubeTheme"/>
 
         <activity
             android:name=".activity.ActBrowser"

@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -80,12 +81,13 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
         super.onAttach(activity);
         ColorDrawable colorDrawable = new ColorDrawable();
         colorDrawable.setColor(getResources().getColor(R.color.header_headline_terbaru_new));
-        activity.getActionBar().setBackgroundDrawable(colorDrawable);
-        activity.getActionBar().setIcon(R.drawable.logo_viva_coid_second);
+        ActionBarActivity mActivity = (ActionBarActivity) activity;
+        mActivity.getSupportActionBar().setBackgroundDrawable(colorDrawable);
+        mActivity.getSupportActionBar().setIcon(R.drawable.logo_viva_coid_second);
     }
 
     private Drawable getProgressDrawable() {
-        Drawable progressDrawable = null;
+        Drawable progressDrawable;
         progressDrawable = new GoogleMusicDicesDrawable.Builder().build();
         return progressDrawable;
     }
@@ -116,7 +118,7 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
         labelText.setText(getString(R.string.label_terbaru));
         lastUpdate = (TextView) rootView.findViewById(R.id.date_terbaru_headline);
 
-        newsArrayList = new ArrayList<News>();
+        newsArrayList = new ArrayList<>();
         terbaruAdapter = new TerbaruAdapter(getActivity(), newsArrayList);
 
         listView = (LoadMoreListView) rootView.findViewById(R.id.list_terbaru_headline);
@@ -318,7 +320,6 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
         if(newsArrayList.size() > 0) {
             News news = newsArrayList.get(position);
-            Log.i(Constant.TAG, "ID : " + news.getId());
             Bundle bundle = new Bundle();
             bundle.putString("id", news.getId());
             Intent intent = new Intent(getActivity(), ActDetailTerbaru.class);

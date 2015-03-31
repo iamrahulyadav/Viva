@@ -2,7 +2,8 @@ package id.co.viva.news.app.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.ActionBarActivity;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -10,7 +11,6 @@ import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.ShareActionProvider;
 import android.widget.Toast;
 
 import java.lang.reflect.InvocationTargetException;
@@ -22,7 +22,7 @@ import id.co.viva.news.app.component.ProgressWheel;
 /**
  * Created by reza on 13/03/15.
  */
-public class ActBrowser extends FragmentActivity {
+public class ActBrowser extends ActionBarActivity {
 
     private WebView webView;
     private String mUrl;
@@ -98,10 +98,10 @@ public class ActBrowser extends FragmentActivity {
     }
 
     private void setActionBarTheme() {
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
-        getActionBar().setDisplayShowTitleEnabled(true);
-        getActionBar().setTitle(getResources().getString(R.string.label_reference_article));
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
+        getSupportActionBar().setTitle(getResources().getString(R.string.label_reference_article));
     }
 
     @Override
@@ -143,7 +143,8 @@ public class ActBrowser extends FragmentActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_browser, menu);
         MenuItem item = menu.findItem(R.id.action_share);
-        ShareActionProvider myShareActionProvider = (ShareActionProvider) item.getActionProvider();
+        android.support.v7.widget.ShareActionProvider myShareActionProvider =
+                (android.support.v7.widget.ShareActionProvider) MenuItemCompat.getActionProvider(item);
         Intent myIntent = new Intent();
         myIntent.setAction(Intent.ACTION_SEND);
         if (isFirstShow) {

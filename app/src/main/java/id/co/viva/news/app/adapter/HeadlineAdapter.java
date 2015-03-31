@@ -66,13 +66,19 @@ public class HeadlineAdapter extends BaseAdapter {
         }
 
         Headline headline = headlineArrayList.get(position);
-        if(headline.getImage_url().length() > 0) {
+
+        if (headline.getImage_url().length() > 0) {
             Picasso.with(context).load(headline.getImage_url())
                     .transform(new CropSquareTransformation()).into(holder.icon_item_news);
+            if (Constant.isTablet(context)) {
+                holder.icon_item_news.getLayoutParams().height = Constant.getDynamicImageSize(context);
+                holder.icon_item_news.requestLayout();
+            }
         }
+
         holder.title_item_news.setText(headline.getTitle());
 
-        if(headline.getKanal().equalsIgnoreCase("bola")) {
+        if (headline.getKanal().equalsIgnoreCase("bola")) {
             holder.icon_item_viva_news.setImageResource(R.drawable.icon_viva_bola);
         } else if(headline.getKanal().equalsIgnoreCase("vivalife")) {
             holder.icon_item_viva_news.setImageResource(R.drawable.icon_viva_life);
@@ -82,7 +88,7 @@ public class HeadlineAdapter extends BaseAdapter {
 
         try {
             DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            Date date = (Date)formatter.parse(headline.getDate_publish());
+            Date date = formatter.parse(headline.getDate_publish());
             holder.date_item_news.setText(Constant.getTimeAgo(date.getTime()));
         } catch (Exception e) {
             e.getMessage();

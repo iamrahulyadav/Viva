@@ -77,7 +77,9 @@ public class TutorialFragment extends Fragment {
                     @Override
                     public void onError() {
                         progressWheel.setVisibility(View.INVISIBLE);
-                        labelText.setText(getResources().getString(R.string.label_fail_get_image_tutorial));
+                        if (isAdded()) {
+                            labelText.setText(getResources().getString(R.string.label_fail_get_image_tutorial));
+                        }
                     }
                 });
             } else {

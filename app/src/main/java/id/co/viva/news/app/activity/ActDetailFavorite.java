@@ -2,8 +2,8 @@ package id.co.viva.news.app.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,7 +26,7 @@ import id.co.viva.news.app.services.Analytics;
 /**
  * Created by reza on 24/11/14.
  */
-public class ActDetailFavorite extends FragmentActivity implements View.OnClickListener {
+public class ActDetailFavorite extends ActionBarActivity implements View.OnClickListener {
 
     private Intent intent;
     private KenBurnsView imageDetail;
@@ -119,10 +119,10 @@ public class ActDetailFavorite extends FragmentActivity implements View.OnClickL
     }
 
     private void getHeaderActionBar() {
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
-        getActionBar().setDisplayShowTitleEnabled(true);
-        getActionBar().setTitle("Favorites");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
+        getSupportActionBar().setTitle("Favorites");
     }
 
     private void getAnalytics(String title) {

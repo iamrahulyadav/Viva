@@ -3,15 +3,19 @@ package id.co.viva.news.app;
 import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.Point;
 import android.os.Build;
 import android.renderscript.Allocation;
 import android.renderscript.Element;
 import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
 import android.util.Log;
+import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
@@ -32,7 +36,7 @@ public class Constant {
     public static final String CODE_PATH = "12";
     public static final String CODE_GPLUS = "13";
 
-    public static final int MIN_TIME_BW_UPDATES = 10000;
+    public static final int MIN_TIME_BW_UPDATES = 20000;
 
     public static final String TAG_LOCATION_NAME = "nama";
     public static final String TAG_LOCATION_PROVINCE_ID = "id_propinsi";
@@ -257,6 +261,21 @@ public class Constant {
         } else {
             return diff / DAY_MILLIS + " hari yang lalu";
         }
+    }
+
+    public static int getDynamicImageSize(Context mCtx) {
+        WindowManager wm = (WindowManager) mCtx.getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int width = size.x;
+        return width;
+    }
+
+    public static boolean isTablet(Context context) {
+        return (context.getResources().getConfiguration().screenLayout
+                & Configuration.SCREENLAYOUT_SIZE_MASK)
+                >= Configuration.SCREENLAYOUT_SIZE_LARGE;
     }
 
     public static String getArticleViva(String url) {

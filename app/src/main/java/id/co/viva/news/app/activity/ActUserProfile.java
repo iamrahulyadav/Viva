@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.ActionBarActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.MenuItem;
@@ -54,14 +54,13 @@ import id.co.viva.news.app.services.UserAccount;
 /**
  * Created by reza on 03/12/14.
  */
-public class ActUserProfile extends FragmentActivity implements View.OnClickListener, OnCompleteListener,
+public class ActUserProfile extends ActionBarActivity implements View.OnClickListener, OnCompleteListener,
         OnProgressDoneListener, AdapterView.OnItemSelectedListener, ShowingBackListener, OnSpinnerListener,
         DatePickerDialogFragment.DatePickerDialogHandler, android.app.FragmentManager.OnBackStackChangedListener {
 
     private boolean isInternetPresent = false;
     private CircularProgressButton btnLogout;
     private ActionProcessButton btnSave;
-    private RelativeLayout backgroundLayout;
     private TextView mProfileName;
     private TextView mProfileEmail;
     private ImageView mprofileThumb;
@@ -146,12 +145,11 @@ public class ActUserProfile extends FragmentActivity implements View.OnClickList
     }
 
     private void getHeaderActionBar() {
-        getActionBar().setBackgroundDrawable(new ColorDrawable(getResources().
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().
                 getColor(R.color.header_headline_terbaru_new)));
-        getActionBar().setDisplayShowTitleEnabled(false);
-        getActionBar().setIcon(R.drawable.logo_viva_coid_second);
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setTitle("Profile");
     }
 
     @Override
@@ -252,10 +250,9 @@ public class ActUserProfile extends FragmentActivity implements View.OnClickList
 
     private void defineView() {
         //Initiate Views
-        cityArrayList = new ArrayList<City>();
-        provinceArrayList = new ArrayList<Province>();
+        cityArrayList = new ArrayList<>();
+        provinceArrayList = new ArrayList<>();
         coachmarkView = findViewById(R.id.coachmark_img_profile);
-        backgroundLayout = (RelativeLayout) findViewById(R.id.layout_background_profile_photo);
         spinnerGender = (Spinner) findViewById(R.id.spin_regist_gender);
         spinCity = (Spinner) findViewById(R.id.spin_regist_city);
         spinProvince = (Spinner) findViewById(R.id.spin_regist_province);
@@ -292,7 +289,7 @@ public class ActUserProfile extends FragmentActivity implements View.OnClickList
     }
 
     private void showCoachMark() {
-        if(Global.getInstance(this).getSharedPreferences(this).getBoolean(Constant.FIRST_INSTALL_PROFILE, true)) {
+        if (Global.getInstance(this).getSharedPreferences(this).getBoolean(Constant.FIRST_INSTALL_PROFILE, true)) {
             RelativeLayout relativeLayout = new RelativeLayout(this);
             relativeLayout.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT));
@@ -300,6 +297,7 @@ public class ActUserProfile extends FragmentActivity implements View.OnClickList
             showtips = new CoachmarkBuilder(this)
                     .setTarget(mprofileThumb)
                     .setTitle(getResources().getString(R.string.label_image_profile))
+                    .setBackgroundColor(getResources().getColor(R.color.transparent))
                     .setDescription(getResources().getString(R.string.label_image_profile_desc))
                     .setDelay(1000)
                     .build();

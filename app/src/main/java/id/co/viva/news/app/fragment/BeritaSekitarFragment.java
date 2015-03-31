@@ -13,6 +13,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -77,7 +78,7 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
     private JSONArray jsonArrayResponses;
     private BeritaSekitarAdapter adapter;
     private SwingBottomInAnimationAdapter swingBottomInAnimationAdapter;
-    private Activity mActivity;
+    private ActionBarActivity mActivity;
     private int page = 1;
 
     private void setAnalytics(String page) {
@@ -93,11 +94,11 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        mActivity = activity;
+        mActivity = (ActionBarActivity) activity;
         ColorDrawable colorDrawable = new ColorDrawable();
         colorDrawable.setColor(getResources().getColor(R.color.header_headline_terbaru_new));
-        mActivity.getActionBar().setBackgroundDrawable(colorDrawable);
-        mActivity.getActionBar().setIcon(R.drawable.logo_viva_coid_second);
+        mActivity.getSupportActionBar().setBackgroundDrawable(colorDrawable);
+        mActivity.getSupportActionBar().setIcon(R.drawable.logo_viva_coid_second);
     }
 
     @Override
@@ -120,7 +121,7 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
     }
 
     private Drawable getProgressDrawable() {
-        Drawable progressDrawable = null;
+        Drawable progressDrawable;
         progressDrawable = new GoogleMusicDicesDrawable.Builder().build();
         return progressDrawable;
     }
@@ -162,7 +163,7 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
         });
         floatingActionButton.setOnClickListener(this);
 
-        beritaSekitarArrayList = new ArrayList<BeritaSekitar>();
+        beritaSekitarArrayList = new ArrayList<>();
         if (getActivity() != null) {
             adapter = new BeritaSekitarAdapter(getActivity(), beritaSekitarArrayList);
         } else {
@@ -390,8 +391,10 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if (city != null && city.length() > 0) {
-            return city;
+        if (city != null) {
+            if (city.length() > 0) {
+                return city;
+            }
         }
         return null;
     }
@@ -399,62 +402,76 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
     @Override
     public void getLocation(Location location) {
         if (isInternetPresent) {
-            city = getCity(location);
-            StringRequest request = new StringRequest(Request.Method.GET,
-                    Constant.NEW_SEARCH + "q/" + city.replaceAll(" ", "%20") + "/s/0",
-                    new Response.Listener<String>() {
-                @Override
-                public void onResponse(String s) {
-                    try {
-                        JSONObject jsonObject = new JSONObject(s);
-                        JSONObject response = jsonObject.getJSONObject(Constant.response);
-                        jsonArrayResponses = response.getJSONArray(Constant.search);
-                        if(jsonArrayResponses != null) {
-                            for(int i=0; i<jsonArrayResponses.length(); i++) {
-                                JSONObject jsonHeadline = jsonArrayResponses.getJSONObject(i);
-                                String id = jsonHeadline.getString(Constant.id);
-                                String kanal = jsonHeadline.getString(Constant.kanal);
-                                String image_url = jsonHeadline.getString(Constant.image_url);
-                                String title = jsonHeadline.getString(Constant.title);
-                                String url = jsonHeadline.getString(Constant.url);
-                                String date_publish = jsonHeadline.getString(Constant.date_publish);
-                                beritaSekitarArrayList.add(new BeritaSekitar(id, kanal, image_url,
-                                        title, url, date_publish));
+            if (location != null) {
+                city = getCity(location);
+                if (city != null) {
+                    if (city.length() > 0) {
+                        StringRequest request = new StringRequest(Request.Method.GET,
+                                Constant.NEW_SEARCH + "q/" + city.replaceAll(" ", "%20") + "/s/0",
+                                new Response.Listener<String>() {
+                                    @Override
+                                    public void onResponse(String s) {
+                                        try {
+                                            JSONObject jsonObject = new JSONObject(s);
+                                            JSONObject response = jsonObject.getJSONObject(Constant.response);
+                                            jsonArrayResponses = response.getJSONArray(Constant.search);
+                                            if(jsonArrayResponses != null) {
+                                                for(int i=0; i<jsonArrayResponses.length(); i++) {
+                                                    JSONObject jsonHeadline = jsonArrayResponses.getJSONObject(i);
+                                                    String id = jsonHeadline.getString(Constant.id);
+                                                    String kanal = jsonHeadline.getString(Constant.kanal);
+                                                    String image_url = jsonHeadline.getString(Constant.image_url);
+                                                    String title = jsonHeadline.getString(Constant.title);
+                                                    String url = jsonHeadline.getString(Constant.url);
+                                                    String date_publish = jsonHeadline.getString(Constant.date_publish);
+                                                    beritaSekitarArrayList.add(new BeritaSekitar(id, kanal, image_url,
+                                                            title, url, date_publish));
+                                                }
+                                            }
+                                            if (beritaSekitarArrayList.size() > 0 || !beritaSekitarArrayList.isEmpty()) {
+                                                swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(adapter);
+                                                swingBottomInAnimationAdapter.setAbsListView(listView);
+                                                assert swingBottomInAnimationAdapter.getViewAnimator() != null;
+                                                swingBottomInAnimationAdapter.getViewAnimator().setInitialDelayMillis(1000);
+                                                listView.setAdapter(swingBottomInAnimationAdapter);
+                                                adapter.notifyDataSetChanged();
+                                                loading_layout.setVisibility(View.GONE);
+                                                labelLoadData.setVisibility(View.GONE);
+                                                lastUpdate.setText(city);
+                                            }
+                                        } catch (Exception e) {
+                                            e.getMessage();
+                                        }
+                                    }
+                                }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError volleyError) {
+                                Toast.makeText(mActivity, getResources()
+                                        .getString(R.string.title_failed_get_location), Toast.LENGTH_SHORT).show();
+                                loading_layout.setVisibility(View.GONE);
+                                labelLoadData.setVisibility(View.GONE);
+                                rippleView.setVisibility(View.VISIBLE);
                             }
+                        });
+                        request.setShouldCache(false);
+                        request.setRetryPolicy(new DefaultRetryPolicy(
+                                Constant.TIME_OUT,
+                                0,
+                                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+                        if (getActivity() != null) {
+                            Global.getInstance(getActivity())
+                                    .addToRequestQueue(request, Constant.JSON_REQUEST);
                         }
-                        if (beritaSekitarArrayList.size() > 0 || !beritaSekitarArrayList.isEmpty()) {
-                            swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(adapter);
-                            swingBottomInAnimationAdapter.setAbsListView(listView);
-                            assert swingBottomInAnimationAdapter.getViewAnimator() != null;
-                            swingBottomInAnimationAdapter.getViewAnimator().setInitialDelayMillis(1000);
-                            listView.setAdapter(swingBottomInAnimationAdapter);
-                            adapter.notifyDataSetChanged();
-                            loading_layout.setVisibility(View.GONE);
-                            labelLoadData.setVisibility(View.GONE);
-                            lastUpdate.setText(city);
-                        }
-                    } catch (Exception e) {
-                        e.getMessage();
                     }
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError volleyError) {
+                } else {
                     Toast.makeText(mActivity, getResources()
                             .getString(R.string.title_failed_get_location), Toast.LENGTH_SHORT).show();
-                    loading_layout.setVisibility(View.GONE);
-                    labelLoadData.setVisibility(View.GONE);
-                    rippleView.setVisibility(View.VISIBLE);
+                    refreshContent();
                 }
-            });
-            request.setShouldCache(false);
-            request.setRetryPolicy(new DefaultRetryPolicy(
-                    Constant.TIME_OUT,
-                    0,
-                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-            if (getActivity() != null) {
-                Global.getInstance(getActivity())
-                        .addToRequestQueue(request, Constant.JSON_REQUEST);
+            } else {
+                Toast.makeText(mActivity, getResources()
+                        .getString(R.string.title_failed_get_location), Toast.LENGTH_SHORT).show();
+                refreshContent();
             }
         } else {
             loading_layout.setVisibility(View.GONE);

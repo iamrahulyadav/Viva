@@ -2,7 +2,7 @@ package id.co.viva.news.app.activity;
 
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -19,7 +19,7 @@ import id.co.viva.news.app.services.Validation;
 /**
  * Created by reza on 02/12/14.
  */
-public class ActRegistration extends FragmentActivity
+public class ActRegistration extends ActionBarActivity
         implements View.OnClickListener, AdapterView.OnItemSelectedListener, OnCompleteListener {
 
     private EditText etUsername;
@@ -61,10 +61,10 @@ public class ActRegistration extends FragmentActivity
     }
 
     private void getPrefActionBar() {
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
-        getActionBar().setDisplayShowTitleEnabled(true);
-        getActionBar().setTitle("Registrasi");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
+        getSupportActionBar().setTitle("Registrasi");
     }
 
     @Override

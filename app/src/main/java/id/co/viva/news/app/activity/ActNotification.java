@@ -3,8 +3,9 @@ package id.co.viva.news.app.activity;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.method.LinkMovementMethod;
@@ -18,7 +19,6 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
-import android.widget.ShareActionProvider;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -54,7 +54,7 @@ import id.co.viva.news.app.services.Analytics;
 /**
  * Created by reza on 20/01/15.
  */
-public class ActNotification extends FragmentActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
+public class ActNotification extends ActionBarActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
 
     private String kanalFromNotification;
     private String idFromNotification;
@@ -132,9 +132,9 @@ public class ActNotification extends FragmentActivity implements View.OnClickLis
         tvNoResult = (TextView) findViewById(R.id.text_no_result_detail_content);
         tvNoResult.setVisibility(View.GONE);
 
-        relatedArticleArrayList = new ArrayList<RelatedArticle>();
-        sliderContentImages = new ArrayList<SliderContentImage>();
-        videoArrayList = new ArrayList<Video>();
+        relatedArticleArrayList = new ArrayList<>();
+        sliderContentImages = new ArrayList<>();
+        videoArrayList = new ArrayList<>();
 
         listView = (ListView) findViewById(R.id.list_related_article_notification);
         listView.setOnItemClickListener(this);
@@ -344,24 +344,25 @@ public class ActNotification extends FragmentActivity implements View.OnClickLis
 
     private void setHeaderActionbar(String fromkanal) {
         ColorDrawable colorDrawable = new ColorDrawable();
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setDisplayShowTitleEnabled(false);
-        getActionBar().setHomeButtonEnabled(true);
-        getActionBar().setIcon(R.drawable.logo_viva_coid_second);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
         if(fromkanal != null) {
             if(fromkanal.equalsIgnoreCase("bola")) {
                 colorDrawable.setColor(getResources().getColor(R.color.color_bola));
-                getActionBar().setBackgroundDrawable(colorDrawable);
+                getSupportActionBar().setBackgroundDrawable(colorDrawable);
+                getSupportActionBar().setTitle(R.string.label_item_navigation_bola);
             } else if(fromkanal.equalsIgnoreCase("vivalife")) {
                 colorDrawable.setColor(getResources().getColor(R.color.color_life));
-                getActionBar().setBackgroundDrawable(colorDrawable);
+                getSupportActionBar().setBackgroundDrawable(colorDrawable);
+                getSupportActionBar().setTitle(R.string.label_item_navigation_life);
             } else {
                 colorDrawable.setColor(getResources().getColor(R.color.color_news));
-                getActionBar().setBackgroundDrawable(colorDrawable);
+                getSupportActionBar().setBackgroundDrawable(colorDrawable);
+                getSupportActionBar().setTitle(R.string.label_item_navigation_news);
             }
         } else {
             colorDrawable.setColor(getResources().getColor(R.color.header_headline_terbaru_new));
-            getActionBar().setBackgroundDrawable(colorDrawable);
+            getSupportActionBar().setBackgroundDrawable(colorDrawable);
         }
     }
 
@@ -444,7 +445,7 @@ public class ActNotification extends FragmentActivity implements View.OnClickLis
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                finish();
+                goFirstFlow();
                 return true;
             case R.id.subaction_rate:
                 moveRatingPage();
@@ -483,7 +484,8 @@ public class ActNotification extends FragmentActivity implements View.OnClickLis
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_frag_detail, menu);
         MenuItem item = menu.findItem(R.id.action_share);
-        ShareActionProvider myShareActionProvider = (ShareActionProvider) item.getActionProvider();
+        android.support.v7.widget.ShareActionProvider myShareActionProvider =
+                (android.support.v7.widget.ShareActionProvider) MenuItemCompat.getActionProvider(item);
         Intent myIntent = new Intent();
         myIntent.setAction(Intent.ACTION_SEND);
         myIntent.putExtra(Intent.EXTRA_TEXT, shared_url);

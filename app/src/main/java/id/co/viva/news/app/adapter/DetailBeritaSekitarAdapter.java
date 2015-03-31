@@ -22,7 +22,7 @@ import id.co.viva.news.app.model.BeritaSekitar;
 public class DetailBeritaSekitarAdapter extends FragmentStatePagerAdapter {
 
     private ArrayList<BeritaSekitar> beritaSekitarArrayList;
-    private ArrayList<Fragment> mFragments = new ArrayList<Fragment>();
+    private ArrayList<Fragment> mFragments = new ArrayList<>();
     private FragmentTransaction mCurTransaction = null;
     private final FragmentManager mFragmentManager;
     private ArrayList<Fragment.SavedState> mSavedState = new ArrayList<Fragment.SavedState>();

@@ -46,7 +46,6 @@ public class ActSplashScreen extends Activity {
                         }
                     }, 2000);
         }
-
     }
 
     private void goToApplication(String intentType) {

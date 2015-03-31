@@ -5,6 +5,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,12 +20,14 @@ import id.co.viva.news.app.model.DeviceInfo;
 public class AboutFragment extends Fragment {
 
     private TextView textAppVersion;
+    private ActionBarActivity mActivity;
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        activity.getActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.header_headline_terbaru_new)));
-        activity.getActionBar().setIcon(R.drawable.logo_viva_coid_second);
+        mActivity = (ActionBarActivity) activity;
+        mActivity.getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.header_headline_terbaru_new)));
+        mActivity.getSupportActionBar().setIcon(R.drawable.logo_viva_coid_second);
     }
 
     @Override

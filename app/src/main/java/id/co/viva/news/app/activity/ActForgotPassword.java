@@ -3,7 +3,7 @@ package id.co.viva.news.app.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
@@ -20,7 +20,7 @@ import id.co.viva.news.app.services.Validation;
 /**
  * Created by reza on 12/12/14.
  */
-public class ActForgotPassword extends FragmentActivity implements View.OnClickListener, OnCompleteListener {
+public class ActForgotPassword extends ActionBarActivity implements View.OnClickListener, OnCompleteListener {
 
     private TextView mSuccessEmail;
     private EditText mInputEmail;
@@ -89,10 +89,10 @@ public class ActForgotPassword extends FragmentActivity implements View.OnClickL
     }
 
     private void getPrefActionBar() {
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
-        getActionBar().setDisplayShowTitleEnabled(true);
-        getActionBar().setTitle("Forgot Password");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
+        getSupportActionBar().setTitle("Forgot Password");
     }
 
     @Override

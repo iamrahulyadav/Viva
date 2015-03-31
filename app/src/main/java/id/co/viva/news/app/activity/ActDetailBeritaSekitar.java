@@ -1,8 +1,8 @@
 package id.co.viva.news.app.activity;
 
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -15,7 +15,7 @@ import id.co.viva.news.app.model.BeritaSekitar;
 /**
  * Created by reza on 27/02/15.
  */
-public class ActDetailBeritaSekitar extends FragmentActivity {
+public class ActDetailBeritaSekitar extends ActionBarActivity {
 
     private String id;
     private ViewPager viewPager;
@@ -52,10 +52,10 @@ public class ActDetailBeritaSekitar extends FragmentActivity {
     }
 
     private void setActionBar() {
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
-        getActionBar().setDisplayShowTitleEnabled(true);
-        getActionBar().setTitle("Berita Sekitar");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
+        getSupportActionBar().setTitle(getResources().getString(R.string.label_berita_sekitar_detail));
     }
 
     @Override

@@ -5,7 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -13,8 +14,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ImageView;
-import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,7 +45,7 @@ import id.co.viva.news.app.services.Analytics;
 /**
  * Created by reza on 27/10/14.
  */
-public class ActDetailChannelNews extends FragmentActivity implements
+public class ActDetailChannelNews extends ActionBarActivity implements
         AdapterView.OnItemClickListener, OnLoadMoreListener, View.OnClickListener {
 
     public static ArrayList<ChannelNews> channelNewsArrayList;
@@ -210,22 +209,16 @@ public class ActDetailChannelNews extends FragmentActivity implements
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_frag_default, menu);
-
+        //SearchView OnClick
         SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView =
-                (SearchView) menu.findItem(R.id.action_search).getActionView();
-        searchView.setSearchableInfo(
-                searchManager.getSearchableInfo(getComponentName()));
-
-        int searchImgId = getResources().getIdentifier("android:id/search_button", null, null);
-        ImageView v = (ImageView) searchView.findViewById(searchImgId);
-        v.setImageResource(R.drawable.ic_action_search);
-
-        int searchTextViewId = searchView.getContext().getResources().getIdentifier("android:id/search_src_text", null, null);
-        TextView searchTextView = (TextView) searchView.findViewById(searchTextViewId);
-        searchTextView.setHintTextColor(getResources().getColor(R.color.white));
-
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        android.support.v7.widget.SearchView searchView =
+                (android.support.v7.widget.SearchView) MenuItemCompat.getActionView(searchItem);
+        if (searchView != null) {
+            searchView.setSearchableInfo(
+                    searchManager.getSearchableInfo(getComponentName()));
+        }
         return true;
     }
 
@@ -233,9 +226,9 @@ public class ActDetailChannelNews extends FragmentActivity implements
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
         if (channelNewsArrayList.size() > 0) {
             ChannelNews news = channelNewsArrayList.get(position);
-            Log.i(Constant.TAG, "ID : " + news.getId());
             Bundle bundle = new Bundle();
             bundle.putString("id", news.getId());
+            bundle.putString("channel_title", channel_title);
             Intent intent = new Intent(this, ActDetailContentNews.class);
             intent.putExtras(bundle);
             startActivity(intent);
@@ -397,7 +390,7 @@ public class ActDetailChannelNews extends FragmentActivity implements
         tvNoResult = (TextView) findViewById(R.id.text_no_result_detail_channel_news);
         tvNoResult.setVisibility(View.GONE);
 
-        channelNewsArrayList = new ArrayList<ChannelNews>();
+        channelNewsArrayList = new ArrayList<>();
         adapter = new ChannelNewsAdapter(this, channelNewsArrayList);
 
         listView = (LoadMoreListView) findViewById(R.id.list_channel_news);
@@ -422,13 +415,12 @@ public class ActDetailChannelNews extends FragmentActivity implements
     }
 
     private void setActionBarTheme() {
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
         ColorDrawable colorDrawable = new ColorDrawable();
         colorDrawable.setColor(getResources().getColor(R.color.color_news));
-        getActionBar().setBackgroundDrawable(colorDrawable);
-        getActionBar().setDisplayShowTitleEnabled(false);
-        getActionBar().setIcon(R.drawable.logo_viva_coid_second);
+        getSupportActionBar().setBackgroundDrawable(colorDrawable);
+        getSupportActionBar().setTitle(R.string.label_item_navigation_news);
     }
 
     private void getIntentData() {

@@ -3,7 +3,7 @@ package id.co.viva.news.app.activity;
 import android.graphics.Bitmap;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,7 +18,7 @@ import id.co.viva.news.app.model.Path;
 /**
  * Created by reza on 11/12/14.
  */
-public class ActPath extends FragmentActivity {
+public class ActPath extends ActionBarActivity {
 
     private WebView mWebiew;
     private ProgressBar mProgressBar;
@@ -78,13 +78,11 @@ public class ActPath extends FragmentActivity {
     }
 
     private void getHeaderActionBar() {
-        getActionBar().setBackgroundDrawable(new ColorDrawable(getResources().
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().
                 getColor(R.color.header_headline_terbaru_new)));
-        getActionBar().setDisplayShowTitleEnabled(false);
-        getActionBar().setIcon(R.drawable.logo_viva_coid_second);
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
-
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setTitle("Path");
     }
 
 }

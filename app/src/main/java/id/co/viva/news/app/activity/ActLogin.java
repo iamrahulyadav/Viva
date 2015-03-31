@@ -5,7 +5,7 @@ import android.content.IntentSender;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -53,7 +53,7 @@ import id.co.viva.news.app.services.Validation;
 /**
  * Created by reza on 27/11/14.
  */
-public class ActLogin extends FragmentActivity implements OnCompleteListener, OnFacebookInfoListener, OnPathListener,
+public class ActLogin extends ActionBarActivity implements OnCompleteListener, OnFacebookInfoListener, OnPathListener,
         View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     //Google SignIn Instances
@@ -180,12 +180,11 @@ public class ActLogin extends FragmentActivity implements OnCompleteListener, On
     }
 
     private void getHeaderActionBar() {
-        getActionBar().setBackgroundDrawable(new ColorDrawable(getResources().
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().
                 getColor(R.color.header_headline_terbaru_new)));
-        getActionBar().setDisplayShowTitleEnabled(false);
-        getActionBar().setIcon(R.drawable.logo_viva_coid_second);
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setTitle(R.string.label_login);
     }
 
     @Override

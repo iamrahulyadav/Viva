@@ -1,9 +1,9 @@
 package id.co.viva.news.app.activity;
 
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
-import android.view.Window;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -14,7 +14,7 @@ import id.co.viva.news.app.component.ZoomImageView;
 /**
  * Created by reza on 31/12/14.
  */
-public class ActDetailPhotoThumb extends FragmentActivity {
+public class ActDetailPhotoThumb extends ActionBarActivity {
 
     private ZoomImageView imageView;
     private TextView textView;
@@ -24,8 +24,7 @@ public class ActDetailPhotoThumb extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        getWindow().requestFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
+//        getWindow().requestFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
         getHeaderActionBar();
 
         Bundle bundle = getIntent().getExtras();
@@ -56,10 +55,13 @@ public class ActDetailPhotoThumb extends FragmentActivity {
     }
 
     private void getHeaderActionBar() {
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
-        getActionBar().setDisplayShowTitleEnabled(true);
-        getActionBar().setTitle("Detail Foto");
+        ColorDrawable colorDrawable = new ColorDrawable();
+        colorDrawable.setColor(getResources().getColor(R.color.black));
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setBackgroundDrawable(colorDrawable);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
+        getSupportActionBar().setTitle("Detail Foto");
     }
 
 }

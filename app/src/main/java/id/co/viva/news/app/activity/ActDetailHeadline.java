@@ -1,8 +1,8 @@
 package id.co.viva.news.app.activity;
 
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -15,7 +15,7 @@ import id.co.viva.news.app.model.Headline;
 /**
  * Created by rezarachman on 07/10/14.
  */
-public class ActDetailHeadline extends FragmentActivity {
+public class ActDetailHeadline extends ActionBarActivity {
 
     private String id;
     private ViewPager viewPager;
@@ -28,10 +28,10 @@ public class ActDetailHeadline extends FragmentActivity {
         id = bundle.getString("id");
 
         setContentView(R.layout.act_detail_main_article);
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
-        getActionBar().setDisplayShowTitleEnabled(true);
-        getActionBar().setTitle("Headlines");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
+        getSupportActionBar().setTitle(getResources().getString(R.string.label_headline_detail));
 
         int position = 0;
         if(HeadlineFragment.headlineArrayList != null) {

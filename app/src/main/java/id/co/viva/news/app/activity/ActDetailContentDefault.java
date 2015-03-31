@@ -3,8 +3,9 @@ package id.co.viva.news.app.activity;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.method.LinkMovementMethod;
@@ -18,7 +19,6 @@ import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
-import android.widget.ShareActionProvider;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -54,7 +54,7 @@ import id.co.viva.news.app.services.Analytics;
 /**
  * Created by reza on 27/10/14.
  */
-public class ActDetailContentDefault extends FragmentActivity
+public class ActDetailContentDefault extends ActionBarActivity
         implements AdapterView.OnItemClickListener, View.OnClickListener {
 
     private String ids;
@@ -444,10 +444,10 @@ public class ActDetailContentDefault extends FragmentActivity
         tvPreviewCommentContent = (TextView) findViewById(R.id.text_preview_comment_content);
         tvPreviewCommentUser = (TextView) findViewById(R.id.text_preview_comment_user);
 
-        relatedArticleArrayList = new ArrayList<RelatedArticle>();
-        commentArrayList = new ArrayList<Comment>();
-        sliderContentImages = new ArrayList<SliderContentImage>();
-        videoArrayList = new ArrayList<Video>();
+        relatedArticleArrayList = new ArrayList<>();
+        commentArrayList = new ArrayList<>();
+        sliderContentImages = new ArrayList<>();
+        videoArrayList = new ArrayList<>();
 
         tvTitleDetail = (TextView) findViewById(R.id.title_detail_content_default);
         tvDateDetail = (TextView) findViewById(R.id.date_detail_content_default);
@@ -493,24 +493,34 @@ public class ActDetailContentDefault extends FragmentActivity
 
     private void setHeaderActionbar() {
         ColorDrawable colorDrawable = new ColorDrawable();
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
-        getActionBar().setDisplayShowTitleEnabled(false);
-        getActionBar().setIcon(R.drawable.logo_viva_coid_second);
-        if(fromkanal != null) {
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        //Set Background
+        if (fromkanal != null) {
             if(fromkanal.equalsIgnoreCase("bola")) {
                 colorDrawable.setColor(getResources().getColor(R.color.color_bola));
-                getActionBar().setBackgroundDrawable(colorDrawable);
+                getSupportActionBar().setBackgroundDrawable(colorDrawable);
+                getSupportActionBar().setTitle(R.string.label_item_navigation_bola);
             } else if(fromkanal.equalsIgnoreCase("vivalife")) {
                 colorDrawable.setColor(getResources().getColor(R.color.color_life));
-                getActionBar().setBackgroundDrawable(colorDrawable);
+                getSupportActionBar().setBackgroundDrawable(colorDrawable);
+                if (typeFrom != null) {
+                    if (typeFrom.equals("editor_choice")) {
+                        getSupportActionBar().setTitle("Editor's Choice");
+                    } else {
+                        getSupportActionBar().setTitle(R.string.label_item_navigation_life);
+                    }
+                } else {
+                    getSupportActionBar().setTitle(R.string.label_item_navigation_life);
+                }
             } else {
                 colorDrawable.setColor(getResources().getColor(R.color.color_news));
-                getActionBar().setBackgroundDrawable(colorDrawable);
+                getSupportActionBar().setBackgroundDrawable(colorDrawable);
+                getSupportActionBar().setTitle(R.string.label_item_navigation_news);
             }
         } else {
             colorDrawable.setColor(getResources().getColor(R.color.header_headline_terbaru_new));
-            getActionBar().setBackgroundDrawable(colorDrawable);
+            getSupportActionBar().setBackgroundDrawable(colorDrawable);
         }
     }
 
@@ -612,7 +622,8 @@ public class ActDetailContentDefault extends FragmentActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_frag_detail, menu);
         MenuItem item = menu.findItem(R.id.action_share);
-        ShareActionProvider myShareActionProvider = (ShareActionProvider) item.getActionProvider();
+        android.support.v7.widget.ShareActionProvider myShareActionProvider =
+                (android.support.v7.widget.ShareActionProvider) MenuItemCompat.getActionProvider(item);
         Intent myIntent = new Intent();
         myIntent.setAction(Intent.ACTION_SEND);
         myIntent.putExtra(Intent.EXTRA_TEXT, shared_url);

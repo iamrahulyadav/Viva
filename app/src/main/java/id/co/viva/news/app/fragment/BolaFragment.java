@@ -6,6 +6,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -80,17 +81,17 @@ public class BolaFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        setHasOptionsMenu(true);
         ColorDrawable colorDrawable = new ColorDrawable();
         colorDrawable.setColor(getResources().getColor(R.color.color_bola));
-        activity.getActionBar().setBackgroundDrawable(colorDrawable);
-        activity.getActionBar().setIcon(R.drawable.logo_viva_coid_second);
+        ActionBarActivity mActionBarActivity = (ActionBarActivity) activity;
+        mActionBarActivity.getSupportActionBar().setBackgroundDrawable(colorDrawable);
+        mActionBarActivity.getSupportActionBar().setIcon(R.drawable.logo_viva_coid_second);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.frag_bola, container, false);
-
-        setHasOptionsMenu(true);
 
         analytics = new Analytics(getActivity());
         analytics.getAnalyticByATInternet(Constant.KANAL_BOLA_PAGE);
@@ -150,8 +151,8 @@ public class BolaFragment extends Fragment implements View.OnClickListener {
             }
         });
 
-        featuredNewsArrayList = new ArrayList<FeaturedBola>();
-        featuredNewsArrayListTypeList = new ArrayList<FeaturedBola>();
+        featuredNewsArrayList = new ArrayList<>();
+        featuredNewsArrayListTypeList = new ArrayList<>();
 
         if(isInternetPresent) {
             StringRequest request = new StringRequest(Request.Method.GET, Constant.NEW_BOLA,
@@ -373,7 +374,7 @@ public class BolaFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId() == R.id.action_change_layout) {
+        if (item.getItemId() == R.id.action_change_layout) {
             if(getActivity() != null) {
                 getActivity().invalidateOptionsMenu();
             }
@@ -391,9 +392,11 @@ public class BolaFragment extends Fragment implements View.OnClickListener {
             imageHeader.setVisibility(View.VISIBLE);
             textHeader.setVisibility(View.VISIBLE);
             imageHeader.requestFocus();
-            if(menu != null) {
-                if(menu.hasVisibleItems()) {
-                    menu.removeItem(R.id.action_change_layout);
+            if (menu != null) {
+                if (menu.hasVisibleItems()) {
+                    if (menu.findItem(R.id.action_change_layout) != null) {
+                        menu.removeItem(R.id.action_change_layout);
+                    }
                 }
             }
             MenuItem mi = menu.add(Menu.NONE, R.id.action_change_layout, 2, "");
@@ -405,9 +408,11 @@ public class BolaFragment extends Fragment implements View.OnClickListener {
             imageHeader.setVisibility(View.GONE);
             textHeader.setVisibility(View.GONE);
             layoutTransparentHeader.setVisibility(View.GONE);
-            if(menu != null) {
-                if(menu.hasVisibleItems()) {
-                    menu.removeItem(R.id.action_change_layout);
+            if (menu != null) {
+                if (menu.hasVisibleItems()) {
+                    if (menu.findItem(R.id.action_change_layout) != null) {
+                        menu.removeItem(R.id.action_change_layout);
+                    }
                 }
             }
             MenuItem mi = menu.add(Menu.NONE, R.id.action_change_layout, 2, "");

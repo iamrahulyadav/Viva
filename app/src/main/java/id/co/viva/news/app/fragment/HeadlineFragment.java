@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -52,8 +53,8 @@ public class HeadlineFragment extends Fragment implements
         AdapterView.OnItemClickListener, View.OnClickListener, OnLoadMoreListener {
 
     private static String HEADLINES = "headlines";
-    private Activity mActivity;
     public static ArrayList<Headline> headlineArrayList;
+    private ActionBarActivity mActivity;
     private String lastPublished;
     private SwingBottomInAnimationAdapter swingBottomInAnimationAdapter;
     private HeadlineAdapter headlineAdapter;
@@ -80,11 +81,11 @@ public class HeadlineFragment extends Fragment implements
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        mActivity = activity;
         ColorDrawable colorDrawable = new ColorDrawable();
         colorDrawable.setColor(getResources().getColor(R.color.header_headline_terbaru_new));
-        activity.getActionBar().setBackgroundDrawable(colorDrawable);
-        activity.getActionBar().setIcon(R.drawable.logo_viva_coid_second);
+        mActivity = (ActionBarActivity) activity;
+        mActivity.getSupportActionBar().setBackgroundDrawable(colorDrawable);
+        mActivity.getSupportActionBar().setIcon(R.drawable.logo_viva_coid_second);
     }
 
     private Drawable getProgressDrawable() {

@@ -4,8 +4,8 @@ import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
@@ -43,7 +43,7 @@ import id.co.viva.news.app.model.Video;
 /**
  * Created by reza on 20/01/15.
  */
-public class ActFromUrl extends FragmentActivity implements View.OnClickListener {
+public class ActFromUrl extends ActionBarActivity implements View.OnClickListener {
 
     private boolean isInternetPresent = false;
     private ViewPager viewPager;
@@ -101,8 +101,8 @@ public class ActFromUrl extends FragmentActivity implements View.OnClickListener
         tvNoResult = (TextView) findViewById(R.id.text_no_result_detail_content);
         tvNoResult.setVisibility(View.GONE);
 
-        sliderContentImages = new ArrayList<SliderContentImage>();
-        videoArrayList = new ArrayList<Video>();
+        sliderContentImages = new ArrayList<>();
+        videoArrayList = new ArrayList<>();
 
         tvTitleDetail = (TextView) findViewById(R.id.title_detail_content);
         tvDateDetail = (TextView) findViewById(R.id.date_detail_content);
@@ -251,24 +251,25 @@ public class ActFromUrl extends FragmentActivity implements View.OnClickListener
 
     private void setHeaderActionbar(String fromkanal) {
         ColorDrawable colorDrawable = new ColorDrawable();
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
-        getActionBar().setDisplayShowTitleEnabled(false);
-        getActionBar().setIcon(R.drawable.logo_viva_coid_second);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
         if(fromkanal != null) {
             if(fromkanal.equalsIgnoreCase("bola")) {
                 colorDrawable.setColor(getResources().getColor(R.color.color_bola));
-                getActionBar().setBackgroundDrawable(colorDrawable);
+                getSupportActionBar().setBackgroundDrawable(colorDrawable);
+                getSupportActionBar().setTitle(R.string.label_item_navigation_bola);
             } else if(fromkanal.equalsIgnoreCase("vivalife")) {
                 colorDrawable.setColor(getResources().getColor(R.color.color_life));
-                getActionBar().setBackgroundDrawable(colorDrawable);
+                getSupportActionBar().setBackgroundDrawable(colorDrawable);
+                getSupportActionBar().setTitle(R.string.label_item_navigation_life);
             } else {
                 colorDrawable.setColor(getResources().getColor(R.color.color_news));
-                getActionBar().setBackgroundDrawable(colorDrawable);
+                getSupportActionBar().setBackgroundDrawable(colorDrawable);
+                getSupportActionBar().setTitle(R.string.label_item_navigation_news);
             }
         } else {
             colorDrawable.setColor(getResources().getColor(R.color.header_headline_terbaru_new));
-            getActionBar().setBackgroundDrawable(colorDrawable);
+            getSupportActionBar().setBackgroundDrawable(colorDrawable);
         }
     }
 

@@ -16,6 +16,9 @@
     <com.nhaarman.listviewanimations.itemmanipulation.DynamicListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="10dp"
         android:layout_below="@id/text_label_favorite"
         android:divider="@color/list_divider"
         android:dividerHeight="0dp"

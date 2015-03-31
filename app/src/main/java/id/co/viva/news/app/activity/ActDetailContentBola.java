@@ -2,8 +2,8 @@ package id.co.viva.news.app.activity;
 
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -15,28 +15,23 @@ import id.co.viva.news.app.model.ChannelBola;
 /**
  * Created by reza on 24/10/14.
  */
-public class ActDetailContentBola extends FragmentActivity {
+public class ActDetailContentBola extends ActionBarActivity {
 
     private String id;
+    private String channel_title;
     private ViewPager viewPager;
     private DetailContentAdapterBola adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         Bundle bundle = getIntent().getExtras();
         id = bundle.getString("id");
+        channel_title = bundle.getString("channel_title");
 
         setContentView(R.layout.act_detail_content);
 
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
-        ColorDrawable colorDrawable = new ColorDrawable();
-        colorDrawable.setColor(getResources().getColor(R.color.color_bola));
-        getActionBar().setBackgroundDrawable(colorDrawable);
-        getActionBar().setDisplayShowTitleEnabled(false);
-        getActionBar().setIcon(R.drawable.logo_viva_coid_second);
+        setActionBar();
 
         int position = 0;
         if(ActDetailChannelBola.channelBolaArrayList != null) {
@@ -55,6 +50,17 @@ public class ActDetailContentBola extends FragmentActivity {
         } else {
             Toast.makeText(this, R.string.label_error, Toast.LENGTH_SHORT).show();
             onBackPressed();
+        }
+    }
+
+    private void setActionBar() {
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        ColorDrawable colorDrawable = new ColorDrawable();
+        colorDrawable.setColor(getResources().getColor(R.color.color_bola));
+        getSupportActionBar().setBackgroundDrawable(colorDrawable);
+        if (channel_title != null) {
+            getSupportActionBar().setTitle(channel_title);
         }
     }
 

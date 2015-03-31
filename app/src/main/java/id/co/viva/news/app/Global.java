@@ -89,7 +89,7 @@ public class Global {
 
     public ArrayList<Favorites> getFavoritesList() {
         if(favoritesList == null) {
-            favoritesList = new ArrayList<Favorites>();
+            favoritesList = new ArrayList<>();
         }
         return favoritesList;
     }

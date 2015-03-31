@@ -2,6 +2,7 @@
 <resources>
 
     <string name="app_name">Viva</string>
+    <string name="app_title_empty"></string>
     <string name="title_failed_get_location">Gagal mendapatkan berita di sekitar anda!</string>
     <string name="title_no_connection_and_no_gps">Periksa kembali koneksi anda dan aktifkan GPS.</string>
     <string name="title_validate_rate">Anda belum melakukan rate artikel!</string>
@@ -12,8 +13,12 @@
     <string name="label_no_results">Tidak ada hasil.</string>
     <string name="label_no_results_favorite">Daftar favorite kosong.</string>
     <string name="label_related_article">Artikel Terkait</string>
+    <string name="label_pencarian">Pencarian</string>
+    <string name="label_terbaru_detail">Terbaru</string>
+    <string name="label_headline_detail">Headlines</string>
     <string name="label_terbaru">TERBARU</string>
     <string name="label_headline">HEADLINES</string>
+    <string name="label_berita_sekitar_detail">Berita Sekitar</string>
     <string name="label_berita_sekitar">BERITA SEKITAR</string>
     <string name="label_content_not_update">Gagal memperbaharui konten.</string>
     <string name="label_error">Terjadi Kesalahan!</string>

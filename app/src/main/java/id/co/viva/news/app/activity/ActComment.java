@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
@@ -36,7 +36,7 @@ import id.co.viva.news.app.services.UserAccount;
 /**
  * Created by reza on 03/12/14.
  */
-public class ActComment extends FragmentActivity implements View.OnClickListener,
+public class ActComment extends ActionBarActivity implements View.OnClickListener,
         OnCompleteListener, OnDoneListener {
 
     private String mImageUrl;
@@ -76,7 +76,7 @@ public class ActComment extends FragmentActivity implements View.OnClickListener
 
         isInternetPresent = Global.getInstance(this).getConnectionStatus().isConnectingToInternet();
 
-        commentArrayList = new ArrayList<Comment>();
+        commentArrayList = new ArrayList<>();
         mLayout = (LinearLayout)findViewById(R.id.background_label_comment);
         text_title = (TextView)findViewById(R.id.text_title_content_coment);
         text_label_comment = (TextView)findViewById(R.id.text_label_comment);
@@ -135,23 +135,23 @@ public class ActComment extends FragmentActivity implements View.OnClickListener
         if(kanal != null) {
             if(kanal.equalsIgnoreCase("bola")) {
                 colorDrawable.setColor(getResources().getColor(R.color.color_bola));
-                getActionBar().setBackgroundDrawable(colorDrawable);
+                getSupportActionBar().setBackgroundDrawable(colorDrawable);
                 mLayout.setBackgroundResource(R.color.color_bola);
                 btnSubmit.setBackgroundResource(R.color.color_bola);
             } else if(kanal.equalsIgnoreCase("vivalife")) {
                 colorDrawable.setColor(getResources().getColor(R.color.color_life));
-                getActionBar().setBackgroundDrawable(colorDrawable);
+                getSupportActionBar().setBackgroundDrawable(colorDrawable);
                 mLayout.setBackgroundResource(R.color.color_life);
                 btnSubmit.setBackgroundResource(R.color.color_life);
             } else {
                 colorDrawable.setColor(getResources().getColor(R.color.color_news));
-                getActionBar().setBackgroundDrawable(colorDrawable);
+                getSupportActionBar().setBackgroundDrawable(colorDrawable);
                 mLayout.setBackgroundResource(R.color.color_news);
                 btnSubmit.setBackgroundResource(R.color.color_news);
             }
         } else {
             colorDrawable.setColor(getResources().getColor(R.color.header_headline_terbaru_new));
-            getActionBar().setBackgroundDrawable(colorDrawable);
+            getSupportActionBar().setBackgroundDrawable(colorDrawable);
             mLayout.setBackgroundResource(R.color.header_headline_terbaru_new);
             btnSubmit.setBackgroundResource(R.color.header_headline_terbaru_new);
         }
@@ -213,12 +213,12 @@ public class ActComment extends FragmentActivity implements View.OnClickListener
     }
 
     private void getHeaderActionBar() {
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
-        getActionBar().setDisplayShowTitleEnabled(true);
-        getActionBar().setIcon(new ColorDrawable(getResources().
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
+        getSupportActionBar().setIcon(new ColorDrawable(getResources().
                 getColor(android.R.color.transparent)));
-        getActionBar().setTitle("Komentar");
+        getSupportActionBar().setTitle("Komentar");
     }
 
     @Override

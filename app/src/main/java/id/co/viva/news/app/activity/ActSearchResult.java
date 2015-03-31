@@ -4,14 +4,14 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ImageView;
-import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,7 +41,7 @@ import id.co.viva.news.app.services.Analytics;
 /**
  * Created by reza on 13/10/14.
  */
-public class ActSearchResult extends FragmentActivity implements
+public class ActSearchResult extends ActionBarActivity implements
         AdapterView.OnItemClickListener, OnLoadMoreListener {
 
     private TextView tvSearchResult;
@@ -72,12 +72,13 @@ public class ActSearchResult extends FragmentActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act_search_result);
 
-        getActionBar().setTitle("Pencarian");
+        getSupportActionBar()
+                .setTitle(getResources().getString(R.string.label_pencarian));
 
         isInternetPresent = Global.getInstance(this).
                 getConnectionStatus().isConnectingToInternet();
 
-        resultArrayList = new ArrayList<SearchResult>();
+        resultArrayList = new ArrayList<>();
         searchResultAdapter = new SearchResultAdapter(this, resultArrayList);
 
         tvSearchResult = (TextView)findViewById(R.id.text_search_result);
@@ -155,8 +156,9 @@ public class ActSearchResult extends FragmentActivity implements
                 public void onErrorResponse(VolleyError volleyError) {
                     volleyError.getMessage();
                     progressWheel.setVisibility(View.GONE);
-                    SearchView searchView =
-                            (SearchView) mMenu.findItem(R.id.action_search).getActionView();
+                    MenuItem searchItem = mMenu.findItem(R.id.action_search);
+                    android.support.v7.widget.SearchView searchView =
+                            (android.support.v7.widget.SearchView) MenuItemCompat.getActionView(searchItem);
                     searchView.setIconified(false);
                 }
             });
@@ -175,7 +177,6 @@ public class ActSearchResult extends FragmentActivity implements
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
         if(resultArrayList.size() > 0) {
             SearchResult searchResult = resultArrayList.get(position);
-            Log.i(Constant.TAG, "ID : " + searchResult.getId());
             Bundle bundle = new Bundle();
             bundle.putString("id", searchResult.getId());
             bundle.putString("type", "search");
@@ -193,22 +194,16 @@ public class ActSearchResult extends FragmentActivity implements
         mMenu = menu;
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_frag_default, menu);
-
+        //SearchView OnClick
         SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView =
-                (SearchView) menu.findItem(R.id.action_search).getActionView();
-        searchView.setSearchableInfo(
-                searchManager.getSearchableInfo(getComponentName()));
-
-        int searchImgId = getResources().getIdentifier("android:id/search_button", null, null);
-        ImageView v = (ImageView) searchView.findViewById(searchImgId);
-        v.setImageResource(R.drawable.ic_action_search);
-
-        int searchTextViewId = searchView.getContext().getResources().getIdentifier("android:id/search_src_text", null, null);
-        TextView searchTextView = (TextView) searchView.findViewById(searchTextViewId);
-        searchTextView.setHintTextColor(getResources().getColor(R.color.white));
-
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        android.support.v7.widget.SearchView searchView =
+                (android.support.v7.widget.SearchView) MenuItemCompat.getActionView(searchItem);
+        if (searchView != null) {
+            searchView.setSearchableInfo(
+                    searchManager.getSearchableInfo(getComponentName()));
+        }
         return true;
     }
 

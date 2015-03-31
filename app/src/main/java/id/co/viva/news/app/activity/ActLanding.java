@@ -10,10 +10,10 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.ActionBarDrawerToggle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -23,7 +23,6 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
-import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,20 +48,18 @@ import id.co.viva.news.app.interfaces.Item;
 import id.co.viva.news.app.model.NavigationItem;
 import id.co.viva.news.app.model.NavigationSectionItem;
 
-public class ActLanding extends FragmentActivity implements View.OnClickListener {
+public class ActLanding extends ActionBarActivity implements View.OnClickListener {
 
     private DrawerLayout mDrawerLayout;
-    private CharSequence mTitle;
     private ListView mDrawerList;
-    private ActionBarDrawerToggle mDrawerToggle;
+    private android.support.v7.app.ActionBarDrawerToggle mDrawerToggle;
     private ArrayList<Item> navDrawerItems;
     private NavigationAdapter adapter;
-    private CharSequence mDrawerTitle;
     private android.support.v4.app.Fragment fragment = null;
     private android.support.v4.app.FragmentManager fragmentManager;
-    private String fullname;
-    private String email;
-    private String photourl;
+    private String mFullname;
+    private String mEmail;
+    private String mPhotourl;
     private RelativeLayout mNavLayout;
     private ImageView mBackground;
     private ImageView mImgProfile;
@@ -78,7 +75,6 @@ public class ActLanding extends FragmentActivity implements View.OnClickListener
         isInternetPresent = Global.getInstance(this)
                 .getConnectionStatus().isConnectingToInternet();
 
-        mTitle = mDrawerTitle = getTitle();
         getProfile();
         defineViews();
         defineItemList();
@@ -89,17 +85,12 @@ public class ActLanding extends FragmentActivity implements View.OnClickListener
 
         showHeaderActionBar();
 
-        mDrawerToggle = new ActionBarDrawerToggle(this,
+        mDrawerToggle = new android.support.v7.app.ActionBarDrawerToggle(this,
                 mDrawerLayout,
-                R.drawable.ic_drawer,
-                R.string.app_name,
-                R.string.app_name) {
-            public void onDrawerClosed(View view) {
-                getActionBar().setTitle(mTitle);
-            }
-            public void onDrawerOpened(View drawerView) {
-                getActionBar().setTitle(mDrawerTitle);
-            }
+                R.string.app_title_empty,
+                R.string.app_title_empty) {
+            public void onDrawerClosed(View view) {}
+            public void onDrawerOpened(View drawerView) {}
             @Override
             public void setDrawerIndicatorEnabled(boolean enable) {
                 super.setDrawerIndicatorEnabled(enable);
@@ -161,7 +152,7 @@ public class ActLanding extends FragmentActivity implements View.OnClickListener
     @Override
     public void onClick(View view) {
         if(view.getId() == R.id.profile_bg) {
-            if(fullname.length() > 0 && email.length() > 0) {
+            if(mFullname.length() > 0 && mEmail.length() > 0) {
                 Intent intent = new Intent(this, ActUserProfile.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
@@ -183,10 +174,11 @@ public class ActLanding extends FragmentActivity implements View.OnClickListener
     }
 
     private void showHeaderActionBar() {
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
-        getActionBar().setIcon(R.drawable.logo_viva_coid_second);
-        getActionBar().setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setIcon(R.drawable.logo_viva_coid_second);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
     }
 
     private void rateApp() {
@@ -200,7 +192,7 @@ public class ActLanding extends FragmentActivity implements View.OnClickListener
     }
 
     private void defineItemList() {
-        navDrawerItems = new ArrayList<Item>();
+        navDrawerItems = new ArrayList<>();
         navDrawerItems.add(new NavigationItem(getResources().getString(R.string.label_item_navigation_terbaru), R.drawable.icon_headline));
         navDrawerItems.add(new NavigationItem(getResources().getString(R.string.label_item_navigation_headline), R.drawable.icon_terbaru));
         navDrawerItems.add(new NavigationItem(getResources().getString(R.string.label_item_navigation_search_by_location), R.drawable.icon_search_location));
@@ -223,16 +215,16 @@ public class ActLanding extends FragmentActivity implements View.OnClickListener
         mBackground.setOnClickListener(this);
         mNameProfile = (TextView) findViewById(R.id.tv_username);
         mEmailProfile = (TextView) findViewById(R.id.tv_user_email);
-        if(fullname.length() > 0 && email.length() > 0) {
-            mNameProfile.setText(fullname);
-            mEmailProfile.setText(email);
+        if(mFullname.length() > 0 && mEmail.length() > 0) {
+            mNameProfile.setText(mFullname);
+            mEmailProfile.setText(mEmail);
         } else {
             mNameProfile.setText(getResources().getString(R.string.label_not_logged_in));
         }
-        if(photourl.length() > 0) {
+        if(mPhotourl.length() > 0) {
             if(isInternetPresent) {
-                Picasso.with(this).load(photourl).transform(new CropSquareTransformation()).into(mImgProfile);
-                Picasso.with(this).load(photourl).transform(new CropSquareTransformation()).into(target);
+                Picasso.with(this).load(mPhotourl).transform(new CropSquareTransformation()).into(mImgProfile);
+                Picasso.with(this).load(mPhotourl).transform(new CropSquareTransformation()).into(target);
             } else {
                 mImgProfile.setImageResource(R.drawable.ic_profile);
             }
@@ -263,11 +255,11 @@ public class ActLanding extends FragmentActivity implements View.OnClickListener
 
     private void getProfile() {
         Global.getInstance(this).getDefaultEditor();
-        fullname = Global.getInstance(this).getSharedPreferences(this)
+        mFullname = Global.getInstance(this).getSharedPreferences(this)
                 .getString(Constant.LOGIN_STATES_FULLNAME, "");
-        email = Global.getInstance(this).getSharedPreferences(this)
+        mEmail = Global.getInstance(this).getSharedPreferences(this)
                 .getString(Constant.LOGIN_STATES_EMAIL, "");
-        photourl = Global.getInstance(this).getSharedPreferences(this)
+        mPhotourl = Global.getInstance(this).getSharedPreferences(this)
                 .getString(Constant.LOGIN_STATES_URL_PHOTO, "");
     }
 
@@ -275,8 +267,8 @@ public class ActLanding extends FragmentActivity implements View.OnClickListener
     public boolean onPrepareOptionsMenu(Menu menu) {
         if(fragment != null) {
             if(fragment.getClass().toString().equals(Constant.fragment_bola)
-            || fragment.getClass().toString().equals(Constant.fragment_life)
-            || fragment.getClass().toString().equals(Constant.fragment_news)) {
+                    || fragment.getClass().toString().equals(Constant.fragment_life)
+                    || fragment.getClass().toString().equals(Constant.fragment_news)) {
                 if(mDrawerLayout.isDrawerOpen(mNavLayout)) {
                     menu.findItem(R.id.action_change_layout).setEnabled(false);
                 } else {
@@ -303,22 +295,16 @@ public class ActLanding extends FragmentActivity implements View.OnClickListener
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_frag_default, menu);
-
+        //SearchView OnClick
         SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView =
-                (SearchView) menu.findItem(R.id.action_search).getActionView();
-        searchView.setSearchableInfo(
-                searchManager.getSearchableInfo(getComponentName()));
-
-        int searchImgId = getResources().getIdentifier("android:id/search_button", null, null);
-        ImageView v = (ImageView) searchView.findViewById(searchImgId);
-        v.setImageResource(R.drawable.ic_action_search);
-
-        int searchTextViewId = searchView.getContext().getResources().getIdentifier("android:id/search_src_text", null, null);
-        TextView searchTextView = (TextView) searchView.findViewById(searchTextViewId);
-        searchTextView.setHintTextColor(getResources().getColor(R.color.white));
-
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        android.support.v7.widget.SearchView searchView =
+                (android.support.v7.widget.SearchView) MenuItemCompat.getActionView(searchItem);
+        if (searchView != null) {
+            searchView.setSearchableInfo(
+                    searchManager.getSearchableInfo(getComponentName()));
+        }
         return true;
     }
 

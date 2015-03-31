@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -27,7 +27,7 @@ import id.co.viva.news.app.services.UserAccount;
 /**
  * Created by reza on 05/12/14.
  */
-public class ActRating extends FragmentActivity implements OnCompleteListener,
+public class ActRating extends ActionBarActivity implements OnCompleteListener,
         View.OnClickListener, RatingBar.OnRatingBarChangeListener {
 
     private String mImageUrl;
@@ -115,23 +115,23 @@ public class ActRating extends FragmentActivity implements OnCompleteListener,
         if(kanal != null) {
             if(kanal.equalsIgnoreCase("bola")) {
                 colorDrawable.setColor(getResources().getColor(R.color.color_bola));
-                getActionBar().setBackgroundDrawable(colorDrawable);
+                getSupportActionBar().setBackgroundDrawable(colorDrawable);
                 mLayout.setBackgroundResource(R.color.color_bola);
                 btnRate.setBackgroundResource(R.color.color_bola);
             } else if(kanal.equalsIgnoreCase("vivalife")) {
                 colorDrawable.setColor(getResources().getColor(R.color.color_life));
-                getActionBar().setBackgroundDrawable(colorDrawable);
+                getSupportActionBar().setBackgroundDrawable(colorDrawable);
                 mLayout.setBackgroundResource(R.color.color_life);
                 btnRate.setBackgroundResource(R.color.color_life);
             } else {
                 colorDrawable.setColor(getResources().getColor(R.color.color_news));
-                getActionBar().setBackgroundDrawable(colorDrawable);
+                getSupportActionBar().setBackgroundDrawable(colorDrawable);
                 mLayout.setBackgroundResource(R.color.color_news);
                 btnRate.setBackgroundResource(R.color.color_news);
             }
         } else {
             colorDrawable.setColor(getResources().getColor(R.color.header_headline_terbaru_new));
-            getActionBar().setBackgroundDrawable(colorDrawable);
+            getSupportActionBar().setBackgroundDrawable(colorDrawable);
             mLayout.setBackgroundResource(R.color.header_headline_terbaru_new);
             btnRate.setBackgroundResource(R.color.header_headline_terbaru_new);
         }
@@ -139,12 +139,12 @@ public class ActRating extends FragmentActivity implements OnCompleteListener,
     }
 
     private void getHeaderActionBar() {
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
-        getActionBar().setDisplayShowTitleEnabled(true);
-        getActionBar().setIcon(new ColorDrawable(getResources().
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
+        getSupportActionBar().setIcon(new ColorDrawable(getResources().
                 getColor(android.R.color.transparent)));
-        getActionBar().setTitle("Rate Artikel");
+        getSupportActionBar().setTitle("Rate Artikel");
     }
 
     @Override
