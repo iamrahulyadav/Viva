@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -75,58 +76,77 @@ public class ChannelListTypeAdapter extends BaseAdapter {
     public View getView(int position, View view, ViewGroup viewGroup) {
         ViewHolder holder;
 
-        if(view == null) {
+        if (view == null) {
             LayoutInflater inflater = LayoutInflater.from(context);
             view = inflater.inflate(R.layout.item_channel_type_list, null);
             holder = new ViewHolder();
             holder.image_item_channel = (ImageView) view.findViewById(R.id.item_image_channel_list_type);
             holder.title_item_channel = (TextView) view.findViewById(R.id.item_title_channel_list_type);
+            holder.transparent_layout = (RelativeLayout) view.findViewById(R.id.item_image_channel_list_type_transparent);
             view.setTag(holder);
         } else {
             holder = (ViewHolder) view.getTag();
         }
 
-        if(mType.equalsIgnoreCase(Constant.ADAPTER_CHANNEL_BOLA)) {
+        if (mType.equalsIgnoreCase(Constant.ADAPTER_CHANNEL_BOLA)) {
             FeaturedBola featuredBola = featuredBolaArrayList.get(position);
             if(holder.title_item_channel != null) {
                 if(featuredBola.getChannel_title().length() > 0) {
                     holder.title_item_channel.setText(featuredBola.getChannel_title().toUpperCase());
                 }
             }
-            if(holder.image_item_channel != null) {
+            if (holder.image_item_channel != null) {
                 if(featuredBola.getImage_url().length() > 0) {
                     Picasso.with(context).load(featuredBola.getImage_url())
                             .transform(new CropSquareTransformation()).into(holder.image_item_channel);
+                    if (Constant.isTablet(context)) {
+                        holder.image_item_channel.getLayoutParams().height = Constant.getDynamicImageSize(context, Constant.DYNAMIC_SIZE_LIST_TYPE);
+                        holder.transparent_layout.getLayoutParams().height = Constant.getDynamicImageSize(context, Constant.DYNAMIC_SIZE_LIST_TYPE);
+                        holder.image_item_channel.requestLayout();
+                        holder.transparent_layout.requestLayout();
+                    }
                 } else {
                     holder.image_item_channel.setImageResource(R.drawable.default_image);
                 }
             }
-        } else if(mType.equalsIgnoreCase(Constant.ADAPTER_CHANNEL_LIFE)) {
+        } else if (mType.equalsIgnoreCase(Constant.ADAPTER_CHANNEL_LIFE)) {
             FeaturedLife featuredLife = featuredLifeArrayList.get(position);
-            if(holder.title_item_channel != null) {
-                if(featuredLife.getChannel_title().length() > 0) {
+            if (holder.title_item_channel != null) {
+                if (featuredLife.getChannel_title().length() > 0) {
                     holder.title_item_channel.setText(featuredLife.getChannel_title().toUpperCase());
                 }
             }
-            if(holder.image_item_channel != null) {
-                if(featuredLife.getImage_url().length() > 0) {
+            if (holder.image_item_channel != null) {
+                if (featuredLife.getImage_url().length() > 0) {
                     Picasso.with(context).load(featuredLife.getImage_url())
                             .transform(new CropSquareTransformation()).into(holder.image_item_channel);
+                    if (Constant.isTablet(context)) {
+                        holder.image_item_channel.getLayoutParams().height = Constant.getDynamicImageSize(context, Constant.DYNAMIC_SIZE_LIST_TYPE);
+                        holder.transparent_layout.getLayoutParams().height = Constant.getDynamicImageSize(context, Constant.DYNAMIC_SIZE_LIST_TYPE);
+                        holder.image_item_channel.requestLayout();
+                        holder.transparent_layout.requestLayout();
+                    }
                 } else {
                     holder.image_item_channel.setImageResource(R.drawable.default_image);
                 }
             }
-        } else if(mType.equalsIgnoreCase(Constant.ADAPTER_CHANNEL_NEWS)) {
+        } else if (mType.equalsIgnoreCase(Constant.ADAPTER_CHANNEL_NEWS)) {
             FeaturedNews featuredNews = featuredNewsArrayList.get(position);
-            if(holder.title_item_channel != null) {
-                if(featuredNews.getChannel_title().length() > 0) {
+            if (holder.title_item_channel != null) {
+                if (featuredNews.getChannel_title().length() > 0) {
                     holder.title_item_channel.setText(featuredNews.getChannel_title().toUpperCase());
                 }
             }
-            if(holder.image_item_channel != null) {
-                if(featuredNews.getImage_url().length() > 0) {
+            if (holder.image_item_channel != null) {
+                if (featuredNews.getImage_url().length() > 0) {
                     Picasso.with(context).load(featuredNews.getImage_url())
                             .transform(new CropSquareTransformation()).into(holder.image_item_channel);
+                    if (Constant.isTablet(context)) {
+                        holder.image_item_channel.getLayoutParams().height = Constant.getDynamicImageSize(context, Constant.DYNAMIC_SIZE_LIST_TYPE);
+                        holder.transparent_layout.getLayoutParams().height = Constant.getDynamicImageSize(context, Constant.DYNAMIC_SIZE_LIST_TYPE);
+                        holder.image_item_channel.requestLayout();
+                        holder.transparent_layout.requestLayout();
+                    }
                 } else {
                     holder.image_item_channel.setImageResource(R.drawable.default_image);
                 }
@@ -139,6 +159,7 @@ public class ChannelListTypeAdapter extends BaseAdapter {
     private static class ViewHolder {
         public ImageView image_item_channel;
         public TextView title_item_channel;
+        public RelativeLayout transparent_layout;
     }
 
 }

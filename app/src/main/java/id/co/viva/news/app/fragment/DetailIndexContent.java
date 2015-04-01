@@ -215,19 +215,19 @@ public class DetailIndexContent extends Fragment implements
         listView.setOnItemClickListener(this);
 
         if(relatedArticleArrayList == null) {
-            relatedArticleArrayList = new ArrayList<RelatedArticle>();
+            relatedArticleArrayList = new ArrayList<>();
         }
 
         if(commentArrayList == null) {
-            commentArrayList = new ArrayList<Comment>();
+            commentArrayList = new ArrayList<>();
         }
 
         if(sliderContentImages == null) {
-            sliderContentImages = new ArrayList<SliderContentImage>();
+            sliderContentImages = new ArrayList<>();
         }
 
         if(videoArrayList == null) {
-            videoArrayList = new ArrayList<Video>();
+            videoArrayList = new ArrayList<>();
         }
 
         if(layoutCommentPreview == null) {
@@ -298,6 +298,13 @@ public class DetailIndexContent extends Fragment implements
         }
         textLinkVideo.setOnClickListener(this);
         textLinkVideo.setVisibility(View.GONE);
+
+        if (Constant.isTablet(mActivity)) {
+            ivThumbDetail.getLayoutParams().height =
+                    Constant.getDynamicImageSize(mActivity, Constant.DYNAMIC_SIZE_GRID_TYPE);
+            viewPager.getLayoutParams().height =
+                    Constant.getDynamicImageSize(mActivity, Constant.DYNAMIC_SIZE_SLIDER_TYPE);
+        }
 
         if(isInternetPresent) {
             StringRequest request = new StringRequest(Request.Method.GET, Constant.NEW_DETAIL + "/id/" + id,

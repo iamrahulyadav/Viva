@@ -287,6 +287,12 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
         textLinkVideo.setOnClickListener(this);
         textLinkVideo.setVisibility(View.GONE);
 
+        if (Constant.isTablet(mActivity)) {
+            ivThumbDetailHeadline.getLayoutParams().height =
+                    Constant.getDynamicImageSize(mActivity, Constant.DYNAMIC_SIZE_GRID_TYPE);
+            viewPager.getLayoutParams().height =
+                    Constant.getDynamicImageSize(mActivity, Constant.DYNAMIC_SIZE_SLIDER_TYPE);
+        }
     }
 
     @Override

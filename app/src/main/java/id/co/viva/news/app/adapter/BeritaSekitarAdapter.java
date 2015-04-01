@@ -68,7 +68,7 @@ public class BeritaSekitarAdapter extends BaseAdapter {
             Picasso.with(context).load(beritaSekitar.getImage_url())
                     .transform(new CropSquareTransformation()).into(holder.icon_item_news);
             if (Constant.isTablet(context)) {
-                holder.icon_item_news.getLayoutParams().height = Constant.getDynamicImageSize(context);
+                holder.icon_item_news.getLayoutParams().height = Constant.getDynamicImageSize(context, Constant.DYNAMIC_SIZE_LIST_TYPE);
                 holder.icon_item_news.requestLayout();
             }
         }

@@ -116,6 +116,12 @@ public class ActDetailFavorite extends ActionBarActivity implements View.OnClick
         viewPager = (ViewPager) findViewById(R.id.horizontal_list);
         linePageIndicator = (LinePageIndicator)findViewById(R.id.indicator);
         linePageIndicator.setVisibility(View.GONE);
+        if (Constant.isTablet(this)) {
+            imageDetail.getLayoutParams().height =
+                    Constant.getDynamicImageSize(this, Constant.DYNAMIC_SIZE_GRID_TYPE);
+            viewPager.getLayoutParams().height =
+                    Constant.getDynamicImageSize(this, Constant.DYNAMIC_SIZE_SLIDER_TYPE);
+        }
     }
 
     private void getHeaderActionBar() {

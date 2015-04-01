@@ -149,13 +149,18 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
 
         ivThumbDetail = (KenBurnsView) findViewById(R.id.thumb_detail_content);
         ivThumbDetail.setOnClickListener(this);
-        ivThumbDetail.setFocusable(true);
         ivThumbDetail.setFocusableInTouchMode(true);
-        ivThumbDetail.requestFocus();
 
         textLinkVideo = (TextView) findViewById(R.id.text_move_video);
         textLinkVideo.setOnClickListener(this);
         textLinkVideo.setVisibility(View.GONE);
+
+        if (Constant.isTablet(this)) {
+            ivThumbDetail.getLayoutParams().height =
+                    Constant.getDynamicImageSize(this, Constant.DYNAMIC_SIZE_GRID_TYPE);
+            viewPager.getLayoutParams().height =
+                    Constant.getDynamicImageSize(this, Constant.DYNAMIC_SIZE_SLIDER_TYPE);
+        }
     }
 
     private void goDetailPhoto() {

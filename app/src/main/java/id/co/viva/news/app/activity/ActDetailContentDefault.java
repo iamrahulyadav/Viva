@@ -461,6 +461,13 @@ public class ActDetailContentDefault extends ActionBarActivity
         textLinkVideo = (TextView)findViewById(R.id.text_move_video);
         textLinkVideo.setOnClickListener(this);
         textLinkVideo.setVisibility(View.GONE);
+
+        if (Constant.isTablet(this)) {
+            ivThumbDetail.getLayoutParams().height =
+                    Constant.getDynamicImageSize(this, Constant.DYNAMIC_SIZE_GRID_TYPE);
+            viewPager.getLayoutParams().height =
+                    Constant.getDynamicImageSize(this, Constant.DYNAMIC_SIZE_SLIDER_TYPE);
+        }
     }
 
     @Override

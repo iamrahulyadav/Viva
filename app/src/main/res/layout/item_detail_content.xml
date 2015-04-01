@@ -19,7 +19,7 @@
                 android:id="@+id/thumb_detail_content"
                 android:layout_width="match_parent"
                 android:layout_height="220dp"
-                android:scaleType="fitXY"/>
+                android:scaleType="centerCrop"/>
         </RelativeLayout>
         <RelativeLayout
             android:layout_width="match_parent"

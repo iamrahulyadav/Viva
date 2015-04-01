@@ -108,6 +108,11 @@ public class BolaFragment extends Fragment implements View.OnClickListener {
         layoutTransparentHeader = (RelativeLayout) rootView.findViewById(R.id.header_grid_bola_transparent);
         layoutTransparentHeader.setVisibility(View.GONE);
 
+        if (Constant.isTablet(getActivity())) {
+            imageHeader.getLayoutParams().height = Constant.getDynamicImageSize(getActivity(), Constant.DYNAMIC_SIZE_GRID_TYPE);
+            layoutTransparentHeader.getLayoutParams().height = Constant.getDynamicImageSize(getActivity(), Constant.DYNAMIC_SIZE_GRID_TYPE);
+        }
+
         progressWheel = (ProgressWheel) rootView.findViewById(R.id.progress_wheel);
         progressWheel.setVisibility(View.VISIBLE);
 

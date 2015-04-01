@@ -11,7 +11,6 @@ import android.renderscript.Allocation;
 import android.renderscript.Element;
 import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
-import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,6 +36,14 @@ public class Constant {
     public static final String CODE_GPLUS = "13";
 
     public static final int MIN_TIME_BW_UPDATES = 20000;
+
+    private static int PADDING_DYNAMIC_SIZE_GRID = 500;
+    private static int PADDING_DYNAMIC_SIZE = 200;
+    private static int PADDING_DYNAMIC_SIZE_SLIDER = 800;
+
+    public static String DYNAMIC_SIZE_GRID_TYPE = "grid_type";
+    public static String DYNAMIC_SIZE_LIST_TYPE = "list_type";
+    public static String DYNAMIC_SIZE_SLIDER_TYPE = "slider_type";
 
     public static final String TAG_LOCATION_NAME = "nama";
     public static final String TAG_LOCATION_PROVINCE_ID = "id_propinsi";
@@ -263,12 +270,19 @@ public class Constant {
         }
     }
 
-    public static int getDynamicImageSize(Context mCtx) {
+    public static int getDynamicImageSize(Context mCtx, String mType) {
         WindowManager wm = (WindowManager) mCtx.getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
-        int width = size.x;
+        int width = 0;
+        if (mType.equals(Constant.DYNAMIC_SIZE_LIST_TYPE)) {
+            width = size.x - PADDING_DYNAMIC_SIZE;
+        } else if (mType.equals(Constant.DYNAMIC_SIZE_GRID_TYPE)) {
+            width = size.x - PADDING_DYNAMIC_SIZE_GRID;
+        } else if (mType.equals(DYNAMIC_SIZE_SLIDER_TYPE)) {
+            width = size.x - PADDING_DYNAMIC_SIZE_SLIDER;
+        }
         return width;
     }
 
@@ -279,7 +293,6 @@ public class Constant {
     }
 
     public static String getArticleViva(String url) {
-        Log.i(Constant.TAG, "URL : " + url);
         String[] separated = url.split("/");
         String urlSplit;
         if (separated.length < 5) {
@@ -287,10 +300,8 @@ public class Constant {
         } else {
             urlSplit = separated[5];
         }
-        Log.i(Constant.TAG, "URL Split : " + urlSplit);
         String[] splitter = urlSplit.split("-");
         String article_id = splitter[0];
-        Log.i(Constant.TAG, "Article Id : " + article_id);
         return  article_id;
     }
 

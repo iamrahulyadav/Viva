@@ -24,7 +24,6 @@ public class ActDetailPhotoThumb extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        getWindow().requestFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
         getHeaderActionBar();
 
         Bundle bundle = getIntent().getExtras();

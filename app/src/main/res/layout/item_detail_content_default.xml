@@ -19,7 +19,7 @@
                 android:id="@+id/thumb_detail_content_default"
                 android:layout_width="match_parent"
                 android:layout_height="220dp"
-                android:scaleType="fitXY"/>
+                android:scaleType="centerCrop"/>
         </RelativeLayout>
         <RelativeLayout
             android:layout_width="match_parent"
@@ -67,6 +67,7 @@
                 android:id="@+id/horizontal_list"/>
             <com.viewpagerindicator.LinePageIndicator
                 android:id="@+id/indicator"
+                android:layout_marginTop="5dp"
                 android:layout_marginBottom="15dp"
                 android:layout_height="wrap_content"
                 android:layout_width="fill_parent"

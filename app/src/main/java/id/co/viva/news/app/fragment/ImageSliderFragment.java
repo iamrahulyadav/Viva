@@ -11,6 +11,7 @@ import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 
+import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.activity.ActDetailPhotoThumb;
 import id.co.viva.news.app.component.CropSquareTransformation;
@@ -46,7 +47,14 @@ public class ImageSliderFragment extends Fragment implements View.OnClickListene
         imageView = (ImageView) rootView.findViewById(R.id.image_item_slider_detail);
         imageView.setOnClickListener(this);
         if(mPhotoUrl.length() > 0) {
-            Picasso.with(getActivity()).load(mPhotoUrl).transform(new CropSquareTransformation()).into(imageView);
+            if (getActivity() != null) {
+                if (Constant.isTablet(getActivity())) {
+                    imageView.getLayoutParams().height =
+                            Constant.getDynamicImageSize(getActivity(), Constant.DYNAMIC_SIZE_SLIDER_TYPE);
+                }
+            }
+            Picasso.with(getActivity()).load(mPhotoUrl)
+                    .transform(new CropSquareTransformation()).into(imageView);
         }
         return rootView;
     }
