@@ -45,6 +45,9 @@ public class Constant {
     public static String DYNAMIC_SIZE_LIST_TYPE = "list_type";
     public static String DYNAMIC_SIZE_SLIDER_TYPE = "slider_type";
 
+    public static String SUPPPORT_EMAIL = "mobile-developer@viva.co.id";
+    public static String EMAIL_SCHEME = "mailto";
+
     public static final String TAG_LOCATION_NAME = "nama";
     public static final String TAG_LOCATION_PROVINCE_ID = "id_propinsi";
     public static final String TAG_LOCATION_KABUPATEN_ID = "id_kabupaten";
@@ -205,7 +208,7 @@ public class Constant {
     public static final String FAVORITES_PAGE_DETAIL = "FAVORITES_PAGE_DETAIL_";
     public static final String COMMENTED_ARTICLE = "COMMENTED_ARTICLE";
     public static final String RATING_ARTICLE = "RATING_ARTICLE";
-    public static final String ARTICLE_FROM_NOTIFICATION = "ARTICLE_FROM_NOTIFICATION";
+    public static final String ARTICLE_FROM_NOTIFICATION = "DETAIL_ARTICLE";
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     public static Bitmap blur(Context ctx, Bitmap image) {

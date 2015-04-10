@@ -26,6 +26,7 @@ public class DetailHeadlineAdapter extends FragmentStatePagerAdapter {
     private FragmentTransaction mCurTransaction = null;
     private ArrayList<Fragment.SavedState> mSavedState = new ArrayList<Fragment.SavedState>();
     private final FragmentManager mFragmentManager;
+    private int mPosition;
 
     public DetailHeadlineAdapter(FragmentManager fragmentManager, ArrayList<Headline> headlineList) {
         super(fragmentManager);
@@ -35,9 +36,19 @@ public class DetailHeadlineAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
+        mPosition = position;
         return DetailMainIndexFragment
                 .newInstance(headlineList.get(position).getId(),
                         Constant.HEADLINE_DETAIL_PAGE);
+    }
+
+    @Override
+    public int getItemPosition(Object object) {
+        if (mPosition >= 0) {
+            return mPosition;
+        } else {
+            return POSITION_NONE;
+        }
     }
 
     @Override

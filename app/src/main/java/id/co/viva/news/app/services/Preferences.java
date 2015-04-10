@@ -27,8 +27,8 @@ public class Preferences {
 
     public Preferences() {}
 
-    public static void setGCMClientId(String gcm_client_id) {
-        gcm_client_id = gcm_client_id;
+    public static void setGCMClientId(String m_gcm_client_id) {
+        gcm_client_id = m_gcm_client_id;
     }
 
     public static String getGCMRegId() {

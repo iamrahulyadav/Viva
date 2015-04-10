@@ -140,150 +140,56 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
 
     private void defineViews(View view) {
         //Viewpager Image
-        if(viewPager == null) {
-            viewPager = (ViewPager) view.findViewById(R.id.horizontal_list);
-            view.setTag(viewPager);
-        } else {
-            viewPager = (ViewPager) view.getTag();
-        }
+        viewPager = (ViewPager) view.findViewById(R.id.horizontal_list);
         viewPager.setVisibility(View.GONE);
 
         //Indicator Slider Image
-        if(linePageIndicator == null) {
-            linePageIndicator = (LinePageIndicator) view.findViewById(R.id.indicator);
-            view.setTag(linePageIndicator);
-        } else {
-            linePageIndicator = (LinePageIndicator) view.getTag();
-        }
+        linePageIndicator = (LinePageIndicator) view.findViewById(R.id.indicator);
         linePageIndicator.setVisibility(View.GONE);
 
         //Layout Comment
-        if(layoutCommentPreview == null) {
-            layoutCommentPreview = (LinearLayout) view.findViewById(R.id.layout_preview_comment_list);
-            view.setTag(layoutCommentPreview);
-        } else {
-            layoutCommentPreview = (LinearLayout) view.getTag();
-        }
+        layoutCommentPreview = (LinearLayout) view.findViewById(R.id.layout_preview_comment_list);
         layoutCommentPreview.setOnClickListener(this);
         layoutCommentPreview.setVisibility(View.GONE);
 
         //Preview Comment
-        if(tvPreviewCommentContent == null) {
-            tvPreviewCommentContent = (TextView) view.findViewById(R.id.text_preview_comment_content);
-            view.setTag(tvPreviewCommentContent);
-        } else {
-            tvPreviewCommentContent = (TextView) view.getTag();
-        }
+        tvPreviewCommentContent = (TextView) view.findViewById(R.id.text_preview_comment_content);
 
         //Preview Comment User
-        if(tvPreviewCommentUser == null) {
-            tvPreviewCommentUser = (TextView) view.findViewById(R.id.text_preview_comment_user);
-            view.setTag(tvPreviewCommentUser);
-        } else {
-            tvPreviewCommentUser = (TextView) view.getTag();
-        }
+        tvPreviewCommentUser = (TextView) view.findViewById(R.id.text_preview_comment_user);
 
-        if(relatedArticleArrayList == null) {
-            relatedArticleArrayList = new ArrayList<RelatedArticle>();
-        }
+        relatedArticleArrayList = new ArrayList<>();
+        commentArrayList = new ArrayList<>();
+        sliderContentImages = new ArrayList<>();
+        videoArrayList = new ArrayList<>();
 
-        if(commentArrayList == null) {
-            commentArrayList = new ArrayList<Comment>();
-        }
+        progressWheel = (ProgressWheel) view.findViewById(R.id.progress_wheel);
 
-        if(sliderContentImages == null) {
-            sliderContentImages = new ArrayList<SliderContentImage>();
-        }
-
-        if(videoArrayList == null) {
-            videoArrayList = new ArrayList<Video>();
-        }
-
-        if(progressWheel == null) {
-            progressWheel = (ProgressWheel) view.findViewById(R.id.progress_wheel);
-            view.setTag(progressWheel);
-        } else {
-            progressWheel = (ProgressWheel) view.getTag();
-        }
-
-        if(headerRelated == null) {
-            headerRelated = (RelativeLayout) view.findViewById(R.id.header_related_article);
-            view.setTag(headerRelated);
-        } else {
-            headerRelated = (RelativeLayout) view.getTag();
-        }
+        headerRelated = (RelativeLayout) view.findViewById(R.id.header_related_article);
         headerRelated.setVisibility(View.GONE);
 
-        if(tvNoResult == null) {
-            tvNoResult = (TextView) view.findViewById(R.id.text_no_result_detail);
-            view.setTag(tvNoResult);
-        } else {
-            tvNoResult = (TextView) view.getTag();
-        }
+        tvNoResult = (TextView) view.findViewById(R.id.text_no_result_detail);
         tvNoResult.setVisibility(View.GONE);
 
         //Material Effect View
-        if(rippleView == null) {
-            rippleView = (RippleView) view.findViewById(R.id.layout_ripple_view);
-            view.setTag(rippleView);
-        } else {
-            rippleView = (RippleView) view.getTag();
-        }
+        rippleView = (RippleView) view.findViewById(R.id.layout_ripple_view);
         rippleView.setVisibility(View.GONE);
         rippleView.setOnClickListener(this);
 
         //List Related Article
-        if(listView == null) {
-            listView = (ListView) view.findViewById(R.id.list_related_article);
-            view.setTag(listView);
-        } else {
-            listView = (ListView) view.getTag();
-        }
+        listView = (ListView) view.findViewById(R.id.list_related_article);
         listView.setOnItemClickListener(this);
 
-        if(tvTitleHeadlineDetail == null) {
-            tvTitleHeadlineDetail = (TextView) view.findViewById(R.id.title_detail);
-            view.setTag(tvTitleHeadlineDetail);
-        } else {
-            tvTitleHeadlineDetail = (TextView) view.getTag();
-        }
+        tvTitleHeadlineDetail = (TextView) view.findViewById(R.id.title_detail);
+        tvDateHeadlineDetail = (TextView) view.findViewById(R.id.date_detail);
+        tvReporterHeadlineDetail = (TextView) view.findViewById(R.id.reporter_detail);
+        tvContentHeadlineDetail = (TextView) view.findViewById(R.id.content_detail);
 
-        if(tvDateHeadlineDetail == null) {
-            tvDateHeadlineDetail = (TextView) view.findViewById(R.id.date_detail);
-            view.setTag(tvDateHeadlineDetail);
-        } else {
-            tvDateHeadlineDetail = (TextView) view.getTag();
-        }
-
-        if(tvReporterHeadlineDetail == null) {
-            tvReporterHeadlineDetail = (TextView) view.findViewById(R.id.reporter_detail);
-            view.setTag(tvReporterHeadlineDetail);
-        } else {
-            tvReporterHeadlineDetail = (TextView) view.getTag();
-        }
-
-        if(tvContentHeadlineDetail == null) {
-            tvContentHeadlineDetail = (TextView) view.findViewById(R.id.content_detail);
-            view.setTag(tvContentHeadlineDetail);
-        } else {
-            tvContentHeadlineDetail = (TextView) view.getTag();
-        }
-
-        if(ivThumbDetailHeadline == null) {
-            ivThumbDetailHeadline = (KenBurnsView) view.findViewById(R.id.thumb_detail);
-            view.setTag(ivThumbDetailHeadline);
-        } else {
-            ivThumbDetailHeadline = (KenBurnsView) view.getTag();
-        }
+        ivThumbDetailHeadline = (KenBurnsView) view.findViewById(R.id.thumb_detail);
         ivThumbDetailHeadline.setOnClickListener(this);
         ivThumbDetailHeadline.setFocusableInTouchMode(true);
 
-        if(textLinkVideo == null) {
-            textLinkVideo = (TextView) view.findViewById(R.id.text_move_video);
-            view.setTag(textLinkVideo);
-        } else {
-            textLinkVideo = (TextView) view.getTag();
-        }
+        textLinkVideo = (TextView) view.findViewById(R.id.text_move_video);
         textLinkVideo.setOnClickListener(this);
         textLinkVideo.setVisibility(View.GONE);
 

@@ -26,7 +26,7 @@ public class Analytics {
 
     public void getAnalyticByATInternetFromNotification(String page, String key) {
         Global.getInstance(mContext).getAtParams().setPage(page);
-        Global.getInstance(mContext).getAtParams().xt_click("", key, ATParams.clicType.navigation);
+        Global.getInstance(mContext).getAtParams().xt_click("1", key, ATParams.clicType.navigation);
         Global.getInstance(mContext).getAtParams().xt_sendTag();
     }
 

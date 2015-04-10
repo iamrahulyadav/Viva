@@ -27,8 +27,6 @@
     <string name="label_button_skip_tutorial">Skip</string>
     <string name="label_navigation_button">Navigation Button</string>
     <string name="label_navigation_favorite">Favorite Articles</string>
-    <string name="label_navigation_favorite_desc">Nikmati pengalaman membaca anda dengan menggunakan fitur Favorites.
-        Simple and Off-line Mode!</string>
     <string name="label_image_profile">Profile Photo</string>
     <string name="label_reference_article">Referensi Artikel</string>
     <string name="label_image_profile_desc">Tap untuk melihat detail foto.</string>
@@ -99,11 +97,13 @@
     <string name="label_item_navigation_terbaru">Terbaru</string>
     <string name="label_item_navigation_search_by_location">Berita Sekitar</string>
     <string name="label_item_navigation_favorites">Favorites</string>
+    <string name="label_item_navigation_scan_berita">Scan Berita</string>
     <string name="label_item_navigation_news">Berita</string>
     <string name="label_item_navigation_bola">Bola</string>
     <string name="label_item_navigation_life">Life</string>
     <string name="label_item_navigation_about">About</string>
     <string name="label_item_navigation_rateapp">Rate App</string>
+    <string name="label_item_navigation_email">Contact Us</string>
     <string name="label_section_navigation_channel">KANAL</string>
     <string name="label_section_navigation_preferences">PREFERENSI</string>
     <string name="label_loading">Loading...</string>
@@ -112,6 +112,7 @@
     <string name="label_hint_email">Email</string>
     <string name="label_hint_password">Password</string>
     <string name="label_login">Login</string>
+    <string name="label_camera_scan">Kamera</string>
     <string name="label_register">Register</string>
     <string name="label_forgot_password_caps">FORGOT PASSWORD</string>
     <string name="label_forgot_password"><u>Forgot Password</u></string>
@@ -138,6 +139,12 @@
     <string name="label_video_click"><u>Klik untuk melihat video.</u></string>
     <string name="label_success_send_email">Email telah berhasil dikirim. Silahkan cek email anda untuk melihat password.</string>
     <string name="label_not_logged_in">Anda Belum Login</string>
+
+    <!-- Camera Configuration -->
+    <string name="flash_on">Flash [ON]</string>
+    <string name="flash_off">Flash [OFF]</string>
+    <string name="auto_focus_on">Auto Focus [ON]</string>
+    <string name="auto_focus_off">Auto Focus [OFF]</string>
 
     <string name="title_copyright">Copyright © 2008 - 2015 PT. Viva Media Baru</string>
     <string name="wording_about_indo">Aplikasi mobile VIVA.co.id ini dirancang khusus untuk Android ​agar pengguna dapat menikmati beragam konten bermutu dari VIVA.co.id dengan kemudahan navigasi dan kekayaan fitur Android. Konten dalam bentuk teks, foto dan video diperbarui terus-menerus dan disajikan secara kreatif sehingga memperkaya pengalaman pengguna.</string>

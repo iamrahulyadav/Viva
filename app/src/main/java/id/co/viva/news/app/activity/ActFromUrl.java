@@ -176,7 +176,7 @@ public class ActFromUrl extends ActionBarActivity implements View.OnClickListene
                                 image_caption = detail.getString(Constant.image_caption);
                                 kanal = detail.getString(Constant.kanal);
 
-                                setHeaderActionbar(kanal);
+                                setThemes(kanal);
 
                                 JSONArray sliderImageArray = detail.getJSONArray(Constant.content_images);
                                 if(sliderImageArray != null) {
@@ -256,35 +256,39 @@ public class ActFromUrl extends ActionBarActivity implements View.OnClickListene
         }
     }
 
-    private void setHeaderActionbar(String fromkanal) {
+    private void setThemes(String mChannel) {
         ColorDrawable colorDrawable = new ColorDrawable();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
-        if(fromkanal != null) {
-            if(fromkanal.equalsIgnoreCase("bola")) {
+        if (mChannel != null) {
+            if (mChannel.equalsIgnoreCase("bola")) {
                 colorDrawable.setColor(getResources().getColor(R.color.color_bola));
                 getSupportActionBar().setBackgroundDrawable(colorDrawable);
                 getSupportActionBar().setTitle(R.string.label_item_navigation_bola);
-            } else if(fromkanal.equalsIgnoreCase("vivalife")) {
+                progressWheel.setBarColor(getResources().getColor(R.color.color_bola));
+            } else if (mChannel.equalsIgnoreCase("vivalife")) {
                 colorDrawable.setColor(getResources().getColor(R.color.color_life));
                 getSupportActionBar().setBackgroundDrawable(colorDrawable);
                 getSupportActionBar().setTitle(R.string.label_item_navigation_life);
+                progressWheel.setBarColor(getResources().getColor(R.color.color_life));
             } else {
                 colorDrawable.setColor(getResources().getColor(R.color.color_news));
                 getSupportActionBar().setBackgroundDrawable(colorDrawable);
                 getSupportActionBar().setTitle(R.string.label_item_navigation_news);
+                progressWheel.setBarColor(getResources().getColor(R.color.color_news));
             }
         } else {
             colorDrawable.setColor(getResources().getColor(R.color.header_headline_terbaru_new));
             getSupportActionBar().setBackgroundDrawable(colorDrawable);
+            progressWheel.setBarColor(getResources().getColor(R.color.blue));
         }
     }
 
     private void setButtonRetry(String kanals) {
         if(kanals != null) {
-            if(kanals.equalsIgnoreCase("bola")) {
+            if (kanals.equalsIgnoreCase("bola")) {
                 btnRetry.setBackgroundResource(R.drawable.shadow_button_bola);
-            } else if(kanals.equalsIgnoreCase("vivalife")) {
+            } else if (kanals.equalsIgnoreCase("vivalife")) {
                 btnRetry.setBackgroundResource(R.drawable.shadow_button_life);
             } else {
                 btnRetry.setBackgroundResource(R.drawable.shadow_button_news);

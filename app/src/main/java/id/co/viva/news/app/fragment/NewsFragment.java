@@ -120,7 +120,6 @@ public class NewsFragment extends Fragment implements View.OnClickListener {
         rippleView.setOnClickListener(this);
 
         listNews = (ListView) rootView.findViewById(R.id.list_news);
-        listNews.setVisibility(View.GONE);
         listNews.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
@@ -138,6 +137,7 @@ public class NewsFragment extends Fragment implements View.OnClickListener {
         });
 
         gridNews = (ExpandableHeightGridView) rootView.findViewById(R.id.grid_news);
+        gridNews.setVisibility(View.GONE);
         gridNews.setExpanded(true);
         gridNews.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -240,6 +240,7 @@ public class NewsFragment extends Fragment implements View.OnClickListener {
                                         channelListTypeAdapter = new ChannelListTypeAdapter(
                                                 getActivity(), null, null, featuredNewsArrayListTypeList, Constant.ADAPTER_CHANNEL_NEWS);
                                     }
+
                                     listNews.setAdapter(channelListTypeAdapter);
                                     Constant.setListViewHeightBasedOnChildren(listNews);
                                     channelListTypeAdapter.notifyDataSetChanged();
@@ -483,20 +484,22 @@ public class NewsFragment extends Fragment implements View.OnClickListener {
                 Toast.makeText(getActivity(), R.string.title_no_connection, Toast.LENGTH_SHORT).show();
             }
         } else if(view.getId() == R.id.header_grid_news) {
-            Bundle bundle = new Bundle();
-            bundle.putString("id", id_header_grid);
-            bundle.putString("channel_title", channel_title_header_grid);
-            Intent intent = new Intent(getActivity(), ActDetailChannelNews.class);
-            intent.putExtras(bundle);
-            getActivity().startActivity(intent);
-            getActivity().overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+            if (id_header_grid != null && channel_title_header_grid != null) {
+                Bundle bundle = new Bundle();
+                bundle.putString("id", id_header_grid);
+                bundle.putString("channel_title", channel_title_header_grid);
+                Intent intent = new Intent(getActivity(), ActDetailChannelNews.class);
+                intent.putExtras(bundle);
+                getActivity().startActivity(intent);
+                getActivity().overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+            }
         }
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId() == R.id.action_change_layout) {
-            if(getActivity() != null) {
+        if (item.getItemId() == R.id.action_change_layout) {
+            if (getActivity() != null) {
                 getActivity().invalidateOptionsMenu();
             }
         }
@@ -505,7 +508,7 @@ public class NewsFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
-        if(listNews.getVisibility() == View.VISIBLE) {
+        if (listNews.getVisibility() == View.VISIBLE) {
             listNews.setVisibility(View.GONE);
             layoutTransparentHeader.setVisibility(View.VISIBLE);
             layoutTransparentHeader.setBackgroundColor(getResources().getColor(R.color.transparent));

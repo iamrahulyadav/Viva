@@ -121,7 +121,6 @@ public class BolaFragment extends Fragment implements View.OnClickListener {
         rippleView.setOnClickListener(this);
 
         listBola = (ListView) rootView.findViewById(R.id.list_bola);
-        listBola.setVisibility(View.GONE);
         listBola.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
@@ -139,6 +138,7 @@ public class BolaFragment extends Fragment implements View.OnClickListener {
         });
 
         gridBola = (ExpandableHeightGridView) rootView.findViewById(R.id.grid_bola);
+        gridBola.setVisibility(View.GONE);
         gridBola.setExpanded(true);
         gridBola.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -233,7 +233,7 @@ public class BolaFragment extends Fragment implements View.OnClickListener {
                                 featuredNewsArrayListTypeList.add(0, new FeaturedBola(channel_title_header_grid,
                                         null, id_header_grid, null, null, null, image_url_header_grid));
 
-                                if(featuredNewsArrayList.size() > 0 || !featuredNewsArrayList.isEmpty()) {
+                                if (featuredNewsArrayList.size() > 0 || !featuredNewsArrayList.isEmpty()) {
                                     swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(
                                             new FeaturedBolaAdapter(getActivity(), featuredNewsArrayList));
                                     swingBottomInAnimationAdapter.setAbsListView(gridBola);
@@ -242,8 +242,8 @@ public class BolaFragment extends Fragment implements View.OnClickListener {
                                     gridBola.setAdapter(swingBottomInAnimationAdapter);
                                 }
 
-                                if(featuredNewsArrayListTypeList.size() > 0 || !featuredNewsArrayListTypeList.isEmpty()) {
-                                    if(channelListTypeAdapter == null) {
+                                if (featuredNewsArrayListTypeList.size() > 0 || !featuredNewsArrayListTypeList.isEmpty()) {
+                                    if (channelListTypeAdapter == null) {
                                         channelListTypeAdapter = new ChannelListTypeAdapter(
                                                 getActivity(), featuredNewsArrayListTypeList, null, null, Constant.ADAPTER_CHANNEL_BOLA);
                                     }
@@ -380,7 +380,7 @@ public class BolaFragment extends Fragment implements View.OnClickListener {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_change_layout) {
-            if(getActivity() != null) {
+            if (getActivity() != null) {
                 getActivity().invalidateOptionsMenu();
             }
         }
@@ -389,7 +389,7 @@ public class BolaFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
-        if(listBola.getVisibility() == View.VISIBLE) {
+        if (listBola.getVisibility() == View.VISIBLE) {
             listBola.setVisibility(View.GONE);
             layoutTransparentHeader.setVisibility(View.VISIBLE);
             layoutTransparentHeader.setBackgroundColor(getResources().getColor(R.color.transparent));
@@ -435,8 +435,8 @@ public class BolaFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-        if(view.getId() == R.id.layout_ripple_view) {
-            if(isInternetPresent) {
+        if (view.getId() == R.id.layout_ripple_view) {
+            if (isInternetPresent) {
                 rippleView.setVisibility(View.GONE);
                 progressWheel.setVisibility(View.VISIBLE);
                 StringRequest request = new StringRequest(Request.Method.GET, Constant.NEW_BOLA,
@@ -550,13 +550,15 @@ public class BolaFragment extends Fragment implements View.OnClickListener {
                 Toast.makeText(getActivity(), R.string.title_no_connection, Toast.LENGTH_SHORT).show();
             }
         } else if(view.getId() == R.id.header_grid_bola) {
-            Bundle bundle = new Bundle();
-            bundle.putString("id", id_header_grid);
-            bundle.putString("channel_title", channel_title_header_grid);
-            Intent intent = new Intent(getActivity(), ActDetailChannelBola.class);
-            intent.putExtras(bundle);
-            getActivity().startActivity(intent);
-            getActivity().overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+            if (id_header_grid != null & channel_title_header_grid != null) {
+                Bundle bundle = new Bundle();
+                bundle.putString("id", id_header_grid);
+                bundle.putString("channel_title", channel_title_header_grid);
+                Intent intent = new Intent(getActivity(), ActDetailChannelBola.class);
+                intent.putExtras(bundle);
+                getActivity().startActivity(intent);
+                getActivity().overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+            }
         }
     }
 

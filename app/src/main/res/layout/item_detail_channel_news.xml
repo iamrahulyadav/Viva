@@ -39,7 +39,7 @@
         android:layout_width="90dp"
         android:layout_height="90dp"
         android:layout_centerInParent="true"
-        wheel:barColor="@color/blue"
+        wheel:barColor="@color/color_news"
         wheel:progressIndeterminate="true" />
     <com.andexert.library.RippleView
         android:id="@+id/layout_ripple_view"

@@ -26,6 +26,7 @@ public class DetailBeritaSekitarAdapter extends FragmentStatePagerAdapter {
     private FragmentTransaction mCurTransaction = null;
     private final FragmentManager mFragmentManager;
     private ArrayList<Fragment.SavedState> mSavedState = new ArrayList<Fragment.SavedState>();
+    private int mPosition;
 
     public DetailBeritaSekitarAdapter(FragmentManager fragmentManager, ArrayList<BeritaSekitar> beritaSekitarArrayList) {
         super(fragmentManager);
@@ -35,9 +36,19 @@ public class DetailBeritaSekitarAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
+        mPosition = position;
         return DetailMainIndexFragment
                 .newInstance(beritaSekitarArrayList.get(position).getId(),
                         Constant.BERITA_SEKITAR_DETAIL_PAGE);
+    }
+
+    @Override
+    public int getItemPosition(Object object) {
+        if (mPosition >= 0) {
+            return mPosition;
+        } else {
+            return POSITION_NONE;
+        }
     }
 
     @Override

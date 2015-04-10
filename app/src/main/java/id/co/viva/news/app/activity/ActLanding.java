@@ -72,17 +72,25 @@ public class ActLanding extends ActionBarActivity implements View.OnClickListene
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act_main);
 
+        //Check Connection
         isInternetPresent = Global.getInstance(this)
                 .getConnectionStatus().isConnectingToInternet();
 
+        //Check User Profile
         getProfile();
+
+        //Define All Views
         defineViews();
+
+        //Define Item Navigation List
         defineItemList();
 
+        //All About List
         mDrawerList.setOnItemClickListener(new SlideMenuClickListener());
         adapter = new NavigationAdapter(getApplicationContext(), navDrawerItems);
         mDrawerList.setAdapter(adapter);
 
+        //Set Header
         showHeaderActionBar();
 
         mDrawerToggle = new android.support.v7.app.ActionBarDrawerToggle(this,
@@ -117,20 +125,26 @@ public class ActLanding extends ActionBarActivity implements View.OnClickListene
             case 3:
                 fragment = new FavoritesFragment();
                 break;
-            case 5:
-                fragment =  new NewsFragment();
+            case 4:
+                scanNews();
                 break;
             case 6:
-                fragment =  new BolaFragment();
+                fragment =  new NewsFragment();
                 break;
             case 7:
+                fragment =  new BolaFragment();
+                break;
+            case 8:
                 fragment =  new LifeFragment();
                 break;
-            case 9:
+            case 10:
                 fragment =  new AboutFragment();
                 break;
-            case 10:
+            case 11:
                 rateApp();
+                break;
+            case 12:
+                sendEmail();
                 break;
             default:
                 break;
@@ -151,8 +165,8 @@ public class ActLanding extends ActionBarActivity implements View.OnClickListene
 
     @Override
     public void onClick(View view) {
-        if(view.getId() == R.id.profile_bg) {
-            if(mFullname.length() > 0 && mEmail.length() > 0) {
+        if (view.getId() == R.id.profile_bg) {
+            if (mFullname.length() > 0 && mEmail.length() > 0) {
                 Intent intent = new Intent(this, ActUserProfile.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
@@ -181,6 +195,17 @@ public class ActLanding extends ActionBarActivity implements View.OnClickListene
         getSupportActionBar().setDisplayShowTitleEnabled(false);
     }
 
+    private void sendEmail() {
+        Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
+                Constant.EMAIL_SCHEME, Constant.SUPPPORT_EMAIL, null));
+        startActivity(Intent.createChooser(emailIntent, "Send Email"));
+    }
+
+    private void scanNews() {
+        Intent intent = new Intent(this, ActScanner.class);
+        startActivity(intent);
+    }
+
     private void rateApp() {
         Uri uri = Uri.parse(getResources().getString(R.string.url_google_play) + getPackageName());
         Intent myAppLinkToMarket = new Intent(Intent.ACTION_VIEW, uri);
@@ -197,6 +222,7 @@ public class ActLanding extends ActionBarActivity implements View.OnClickListene
         navDrawerItems.add(new NavigationItem(getResources().getString(R.string.label_item_navigation_headline), R.drawable.icon_terbaru));
         navDrawerItems.add(new NavigationItem(getResources().getString(R.string.label_item_navigation_search_by_location), R.drawable.icon_search_location));
         navDrawerItems.add(new NavigationItem(getResources().getString(R.string.label_item_navigation_favorites), R.drawable.icon_favorites));
+        navDrawerItems.add(new NavigationItem(getResources().getString(R.string.label_item_navigation_scan_berita), R.drawable.icon_qrcode));
         navDrawerItems.add(new NavigationSectionItem(getResources().getString(R.string.label_section_navigation_channel)));
         navDrawerItems.add(new NavigationItem(getResources().getString(R.string.label_item_navigation_news), R.drawable.icon_viva_news));
         navDrawerItems.add(new NavigationItem(getResources().getString(R.string.label_item_navigation_bola), R.drawable.icon_viva_bola));
@@ -204,6 +230,7 @@ public class ActLanding extends ActionBarActivity implements View.OnClickListene
         navDrawerItems.add(new NavigationSectionItem(getResources().getString(R.string.label_section_navigation_preferences)));
         navDrawerItems.add(new NavigationItem(getResources().getString(R.string.label_item_navigation_about), R.drawable.icon_about));
         navDrawerItems.add(new NavigationItem(getResources().getString(R.string.label_item_navigation_rateapp), R.drawable.icon_rateapp));
+        navDrawerItems.add(new NavigationItem(getResources().getString(R.string.label_item_navigation_email), R.drawable.icon_mail));
     }
 
     private void defineViews() {

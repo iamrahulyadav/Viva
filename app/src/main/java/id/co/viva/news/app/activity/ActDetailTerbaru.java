@@ -28,10 +28,9 @@ public class ActDetailTerbaru extends ActionBarActivity {
         id = bundle.getString("id");
 
         setContentView(R.layout.act_detail_main_article);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayShowTitleEnabled(true);
-        getSupportActionBar().setTitle(getResources().getString(R.string.label_terbaru_detail));
+
+        //Set ActionBar
+        setActionBar();
 
         int position = 0;
         if(TerbaruFragment.newsArrayList != null) {
@@ -51,6 +50,13 @@ public class ActDetailTerbaru extends ActionBarActivity {
             Toast.makeText(this, R.string.label_error, Toast.LENGTH_SHORT).show();
             onBackPressed();
         }
+    }
+
+    private void setActionBar() {
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
+        getSupportActionBar().setTitle(getResources().getString(R.string.label_terbaru_detail));
     }
 
     @Override

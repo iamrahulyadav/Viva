@@ -122,6 +122,7 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
         rippleView.setOnClickListener(this);
 
         gridLife = (ExpandableHeightGridView) rootView.findViewById(R.id.grid_life);
+        gridLife.setVisibility(View.GONE);
         gridLife.setExpanded(true);
         gridLife.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -152,7 +153,6 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
         });
 
         listLife = (ListView) rootView.findViewById(R.id.list_life);
-        listLife.setVisibility(View.GONE);
         listLife.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
@@ -521,20 +521,22 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
                 Toast.makeText(getActivity(), R.string.title_no_connection, Toast.LENGTH_SHORT).show();
             }
         } else if(view.getId() == R.id.header_grid_life) {
-            Bundle bundle = new Bundle();
-            bundle.putString("id", id_header_grid);
-            bundle.putString("channel_title", channel_title_header_grid);
-            Intent intent = new Intent(getActivity(), ActDetailChannelLife.class);
-            intent.putExtras(bundle);
-            getActivity().startActivity(intent);
-            getActivity().overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+            if (id_header_grid != null & channel_title_header_grid != null) {
+                Bundle bundle = new Bundle();
+                bundle.putString("id", id_header_grid);
+                bundle.putString("channel_title", channel_title_header_grid);
+                Intent intent = new Intent(getActivity(), ActDetailChannelLife.class);
+                intent.putExtras(bundle);
+                getActivity().startActivity(intent);
+                getActivity().overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+            }
         }
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId() == R.id.action_change_layout) {
-            if(getActivity() != null) {
+        if (item.getItemId() == R.id.action_change_layout) {
+            if (getActivity() != null) {
                 getActivity().invalidateOptionsMenu();
             }
         }
@@ -543,7 +545,7 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
-        if(listLife.getVisibility() == View.VISIBLE) {
+        if (listLife.getVisibility() == View.VISIBLE) {
             listLife.setVisibility(View.GONE);
             layoutTransparentHeader.setVisibility(View.VISIBLE);
             layoutTransparentHeader.setBackgroundColor(getResources().getColor(R.color.transparent));

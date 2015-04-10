@@ -52,6 +52,7 @@ import id.co.viva.news.app.interfaces.OnGPSListener;
 import id.co.viva.news.app.interfaces.OnLoadMoreListener;
 import id.co.viva.news.app.location.LocationFinder;
 import id.co.viva.news.app.model.BeritaSekitar;
+import id.co.viva.news.app.model.Places;
 import id.co.viva.news.app.services.Analytics;
 
 /**
@@ -61,11 +62,14 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
         OnLoadMoreListener, AdapterView.OnItemClickListener, LocationResult, OnGPSListener {
 
     public static ArrayList<BeritaSekitar> beritaSekitarArrayList;
+    private ArrayList<Places> placesArrayList;
     private boolean isInternetPresent = false;
     private boolean isResume;
     private String lastPaging;
     private int dataSize = 0;
-    private String city;
+    private String mCity;
+    private String mAdminArea;
+    private String mSubLocality;
     private LoadMoreListView listView;
     private Analytics analytics;
     private RippleView rippleView;
@@ -82,7 +86,7 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
     private int page = 1;
 
     private void setAnalytics(String page) {
-        if(analytics == null) {
+        if (analytics == null) {
             analytics = new Analytics(mActivity);
         }
         analytics.getAnalyticByATInternet(
@@ -154,7 +158,7 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                 super.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
                 int firstIndex = listView.getFirstVisiblePosition();
-                if(firstIndex > Constant.NUMBER_OF_TOP_LIST_ITEMS) {
+                if (firstIndex > Constant.NUMBER_OF_TOP_LIST_ITEMS) {
                     floatingActionButton.setVisibility(View.VISIBLE);
                 } else {
                     floatingActionButton.setVisibility(View.GONE);
@@ -163,14 +167,16 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
         });
         floatingActionButton.setOnClickListener(this);
 
+        placesArrayList = new ArrayList<>();
         beritaSekitarArrayList = new ArrayList<>();
+
         if (getActivity() != null) {
             adapter = new BeritaSekitarAdapter(getActivity(), beritaSekitarArrayList);
         } else {
             adapter = new BeritaSekitarAdapter(mActivity, beritaSekitarArrayList);
         }
 
-        if(isInternetPresent) {
+        if (isInternetPresent) {
             loading_layout.setVisibility(View.VISIBLE);
             labelLoadData.setVisibility(View.VISIBLE);
             labelLoadData.setText(getResources().getString(R.string.label_get_location));
@@ -198,7 +204,7 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
     @Override
     public void onResume() {
         if (isResume) {
-            if(isInternetPresent) {
+            if (isInternetPresent) {
                 getLocationFinder();
             }
         }
@@ -214,7 +220,7 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
                 labelLoadData.setVisibility(View.VISIBLE);
                 labelLoadData.setText(getResources().getString(R.string.label_get_location));
                 StringRequest request = new StringRequest(Request.Method.GET,
-                        Constant.NEW_SEARCH + "q/" + city.replaceAll(" ", "%20") + "/s/0",
+                        Constant.NEW_SEARCH + "q/" + mCity.replaceAll(" ", "%20") + "/s/0",
                         new Response.Listener<String>() {
                             @Override
                             public void onResponse(String s) {
@@ -244,7 +250,7 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
                                         adapter.notifyDataSetChanged();
                                         loading_layout.setVisibility(View.GONE);
                                         labelLoadData.setVisibility(View.GONE);
-                                        lastUpdate.setText(city);
+                                        lastUpdate.setText(mCity);
                                     }
                                 } catch (Exception e) {
                                     e.getMessage();
@@ -253,8 +259,10 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
                         }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError volleyError) {
-                        Toast.makeText(mActivity, getResources()
-                                .getString(R.string.title_failed_get_location), Toast.LENGTH_SHORT).show();
+                        if (isAdded()) {
+                            Toast.makeText(mActivity, getResources()
+                                    .getString(R.string.title_failed_get_location), Toast.LENGTH_SHORT).show();
+                        }
                         loading_layout.setVisibility(View.GONE);
                         labelLoadData.setVisibility(View.GONE);
                         rippleView.setVisibility(View.VISIBLE);
@@ -282,7 +290,7 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
         if (isInternetPresent) {
             setAnalytics(String.valueOf(page));
             StringRequest request = new StringRequest(Request.Method.GET,
-                    Constant.NEW_SEARCH + "q/" + city.replaceAll(" ", "%20") + "/s/" + lastPaging,
+                    Constant.NEW_SEARCH + "q/" + mCity.replaceAll(" ", "%20") + "/s/" + lastPaging,
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String s) {
@@ -320,10 +328,7 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
                 public void onErrorResponse(VolleyError volleyError) {
                     listView.onLoadMoreComplete();
                     listView.setSelection(0);
-                    if(getActivity() != null) {
-                        Toast.makeText(getActivity(),
-                                R.string.label_error, Toast.LENGTH_SHORT).show();
-                    } else {
+                    if (isAdded()) {
                         Toast.makeText(mActivity,
                                 R.string.label_error, Toast.LENGTH_SHORT).show();
                     }
@@ -358,8 +363,8 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
     }
 
     private void getLocationFinder() {
-        if(getActivity() != null) {
-            if(locationFinder == null) {
+        if (getActivity() != null) {
+            if (locationFinder == null) {
                 locationFinder = new LocationFinder();
             }
             locationFinder.getLocation(getActivity(), this, this);
@@ -367,16 +372,23 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
     }
 
     private void refreshContent() {
-        if(getActivity() != null) {
+        if (getActivity() != null) {
             getActivity().finish();
             startActivity(getActivity().getIntent());
         }
     }
 
-    private String getCity(Location location) {
-        String city = null;
+    private ArrayList<Places> getPlaces(Location location) {
+        String city;
+        String subLocality;
+        String subAdminArea;
         Geocoder gcd;
         List<Address> addresses;
+        //Check Data
+        if (placesArrayList.size() > 0) {
+            placesArrayList.clear();
+        }
+        //Check Instance
         if (getActivity() != null) {
             gcd = new Geocoder(getActivity(), Locale.getDefault());
         } else {
@@ -385,29 +397,31 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
         try {
             addresses = gcd.getFromLocation(location.getLatitude(),
                     location.getLongitude(), 1);
-            if (addresses.size() > 0) {
-                city = addresses.get(0).getLocality();
+            if (addresses != null) {
+                if (addresses.size() > 0) {
+                    city = addresses.get(0).getLocality();
+                    subLocality = addresses.get(0).getSubLocality();
+                    subAdminArea = addresses.get(0).getSubAdminArea();
+                    placesArrayList.add(new Places(city, subLocality, subAdminArea));
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if (city != null) {
-            if (city.length() > 0) {
-                return city;
-            }
-        }
-        return null;
+        return placesArrayList;
     }
 
     @Override
     public void getLocation(Location location) {
         if (isInternetPresent) {
             if (location != null) {
-                city = getCity(location);
-                if (city != null) {
-                    if (city.length() > 0) {
+                mCity = getPlaces(location).get(0).getmCity();
+                mAdminArea = getPlaces(location).get(0).getmSubAdminArea();
+                mSubLocality = getPlaces(location).get(0).getmSubLocality();
+                if (mCity != null || mAdminArea != null || mSubLocality != null) {
+                    if (mCity.length() > 0) {
                         StringRequest request = new StringRequest(Request.Method.GET,
-                                Constant.NEW_SEARCH + "q/" + city.replaceAll(" ", "%20") + "/s/0",
+                                Constant.NEW_SEARCH + "q/" + mCity.replaceAll(" ", "%20") + "/s/0",
                                 new Response.Listener<String>() {
                                     @Override
                                     public void onResponse(String s) {
@@ -437,7 +451,7 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
                                                 adapter.notifyDataSetChanged();
                                                 loading_layout.setVisibility(View.GONE);
                                                 labelLoadData.setVisibility(View.GONE);
-                                                lastUpdate.setText(city);
+                                                lastUpdate.setText(mCity);
                                             }
                                         } catch (Exception e) {
                                             e.getMessage();
@@ -446,8 +460,10 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
                                 }, new Response.ErrorListener() {
                             @Override
                             public void onErrorResponse(VolleyError volleyError) {
-                                Toast.makeText(mActivity, getResources()
-                                        .getString(R.string.title_failed_get_location), Toast.LENGTH_SHORT).show();
+                                if (isAdded()) {
+                                    Toast.makeText(mActivity, getResources()
+                                            .getString(R.string.title_failed_get_location), Toast.LENGTH_SHORT).show();
+                                }
                                 loading_layout.setVisibility(View.GONE);
                                 labelLoadData.setVisibility(View.GONE);
                                 rippleView.setVisibility(View.VISIBLE);
@@ -464,13 +480,17 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
                         }
                     }
                 } else {
-                    Toast.makeText(mActivity, getResources()
-                            .getString(R.string.title_failed_get_location), Toast.LENGTH_SHORT).show();
+                    if (isAdded()) {
+                        Toast.makeText(mActivity, getResources()
+                                .getString(R.string.title_failed_get_location), Toast.LENGTH_SHORT).show();
+                    }
                     refreshContent();
                 }
             } else {
-                Toast.makeText(mActivity, getResources()
-                        .getString(R.string.title_failed_get_location), Toast.LENGTH_SHORT).show();
+                if (isAdded()) {
+                    Toast.makeText(mActivity, getResources()
+                            .getString(R.string.title_failed_get_location), Toast.LENGTH_SHORT).show();
+                }
                 refreshContent();
             }
         } else {
@@ -513,7 +533,9 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
     @Override
     public void onDestroy() {
         super.onDestroy();
-        locationFinder.removeLocationListener();
+        if (locationFinder != null) {
+            locationFinder.removeLocationListener();
+        }
     }
 
 }

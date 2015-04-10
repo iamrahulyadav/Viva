@@ -117,10 +117,10 @@ public class ActDetailContentDefault extends ActionBarActivity
 
         setContentView(R.layout.item_detail_content_default);
 
-        setHeaderActionbar();
-
         //Define All View
         defineViews();
+
+        setThemes();
 
         if(isInternetPresent) {
             StringRequest request = new StringRequest(Request.Method.GET, Constant.NEW_DETAIL + "/id/" + id,
@@ -498,17 +498,18 @@ public class ActDetailContentDefault extends ActionBarActivity
         shared_url = intent.getStringExtra("shared_url");
     }
 
-    private void setHeaderActionbar() {
+    private void setThemes() {
         ColorDrawable colorDrawable = new ColorDrawable();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         //Set Background
         if (fromkanal != null) {
-            if(fromkanal.equalsIgnoreCase("bola")) {
+            if (fromkanal.equalsIgnoreCase("bola")) {
                 colorDrawable.setColor(getResources().getColor(R.color.color_bola));
                 getSupportActionBar().setBackgroundDrawable(colorDrawable);
                 getSupportActionBar().setTitle(R.string.label_item_navigation_bola);
-            } else if(fromkanal.equalsIgnoreCase("vivalife")) {
+                progressWheel.setBarColor(getResources().getColor(R.color.color_bola));
+            } else if (fromkanal.equalsIgnoreCase("vivalife")) {
                 colorDrawable.setColor(getResources().getColor(R.color.color_life));
                 getSupportActionBar().setBackgroundDrawable(colorDrawable);
                 if (typeFrom != null) {
@@ -520,14 +521,17 @@ public class ActDetailContentDefault extends ActionBarActivity
                 } else {
                     getSupportActionBar().setTitle(R.string.label_item_navigation_life);
                 }
+                progressWheel.setBarColor(getResources().getColor(R.color.color_life));
             } else {
                 colorDrawable.setColor(getResources().getColor(R.color.color_news));
                 getSupportActionBar().setBackgroundDrawable(colorDrawable);
                 getSupportActionBar().setTitle(R.string.label_item_navigation_news);
+                progressWheel.setBarColor(getResources().getColor(R.color.color_news));
             }
         } else {
             colorDrawable.setColor(getResources().getColor(R.color.header_headline_terbaru_new));
             getSupportActionBar().setBackgroundDrawable(colorDrawable);
+            progressWheel.setBarColor(getResources().getColor(R.color.blue));
         }
     }
 
@@ -674,28 +678,31 @@ public class ActDetailContentDefault extends ActionBarActivity
 
     @Override
     public void onClick(View view) {
-        if(view.getId() == R.id.thumb_detail_content_default) {
-            if(image_url != null) {
-                if(image_url.length() > 0) {
+        if (view.getId() == R.id.thumb_detail_content_default) {
+            if (image_url != null) {
+                if (image_url.length() > 0) {
                     toDetailThumbnail();
                 }
             }
-        } else if(view.getId() == R.id.layout_preview_comment_list) {
+        } else if (view.getId() == R.id.layout_preview_comment_list) {
             moveCommentPage();
-        } else if(view.getId() == R.id.text_move_video) {
+        } else if (view.getId() == R.id.text_move_video) {
             moveVideoPage(urlVideo);
         }
     }
 
     private void setAnalytics(String title, String id) {
         analytics = new Analytics(this);
-        if(typeFrom != null) {
-            if(typeFrom.equalsIgnoreCase("search")) {
+        if (typeFrom != null) {
+            if (typeFrom.equalsIgnoreCase("search")) {
                 analytics.getAnalyticByATInternet(Constant.FROM_SEARCH_RESULT_DETAIL_CONTENT + fromkanal.toUpperCase() + "_" + id + "_" + title);
                 analytics.getAnalyticByGoogleAnalytic(Constant.FROM_SEARCH_RESULT_DETAIL_CONTENT + fromkanal.toUpperCase() + "_" + id + "_" + title);
-            } else if(typeFrom.equalsIgnoreCase("editor_choice")) {
+            } else if (typeFrom.equalsIgnoreCase("editor_choice")) {
                 analytics.getAnalyticByATInternet(Constant.FROM_EDITOR_CHOICE + id + "_" + title);
                 analytics.getAnalyticByGoogleAnalytic(Constant.FROM_EDITOR_CHOICE + id + "_" + title);
+            } else if (typeFrom.equals(getResources().getString(R.string.label_item_navigation_scan_berita))) {
+                analytics.getAnalyticByATInternet(getResources().getString(R.string.label_item_navigation_scan_berita) + id + "_" + title);
+                analytics.getAnalyticByGoogleAnalytic(getResources().getString(R.string.label_item_navigation_scan_berita) + id + "_" + title);
             }
         } else {
             analytics.getAnalyticByATInternet(Constant.FROM_RELATED_ARTICLE_DETAIL_CONTENT + id + "_" + title);

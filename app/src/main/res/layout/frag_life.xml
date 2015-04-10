@@ -62,7 +62,7 @@
             android:layout_below="@+id/grid_life"
             android:layout_centerHorizontal="true"
             android:layout_margin="5dp"
-            wheel:barColor="@color/blue"
+            wheel:barColor="@color/color_life"
             wheel:progressIndeterminate="true" />
         <id.co.viva.news.app.component.RobotoTextView
             android:layout_width="wrap_content"

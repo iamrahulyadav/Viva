@@ -1,13 +1,23 @@
 <resources>
 
-    <!-- Base application theme. -->
+    <!-- Base application theme -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="colorPrimary">@color/header_headline_terbaru_new</item>
-        <!--<item name="android:windowBackground">@android:color/white</item>-->
-        <!-- SearchView Line Color -->
-        <!--<item name="colorControlNormal">@android:color/white</item>-->
-        <!--<item name="colorControlActivated">@android:color/white</item>-->
-        <!--<item name="colorControlHighlight">@android:color/white</item>-->
+    </style>
+
+    <!-- Camera -->
+    <style name="AppThemeTransparent" parent="Theme.AppCompat.Light">
+        <item name="android:actionBarStyle">@style/ActionBarCamera</item>
+        <!-- Support library compatibility -->
+        <item name="actionBarStyle">@style/ActionBarCamera</item>
+    </style>
+
+    <style name="ActionBarCamera" parent="@style/Widget.AppCompat.ActionBar">
+        <item name="android:background">@drawable/ab_background_transparent</item>
+        <item name="android:windowActionBarOverlay">true</item>
+        <!-- Support library compatibility -->
+        <item name="background">@drawable/ab_background_transparent</item>
+        <item name="windowActionBarOverlay">true</item>
     </style>
 
     <!-- YouTube -->

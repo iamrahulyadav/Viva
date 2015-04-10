@@ -25,6 +25,7 @@ public class DetailTerbaruAdapter extends FragmentStatePagerAdapter {
     private ArrayList<Fragment> mFragments = new ArrayList<Fragment>();
     private FragmentTransaction mCurTransaction = null;
     private final FragmentManager mFragmentManager;
+    private int mPosition;
     private ArrayList<Fragment.SavedState> mSavedState = new ArrayList<Fragment.SavedState>();
 
     public DetailTerbaruAdapter(FragmentManager fragmentManager, ArrayList<News> newsArrayList) {
@@ -35,9 +36,19 @@ public class DetailTerbaruAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
+        mPosition = position;
         return DetailMainIndexFragment
                 .newInstance(newsArrayList.get(position).getId(),
                         Constant.TERBARU_DETAIL_PAGE);
+    }
+
+    @Override
+    public int getItemPosition(Object object) {
+        if (mPosition >= 0) {
+            return mPosition;
+        } else {
+            return POSITION_NONE;
+        }
     }
 
     @Override

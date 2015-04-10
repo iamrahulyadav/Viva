@@ -106,8 +106,12 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
         }
 
         setContentView(R.layout.act_notification);
-        setHeaderActionbar(kanalFromNotification);
+
+        //Define All Views
         defineViews();
+
+        //Set Color Theme
+        setHeaderActionbar(kanalFromNotification);
 
         isInternetPresent = Global.getInstance(this)
                 .getConnectionStatus().isConnectingToInternet();
@@ -356,18 +360,22 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
                 colorDrawable.setColor(getResources().getColor(R.color.color_bola));
                 getSupportActionBar().setBackgroundDrawable(colorDrawable);
                 getSupportActionBar().setTitle(R.string.label_item_navigation_bola);
+                progressWheel.setBarColor(getResources().getColor(R.color.color_bola));
             } else if(fromkanal.equalsIgnoreCase("vivalife")) {
                 colorDrawable.setColor(getResources().getColor(R.color.color_life));
                 getSupportActionBar().setBackgroundDrawable(colorDrawable);
                 getSupportActionBar().setTitle(R.string.label_item_navigation_life);
+                progressWheel.setBarColor(getResources().getColor(R.color.color_life));
             } else {
                 colorDrawable.setColor(getResources().getColor(R.color.color_news));
                 getSupportActionBar().setBackgroundDrawable(colorDrawable);
                 getSupportActionBar().setTitle(R.string.label_item_navigation_news);
+                progressWheel.setBarColor(getResources().getColor(R.color.color_news));
             }
         } else {
             colorDrawable.setColor(getResources().getColor(R.color.header_headline_terbaru_new));
             getSupportActionBar().setBackgroundDrawable(colorDrawable);
+            progressWheel.setBarColor(getResources().getColor(R.color.blue));
         }
     }
 
@@ -507,7 +515,8 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
 
     private void getAnalytics(String title) {
         analytics = new Analytics(this);
-        analytics.getAnalyticByATInternetFromNotification(Constant.ARTICLE_FROM_NOTIFICATION + "_" + title.toUpperCase(), "Push Notification");
+        analytics.getAnalyticByATInternetFromNotification(Constant.ARTICLE_FROM_NOTIFICATION + "_"
+                + title.toUpperCase(), "Push Notifications::" + Constant.ARTICLE_FROM_NOTIFICATION + "_" + title.toUpperCase());
         analytics.getAnalyticByGoogleAnalytic(Constant.ARTICLE_FROM_NOTIFICATION + "_" + title.toUpperCase());
     }
 

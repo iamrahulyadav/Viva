@@ -145,157 +145,68 @@ public class DetailIndexContent extends Fragment implements
                 .getConnectionStatus().isConnectingToInternet();
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.item_detail_content, container, false);
-
-        setHasOptionsMenu(true);
-
-        if(viewPager == null) {
-            viewPager = (ViewPager) view.findViewById(R.id.horizontal_list);
-            view.setTag(viewPager);
-        } else {
-            viewPager = (ViewPager) view.getTag();
-        }
+    private void defineViews(View view) {
+        //Image Slider
+        viewPager = (ViewPager) view.findViewById(R.id.horizontal_list);
         viewPager.setVisibility(View.GONE);
 
-        if(linePageIndicator == null) {
-            linePageIndicator = (LinePageIndicator) view.findViewById(R.id.indicator);
-            view.setTag(linePageIndicator);
-        } else {
-            linePageIndicator = (LinePageIndicator) view.getTag();
-        }
+        //Indicator Pager
+        linePageIndicator = (LinePageIndicator) view.findViewById(R.id.indicator);
         linePageIndicator.setVisibility(View.GONE);
 
-        if(progressWheel == null) {
-            progressWheel = (ProgressWheel) view.findViewById(R.id.progress_wheel);
-            view.setTag(progressWheel);
+        //Loading Progress
+        progressWheel = (ProgressWheel) view.findViewById(R.id.progress_wheel);
+        if(kanals != null) {
+            if(kanals.equalsIgnoreCase("bola")) {
+                progressWheel.setBarColor(getResources().getColor(R.color.color_bola));
+            } else if(kanals.equalsIgnoreCase("vivalife")) {
+                progressWheel.setBarColor(getResources().getColor(R.color.color_life));
+            } else {
+                progressWheel.setBarColor(getResources().getColor(R.color.color_news));
+            }
         } else {
-            progressWheel = (ProgressWheel) view.getTag();
+            progressWheel.setBarColor(getResources().getColor(R.color.blue));
         }
 
-        if(headerRelated == null) {
-            headerRelated = (RelativeLayout) view.findViewById(R.id.header_related_article);
-            view.setTag(headerRelated);
-        } else {
-            headerRelated = (RelativeLayout) view.getTag();
-        }
+        //Header Related Article
+        headerRelated = (RelativeLayout) view.findViewById(R.id.header_related_article);
         headerRelated.setVisibility(View.GONE);
 
-        if(rippleView == null) {
-            rippleView = (RippleView) view.findViewById(R.id.layout_ripple_view_detail_subkanal);
-            view.setTag(rippleView);
-        } else {
-            rippleView = (RippleView) view.getTag();
-        }
+        //Ripple Effect Layout
+        rippleView = (RippleView) view.findViewById(R.id.layout_ripple_view_detail_subkanal);
         rippleView.setVisibility(View.GONE);
         rippleView.setOnClickListener(this);
 
-        if(btnRetry == null) {
-            btnRetry = (Button) view.findViewById(R.id.btn_retry);
-            view.setTag(btnRetry);
-        } else {
-            btnRetry = (Button) view.getTag();
-        }
+        //Retry Button
+        btnRetry = (Button) view.findViewById(R.id.btn_retry);
 
-        if(tvNoResult == null) {
-            tvNoResult = (TextView) view.findViewById(R.id.text_no_result_detail_content);
-            view.setTag(tvNoResult);
-        } else {
-            tvNoResult = (TextView) view.getTag();
-        }
+        tvNoResult = (TextView) view.findViewById(R.id.text_no_result_detail_content);
         tvNoResult.setVisibility(View.GONE);
 
-        if(listView == null) {
-            listView = (ListView) view.findViewById(R.id.list_related_article);
-            view.setTag(listView);
-        } else {
-            listView = (ListView) view.getTag();
-        }
+        listView = (ListView) view.findViewById(R.id.list_related_article);
         listView.setOnItemClickListener(this);
 
-        if(relatedArticleArrayList == null) {
-            relatedArticleArrayList = new ArrayList<>();
-        }
+        relatedArticleArrayList = new ArrayList<>();
+        commentArrayList = new ArrayList<>();
+        sliderContentImages = new ArrayList<>();
+        videoArrayList = new ArrayList<>();
 
-        if(commentArrayList == null) {
-            commentArrayList = new ArrayList<>();
-        }
-
-        if(sliderContentImages == null) {
-            sliderContentImages = new ArrayList<>();
-        }
-
-        if(videoArrayList == null) {
-            videoArrayList = new ArrayList<>();
-        }
-
-        if(layoutCommentPreview == null) {
-            layoutCommentPreview = (LinearLayout) view.findViewById(R.id.layout_preview_comment_list);
-            view.setTag(layoutCommentPreview);
-        } else {
-            layoutCommentPreview = (LinearLayout) view.getTag();
-        }
+        layoutCommentPreview = (LinearLayout) view.findViewById(R.id.layout_preview_comment_list);
         layoutCommentPreview.setOnClickListener(this);
         layoutCommentPreview.setVisibility(View.GONE);
 
-        if(tvPreviewCommentContent == null) {
-            tvPreviewCommentContent = (TextView) view.findViewById(R.id.text_preview_comment_content);
-            view.setTag(tvPreviewCommentContent);
-        } else {
-            tvPreviewCommentContent = (TextView) view.getTag();
-        }
+        tvPreviewCommentContent = (TextView) view.findViewById(R.id.text_preview_comment_content);
+        tvPreviewCommentUser = (TextView) view.findViewById(R.id.text_preview_comment_user);
+        tvTitleDetail = (TextView) view.findViewById(R.id.title_detail_content);
+        tvDateDetail = (TextView) view.findViewById(R.id.date_detail_content);
+        tvReporterDetail = (TextView) view.findViewById(R.id.reporter_detail_content);
+        tvContentDetail = (TextView) view.findViewById(R.id.content_detail_content);
 
-        if(tvPreviewCommentUser == null) {
-            tvPreviewCommentUser = (TextView) view.findViewById(R.id.text_preview_comment_user);
-            view.setTag(tvPreviewCommentUser);
-        } else {
-            tvPreviewCommentUser = (TextView) view.getTag();
-        }
-
-        if(tvTitleDetail == null) {
-            tvTitleDetail = (TextView) view.findViewById(R.id.title_detail_content);
-            view.setTag(tvTitleDetail);
-        } else {
-            tvTitleDetail = (TextView) view.getTag();
-        }
-
-        if(tvDateDetail == null) {
-            tvDateDetail = (TextView) view.findViewById(R.id.date_detail_content);
-            view.setTag(tvDateDetail);
-        } else {
-            tvDateDetail = (TextView) view.getTag();
-        }
-
-        if(tvReporterDetail == null) {
-            tvReporterDetail = (TextView) view.findViewById(R.id.reporter_detail_content);
-            view.setTag(tvReporterDetail);
-        } else {
-            tvReporterDetail = (TextView) view.getTag();
-        }
-
-        if(tvContentDetail == null) {
-            tvContentDetail = (TextView) view.findViewById(R.id.content_detail_content);
-            view.setTag(tvContentDetail);
-        } else {
-            tvContentDetail = (TextView) view.getTag();
-        }
-
-        if(ivThumbDetail == null) {
-            ivThumbDetail = (KenBurnsView) view.findViewById(R.id.thumb_detail_content);
-            view.setTag(ivThumbDetail);
-        } else {
-            ivThumbDetail = (KenBurnsView) view.getTag();
-        }
+        ivThumbDetail = (KenBurnsView) view.findViewById(R.id.thumb_detail_content);
         ivThumbDetail.setOnClickListener(this);
         ivThumbDetail.setFocusableInTouchMode(true);
 
-        if(textLinkVideo == null) {
-            textLinkVideo = (TextView) view.findViewById(R.id.text_move_video);
-            view.setTag(textLinkVideo);
-        } else {
-            textLinkVideo = (TextView) view.getTag();
-        }
+        textLinkVideo = (TextView) view.findViewById(R.id.text_move_video);
         textLinkVideo.setOnClickListener(this);
         textLinkVideo.setVisibility(View.GONE);
 
@@ -305,6 +216,15 @@ public class DetailIndexContent extends Fragment implements
             viewPager.getLayoutParams().height =
                     Constant.getDynamicImageSize(mActivity, Constant.DYNAMIC_SIZE_SLIDER_TYPE);
         }
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.item_detail_content, container, false);
+
+        setHasOptionsMenu(true);
+
+        defineViews(view);
 
         if(isInternetPresent) {
             StringRequest request = new StringRequest(Request.Method.GET, Constant.NEW_DETAIL + "/id/" + id,
