@@ -2,7 +2,7 @@
 
     <!-- Base application theme -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <item name="colorPrimary">@color/header_headline_terbaru_new</item>
+        <item name="colorPrimary">@color/new_base_color</item>
     </style>
 
     <!-- Camera -->

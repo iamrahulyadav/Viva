@@ -26,7 +26,7 @@ public class AboutFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         mActivity = (ActionBarActivity) activity;
-        mActivity.getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.header_headline_terbaru_new)));
+        mActivity.getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.new_base_color)));
         mActivity.getSupportActionBar().setIcon(R.drawable.logo_viva_coid_second);
     }
 

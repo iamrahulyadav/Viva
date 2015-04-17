@@ -79,7 +79,7 @@ public class ActPath extends ActionBarActivity {
 
     private void getHeaderActionBar() {
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().
-                getColor(R.color.header_headline_terbaru_new)));
+                getColor(R.color.new_base_color)));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setTitle("Path");

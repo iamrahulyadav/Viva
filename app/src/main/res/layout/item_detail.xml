@@ -137,7 +137,7 @@
                 android:layout_marginTop="5dp"
                 android:id="@+id/header_related_article"
                 android:layout_below="@id/layout_preview_comment_list"
-                android:background="@color/header_headline_terbaru_new">
+                android:background="@color/new_base_color">
                 <id.co.viva.news.app.component.RobotoBoldTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -159,14 +159,14 @@
                 android:textStyle="bold"
                 android:layout_centerHorizontal="true"
                 android:text="@string/label_no_results"
-                android:textColor="@color/header_grey"
+                android:textColor="@color/black"
                 android:id="@+id/text_no_result_detail"/>
             <id.co.viva.news.app.component.ProgressWheel
                 android:id="@+id/progress_wheel"
                 android:layout_width="90dp"
                 android:layout_height="90dp"
                 android:layout_centerInParent="true"
-                wheel:barColor="@color/header_headline_terbaru_new"
+                wheel:barColor="@color/new_base_color"
                 wheel:progressIndeterminate="true" />
             <com.andexert.library.RippleView
                 android:id="@+id/layout_ripple_view"

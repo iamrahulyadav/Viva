@@ -80,7 +80,7 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         ColorDrawable colorDrawable = new ColorDrawable();
-        colorDrawable.setColor(getResources().getColor(R.color.header_headline_terbaru_new));
+        colorDrawable.setColor(getResources().getColor(R.color.new_base_color));
         ActionBarActivity mActivity = (ActionBarActivity) activity;
         mActivity.getSupportActionBar().setBackgroundDrawable(colorDrawable);
         mActivity.getSupportActionBar().setIcon(R.drawable.logo_viva_coid_second);

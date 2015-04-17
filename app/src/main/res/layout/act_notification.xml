@@ -123,7 +123,7 @@
                 android:textStyle="bold"
                 android:layout_centerHorizontal="true"
                 android:text="@string/label_no_results"
-                android:textColor="@color/header_grey"
+                android:textColor="@color/black"
                 android:id="@+id/text_no_result_detail_content"/>
             <id.co.viva.news.app.component.ProgressWheel
                 android:id="@+id/progress_wheel"

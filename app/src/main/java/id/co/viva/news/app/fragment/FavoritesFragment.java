@@ -50,7 +50,7 @@ public class FavoritesFragment extends Fragment implements AdapterView.OnItemCli
         super.onAttach(activity);
         ActionBarActivity mActionBarActivity = (ActionBarActivity) activity;
         mActionBarActivity.getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().
-                getColor(R.color.header_headline_terbaru_new)));
+                getColor(R.color.new_base_color)));
         mActionBarActivity.getSupportActionBar().setIcon(R.drawable.logo_viva_coid_second);
     }
 

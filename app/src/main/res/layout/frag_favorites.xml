@@ -7,7 +7,7 @@
         android:text="@string/label_favorites"
         android:layout_height="wrap_content"
         android:textStyle="bold"
-        android:textColor="@color/header_headline_terbaru_new"
+        android:textColor="@color/black"
         android:textSize="18sp"
         android:layout_marginLeft="5dp"
         android:layout_marginTop="5dp"
@@ -30,6 +30,6 @@
         android:textStyle="bold"
         android:layout_centerInParent="true"
         android:text="@string/label_no_results_favorite"
-        android:textColor="@color/header_grey"
+        android:textColor="@color/black"
         android:id="@+id/text_no_result_detail_content_favorite"/>
 </RelativeLayout>

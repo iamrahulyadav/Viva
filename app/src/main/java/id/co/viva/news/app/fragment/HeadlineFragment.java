@@ -82,14 +82,14 @@ public class HeadlineFragment extends Fragment implements
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         ColorDrawable colorDrawable = new ColorDrawable();
-        colorDrawable.setColor(getResources().getColor(R.color.header_headline_terbaru_new));
+        colorDrawable.setColor(getResources().getColor(R.color.new_base_color));
         mActivity = (ActionBarActivity) activity;
         mActivity.getSupportActionBar().setBackgroundDrawable(colorDrawable);
         mActivity.getSupportActionBar().setIcon(R.drawable.logo_viva_coid_second);
     }
 
     private Drawable getProgressDrawable() {
-        Drawable progressDrawable = null;
+        Drawable progressDrawable;
         progressDrawable = new GoogleMusicDicesDrawable.Builder().build();
         return progressDrawable;
     }

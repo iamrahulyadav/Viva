@@ -62,12 +62,12 @@ public class CommentAdapter extends BaseAdapter {
 
         Comment comment = commentArrayList.get(position);
         holder.name_item_comment.setText(comment.getUsername());
-        if(comment.getComment_text().length() > 0 ) {
+        if (comment.getComment_text().length() > 0 ) {
             holder.comment_item_content.setText(comment.getComment_text());
         }
         try {
             DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            Date date = (Date)formatter.parse(comment.getSubmitted_date());
+            Date date = formatter.parse(comment.getSubmitted_date());
             holder.date_item_comment.setText(Constant.getTimeAgo(date.getTime()));
         } catch (Exception e) {
             e.getMessage();

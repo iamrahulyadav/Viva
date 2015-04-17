@@ -46,7 +46,7 @@ public class ActSearchResult extends ActionBarActivity implements
 
     private TextView tvSearchResult;
     private LoadMoreListView listSearchResult;
-    private String query;
+    private String mQuery;
     private boolean isInternetPresent = false;
     private JSONArray jsonArrayResponses;
     private ArrayList<SearchResult> resultArrayList;
@@ -59,13 +59,15 @@ public class ActSearchResult extends ActionBarActivity implements
     private ProgressWheel progressWheel;
     private SearchResultAdapter searchResultAdapter;
 
+    private String mKeywordFromScan;
+
     private String id ;
     private String kanal ;
     private String image_url ;
     private String title ;
     private String slug ;
     private String date_publish ;
-    private String url;
+    private String url ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +80,9 @@ public class ActSearchResult extends ActionBarActivity implements
         isInternetPresent = Global.getInstance(this).
                 getConnectionStatus().isConnectingToInternet();
 
+        //Param From Scan Result
+        getParamFromScan();
+
         resultArrayList = new ArrayList<>();
         searchResultAdapter = new SearchResultAdapter(this, resultArrayList);
 
@@ -88,16 +93,29 @@ public class ActSearchResult extends ActionBarActivity implements
         tvNoResult = (TextView)findViewById(R.id.text_no_result);
         progressWheel = (ProgressWheel)findViewById(R.id.progress_wheel);
 
-        if(isInternetPresent) {
+        if (isInternetPresent) {
             tvNoResult.setVisibility(View.GONE);
             progressWheel.setVisibility(View.VISIBLE);
-            handleIntent(getIntent());
+            if (mKeywordFromScan != null) {
+                if (mKeywordFromScan.length() > 0) {
+                    setAnalytics(mKeywordFromScan);
+                    tvSearchResult.setText("Hasil Pencarian : " + mKeywordFromScan.replace("%20", " "));
+                    loadQuery(mKeywordFromScan);
+                }
+            } else {
+                handleIntent(getIntent());
+            }
         } else {
             Toast.makeText(this, R.string.title_no_connection, Toast.LENGTH_SHORT).show();
             progressWheel.setVisibility(View.GONE);
             tvNoResult.setVisibility(View.VISIBLE);
             tvSearchResult.setVisibility(View.GONE);
         }
+    }
+
+    private void getParamFromScan() {
+        Intent intent = getIntent();
+        mKeywordFromScan = intent.getExtras().getString("keyword");
     }
 
     @Override
@@ -107,69 +125,78 @@ public class ActSearchResult extends ActionBarActivity implements
         handleIntent(intent);
     }
 
+    private void setAnalytics(String key) {
+        analytics = new Analytics(this);
+        analytics.getAnalyticByATInternet(Constant.SEARCH_RESULT_PAGE + key.toUpperCase());
+        analytics.getAnalyticByGoogleAnalytic(Constant.SEARCH_RESULT_PAGE + key.toUpperCase());
+    }
+
+    private void loadQuery(String query) {
+        Log.i(Constant.TAG, "URL + " + Constant.NEW_SEARCH + "q/" + query.replaceAll(" ", "%20") + "/s/0");
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, Constant.NEW_SEARCH + "q/" + query.replaceAll(" ", "%20") + "/s/0",
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String volleyResponse) {
+                        Log.i(Constant.TAG, "SEARCH RESPONSES : " + volleyResponse);
+                        try {
+                            JSONObject jsonObject = new JSONObject(volleyResponse);
+                            JSONObject response = jsonObject.getJSONObject(Constant.response);
+                            jsonArrayResponses = response.getJSONArray(Constant.search);
+                            if(jsonArrayResponses != null) {
+                                for(int i=0; i<jsonArrayResponses.length(); i++) {
+                                    JSONObject jsonHeadline = jsonArrayResponses.getJSONObject(i);
+                                    id = jsonHeadline.getString(Constant.id);
+                                    kanal = jsonHeadline.getString(Constant.kanal);
+                                    image_url = jsonHeadline.getString(Constant.image_url);
+                                    title = jsonHeadline.getString(Constant.title);
+                                    slug = jsonHeadline.getString(Constant.slug);
+                                    date_publish = jsonHeadline.getString(Constant.date_publish);
+                                    url = jsonHeadline.getString(Constant.url);
+                                    resultArrayList.add(new SearchResult(id, kanal, image_url,
+                                            title, slug, date_publish, url));
+                                    Log.i(Constant.TAG, "SEARCH RESULTS : " + resultArrayList.get(i).getTitle());
+                                }
+                            }
+                            if (resultArrayList.size() > 0 || !resultArrayList.isEmpty()) {
+                                mAnimAdapter = new ScaleInAnimationAdapter(searchResultAdapter);
+                                mAnimAdapter.setAbsListView(listSearchResult);
+                                listSearchResult.setAdapter(mAnimAdapter);
+                                mAnimAdapter.notifyDataSetChanged();
+                                progressWheel.setVisibility(View.GONE);
+                            }
+                        } catch (Exception e) {
+                            e.getMessage();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                volleyError.getMessage();
+                progressWheel.setVisibility(View.GONE);
+                MenuItem searchItem = mMenu.findItem(R.id.action_search);
+                android.support.v7.widget.SearchView searchView =
+                        (android.support.v7.widget.SearchView) MenuItemCompat.getActionView(searchItem);
+                searchView.setIconified(false);
+            }
+        });
+        stringRequest.setShouldCache(true);
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                Constant.TIME_OUT,
+                0,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        Global.getInstance(this).getRequestQueue().getCache().invalidate(Constant.NEW_SEARCH + "q/" + query.replaceAll(" ", "%20") + "/s/0", true);
+        Global.getInstance(this).getRequestQueue().getCache().get(Constant.NEW_SEARCH + "q/" + query.replaceAll(" ", "%20") + "/s/0");
+        Global.getInstance(this).addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
+    }
+
     private void handleIntent(Intent intent) {
         if (Intent.ACTION_SEARCH.equalsIgnoreCase(intent.getAction())) {
-            query = intent.getStringExtra(SearchManager.QUERY);
-            tvSearchResult.setText("Hasil Pencarian : " + query);
-
-            analytics = new Analytics(this);
-            analytics.getAnalyticByATInternet(Constant.SEARCH_RESULT_PAGE + query.toUpperCase());
-            analytics.getAnalyticByGoogleAnalytic(Constant.SEARCH_RESULT_PAGE + query.toUpperCase());
-
-            StringRequest stringRequest = new StringRequest(Request.Method.GET, Constant.NEW_SEARCH + "q/" + query.replaceAll(" ", "%20") + "/s/0",
-                    new Response.Listener<String>() {
-                        @Override
-                        public void onResponse(String volleyResponse) {
-                            Log.i(Constant.TAG, "SEARCH RESPONSES : " + volleyResponse);
-                            try {
-                                JSONObject jsonObject = new JSONObject(volleyResponse);
-                                JSONObject response = jsonObject.getJSONObject(Constant.response);
-                                jsonArrayResponses = response.getJSONArray(Constant.search);
-                                if(jsonArrayResponses != null) {
-                                    for(int i=0; i<jsonArrayResponses.length(); i++) {
-                                        JSONObject jsonHeadline = jsonArrayResponses.getJSONObject(i);
-                                        id = jsonHeadline.getString(Constant.id);
-                                        kanal = jsonHeadline.getString(Constant.kanal);
-                                        image_url = jsonHeadline.getString(Constant.image_url);
-                                        title = jsonHeadline.getString(Constant.title);
-                                        slug = jsonHeadline.getString(Constant.slug);
-                                        date_publish = jsonHeadline.getString(Constant.date_publish);
-                                        url = jsonHeadline.getString(Constant.url);
-                                        resultArrayList.add(new SearchResult(id, kanal, image_url,
-                                                title, slug, date_publish, url));
-                                        Log.i(Constant.TAG, "SEARCH RESULTS : " + resultArrayList.get(i).getTitle());
-                                    }
-                                }
-                                if (resultArrayList.size() > 0 || !resultArrayList.isEmpty()) {
-                                    mAnimAdapter = new ScaleInAnimationAdapter(searchResultAdapter);
-                                    mAnimAdapter.setAbsListView(listSearchResult);
-                                    listSearchResult.setAdapter(mAnimAdapter);
-                                    mAnimAdapter.notifyDataSetChanged();
-                                    progressWheel.setVisibility(View.GONE);
-                                }
-                            } catch (Exception e) {
-                                e.getMessage();
-                            }
-                        }
-                    }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError volleyError) {
-                    volleyError.getMessage();
-                    progressWheel.setVisibility(View.GONE);
-                    MenuItem searchItem = mMenu.findItem(R.id.action_search);
-                    android.support.v7.widget.SearchView searchView =
-                            (android.support.v7.widget.SearchView) MenuItemCompat.getActionView(searchItem);
-                    searchView.setIconified(false);
-                }
-            });
-            stringRequest.setShouldCache(true);
-            stringRequest.setRetryPolicy(new DefaultRetryPolicy(
-                    Constant.TIME_OUT,
-                    0,
-                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-            Global.getInstance(this).getRequestQueue().getCache().invalidate(Constant.NEW_SEARCH + "q/" + query.replaceAll(" ", "%20") + "/s/0", true);
-            Global.getInstance(this).getRequestQueue().getCache().get(Constant.NEW_SEARCH + "q/" + query.replaceAll(" ", "%20") + "/s/0");
-            Global.getInstance(this).addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
+            mQuery = intent.getStringExtra(SearchManager.QUERY);
+            tvSearchResult.setText("Hasil Pencarian : " + mQuery);
+            //Analytic
+            setAnalytics(mQuery);
+            //Load Data
+            loadQuery(mQuery);
         }
     }
 
@@ -210,6 +237,14 @@ public class ActSearchResult extends ActionBarActivity implements
     @Override
     public void onLoadMore() {
         data = String.valueOf(dataSize += 10);
+        if (mKeywordFromScan != null) {
+            loadMoredata(mKeywordFromScan);
+        } else {
+            loadMoredata(mQuery);
+        }
+    }
+
+    private void loadMoredata(final String query) {
         if(isInternetPresent) {
             StringRequest stringRequest = new StringRequest(Request.Method.GET, Constant.NEW_SEARCH + "q/" + query.replaceAll(" ", "%20") + "/s/" + data,
                     new Response.Listener<String>() {

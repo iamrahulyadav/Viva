@@ -58,14 +58,14 @@ public class GcmIntentService extends IntentService {
     private void sendNotification(String id, String title, String kanal, int notification_id, String type, String message, String image) {
         mNotificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        if(type.equalsIgnoreCase("browse")) {
+        if (type.equalsIgnoreCase("browse")) {
             Uri uri = Uri.parse(getResources().getString(R.string.url_google_play) + getPackageName());
             intent = new Intent(Intent.ACTION_VIEW, uri);
-        } else if(type.equalsIgnoreCase("open")) {
+        } else if (type.equalsIgnoreCase("open")) {
             PackageManager manager = getPackageManager();
             try {
                 intent = manager.getLaunchIntentForPackage(getPackageName());
-                if(intent == null) {
+                if (intent == null) {
                     throw new PackageManager.NameNotFoundException();
                 }
             } catch (PackageManager.NameNotFoundException e) {
@@ -85,8 +85,8 @@ public class GcmIntentService extends IntentService {
 
         final NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
 
-        if(image != null) {
-            if(image.length() > 0) {
+        if (image != null) {
+            if (image.length() > 0) {
                 try {
                     remote_picture = BitmapFactory.decodeStream(
                             (InputStream) new URL(image).getContent());
@@ -102,9 +102,9 @@ public class GcmIntentService extends IntentService {
             }
         }
 
-        if(kanal.equals("vivalife")) {
+        if (kanal.equals("vivalife")) {
             builder.setSmallIcon(R.drawable.icon_viva_life);
-        } else if(kanal.equals("bola")) {
+        } else if (kanal.equals("bola")) {
             builder.setSmallIcon(R.drawable.icon_viva_bola);
         } else {
             builder.setSmallIcon(R.drawable.icon_viva_news);
@@ -129,7 +129,7 @@ public class GcmIntentService extends IntentService {
         String type = extras.containsKey("act") ? extras.getString("act") : "";
         String nid = extras.containsKey("nid") ? extras.getString("nid") : "0";
         int notification_id = Integer.parseInt(nid);
-        if(notification_id != 0) {
+        if (notification_id != 0) {
             sendNotification(id, title, kanal, notification_id, type, message, image);
         }
     }

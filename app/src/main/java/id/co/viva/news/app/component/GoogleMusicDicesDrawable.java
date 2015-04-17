@@ -19,8 +19,8 @@ import android.view.animation.Interpolator;
  */
 public class GoogleMusicDicesDrawable extends Drawable implements Drawable.Callback {
 
-    private static final int DICE_SIDE_COLOR = Color.parseColor("#FFDBDBDB");
-    private static final int DICE_SIDE_SHADOW_COLOR = Color.parseColor("#FFB8B8B9");
+    private static final int DICE_SIDE_COLOR = Color.parseColor("#990000");
+    private static final int DICE_SIDE_SHADOW_COLOR = Color.parseColor("#EF4836");
     private static final int ANIMATION_DURATION = 350;
     private static final int ANIMATION_START_DELAY = 150;
     private static final Interpolator ACCELERATE_INTERPOLATOR = new AccelerateInterpolator();
@@ -233,14 +233,6 @@ public class GoogleMusicDicesDrawable extends Drawable implements Drawable.Callb
                 canvas.drawCircle(mSize - mSize / 4, mSize - mSize / 4, circleRadius, mPaintCircle);
                 break;
         }
-    }
-
-    float getScale() {
-        return mScale;
-    }
-
-    void setScale(float scale) {
-        this.mScale = scale;
     }
 
     public static class Builder {

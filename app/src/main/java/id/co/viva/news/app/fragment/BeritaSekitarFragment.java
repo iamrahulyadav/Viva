@@ -52,7 +52,6 @@ import id.co.viva.news.app.interfaces.OnGPSListener;
 import id.co.viva.news.app.interfaces.OnLoadMoreListener;
 import id.co.viva.news.app.location.LocationFinder;
 import id.co.viva.news.app.model.BeritaSekitar;
-import id.co.viva.news.app.model.Places;
 import id.co.viva.news.app.services.Analytics;
 
 /**
@@ -62,14 +61,11 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
         OnLoadMoreListener, AdapterView.OnItemClickListener, LocationResult, OnGPSListener {
 
     public static ArrayList<BeritaSekitar> beritaSekitarArrayList;
-    private ArrayList<Places> placesArrayList;
     private boolean isInternetPresent = false;
     private boolean isResume;
     private String lastPaging;
     private int dataSize = 0;
-    private String mCity;
-    private String mAdminArea;
-    private String mSubLocality;
+    private String mCitySubLocality;
     private LoadMoreListView listView;
     private Analytics analytics;
     private RippleView rippleView;
@@ -100,7 +96,7 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
         super.onAttach(activity);
         mActivity = (ActionBarActivity) activity;
         ColorDrawable colorDrawable = new ColorDrawable();
-        colorDrawable.setColor(getResources().getColor(R.color.header_headline_terbaru_new));
+        colorDrawable.setColor(getResources().getColor(R.color.new_base_color));
         mActivity.getSupportActionBar().setBackgroundDrawable(colorDrawable);
         mActivity.getSupportActionBar().setIcon(R.drawable.logo_viva_coid_second);
     }
@@ -153,6 +149,7 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
 
         floatingActionButton = (FloatingActionButton) rootView.findViewById(R.id.fab);
         floatingActionButton.setVisibility(View.GONE);
+        floatingActionButton.setOnClickListener(this);
         floatingActionButton.attachToListView(listView, new FloatingActionButton.FabOnScrollListener() {
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
@@ -165,11 +162,8 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
                 }
             }
         });
-        floatingActionButton.setOnClickListener(this);
 
-        placesArrayList = new ArrayList<>();
         beritaSekitarArrayList = new ArrayList<>();
-
         if (getActivity() != null) {
             adapter = new BeritaSekitarAdapter(getActivity(), beritaSekitarArrayList);
         } else {
@@ -220,7 +214,7 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
                 labelLoadData.setVisibility(View.VISIBLE);
                 labelLoadData.setText(getResources().getString(R.string.label_get_location));
                 StringRequest request = new StringRequest(Request.Method.GET,
-                        Constant.NEW_SEARCH + "q/" + mCity.replaceAll(" ", "%20") + "/s/0",
+                        Constant.NEW_SEARCH + "q/" + mCitySubLocality.replaceAll(" ", "%20") + "/s/0",
                         new Response.Listener<String>() {
                             @Override
                             public void onResponse(String s) {
@@ -228,8 +222,8 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
                                     JSONObject jsonObject = new JSONObject(s);
                                     JSONObject response = jsonObject.getJSONObject(Constant.response);
                                     jsonArrayResponses = response.getJSONArray(Constant.search);
-                                    if(jsonArrayResponses != null) {
-                                        for(int i=0; i<jsonArrayResponses.length(); i++) {
+                                    if (jsonArrayResponses != null) {
+                                        for (int i=0; i<jsonArrayResponses.length(); i++) {
                                             JSONObject jsonHeadline = jsonArrayResponses.getJSONObject(i);
                                             String id = jsonHeadline.getString(Constant.id);
                                             String kanal = jsonHeadline.getString(Constant.kanal);
@@ -250,7 +244,7 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
                                         adapter.notifyDataSetChanged();
                                         loading_layout.setVisibility(View.GONE);
                                         labelLoadData.setVisibility(View.GONE);
-                                        lastUpdate.setText(mCity);
+                                        lastUpdate.setText(getCity(mCitySubLocality));
                                     }
                                 } catch (Exception e) {
                                     e.getMessage();
@@ -290,7 +284,7 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
         if (isInternetPresent) {
             setAnalytics(String.valueOf(page));
             StringRequest request = new StringRequest(Request.Method.GET,
-                    Constant.NEW_SEARCH + "q/" + mCity.replaceAll(" ", "%20") + "/s/" + lastPaging,
+                    Constant.NEW_SEARCH + "q/" + mCitySubLocality.replaceAll(" ", "%20") + "/s/" + lastPaging,
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String s) {
@@ -378,16 +372,11 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
         }
     }
 
-    private ArrayList<Places> getPlaces(Location location) {
-        String city;
-        String subLocality;
-        String subAdminArea;
+    private String getPlaces(Location location) {
+        String city = null;
+        String subLocality = null;
         Geocoder gcd;
         List<Address> addresses;
-        //Check Data
-        if (placesArrayList.size() > 0) {
-            placesArrayList.clear();
-        }
         //Check Instance
         if (getActivity() != null) {
             gcd = new Geocoder(getActivity(), Locale.getDefault());
@@ -401,27 +390,37 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
                 if (addresses.size() > 0) {
                     city = addresses.get(0).getLocality();
                     subLocality = addresses.get(0).getSubLocality();
-                    subAdminArea = addresses.get(0).getSubAdminArea();
-                    placesArrayList.add(new Places(city, subLocality, subAdminArea));
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return placesArrayList;
+        return city + "-" + subLocality;
+    }
+
+    private String getCity(String result) {
+        if (result != null) {
+            if (result.length() > 0) {
+                String[] results = result.split("-");
+                String city = results[0];
+                return city;
+            } else {
+                return "";
+            }
+        } else {
+            return "";
+        }
     }
 
     @Override
     public void getLocation(Location location) {
         if (isInternetPresent) {
             if (location != null) {
-                mCity = getPlaces(location).get(0).getmCity();
-                mAdminArea = getPlaces(location).get(0).getmSubAdminArea();
-                mSubLocality = getPlaces(location).get(0).getmSubLocality();
-                if (mCity != null || mAdminArea != null || mSubLocality != null) {
-                    if (mCity.length() > 0) {
+                mCitySubLocality = getPlaces(location);
+                if (mCitySubLocality != null) {
+                    if (mCitySubLocality.length() > 0) {
                         StringRequest request = new StringRequest(Request.Method.GET,
-                                Constant.NEW_SEARCH + "q/" + mCity.replaceAll(" ", "%20") + "/s/0",
+                                Constant.NEW_SEARCH + "q/" + mCitySubLocality.replaceAll(" ", "%20") + "/s/0",
                                 new Response.Listener<String>() {
                                     @Override
                                     public void onResponse(String s) {
@@ -451,7 +450,7 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
                                                 adapter.notifyDataSetChanged();
                                                 loading_layout.setVisibility(View.GONE);
                                                 labelLoadData.setVisibility(View.GONE);
-                                                lastUpdate.setText(mCity);
+                                                lastUpdate.setText(getCity(mCitySubLocality));
                                             }
                                         } catch (Exception e) {
                                             e.getMessage();

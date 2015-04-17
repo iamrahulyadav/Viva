@@ -146,7 +146,7 @@ public class ActUserProfile extends ActionBarActivity implements View.OnClickLis
 
     private void getHeaderActionBar() {
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().
-                getColor(R.color.header_headline_terbaru_new)));
+                getColor(R.color.new_base_color)));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setTitle("Profile");

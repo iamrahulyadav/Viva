@@ -224,7 +224,7 @@ public class ActDetailContentDefault extends ActionBarActivity
                                             headerRelated.setBackgroundResource(R.color.color_news);
                                         }
                                     } else {
-                                        headerRelated.setBackgroundResource(R.color.header_headline_terbaru_new);
+                                        headerRelated.setBackgroundResource(R.color.new_base_color);
                                     }
                                 }
 
@@ -375,7 +375,7 @@ public class ActDetailContentDefault extends ActionBarActivity
                                 headerRelated.setBackgroundResource(R.color.color_news);
                             }
                         } else {
-                            headerRelated.setBackgroundResource(R.color.header_headline_terbaru_new);
+                            headerRelated.setBackgroundResource(R.color.new_base_color);
                         }
                     }
 
@@ -529,9 +529,9 @@ public class ActDetailContentDefault extends ActionBarActivity
                 progressWheel.setBarColor(getResources().getColor(R.color.color_news));
             }
         } else {
-            colorDrawable.setColor(getResources().getColor(R.color.header_headline_terbaru_new));
+            colorDrawable.setColor(getResources().getColor(R.color.new_base_color));
             getSupportActionBar().setBackgroundDrawable(colorDrawable);
-            progressWheel.setBarColor(getResources().getColor(R.color.blue));
+            progressWheel.setBarColor(getResources().getColor(R.color.new_base_color));
         }
     }
 

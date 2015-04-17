@@ -210,6 +210,59 @@ public class Constant {
     public static final String RATING_ARTICLE = "RATING_ARTICLE";
     public static final String ARTICLE_FROM_NOTIFICATION = "DETAIL_ARTICLE";
 
+    public static String LABEL_CHANNEL_POLITIK = "Politik";
+    public static String LABEL_CHANNEL_BISNIS = "Bisnis";
+    public static String LABEL_CHANNEL_NASIONAL = "Nasional";
+    public static String LABEL_CHANNEL_METRO = "Metro";
+    public static String LABEL_CHANNEL_DUNIA = "Dunia";
+    public static String LABEL_CHANNEL_TEKNOLOGI = "Teknologi";
+    public static String LABEL_CHANNEL_OTOMOTIF = "Otomotif";
+    public static String LABEL_CHANNEL_SOROT = "Sorot";
+    public static String LABEL_CHANNEL_WAWANCARA = "Wawancara";
+    public static String LABEL_CHANNEL_FOKUS = "Fokus";
+
+    public static String LABEL_CHANNEL_LIGA_INDONESIA = "Liga Indonesia";
+    public static String LABEL_CHANNEL_LIGA_INGGRIS = "Liga Inggris";
+    public static String LABEL_CHANNEL_LIGA_SPANYOL = "Liga Spanyol";
+    public static String LABEL_CHANNEL_LIGA_ITALIA = "Liga Italia";
+    public static String LABEL_CHANNEL_BOLA_NASIONAL = "Nasional";
+    public static String LABEL_CHANNEL_BOLA_SEJAGAT = "Bola Sejagat";
+
+    public static String LABEL_CHANNEL_STYLE = "Style";
+    public static String LABEL_CHANNEL_FOODLIVING = "Food & Living";
+    public static String LABEL_CHANNEL_SHOWBIZ = "Show Biz";
+    public static String LABEL_CHANNEL_TRAVEL = "Travel";
+    public static String LABEL_CHANNEL_HEALTHSEX = "Health + Sex";
+
+    public static String SEARCH_KEYWORD = "search.viva.co.id/search?q=";
+
+    public static final String CHANNEL_INDEX_NEWS = "http://news.viva.co.id/";
+    public static final String CHANNEL_POLITIK = "http://politik.news.viva.co.id/";
+    public static final String CHANNEL_BISNIS = "http://bisnis.news.viva.co.id/";
+    public static final String CHANNEL_NASIONAL = "http://nasional.news.viva.co.id/";
+    public static final String CHANNEL_METRO = "http://metro.news.viva.co.id/";
+    public static final String CHANNEL_DUNIA = "http://dunia.news.viva.co.id/";
+    public static final String CHANNEL_TEKNOLOGI = "http://teknologi.news.viva.co.id/";
+    public static final String CHANNEL_OTOMOTIF = "http://otomotif.news.viva.co.id/";
+    public static final String CHANNEL_SOROT = "http://sorot.news.viva.co.id/";
+    public static final String CHANNEL_WAWANCARA = "http://analisis.news.viva.co.id/";
+    public static final String CHANNEL_FOKUS = "http://fokus.news.viva.co.id/";
+
+    public static final String CHANNEL_INDEX_BOLA = "http://bola.viva.co.id/";
+    public static final String CHANNEL_LIGA_INGGRIS = "http://bola.viva.co.id/liga/inggris";
+    public static final String CHANNEL_LIGA_INDONESIA = "http://bola.viva.co.id/liga/indonesia";
+    public static final String CHANNEL_LIGA_ITALIA = "http://bola.viva.co.id/liga/italia";
+    public static final String CHANNEL_LIGA_SPANYOL = "http://bola.viva.co.id/liga/spanyol";
+    public static final String CHANNEL_BOLA_NASIONAL = "http://bola.viva.co.id/nasional";
+    public static final String CHANNEL_BOLA_SEJAGAT = "http://bola.viva.co.id/bolasejagad";
+
+    public static final String CHANNEL_INDEX_LIFE = "http://life.viva.co.id/";
+    public static final String CHANNEL_STYLE = "http://life.viva.co.id/style";
+    public static final String CHANNEL_SHOWBIZ = "http://life.viva.co.id/showbiz";
+    public static final String CHANNEL_FOODLIVING = "http://life.viva.co.id/food_and_living";
+    public static final String CHANNEL_TRAVEL = "http://life.viva.co.id/travel";
+    public static final String CHANNEL_HEALTHSEX = "http://life.viva.co.id/health_and_sex";
+
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     public static Bitmap blur(Context ctx, Bitmap image) {
         int width = Math.round(image.getWidth() * BITMAP_SCALE);
@@ -306,6 +359,23 @@ public class Constant {
         String[] splitter = urlSplit.split("-");
         String article_id = splitter[0];
         return  article_id;
+    }
+
+    public static String getSearchKeyword(String url) {
+        if (url != null) {
+            if (url.length() > 0) {
+                String[] separated = url.split("=");
+                String keyword;
+                keyword = separated[1];
+                if (keyword.contains("+")) {
+                    String keywordWithPlus = keyword.replaceAll("\\+", " ");
+                    return keywordWithPlus;
+                } else {
+                    return keyword;
+                }
+            }
+        }
+        return null;
     }
 
 }

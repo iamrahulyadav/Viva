@@ -34,48 +34,12 @@ public class Comment {
         return username;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getParent_id() {
-        return parent_id;
-    }
-
-    public void setParent_id(String parent_id) {
-        this.parent_id = parent_id;
-    }
-
     public String getComment_text() {
         return comment_text;
     }
 
-    public void setComment_text(String comment_text) {
-        this.comment_text = comment_text;
-    }
-
-    public String getApp_id() {
-        return app_id;
-    }
-
-    public void setApp_id(String app_id) {
-        this.app_id = app_id;
-    }
-
     public String getSubmitted_date() {
         return submitted_date;
-    }
-
-    public void setSubmitted_date(String submitted_date) {
-        this.submitted_date = submitted_date;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
     }
 
     public Comment(String id, String article_id, String name, String parent_id,

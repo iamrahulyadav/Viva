@@ -11,13 +11,13 @@
     <string name="label_process_get_image_tutorial">Memproses gambar...</string>
     <string name="label_fail_get_image_tutorial">Gagal memproses gambar!</string>
     <string name="label_no_results">Tidak ada hasil.</string>
-    <string name="label_no_results_favorite">Daftar favorite kosong.</string>
+    <string name="label_no_results_favorite">Daftar favorit kosong.</string>
     <string name="label_related_article">Artikel Terkait</string>
     <string name="label_pencarian">Pencarian</string>
     <string name="label_terbaru_detail">Terbaru</string>
-    <string name="label_headline_detail">Headlines</string>
+    <string name="label_headline_detail">Headline</string>
     <string name="label_terbaru">TERBARU</string>
-    <string name="label_headline">HEADLINES</string>
+    <string name="label_headline">HEADLINE</string>
     <string name="label_berita_sekitar_detail">Berita Sekitar</string>
     <string name="label_berita_sekitar">BERITA SEKITAR</string>
     <string name="label_content_not_update">Gagal memperbaharui konten.</string>
@@ -37,7 +37,7 @@
     <string name="label_action_menu_desc">Simpan artikel favoritmu. Berikan komentar unikmu.</string>
     <string name="label_share_button">Share Button</string>
     <string name="label_share_button_desc">Bagikan artikel-artikel hebat dengan ini.</string>
-    <string name="label_favorites">FAVORITES</string>
+    <string name="label_favorites">FAVORIT</string>
     <string name="label_login_with">LOGIN WITH</string>
     <string name="label_user_profile">USER PROFILE</string>
     <string name="label_swipe_undo">Batal Menghapus</string>
@@ -93,16 +93,16 @@
     <string name="label_favorite_navigation_content">Artikel telah berhasil ditambahkan.</string>
 
     <!-- Navigation -->
-    <string name="label_item_navigation_headline">Headlines</string>
+    <string name="label_item_navigation_headline">Headline</string>
     <string name="label_item_navigation_terbaru">Terbaru</string>
     <string name="label_item_navigation_search_by_location">Berita Sekitar</string>
-    <string name="label_item_navigation_favorites">Favorites</string>
-    <string name="label_item_navigation_scan_berita">Scan Berita</string>
+    <string name="label_item_navigation_favorites">Favorit</string>
+    <string name="label_item_navigation_scan_berita">Scan QR Code</string>
     <string name="label_item_navigation_news">Berita</string>
     <string name="label_item_navigation_bola">Bola</string>
     <string name="label_item_navigation_life">Life</string>
     <string name="label_item_navigation_about">About</string>
-    <string name="label_item_navigation_rateapp">Rate App</string>
+    <string name="label_item_navigation_rateapp">Rate</string>
     <string name="label_item_navigation_email">Contact Us</string>
     <string name="label_section_navigation_channel">KANAL</string>
     <string name="label_section_navigation_preferences">PREFERENSI</string>

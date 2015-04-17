@@ -1,6 +1,5 @@
 package id.co.viva.news.app.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
@@ -10,6 +9,7 @@ import android.view.Window;
 
 import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.R;
+import id.co.viva.news.app.model.ChannelMapper;
 import me.dm7.barcodescanner.zbar.Result;
 import me.dm7.barcodescanner.zbar.ZBarScannerView;
 
@@ -123,20 +123,30 @@ public class ActScanner extends ActionBarActivity implements ZBarScannerView.Res
     @Override
     public void handleResult(Result result) {
         String content = result.getContents();
-        Intent intent;
+        ChannelMapper channelMapper = new ChannelMapper(this);
         if (content != null) {
             if (content.length() > 0) {
                 if (content.contains(Constant.LINK_ARTICLE_VIVA)) {
                     String article_id = Constant.getArticleViva(content);
-                    intent = new Intent(this, ActDetailContentDefault.class);
-                    intent.putExtra("id", article_id);
-                    intent.putExtra("type", getResources().getString(R.string.label_item_navigation_scan_berita));
-                    intent.putExtra("shared_url", content);
+                    channelMapper.checkDetailArticle(article_id, content);
+                } else if (content.contains(Constant.SEARCH_KEYWORD)) {
+                    String keyword = Constant.getSearchKeyword(content);
+                    channelMapper.checkSearchURL(keyword);
+                } else if (content.contains(Constant.CHANNEL_INDEX_LIFE)) {
+                    String editorChoiceId;
+                    String[] separated = content.split("/");
+                    if (separated.length >= 6) {
+                        editorChoiceId = separated[5];
+                        channelMapper.checkDetailArticle(editorChoiceId, content);
+                    }
                 } else {
-                    intent = new Intent(this, ActBrowser.class);
-                    intent.putExtra("url", content);
+                    if (!content.contains("viva")) {
+                        channelMapper.checkNonVivaURL(content);
+                    } else {
+                        channelMapper.checkChannelUrl(content);
+                    }
                 }
-                startActivity(intent);
+                channelMapper.executeResult();
                 finish();
             }
         }
