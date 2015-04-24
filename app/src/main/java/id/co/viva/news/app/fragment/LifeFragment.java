@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -27,6 +28,9 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.doubleclick.PublisherAdRequest;
+import com.google.android.gms.ads.doubleclick.PublisherAdView;
 import com.nhaarman.listviewanimations.appearance.simple.SwingBottomInAnimationAdapter;
 import com.squareup.picasso.Picasso;
 
@@ -57,6 +61,9 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
     private ArrayList<FeaturedLife> featuredNewsArrayListTypeList;
     private SwingBottomInAnimationAdapter swingBottomInAnimationAdapter;
     private boolean isInternetPresent = false;
+    private PublisherAdView publisherAdViewBottom;
+    private PublisherAdView publisherAdViewTop;
+    private LinearLayout mParentLayout;
     private ExpandableHeightGridView gridLife;
     private ListView listLife;
     private String cachedResponse;
@@ -80,6 +87,37 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
     }
 
     @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (isInternetPresent) {
+            if (getActivity() != null) {
+                //Load ad request
+                PublisherAdRequest adRequest = new PublisherAdRequest.Builder().build();
+                //Ad Top
+                if (Constant.unitIdTop != null) {
+                    if (Constant.unitIdTop.length() > 0) {
+                        publisherAdViewTop = new PublisherAdView(getActivity());
+                        publisherAdViewTop.setAdUnitId(Constant.unitIdTop);
+                        publisherAdViewTop.setAdSizes(AdSize.SMART_BANNER);
+                        mParentLayout.addView(publisherAdViewTop, 0);
+                        publisherAdViewTop.loadAd(adRequest);
+                    }
+                }
+                //Ad Bottom
+                if (Constant.unitIdBottom != null) {
+                    if (Constant.unitIdBottom.length() > 0) {
+                        publisherAdViewBottom = new PublisherAdView(getActivity());
+                        publisherAdViewBottom.setAdUnitId(Constant.unitIdBottom);
+                        publisherAdViewBottom.setAdSizes(AdSize.SMART_BANNER);
+                        mParentLayout.addView(publisherAdViewBottom);
+                        publisherAdViewBottom.loadAd(adRequest);
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         setHasOptionsMenu(true);
@@ -93,6 +131,8 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.frag_life, container, false);
+
+        mParentLayout = (LinearLayout) rootView.findViewById(R.id.parent_layout);
 
         analytics = new Analytics(getActivity());
         analytics.getAnalyticByATInternet(Constant.KANAL_LIFE_PAGE);
@@ -252,6 +292,11 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
                                         }
                                     }
                                 }
+
+                                //Get dynamic ad
+                                /**
+                                 *
+                                 */
 
                                 featuredNewsArrayListTypeList.add(0, new FeaturedLife(channel_title_header_grid,
                                         null, id_header_grid, null, null, null, image_url_header_grid, share_url_header_grid));
@@ -474,6 +519,11 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
                                         }
                                     }
 
+                                    //Get dynamic ad
+                                    /**
+                                     *
+                                     */
+
                                     featuredNewsArrayListTypeList.add(0, new FeaturedLife(channel_title_header_grid,
                                             null, id_header_grid, null, null, null, image_url_header_grid, share_url_header_grid));
 
@@ -587,6 +637,39 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_frag_channel, menu);
         super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (publisherAdViewBottom != null) {
+            publisherAdViewBottom.resume();
+        }
+        if (publisherAdViewTop != null) {
+            publisherAdViewTop.resume();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (publisherAdViewBottom != null) {
+            publisherAdViewBottom.pause();
+        }
+        if (publisherAdViewTop != null) {
+            publisherAdViewTop.pause();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (publisherAdViewBottom != null) {
+            publisherAdViewBottom.destroy();
+        }
+        if (publisherAdViewTop != null) {
+            publisherAdViewTop.destroy();
+        }
     }
 
 }

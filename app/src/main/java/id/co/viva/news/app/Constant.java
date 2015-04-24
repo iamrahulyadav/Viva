@@ -263,6 +263,9 @@ public class Constant {
     public static final String CHANNEL_TRAVEL = "http://life.viva.co.id/travel";
     public static final String CHANNEL_HEALTHSEX = "http://life.viva.co.id/health_and_sex";
 
+    public static final String unitIdTop = "/11225321/viva_app_mobile_banner_bottom";
+    public static final String unitIdBottom = "/11225321/viva_app_mobile_banner_bottom";
+
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     public static Bitmap blur(Context ctx, Bitmap image) {
         int width = Math.round(image.getWidth() * BITMAP_SCALE);

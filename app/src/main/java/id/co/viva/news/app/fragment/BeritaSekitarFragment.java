@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,6 +30,9 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.doubleclick.PublisherAdRequest;
+import com.google.android.gms.ads.doubleclick.PublisherAdView;
 import com.melnykov.fab.FloatingActionButton;
 import com.nhaarman.listviewanimations.appearance.simple.SwingBottomInAnimationAdapter;
 
@@ -67,6 +71,9 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
     private int dataSize = 0;
     private String mCitySubLocality;
     private LoadMoreListView listView;
+    private LinearLayout mParentLayout;
+    private PublisherAdView publisherAdViewBottom;
+    private PublisherAdView publisherAdViewTop;
     private Analytics analytics;
     private RippleView rippleView;
     private ProgressBar loading_layout;
@@ -102,6 +109,37 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
     }
 
     @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (isInternetPresent) {
+            if (getActivity() != null) {
+                //Load ad request
+                PublisherAdRequest adRequest = new PublisherAdRequest.Builder().build();
+                //Ad Top
+                if (Constant.unitIdTop != null) {
+                    if (Constant.unitIdTop.length() > 0) {
+                        publisherAdViewTop = new PublisherAdView(getActivity());
+                        publisherAdViewTop.setAdUnitId(Constant.unitIdTop);
+                        publisherAdViewTop.setAdSizes(AdSize.SMART_BANNER);
+                        mParentLayout.addView(publisherAdViewTop, 0);
+                        publisherAdViewTop.loadAd(adRequest);
+                    }
+                }
+                //Ad Bottom
+                if (Constant.unitIdBottom != null) {
+                    if (Constant.unitIdBottom.length() > 0) {
+                        publisherAdViewBottom = new PublisherAdView(getActivity());
+                        publisherAdViewBottom.setAdUnitId(Constant.unitIdBottom);
+                        publisherAdViewBottom.setAdSizes(AdSize.SMART_BANNER);
+                        mParentLayout.addView(publisherAdViewBottom);
+                        publisherAdViewBottom.loadAd(adRequest);
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         isInternetPresent = Global.getInstance(getActivity())
@@ -112,11 +150,9 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.frag_berita_sekitar, container, false);
-
+        //Check whether from outside app or not
         isResume = false;
-
         setViews(rootView);
-
         return rootView;
     }
 
@@ -127,26 +163,33 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
     }
 
     private void setViews(View rootView) {
-        labelLoadData = (TextView) rootView.findViewById(R.id.text_loading_data);
+        mParentLayout = (LinearLayout) rootView.findViewById(R.id.parent_layout);
 
+        //Loading label and progress
+        labelLoadData = (TextView) rootView.findViewById(R.id.text_loading_data);
         loading_layout = (ProgressBar) rootView.findViewById(R.id.loading_progress_layout_berita_sekitar);
         Rect bounds = loading_layout.getIndeterminateDrawable().getBounds();
         loading_layout.setIndeterminateDrawable(getProgressDrawable());
         loading_layout.getIndeterminateDrawable().setBounds(bounds);
 
+        //Button Retry
         rippleView = (RippleView) rootView.findViewById(R.id.layout_ripple_view_berita_sekitar);
         rippleView.setVisibility(View.GONE);
         rippleView.setOnClickListener(this);
 
+        //Last update label
         lastUpdate = (TextView) rootView.findViewById(R.id.date_berita_sekitar);
 
+        //Label Page
         labelText = (TextView) rootView.findViewById(R.id.text_berita_sekitar);
         labelText.setText(getString(R.string.label_berita_sekitar));
 
+        //List Content
         listView = (LoadMoreListView) rootView.findViewById(R.id.list_berita_sekitar);
         listView.setOnItemClickListener(this);
         listView.setOnLoadMoreListener(this);
 
+        //'Go to top' button
         floatingActionButton = (FloatingActionButton) rootView.findViewById(R.id.fab);
         floatingActionButton.setVisibility(View.GONE);
         floatingActionButton.setOnClickListener(this);
@@ -163,6 +206,7 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
             }
         });
 
+        //Assign array
         beritaSekitarArrayList = new ArrayList<>();
         if (getActivity() != null) {
             adapter = new BeritaSekitarAdapter(getActivity(), beritaSekitarArrayList);
@@ -170,6 +214,7 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
             adapter = new BeritaSekitarAdapter(mActivity, beritaSekitarArrayList);
         }
 
+        //Checking process when find some locations
         if (isInternetPresent) {
             loading_layout.setVisibility(View.VISIBLE);
             labelLoadData.setVisibility(View.VISIBLE);
@@ -187,6 +232,12 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
     public void onPause() {
         super.onPause();
         isResume = true;
+        if (publisherAdViewBottom != null) {
+            publisherAdViewBottom.pause();
+        }
+        if (publisherAdViewTop != null) {
+            publisherAdViewTop.pause();
+        }
     }
 
     @Override
@@ -201,6 +252,12 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
             if (isInternetPresent) {
                 getLocationFinder();
             }
+        }
+        if (publisherAdViewBottom != null) {
+            publisherAdViewBottom.resume();
+        }
+        if (publisherAdViewTop != null) {
+            publisherAdViewTop.resume();
         }
         super.onResume();
     }
@@ -235,6 +292,10 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
                                                     title, url, date_publish));
                                         }
                                     }
+                                    //Get dynamic ad
+                                    /**
+                                     *
+                                     */
                                     if (beritaSekitarArrayList.size() > 0 || !beritaSekitarArrayList.isEmpty()) {
                                         swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(adapter);
                                         swingBottomInAnimationAdapter.setAbsListView(listView);
@@ -345,7 +406,7 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-        if(beritaSekitarArrayList.size() > 0) {
+        if (beritaSekitarArrayList.size() > 0) {
             BeritaSekitar beritaSekitar = beritaSekitarArrayList.get(position);
             Bundle bundle = new Bundle();
             bundle.putString("id", beritaSekitar.getId());
@@ -441,6 +502,10 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
                                                             title, url, date_publish));
                                                 }
                                             }
+                                            //Get dynamic ad
+                                            /**
+                                             *
+                                             */
                                             if (beritaSekitarArrayList.size() > 0 || !beritaSekitarArrayList.isEmpty()) {
                                                 swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(adapter);
                                                 swingBottomInAnimationAdapter.setAbsListView(listView);
@@ -534,6 +599,12 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
         super.onDestroy();
         if (locationFinder != null) {
             locationFinder.removeLocationListener();
+        }
+        if (publisherAdViewBottom != null) {
+            publisherAdViewBottom.destroy();
+        }
+        if (publisherAdViewTop != null) {
+            publisherAdViewTop.destroy();
         }
     }
 

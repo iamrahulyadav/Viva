@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +24,9 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.doubleclick.PublisherAdRequest;
+import com.google.android.gms.ads.doubleclick.PublisherAdView;
 import com.melnykov.fab.FloatingActionButton;
 import com.nhaarman.listviewanimations.appearance.AnimationAdapter;
 import com.nhaarman.listviewanimations.appearance.simple.ScaleInAnimationAdapter;
@@ -67,6 +71,9 @@ public class ActDetailChannelLife extends ActionBarActivity implements
     private String data;
     private RippleView rippleView;
     private FloatingActionButton floatingActionButton;
+    private LinearLayout mParentLayout;
+    private PublisherAdView publisherAdViewBottom;
+    private PublisherAdView publisherAdViewTop;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -191,6 +198,35 @@ public class ActDetailChannelLife extends ActionBarActivity implements
             } else {
                 progressWheel.setVisibility(View.GONE);
                 tvNoResult.setVisibility(View.VISIBLE);
+            }
+        }
+
+        //Set ads if exists
+        setAds(mParentLayout);
+    }
+
+    private void setAds(LinearLayout parentLayout) {
+        if (isInternetPresent) {
+            PublisherAdRequest adRequest = new PublisherAdRequest.Builder().build();
+            //Ad Top
+            if (Constant.unitIdTop != null) {
+                if (Constant.unitIdTop.length() > 0) {
+                    publisherAdViewTop = new PublisherAdView(this);
+                    publisherAdViewTop.setAdUnitId(Constant.unitIdTop);
+                    publisherAdViewTop.setAdSizes(AdSize.SMART_BANNER);
+                    parentLayout.addView(publisherAdViewTop, 0);
+                    publisherAdViewTop.loadAd(adRequest);
+                }
+            }
+            //Ad Bottom
+            if (Constant.unitIdBottom != null) {
+                if (Constant.unitIdBottom.length() > 0) {
+                    publisherAdViewBottom = new PublisherAdView(this);
+                    publisherAdViewBottom.setAdUnitId(Constant.unitIdBottom);
+                    publisherAdViewBottom.setAdSizes(AdSize.SMART_BANNER);
+                    parentLayout.addView(publisherAdViewBottom);
+                    publisherAdViewBottom.loadAd(adRequest);
+                }
             }
         }
     }
@@ -380,6 +416,8 @@ public class ActDetailChannelLife extends ActionBarActivity implements
     private void defineViews() {
         progressWheel = (ProgressWheel) findViewById(R.id.progress_wheel);
 
+        mParentLayout = (LinearLayout) findViewById(R.id.parent_layout);
+
         rippleView = (RippleView) findViewById(R.id.layout_ripple_view);
         rippleView.setVisibility(View.GONE);
         rippleView.setOnClickListener(this);
@@ -477,6 +515,39 @@ public class ActDetailChannelLife extends ActionBarActivity implements
             url_channel_paging = Constant.NEW_KANAL + "ch/" + id + Constant.SUB_CHANNEL_LV_2_URL_PAGING + page;
         }
         return url_channel_paging;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (publisherAdViewBottom != null) {
+            publisherAdViewBottom.resume();
+        }
+        if (publisherAdViewTop != null) {
+            publisherAdViewTop.resume();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (publisherAdViewBottom != null) {
+            publisherAdViewBottom.pause();
+        }
+        if (publisherAdViewTop != null) {
+            publisherAdViewTop.pause();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (publisherAdViewBottom != null) {
+            publisherAdViewBottom.destroy();
+        }
+        if (publisherAdViewTop != null) {
+            publisherAdViewTop.destroy();
+        }
     }
 
 }

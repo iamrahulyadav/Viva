@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:ripple="http://schemas.android.com/apk/res-auto"
-        xmlns:fab="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:id="@+id/parent_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#fafafa">
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        xmlns:ripple="http://schemas.android.com/apk/res-auto"
+        xmlns:fab="http://schemas.android.com/apk/res-auto">
         <RelativeLayout
             android:id="@+id/header_terbaru_headline_and_date"
             android:layout_width="fill_parent"
@@ -85,3 +90,4 @@
             fab:fab_colorNormal="@color/new_base_color"
             fab:fab_colorPressed="@color/header_headline_terbaru"/>
     </RelativeLayout>
+</LinearLayout>

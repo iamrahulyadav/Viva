@@ -12,6 +12,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,6 +21,9 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.doubleclick.PublisherAdRequest;
+import com.google.android.gms.ads.doubleclick.PublisherAdView;
 import com.nhaarman.listviewanimations.appearance.AnimationAdapter;
 import com.nhaarman.listviewanimations.appearance.simple.ScaleInAnimationAdapter;
 
@@ -58,8 +62,11 @@ public class ActSearchResult extends ActionBarActivity implements
     private String data;
     private ProgressWheel progressWheel;
     private SearchResultAdapter searchResultAdapter;
-
     private String mKeywordFromScan;
+
+    private LinearLayout mParentLayout;
+    private PublisherAdView publisherAdViewBottom;
+    private PublisherAdView publisherAdViewTop;
 
     private String id ;
     private String kanal ;
@@ -83,15 +90,8 @@ public class ActSearchResult extends ActionBarActivity implements
         //Param From Scan Result
         getParamFromScan();
 
-        resultArrayList = new ArrayList<>();
-        searchResultAdapter = new SearchResultAdapter(this, resultArrayList);
-
-        tvSearchResult = (TextView)findViewById(R.id.text_search_result);
-        listSearchResult = (LoadMoreListView)findViewById(R.id.list_search_result);
-        listSearchResult.setOnItemClickListener(this);
-        listSearchResult.setOnLoadMoreListener(this);
-        tvNoResult = (TextView)findViewById(R.id.text_no_result);
-        progressWheel = (ProgressWheel)findViewById(R.id.progress_wheel);
+        //Define Views
+        defineViews();
 
         if (isInternetPresent) {
             tvNoResult.setVisibility(View.GONE);
@@ -110,6 +110,42 @@ public class ActSearchResult extends ActionBarActivity implements
             progressWheel.setVisibility(View.GONE);
             tvNoResult.setVisibility(View.VISIBLE);
             tvSearchResult.setVisibility(View.GONE);
+        }
+    }
+
+    private void defineViews() {
+        mParentLayout = (LinearLayout) findViewById(R.id.parent_layout);
+        resultArrayList = new ArrayList<>();
+        searchResultAdapter = new SearchResultAdapter(this, resultArrayList);
+        tvSearchResult = (TextView)findViewById(R.id.text_search_result);
+        listSearchResult = (LoadMoreListView)findViewById(R.id.list_search_result);
+        listSearchResult.setOnItemClickListener(this);
+        listSearchResult.setOnLoadMoreListener(this);
+        tvNoResult = (TextView)findViewById(R.id.text_no_result);
+        progressWheel = (ProgressWheel)findViewById(R.id.progress_wheel);
+    }
+
+    private void setAds(LinearLayout parentLayout) {
+        PublisherAdRequest adRequest = new PublisherAdRequest.Builder().build();
+        //Ad Top
+        if (Constant.unitIdTop != null) {
+            if (Constant.unitIdTop.length() > 0) {
+                publisherAdViewTop = new PublisherAdView(this);
+                publisherAdViewTop.setAdUnitId(Constant.unitIdTop);
+                publisherAdViewTop.setAdSizes(AdSize.SMART_BANNER);
+                parentLayout.addView(publisherAdViewTop, 0);
+                publisherAdViewTop.loadAd(adRequest);
+            }
+        }
+        //Ad Bottom
+        if (Constant.unitIdBottom != null) {
+            if (Constant.unitIdBottom.length() > 0) {
+                publisherAdViewBottom = new PublisherAdView(this);
+                publisherAdViewBottom.setAdUnitId(Constant.unitIdBottom);
+                publisherAdViewBottom.setAdSizes(AdSize.SMART_BANNER);
+                parentLayout.addView(publisherAdViewBottom);
+                publisherAdViewBottom.loadAd(adRequest);
+            }
         }
     }
 
@@ -132,7 +168,6 @@ public class ActSearchResult extends ActionBarActivity implements
     }
 
     private void loadQuery(String query) {
-        Log.i(Constant.TAG, "URL + " + Constant.NEW_SEARCH + "q/" + query.replaceAll(" ", "%20") + "/s/0");
         StringRequest stringRequest = new StringRequest(Request.Method.GET, Constant.NEW_SEARCH + "q/" + query.replaceAll(" ", "%20") + "/s/0",
                 new Response.Listener<String>() {
                     @Override
@@ -164,6 +199,8 @@ public class ActSearchResult extends ActionBarActivity implements
                                 mAnimAdapter.notifyDataSetChanged();
                                 progressWheel.setVisibility(View.GONE);
                             }
+                            //Set ads if exists
+                            setAds(mParentLayout);
                         } catch (Exception e) {
                             e.getMessage();
                         }
@@ -171,7 +208,6 @@ public class ActSearchResult extends ActionBarActivity implements
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
-                volleyError.getMessage();
                 progressWheel.setVisibility(View.GONE);
                 MenuItem searchItem = mMenu.findItem(R.id.action_search);
                 android.support.v7.widget.SearchView searchView =
@@ -235,16 +271,49 @@ public class ActSearchResult extends ActionBarActivity implements
     }
 
     @Override
-    public void onLoadMore() {
-        data = String.valueOf(dataSize += 10);
-        if (mKeywordFromScan != null) {
-            loadMoredata(mKeywordFromScan);
-        } else {
-            loadMoredata(mQuery);
+    public void onResume() {
+        super.onResume();
+        if (publisherAdViewBottom != null) {
+            publisherAdViewBottom.resume();
+        }
+        if (publisherAdViewTop != null) {
+            publisherAdViewTop.resume();
         }
     }
 
-    private void loadMoredata(final String query) {
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (publisherAdViewBottom != null) {
+            publisherAdViewBottom.pause();
+        }
+        if (publisherAdViewTop != null) {
+            publisherAdViewTop.pause();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (publisherAdViewBottom != null) {
+            publisherAdViewBottom.destroy();
+        }
+        if (publisherAdViewTop != null) {
+            publisherAdViewTop.destroy();
+        }
+    }
+
+    @Override
+    public void onLoadMore() {
+        data = String.valueOf(dataSize += 10);
+        if (mKeywordFromScan != null) {
+            loadMoreData(mKeywordFromScan);
+        } else {
+            loadMoreData(mQuery);
+        }
+    }
+
+    private void loadMoreData(final String query) {
         if(isInternetPresent) {
             StringRequest stringRequest = new StringRequest(Request.Method.GET, Constant.NEW_SEARCH + "q/" + query.replaceAll(" ", "%20") + "/s/" + data,
                     new Response.Listener<String>() {

@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -27,6 +28,9 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.doubleclick.PublisherAdRequest;
+import com.google.android.gms.ads.doubleclick.PublisherAdView;
 import com.nhaarman.listviewanimations.appearance.simple.SwingBottomInAnimationAdapter;
 import com.squareup.picasso.Picasso;
 
@@ -56,6 +60,9 @@ public class BolaFragment extends Fragment implements View.OnClickListener {
     private ArrayList<FeaturedBola> featuredNewsArrayListTypeList;
     private boolean isInternetPresent = false;
     private ExpandableHeightGridView gridBola;
+    private PublisherAdView publisherAdViewBottom;
+    private PublisherAdView publisherAdViewTop;
+    private LinearLayout mParentLayout;
     private ListView listBola;
     private String cachedResponse;
     private SwingBottomInAnimationAdapter swingBottomInAnimationAdapter;
@@ -79,19 +86,54 @@ public class BolaFragment extends Fragment implements View.OnClickListener {
     }
 
     @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (isInternetPresent) {
+            if (getActivity() != null) {
+                //Load ad request
+                PublisherAdRequest adRequest = new PublisherAdRequest.Builder().build();
+                //Ad Top
+                if (Constant.unitIdTop != null) {
+                    if (Constant.unitIdTop.length() > 0) {
+                        publisherAdViewTop = new PublisherAdView(getActivity());
+                        publisherAdViewTop.setAdUnitId(Constant.unitIdTop);
+                        publisherAdViewTop.setAdSizes(AdSize.SMART_BANNER);
+                        mParentLayout.addView(publisherAdViewTop, 0);
+                        publisherAdViewTop.loadAd(adRequest);
+                    }
+                }
+                //Ad Bottom
+                if (Constant.unitIdBottom != null) {
+                    if (Constant.unitIdBottom.length() > 0) {
+                        publisherAdViewBottom = new PublisherAdView(getActivity());
+                        publisherAdViewBottom.setAdUnitId(Constant.unitIdBottom);
+                        publisherAdViewBottom.setAdSizes(AdSize.SMART_BANNER);
+                        mParentLayout.addView(publisherAdViewBottom);
+                        publisherAdViewBottom.loadAd(adRequest);
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         setHasOptionsMenu(true);
         ColorDrawable colorDrawable = new ColorDrawable();
         colorDrawable.setColor(getResources().getColor(R.color.color_bola));
         ActionBarActivity mActionBarActivity = (ActionBarActivity) activity;
-        mActionBarActivity.getSupportActionBar().setBackgroundDrawable(colorDrawable);
-        mActionBarActivity.getSupportActionBar().setIcon(R.drawable.logo_viva_coid_second);
+        if (mActionBarActivity != null) {
+            mActionBarActivity.getSupportActionBar().setBackgroundDrawable(colorDrawable);
+            mActionBarActivity.getSupportActionBar().setIcon(R.drawable.logo_viva_coid_second);
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.frag_bola, container, false);
+
+        mParentLayout = (LinearLayout) rootView.findViewById(R.id.parent_layout);
 
         analytics = new Analytics(getActivity());
         analytics.getAnalyticByATInternet(Constant.KANAL_BOLA_PAGE);
@@ -229,6 +271,11 @@ public class BolaFragment extends Fragment implements View.OnClickListener {
                                         }
                                     }
                                 }
+
+                                //Get dynamic ad
+                                /**
+                                 *
+                                 */
 
                                 featuredNewsArrayListTypeList.add(0, new FeaturedBola(channel_title_header_grid,
                                         null, id_header_grid, null, null, null, image_url_header_grid));
@@ -503,6 +550,10 @@ public class BolaFragment extends Fragment implements View.OnClickListener {
                                         }
                                     }
 
+                                    /**
+                                     *
+                                     */
+
                                     featuredNewsArrayListTypeList.add(0, new FeaturedBola(channel_title_header_grid,
                                             null, id_header_grid, null, null, null, image_url_header_grid));
 
@@ -559,6 +610,39 @@ public class BolaFragment extends Fragment implements View.OnClickListener {
                 getActivity().startActivity(intent);
                 getActivity().overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
             }
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (publisherAdViewBottom != null) {
+            publisherAdViewBottom.resume();
+        }
+        if (publisherAdViewTop != null) {
+            publisherAdViewTop.resume();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (publisherAdViewBottom != null) {
+            publisherAdViewBottom.pause();
+        }
+        if (publisherAdViewTop != null) {
+            publisherAdViewTop.pause();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (publisherAdViewBottom != null) {
+            publisherAdViewBottom.destroy();
+        }
+        if (publisherAdViewTop != null) {
+            publisherAdViewTop.destroy();
         }
     }
 

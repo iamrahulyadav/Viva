@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,6 +26,9 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.doubleclick.PublisherAdRequest;
+import com.google.android.gms.ads.doubleclick.PublisherAdView;
 import com.melnykov.fab.FloatingActionButton;
 import com.nhaarman.listviewanimations.appearance.simple.SwingBottomInAnimationAdapter;
 
@@ -57,6 +61,9 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
     private SwingBottomInAnimationAdapter swingBottomInAnimationAdapter;
     private TerbaruAdapter terbaruAdapter;
     private LoadMoreListView listView;
+    private LinearLayout mParentLayout;
+    private PublisherAdView publisherAdViewBottom;
+    private PublisherAdView publisherAdViewTop;
     private TextView lastUpdate;
     private ProgressBar loading_layout;
     private TextView labelLoadData;
@@ -73,7 +80,8 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        isInternetPresent = Global.getInstance(getActivity()).getConnectionStatus().isConnectingToInternet();
+        isInternetPresent = Global.getInstance(getActivity())
+                .getConnectionStatus().isConnectingToInternet();
     }
 
     @Override
@@ -82,8 +90,41 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
         ColorDrawable colorDrawable = new ColorDrawable();
         colorDrawable.setColor(getResources().getColor(R.color.new_base_color));
         ActionBarActivity mActivity = (ActionBarActivity) activity;
-        mActivity.getSupportActionBar().setBackgroundDrawable(colorDrawable);
-        mActivity.getSupportActionBar().setIcon(R.drawable.logo_viva_coid_second);
+        if (mActivity != null) {
+            mActivity.getSupportActionBar().setBackgroundDrawable(colorDrawable);
+            mActivity.getSupportActionBar().setIcon(R.drawable.logo_viva_coid_second);
+        }
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (isInternetPresent) {
+            if (getActivity() != null) {
+                //Load ad request
+                PublisherAdRequest adRequest = new PublisherAdRequest.Builder().build();
+                //Ad Top
+                if (Constant.unitIdTop != null) {
+                    if (Constant.unitIdTop.length() > 0) {
+                        publisherAdViewTop = new PublisherAdView(getActivity());
+                        publisherAdViewTop.setAdUnitId(Constant.unitIdTop);
+                        publisherAdViewTop.setAdSizes(AdSize.SMART_BANNER);
+                        mParentLayout.addView(publisherAdViewTop, 0);
+                        publisherAdViewTop.loadAd(adRequest);
+                    }
+                }
+                //Ad Bottom
+                if (Constant.unitIdBottom != null) {
+                    if (Constant.unitIdBottom.length() > 0) {
+                        publisherAdViewBottom = new PublisherAdView(getActivity());
+                        publisherAdViewBottom.setAdUnitId(Constant.unitIdBottom);
+                        publisherAdViewBottom.setAdSizes(AdSize.SMART_BANNER);
+                        mParentLayout.addView(publisherAdViewBottom);
+                        publisherAdViewBottom.loadAd(adRequest);
+                    }
+                }
+            }
+        }
     }
 
     private Drawable getProgressDrawable() {
@@ -92,39 +133,43 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
         return progressDrawable;
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.frag_terbaru_headline, container, false);
+    private void defineViews(View rootView) {
+        mParentLayout = (LinearLayout) rootView.findViewById(R.id.parent_layout);
 
+        //Loading Progress
         loading_layout = (ProgressBar) rootView.findViewById(R.id.loading_progress_layout_headline_terbaru);
         labelLoadData = (TextView) rootView.findViewById(R.id.text_loading_data);
-
         Rect bounds = loading_layout.getIndeterminateDrawable().getBounds();
         loading_layout.setIndeterminateDrawable(getProgressDrawable());
         loading_layout.getIndeterminateDrawable().setBounds(bounds);
-
         labelLoadData.setVisibility(View.VISIBLE);
         loading_layout.setVisibility(View.VISIBLE);
 
+        //Retry Button
         rippleView = (RippleView) rootView.findViewById(R.id.layout_ripple_view);
         rippleView.setVisibility(View.GONE);
         rippleView.setOnClickListener(this);
 
+        //All about analytic
         analytics = new Analytics(getActivity());
         analytics.getAnalyticByATInternet(Constant.TERBARU_PAGE + String.valueOf(page));
         analytics.getAnalyticByGoogleAnalytic(Constant.TERBARU_PAGE + String.valueOf(page));
 
+        //Set some text on top of view
         labelText = (TextView) rootView.findViewById(R.id.text_terbaru_headline);
         labelText.setText(getString(R.string.label_terbaru));
         lastUpdate = (TextView) rootView.findViewById(R.id.date_terbaru_headline);
 
+        //Populate content
         newsArrayList = new ArrayList<>();
         terbaruAdapter = new TerbaruAdapter(getActivity(), newsArrayList);
 
+        //Content list
         listView = (LoadMoreListView) rootView.findViewById(R.id.list_terbaru_headline);
         listView.setOnItemClickListener(this);
         listView.setOnLoadMoreListener(this);
 
+        //Set 'go to the top' button
         floatingActionButton = (FloatingActionButton) rootView.findViewById(R.id.fab);
         floatingActionButton.setVisibility(View.GONE);
         floatingActionButton.attachToListView(listView, new FloatingActionButton.FabOnScrollListener() {
@@ -132,7 +177,7 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                 super.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
                 int firstIndex = listView.getFirstVisiblePosition();
-                if(firstIndex > Constant.NUMBER_OF_TOP_LIST_ITEMS) {
+                if (firstIndex > Constant.NUMBER_OF_TOP_LIST_ITEMS) {
                     floatingActionButton.setVisibility(View.VISIBLE);
                 } else {
                     floatingActionButton.setVisibility(View.GONE);
@@ -140,14 +185,18 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
             }
         });
         floatingActionButton.setOnClickListener(this);
+    }
 
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.frag_terbaru_headline, container, false);
+        defineViews(rootView);
         parseJson(newsArrayList);
-
         return rootView;
     }
 
     private void parseJson(final ArrayList<News> news) {
-        if(isInternetPresent) {
+        if (isInternetPresent) {
             StringRequest stringRequest = new StringRequest(Request.Method.GET, Constant.NEW_TERBARU,
                     new Response.Listener<String>() {
                         @Override
@@ -156,6 +205,8 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
                             try {
                                 JSONObject jsonObject = new JSONObject(volleyResponse);
                                 jsonArrayResponses = jsonObject.getJSONArray(Constant.response);
+
+                                //Retrieve meta-data
                                 if(jsonArrayResponses != null) {
                                     JSONObject objTerbaru = jsonArrayResponses.getJSONObject(0);
                                     if(objTerbaru !=  null) {
@@ -177,8 +228,15 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
                                     }
                                 }
 
+                                //Get last published
                                 lastPublished = news.get(news.size()-1).getTimeStamp();
 
+                                //Get dynamic add
+                                /**
+                                 *
+                                 */
+
+                                //Fill data from API
                                 if(news.size() > 0 || !news.isEmpty()) {
                                     swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(terbaruAdapter);
                                     swingBottomInAnimationAdapter.setAbsListView(listView);
@@ -190,6 +248,7 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
                                     labelLoadData.setVisibility(View.GONE);
                                 }
 
+                                //Set local time
                                 Calendar cal=Calendar.getInstance();
                                 date = new SimpleDateFormat("dd MMM yyyy");
                                 time = new SimpleDateFormat("HH:mm");
@@ -206,7 +265,6 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
                     try {
                         if(Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_TERBARU) != null) {
                             String cachedResponse = new String(Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_TERBARU).data);
-                            Log.i(Constant.TAG, "From Cached : " + cachedResponse);
                             JSONObject jsonObject = new JSONObject(cachedResponse);
                             jsonArrayResponses = jsonObject.getJSONArray(Constant.response);
                             if(jsonArrayResponses != null) {
@@ -402,7 +460,9 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
         } else {
             listView.onLoadMoreComplete();
             listView.setSelection(0);
-            Toast.makeText(getActivity(), R.string.title_no_connection, Toast.LENGTH_SHORT).show();
+            if (getActivity() != null) {
+                Toast.makeText(getActivity(), R.string.title_no_connection, Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -442,9 +502,15 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
                                         }
                                     }
 
+                                    //Get last published
                                     lastPublished = newsArrayList.get(newsArrayList.size()-1).getTimeStamp();
 
-                                    if(newsArrayList.size() > 0 || !newsArrayList.isEmpty()) {
+                                    //Get dynamic add
+                                    /**
+                                     *
+                                     */
+
+                                    if (newsArrayList.size() > 0 || !newsArrayList.isEmpty()) {
                                         swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(terbaruAdapter);
                                         swingBottomInAnimationAdapter.setAbsListView(listView);
                                         assert swingBottomInAnimationAdapter.getViewAnimator() != null;
@@ -534,6 +600,39 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
             }
         } else if(view.getId() == R.id.fab) {
             listView.setSelection(0);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (publisherAdViewBottom != null) {
+            publisherAdViewBottom.resume();
+        }
+        if (publisherAdViewTop != null) {
+            publisherAdViewTop.resume();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (publisherAdViewBottom != null) {
+            publisherAdViewBottom.pause();
+        }
+        if (publisherAdViewTop != null) {
+            publisherAdViewTop.pause();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (publisherAdViewBottom != null) {
+            publisherAdViewBottom.destroy();
+        }
+        if (publisherAdViewTop != null) {
+            publisherAdViewTop.destroy();
         }
     }
 
