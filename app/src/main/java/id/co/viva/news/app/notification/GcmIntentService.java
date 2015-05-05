@@ -49,17 +49,18 @@ public class GcmIntentService extends IntentService {
                 Log.e(Constant.TAG, "Deleted messages on server: " + bundle.toString());
             } else if(GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE.equals(messageType)) {
                 Log.i(Constant.TAG, "Received: " + bundle.toString());
-                getContent(bundle);
+                getContentFromNotification(bundle);
             }
         }
         GcmBroadcastReceiver.completeWakefulIntent(intent);
     }
 
-    private void sendNotification(String id, String title, String kanal, int notification_id, String type, String message, String image) {
+    private void sendNotification(String id, String title, String kanal, int notification_id, String type,
+                                  String message, String image, String url) {
         mNotificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
 
         if (type.equalsIgnoreCase("browse")) {
-            Uri uri = Uri.parse(getResources().getString(R.string.url_google_play) + getPackageName());
+            Uri uri = Uri.parse(url);
             intent = new Intent(Intent.ACTION_VIEW, uri);
         } else if (type.equalsIgnoreCase("open")) {
             PackageManager manager = getPackageManager();
@@ -120,7 +121,7 @@ public class GcmIntentService extends IntentService {
         mNotificationManager.notify(notification_id, builder.build());
     }
 
-    private void getContent(Bundle extras) {
+    private void getContentFromNotification(Bundle extras) {
         String id = extras.containsKey("id") ? extras.getString("id") : "";
         String title = extras.containsKey("title") ? extras.getString("title") : "";
         String message = extras.containsKey("msg") ? extras.getString("msg") : "";
@@ -128,9 +129,10 @@ public class GcmIntentService extends IntentService {
         String kanal = extras.containsKey("cat") ? extras.getString("cat") : "";
         String type = extras.containsKey("act") ? extras.getString("act") : "";
         String nid = extras.containsKey("nid") ? extras.getString("nid") : "0";
+        String url = extras.containsKey("url") ? extras.getString("url") : "";
         int notification_id = Integer.parseInt(nid);
         if (notification_id != 0) {
-            sendNotification(id, title, kanal, notification_id, type, message, image);
+            sendNotification(id, title, kanal, notification_id, type, message, image, url);
         }
     }
 

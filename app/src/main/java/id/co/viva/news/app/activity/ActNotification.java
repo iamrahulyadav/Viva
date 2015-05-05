@@ -17,6 +17,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -28,7 +30,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.flaviofaria.kenburnsview.KenBurnsView;
+import com.google.android.gms.ads.doubleclick.PublisherAdView;
 import com.squareup.picasso.Picasso;
 import com.viewpagerindicator.LinePageIndicator;
 
@@ -43,6 +45,7 @@ import id.co.viva.news.app.Global;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.adapter.ImageSliderAdapter;
 import id.co.viva.news.app.adapter.RelatedAdapter;
+import id.co.viva.news.app.ads.AdsConfig;
 import id.co.viva.news.app.component.CropSquareTransformation;
 import id.co.viva.news.app.component.ProgressWheel;
 import id.co.viva.news.app.model.Favorites;
@@ -56,10 +59,30 @@ import id.co.viva.news.app.services.Analytics;
  */
 public class ActNotification extends ActionBarActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
 
+    //Parameter from notification
     private String kanalFromNotification;
     private String idFromNotification;
 
+    //Internet Flag
     private boolean isInternetPresent = false;
+
+    //Data List
+    private ArrayList<SliderContentImage> sliderContentImages;
+    private ArrayList<Favorites> favoritesArrayList;
+    private ArrayList<RelatedArticle> relatedArticleArrayList;
+    private ArrayList<Video> videoArrayList;
+
+    //All Views
+    private TextView tvTitleDetail;
+    private TextView tvDateDetail;
+    private TextView tvReporterDetail;
+    private TextView tvContentDetail;
+    private ImageView ivThumbDetail;
+    private RelativeLayout headerRelated;
+    private RelatedAdapter adapter;
+    private TextView textLinkVideo;
+    private ListView listView;
+    private ImageSliderAdapter imageSliderAdapter;
     private ViewPager viewPager;
     private LinePageIndicator linePageIndicator;
     private ProgressWheel progressWheel;
@@ -67,23 +90,15 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
     private Button btnRetry;
     private TextView tvNoResult;
 
-    private ArrayList<SliderContentImage> sliderContentImages;
-    private ArrayList<Favorites> favoritesArrayList;
-    private ArrayList<RelatedArticle> relatedArticleArrayList;
-    private ArrayList<Video> videoArrayList;
-
-    private TextView tvTitleDetail;
-    private TextView tvDateDetail;
-    private TextView tvReporterDetail;
-    private TextView tvContentDetail;
-    private KenBurnsView ivThumbDetail;
-    private RelativeLayout headerRelated;
-    private RelatedAdapter adapter;
-    private TextView textLinkVideo;
-    private ListView listView;
-    private ImageSliderAdapter imageSliderAdapter;
+    //Analytic
     private Analytics analytics;
 
+    //Ads AdMob DFP
+    private LinearLayout mParentLayout;
+    private PublisherAdView publisherAdViewBottom;
+    private PublisherAdView publisherAdViewTop;
+
+    //JSON Data
     private String title;
     private String image_url;
     private String date_publish;
@@ -99,6 +114,7 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //Get some param from notification
         Bundle extras = getIntent().getExtras();
         if(extras != null) {
             idFromNotification = extras.containsKey(Constant.id) ? extras.getString(Constant.id) : "";
@@ -113,13 +129,19 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
         //Set Color Theme
         setHeaderActionbar(kanalFromNotification);
 
+        //Checking current internet connection
         isInternetPresent = Global.getInstance(this)
                 .getConnectionStatus().isConnectingToInternet();
 
+        //Fetch data
         getContent();
     }
 
     private void defineViews() {
+        //Add ads if exists
+        mParentLayout = (LinearLayout) findViewById(R.id.parent_layout);
+        setAds(mParentLayout);
+
         viewPager = (ViewPager) findViewById(R.id.horizontal_list);
         viewPager.setVisibility(View.GONE);
 
@@ -151,7 +173,7 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
         tvReporterDetail = (TextView) findViewById(R.id.reporter_detail_content);
         tvContentDetail = (TextView) findViewById(R.id.content_detail_content);
 
-        ivThumbDetail = (KenBurnsView) findViewById(R.id.thumb_detail_content);
+        ivThumbDetail = (ImageView) findViewById(R.id.thumb_detail_content);
         ivThumbDetail.setOnClickListener(this);
         ivThumbDetail.setFocusableInTouchMode(true);
 
@@ -164,6 +186,51 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
                     Constant.getDynamicImageSize(this, Constant.DYNAMIC_SIZE_GRID_TYPE);
             viewPager.getLayoutParams().height =
                     Constant.getDynamicImageSize(this, Constant.DYNAMIC_SIZE_SLIDER_TYPE);
+        }
+    }
+
+    private void setAds(LinearLayout parentLayout) {
+        if (isInternetPresent) {
+            if (this != null) {
+                publisherAdViewTop = new PublisherAdView(this);
+                publisherAdViewBottom = new PublisherAdView(this);
+                AdsConfig adsConfig = new AdsConfig();
+                adsConfig.setAdsBanner(publisherAdViewTop, Constant.unitIdTop, Constant.POSITION_BANNER_TOP, parentLayout);
+                adsConfig.setAdsBanner(publisherAdViewBottom, Constant.unitIdBottom, Constant.POSITION_BANNER_BOTTOM, parentLayout);
+            }
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (publisherAdViewBottom != null) {
+            publisherAdViewBottom.resume();
+        }
+        if (publisherAdViewTop != null) {
+            publisherAdViewTop.resume();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (publisherAdViewBottom != null) {
+            publisherAdViewBottom.pause();
+        }
+        if (publisherAdViewTop != null) {
+            publisherAdViewTop.pause();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (publisherAdViewBottom != null) {
+            publisherAdViewBottom.destroy();
+        }
+        if (publisherAdViewTop != null) {
+            publisherAdViewTop.destroy();
         }
     }
 
@@ -211,7 +278,7 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
     }
 
     private void getContent() {
-        if(isInternetPresent) {
+        if (isInternetPresent) {
             StringRequest request = new StringRequest(Request.Method.GET, Constant.NEW_DETAIL + "/id/" + idFromNotification,
                     new Response.Listener<String>() {
                         @Override
@@ -323,7 +390,6 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError volleyError) {
-                            volleyError.getMessage();
                             progressWheel.setVisibility(View.GONE);
                             rippleView.setVisibility(View.VISIBLE);
                             setButtonRetry(kanalFromNotification);

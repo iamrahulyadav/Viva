@@ -22,6 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -34,7 +35,6 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.flaviofaria.kenburnsview.KenBurnsView;
 import com.squareup.picasso.Picasso;
 import com.viewpagerindicator.LinePageIndicator;
 
@@ -93,7 +93,7 @@ public class DetailIndexContent extends Fragment implements
     private TextView tvDateDetail;
     private TextView tvReporterDetail;
     private TextView tvContentDetail;
-    private KenBurnsView ivThumbDetail;
+    private ImageView ivThumbDetail;
     private Button btnRetry;
     private ViewPager viewPager;
     private LinePageIndicator linePageIndicator;
@@ -202,7 +202,7 @@ public class DetailIndexContent extends Fragment implements
         tvReporterDetail = (TextView) view.findViewById(R.id.reporter_detail_content);
         tvContentDetail = (TextView) view.findViewById(R.id.content_detail_content);
 
-        ivThumbDetail = (KenBurnsView) view.findViewById(R.id.thumb_detail_content);
+        ivThumbDetail = (ImageView) view.findViewById(R.id.thumb_detail_content);
         ivThumbDetail.setOnClickListener(this);
         ivThumbDetail.setFocusableInTouchMode(true);
 

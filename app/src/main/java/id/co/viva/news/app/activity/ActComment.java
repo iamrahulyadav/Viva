@@ -48,7 +48,7 @@ public class ActComment extends ActionBarActivity implements View.OnClickListene
     private ActionProcessButton btnSubmit;
     private ListView listComment;
     private EditText etComment;
-    private String fullname;
+    private String fullName;
     private String email;
     private String userSocialId;
     private String app_id;
@@ -117,7 +117,7 @@ public class ActComment extends ActionBarActivity implements View.OnClickListene
 
     private void getCommentList() {
         userAccount = new UserAccount(this);
-        userAccount.getCommentList(fullname, mIds, this);
+        userAccount.getCommentList(fullName, mIds, this);
     }
 
     @Override
@@ -160,7 +160,7 @@ public class ActComment extends ActionBarActivity implements View.OnClickListene
 
     private void getStateUser() {
         Global.getInstance(this).getDefaultEditor();
-        fullname = Global.getInstance(this).getSharedPreferences(this)
+        fullName = Global.getInstance(this).getSharedPreferences(this)
                 .getString(Constant.LOGIN_STATES_FULLNAME, "");
         email = Global.getInstance(this).getSharedPreferences(this)
                 .getString(Constant.LOGIN_STATES_EMAIL, "");
@@ -181,13 +181,13 @@ public class ActComment extends ActionBarActivity implements View.OnClickListene
     public void onClick(View view) {
         if(view.getId() == R.id.btn_send_comment) {
             String comments = etComment.getText().toString();
-            if((fullname.length() == 0 && email.length() == 0) || (fullname.length() == 0) || (email.length() == 0)) {
+            if((fullName.length() == 0 && email.length() == 0) || (fullName.length() == 0) || (email.length() == 0)) {
                 doLoginFirst();
             } else if(comments.length() < 1) {
                 Toast.makeText(this, R.string.label_validation_for_comment_length, Toast.LENGTH_SHORT).show();
             } else {
                 if(isInternetPresent) {
-                    userAccount = new UserAccount(userSocialId, app_id, mIds, email, fullname, comments, this, ActComment.this);
+                    userAccount = new UserAccount(userSocialId, app_id, mIds, email, fullName, comments, this, ActComment.this);
                     disableView();
                     btnSubmit.setProgress(1);
                     userAccount.sendComment();
@@ -196,7 +196,7 @@ public class ActComment extends ActionBarActivity implements View.OnClickListene
                 }
             }
         } else if(view.getId() == R.id.et_comment_user) {
-            if(fullname.length() == 0 && email.length() == 0) {
+            if(fullName.length() == 0 && email.length() == 0) {
                 doLoginFirst();
             }
         }
@@ -287,13 +287,9 @@ public class ActComment extends ActionBarActivity implements View.OnClickListene
     }
 
     @Override
-    public void onFailedListComment() {
-
-    }
+    public void onFailedListComment() {}
 
     @Override
-    public void onErrorListComment() {
-
-    }
+    public void onErrorListComment() {}
 
 }

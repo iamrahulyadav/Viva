@@ -26,8 +26,6 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.google.android.gms.ads.AdSize;
-import com.google.android.gms.ads.doubleclick.PublisherAdRequest;
 import com.google.android.gms.ads.doubleclick.PublisherAdView;
 import com.melnykov.fab.FloatingActionButton;
 import com.nhaarman.listviewanimations.appearance.simple.SwingBottomInAnimationAdapter;
@@ -44,6 +42,7 @@ import id.co.viva.news.app.Global;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.activity.ActDetailTerbaru;
 import id.co.viva.news.app.adapter.TerbaruAdapter;
+import id.co.viva.news.app.ads.AdsConfig;
 import id.co.viva.news.app.component.GoogleMusicDicesDrawable;
 import id.co.viva.news.app.component.LoadMoreListView;
 import id.co.viva.news.app.interfaces.OnLoadMoreListener;
@@ -101,28 +100,11 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
         super.onActivityCreated(savedInstanceState);
         if (isInternetPresent) {
             if (getActivity() != null) {
-                //Load ad request
-                PublisherAdRequest adRequest = new PublisherAdRequest.Builder().build();
-                //Ad Top
-                if (Constant.unitIdTop != null) {
-                    if (Constant.unitIdTop.length() > 0) {
-                        publisherAdViewTop = new PublisherAdView(getActivity());
-                        publisherAdViewTop.setAdUnitId(Constant.unitIdTop);
-                        publisherAdViewTop.setAdSizes(AdSize.SMART_BANNER);
-                        mParentLayout.addView(publisherAdViewTop, 0);
-                        publisherAdViewTop.loadAd(adRequest);
-                    }
-                }
-                //Ad Bottom
-                if (Constant.unitIdBottom != null) {
-                    if (Constant.unitIdBottom.length() > 0) {
-                        publisherAdViewBottom = new PublisherAdView(getActivity());
-                        publisherAdViewBottom.setAdUnitId(Constant.unitIdBottom);
-                        publisherAdViewBottom.setAdSizes(AdSize.SMART_BANNER);
-                        mParentLayout.addView(publisherAdViewBottom);
-                        publisherAdViewBottom.loadAd(adRequest);
-                    }
-                }
+                publisherAdViewTop = new PublisherAdView(getActivity());
+                publisherAdViewBottom = new PublisherAdView(getActivity());
+                AdsConfig adsConfig = new AdsConfig();
+                adsConfig.setAdsBanner(publisherAdViewTop, Constant.unitIdTop, Constant.POSITION_BANNER_TOP, mParentLayout);
+                adsConfig.setAdsBanner(publisherAdViewBottom, Constant.unitIdBottom, Constant.POSITION_BANNER_BOTTOM, mParentLayout);
             }
         }
     }
@@ -230,11 +212,6 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
 
                                 //Get last published
                                 lastPublished = news.get(news.size()-1).getTimeStamp();
-
-                                //Get dynamic add
-                                /**
-                                 *
-                                 */
 
                                 //Fill data from API
                                 if(news.size() > 0 || !news.isEmpty()) {
@@ -504,11 +481,6 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
 
                                     //Get last published
                                     lastPublished = newsArrayList.get(newsArrayList.size()-1).getTimeStamp();
-
-                                    //Get dynamic add
-                                    /**
-                                     *
-                                     */
 
                                     if (newsArrayList.size() > 0 || !newsArrayList.isEmpty()) {
                                         swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(terbaruAdapter);

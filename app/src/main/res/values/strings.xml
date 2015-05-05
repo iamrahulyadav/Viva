@@ -53,6 +53,8 @@
     <string name="label_validation_failed_login">Anda belum terdaftar! Silahkan melakukan registrasi.</string>
     <string name="label_successful_gplus_connected">Berhasil terkoneksi dengan Google Plus!</string>
 
+    <string name="url_google_play">market://details?id=</string>
+
     <string name="facebook_app_id">331105887084412</string>
     <string name="public_api_key_google">AIzaSyBq5FW1T561DfYKpolGaltd4S6rQrj-KrY</string>
 
@@ -62,7 +64,6 @@
     <string name="label_failed_get_province">Gagal mendapatkan data provinsi!</string>
     <string name="label_failed_get_city">Gagal mendapatkan data kota!</string>
 
-    <string name="url_google_play">market://details?id=</string>
     <string name="label_failed_found_store">Unable to find market app!</string>
 
     <string name="label_title_gps">Aktifkan GPS anda untuk mendapatkan lokasi?</string>

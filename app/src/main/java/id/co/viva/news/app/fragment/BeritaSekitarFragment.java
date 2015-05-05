@@ -30,8 +30,6 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.google.android.gms.ads.AdSize;
-import com.google.android.gms.ads.doubleclick.PublisherAdRequest;
 import com.google.android.gms.ads.doubleclick.PublisherAdView;
 import com.melnykov.fab.FloatingActionButton;
 import com.nhaarman.listviewanimations.appearance.simple.SwingBottomInAnimationAdapter;
@@ -49,6 +47,7 @@ import id.co.viva.news.app.Global;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.activity.ActDetailBeritaSekitar;
 import id.co.viva.news.app.adapter.BeritaSekitarAdapter;
+import id.co.viva.news.app.ads.AdsConfig;
 import id.co.viva.news.app.component.GoogleMusicDicesDrawable;
 import id.co.viva.news.app.component.LoadMoreListView;
 import id.co.viva.news.app.interfaces.LocationResult;
@@ -65,6 +64,7 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
         OnLoadMoreListener, AdapterView.OnItemClickListener, LocationResult, OnGPSListener {
 
     public static ArrayList<BeritaSekitar> beritaSekitarArrayList;
+    private SwingBottomInAnimationAdapter swingBottomInAnimationAdapter;
     private boolean isInternetPresent = false;
     private boolean isResume;
     private String lastPaging;
@@ -84,9 +84,12 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
     private LocationFinder locationFinder;
     private JSONArray jsonArrayResponses;
     private BeritaSekitarAdapter adapter;
-    private SwingBottomInAnimationAdapter swingBottomInAnimationAdapter;
     private ActionBarActivity mActivity;
     private int page = 1;
+    //Type Number
+    final private static int LOCATION_LOCALITY = 0;
+    final private static int LOCATION_SUB_LOCALITY = 1;
+    final private static int LOCATION_ADMIN_AREA = 2;
 
     private void setAnalytics(String page) {
         if (analytics == null) {
@@ -113,28 +116,11 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
         super.onActivityCreated(savedInstanceState);
         if (isInternetPresent) {
             if (getActivity() != null) {
-                //Load ad request
-                PublisherAdRequest adRequest = new PublisherAdRequest.Builder().build();
-                //Ad Top
-                if (Constant.unitIdTop != null) {
-                    if (Constant.unitIdTop.length() > 0) {
-                        publisherAdViewTop = new PublisherAdView(getActivity());
-                        publisherAdViewTop.setAdUnitId(Constant.unitIdTop);
-                        publisherAdViewTop.setAdSizes(AdSize.SMART_BANNER);
-                        mParentLayout.addView(publisherAdViewTop, 0);
-                        publisherAdViewTop.loadAd(adRequest);
-                    }
-                }
-                //Ad Bottom
-                if (Constant.unitIdBottom != null) {
-                    if (Constant.unitIdBottom.length() > 0) {
-                        publisherAdViewBottom = new PublisherAdView(getActivity());
-                        publisherAdViewBottom.setAdUnitId(Constant.unitIdBottom);
-                        publisherAdViewBottom.setAdSizes(AdSize.SMART_BANNER);
-                        mParentLayout.addView(publisherAdViewBottom);
-                        publisherAdViewBottom.loadAd(adRequest);
-                    }
-                }
+                publisherAdViewTop = new PublisherAdView(getActivity());
+                publisherAdViewBottom = new PublisherAdView(getActivity());
+                AdsConfig adsConfig = new AdsConfig();
+                adsConfig.setAdsBanner(publisherAdViewTop, Constant.unitIdTop, Constant.POSITION_BANNER_TOP, mParentLayout);
+                adsConfig.setAdsBanner(publisherAdViewBottom, Constant.unitIdBottom, Constant.POSITION_BANNER_BOTTOM, mParentLayout);
             }
         }
     }
@@ -271,7 +257,9 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
                 labelLoadData.setVisibility(View.VISIBLE);
                 labelLoadData.setText(getResources().getString(R.string.label_get_location));
                 StringRequest request = new StringRequest(Request.Method.GET,
-                        Constant.NEW_SEARCH + "q/" + mCitySubLocality.replaceAll(" ", "%20") + "/s/0",
+                        Constant.BERITA_SEKITAR_URL + "p/" + getParamLocation(mCitySubLocality, LOCATION_LOCALITY)
+                                + "/q/" + getParamLocation(mCitySubLocality, LOCATION_SUB_LOCALITY)
+                                + "/r/" + getParamLocation(mCitySubLocality, LOCATION_ADMIN_AREA) + "/s/0",
                         new Response.Listener<String>() {
                             @Override
                             public void onResponse(String s) {
@@ -292,10 +280,6 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
                                                     title, url, date_publish));
                                         }
                                     }
-                                    //Get dynamic ad
-                                    /**
-                                     *
-                                     */
                                     if (beritaSekitarArrayList.size() > 0 || !beritaSekitarArrayList.isEmpty()) {
                                         swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(adapter);
                                         swingBottomInAnimationAdapter.setAbsListView(listView);
@@ -305,7 +289,7 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
                                         adapter.notifyDataSetChanged();
                                         loading_layout.setVisibility(View.GONE);
                                         labelLoadData.setVisibility(View.GONE);
-                                        lastUpdate.setText(getCity(mCitySubLocality));
+                                        lastUpdate.setText(getParamLocation(mCitySubLocality, LOCATION_LOCALITY));
                                     }
                                 } catch (Exception e) {
                                     e.getMessage();
@@ -345,7 +329,9 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
         if (isInternetPresent) {
             setAnalytics(String.valueOf(page));
             StringRequest request = new StringRequest(Request.Method.GET,
-                    Constant.NEW_SEARCH + "q/" + mCitySubLocality.replaceAll(" ", "%20") + "/s/" + lastPaging,
+                    Constant.BERITA_SEKITAR_URL + "p/" + getParamLocation(mCitySubLocality, LOCATION_LOCALITY)
+                            + "/q/" + getParamLocation(mCitySubLocality, LOCATION_SUB_LOCALITY)
+                            + "/r/" + getParamLocation(mCitySubLocality, LOCATION_ADMIN_AREA) + "/s/" + lastPaging,
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String s) {
@@ -436,6 +422,7 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
     private String getPlaces(Location location) {
         String city = null;
         String subLocality = null;
+        String adminArea = null;
         Geocoder gcd;
         List<Address> addresses;
         //Check Instance
@@ -451,26 +438,35 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
                 if (addresses.size() > 0) {
                     city = addresses.get(0).getLocality();
                     subLocality = addresses.get(0).getSubLocality();
+                    adminArea = addresses.get(0).getSubAdminArea();
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return city + "-" + subLocality;
+        return city + "-" + subLocality + "-" + adminArea;
     }
 
-    private String getCity(String result) {
+    private String getParamLocation(String result, int type) {
         if (result != null) {
             if (result.length() > 0) {
                 String[] results = result.split("-");
-                String city = results[0];
-                return city;
-            } else {
-                return "";
+                switch (type) {
+                    case LOCATION_LOCALITY:
+                        String city = results[0];
+                        return city;
+                    case LOCATION_SUB_LOCALITY:
+                        String subLocality = results[1];
+                        return subLocality;
+                    case LOCATION_ADMIN_AREA:
+                        String adminArea = results[2];
+                        return adminArea;
+                    default:
+                        break;
+                }
             }
-        } else {
-            return "";
         }
+        return null;
     }
 
     @Override
@@ -481,7 +477,9 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
                 if (mCitySubLocality != null) {
                     if (mCitySubLocality.length() > 0) {
                         StringRequest request = new StringRequest(Request.Method.GET,
-                                Constant.NEW_SEARCH + "q/" + mCitySubLocality.replaceAll(" ", "%20") + "/s/0",
+                                Constant.BERITA_SEKITAR_URL + "p/" + getParamLocation(mCitySubLocality, LOCATION_LOCALITY)
+                                + "/q/" + getParamLocation(mCitySubLocality, LOCATION_SUB_LOCALITY)
+                                + "/r/" + getParamLocation(mCitySubLocality, LOCATION_ADMIN_AREA) + "/s/0",
                                 new Response.Listener<String>() {
                                     @Override
                                     public void onResponse(String s) {
@@ -502,10 +500,6 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
                                                             title, url, date_publish));
                                                 }
                                             }
-                                            //Get dynamic ad
-                                            /**
-                                             *
-                                             */
                                             if (beritaSekitarArrayList.size() > 0 || !beritaSekitarArrayList.isEmpty()) {
                                                 swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(adapter);
                                                 swingBottomInAnimationAdapter.setAbsListView(listView);
@@ -515,7 +509,7 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
                                                 adapter.notifyDataSetChanged();
                                                 loading_layout.setVisibility(View.GONE);
                                                 labelLoadData.setVisibility(View.GONE);
-                                                lastUpdate.setText(getCity(mCitySubLocality));
+                                                lastUpdate.setText(getParamLocation(mCitySubLocality, LOCATION_LOCALITY));
                                             }
                                         } catch (Exception e) {
                                             e.getMessage();

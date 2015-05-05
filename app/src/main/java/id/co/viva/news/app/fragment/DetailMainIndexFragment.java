@@ -21,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -33,7 +34,6 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.flaviofaria.kenburnsview.KenBurnsView;
 import com.squareup.picasso.Picasso;
 import com.viewpagerindicator.LinePageIndicator;
 
@@ -91,7 +91,7 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
     private TextView tvDateHeadlineDetail;
     private TextView tvReporterHeadlineDetail;
     private TextView tvContentHeadlineDetail;
-    private KenBurnsView ivThumbDetailHeadline;
+    private ImageView ivThumbDetailHeadline;
     private TextView tvPreviewCommentUser;
     private TextView tvPreviewCommentContent;
     private LinearLayout layoutCommentPreview;
@@ -185,7 +185,7 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
         tvReporterHeadlineDetail = (TextView) view.findViewById(R.id.reporter_detail);
         tvContentHeadlineDetail = (TextView) view.findViewById(R.id.content_detail);
 
-        ivThumbDetailHeadline = (KenBurnsView) view.findViewById(R.id.thumb_detail);
+        ivThumbDetailHeadline = (ImageView) view.findViewById(R.id.thumb_detail);
         ivThumbDetailHeadline.setOnClickListener(this);
         ivThumbDetailHeadline.setFocusableInTouchMode(true);
 

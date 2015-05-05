@@ -13,14 +13,6 @@ public class Video {
         return height;
     }
 
-    public String getHttps() {
-        return https;
-    }
-
-    public String getWidth() {
-        return width;
-    }
-
     public Video(String https, String width, String height) {
         this.https = https;
         this.width = width;

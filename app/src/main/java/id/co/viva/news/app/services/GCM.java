@@ -1,7 +1,6 @@
 package id.co.viva.news.app.services;
 
 import android.app.Activity;
-import android.content.Context;
 import android.util.Log;
 
 import com.android.volley.AuthFailureError;
@@ -44,7 +43,7 @@ public class GCM {
 
     public GCM(Activity activity) {
         this.activity = activity;
-        this.package_name = ((Context) activity).getPackageName();
+        this.package_name = activity.getPackageName();
         this.sender_id = Constant.GCM_SENDER_ID;
         this.backend_server_url = Constant.GCM_URL_BACKEND_SERVER;
         deviceInfo = new DeviceInfo(activity);

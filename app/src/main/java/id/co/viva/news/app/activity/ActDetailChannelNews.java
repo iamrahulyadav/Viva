@@ -24,8 +24,6 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.google.android.gms.ads.AdSize;
-import com.google.android.gms.ads.doubleclick.PublisherAdRequest;
 import com.google.android.gms.ads.doubleclick.PublisherAdView;
 import com.melnykov.fab.FloatingActionButton;
 import com.nhaarman.listviewanimations.appearance.AnimationAdapter;
@@ -40,6 +38,7 @@ import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.Global;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.adapter.ChannelNewsAdapter;
+import id.co.viva.news.app.ads.AdsConfig;
 import id.co.viva.news.app.component.LoadMoreListView;
 import id.co.viva.news.app.component.ProgressWheel;
 import id.co.viva.news.app.interfaces.OnLoadMoreListener;
@@ -206,26 +205,12 @@ public class ActDetailChannelNews extends ActionBarActivity implements
 
     private void setAds(LinearLayout parentLayout) {
         if (isInternetPresent) {
-            PublisherAdRequest adRequest = new PublisherAdRequest.Builder().build();
-            //Ad Top
-            if (Constant.unitIdTop != null) {
-                if (Constant.unitIdTop.length() > 0) {
-                    publisherAdViewTop = new PublisherAdView(this);
-                    publisherAdViewTop.setAdUnitId(Constant.unitIdTop);
-                    publisherAdViewTop.setAdSizes(AdSize.SMART_BANNER);
-                    parentLayout.addView(publisherAdViewTop, 0);
-                    publisherAdViewTop.loadAd(adRequest);
-                }
-            }
-            //Ad Bottom
-            if (Constant.unitIdBottom != null) {
-                if (Constant.unitIdBottom.length() > 0) {
-                    publisherAdViewBottom = new PublisherAdView(this);
-                    publisherAdViewBottom.setAdUnitId(Constant.unitIdBottom);
-                    publisherAdViewBottom.setAdSizes(AdSize.SMART_BANNER);
-                    parentLayout.addView(publisherAdViewBottom);
-                    publisherAdViewBottom.loadAd(adRequest);
-                }
+            if (this != null) {
+                publisherAdViewTop = new PublisherAdView(this);
+                publisherAdViewBottom = new PublisherAdView(this);
+                AdsConfig adsConfig = new AdsConfig();
+                adsConfig.setAdsBanner(publisherAdViewTop, Constant.unitIdTop, Constant.POSITION_BANNER_TOP, parentLayout);
+                adsConfig.setAdsBanner(publisherAdViewBottom, Constant.unitIdBottom, Constant.POSITION_BANNER_BOTTOM, parentLayout);
             }
         }
     }

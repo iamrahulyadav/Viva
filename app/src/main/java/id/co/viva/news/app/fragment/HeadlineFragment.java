@@ -26,8 +26,6 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.google.android.gms.ads.AdSize;
-import com.google.android.gms.ads.doubleclick.PublisherAdRequest;
 import com.google.android.gms.ads.doubleclick.PublisherAdView;
 import com.melnykov.fab.FloatingActionButton;
 import com.nhaarman.listviewanimations.appearance.simple.SwingBottomInAnimationAdapter;
@@ -44,6 +42,7 @@ import id.co.viva.news.app.Global;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.activity.ActDetailHeadline;
 import id.co.viva.news.app.adapter.HeadlineAdapter;
+import id.co.viva.news.app.ads.AdsConfig;
 import id.co.viva.news.app.component.GoogleMusicDicesDrawable;
 import id.co.viva.news.app.component.LoadMoreListView;
 import id.co.viva.news.app.interfaces.OnLoadMoreListener;
@@ -59,7 +58,6 @@ public class HeadlineFragment extends Fragment implements
     private static String HEADLINES = "headlines";
     public static ArrayList<Headline> headlineArrayList;
     private ActionBarActivity mActivity;
-    private String lastPublished;
     private SwingBottomInAnimationAdapter swingBottomInAnimationAdapter;
     private HeadlineAdapter headlineAdapter;
     private LoadMoreListView listView;
@@ -102,28 +100,11 @@ public class HeadlineFragment extends Fragment implements
         super.onActivityCreated(savedInstanceState);
         if (isInternetPresent) {
             if (getActivity() != null) {
-                //Load ad request
-                PublisherAdRequest adRequest = new PublisherAdRequest.Builder().build();
-                //Ad Top
-                if (Constant.unitIdTop != null) {
-                    if (Constant.unitIdTop.length() > 0) {
-                        publisherAdViewTop = new PublisherAdView(getActivity());
-                        publisherAdViewTop.setAdUnitId(Constant.unitIdTop);
-                        publisherAdViewTop.setAdSizes(AdSize.SMART_BANNER);
-                        mParentLayout.addView(publisherAdViewTop, 0);
-                        publisherAdViewTop.loadAd(adRequest);
-                    }
-                }
-                //Ad Bottom
-                if (Constant.unitIdBottom != null) {
-                    if (Constant.unitIdBottom.length() > 0) {
-                        publisherAdViewBottom = new PublisherAdView(getActivity());
-                        publisherAdViewBottom.setAdUnitId(Constant.unitIdBottom);
-                        publisherAdViewBottom.setAdSizes(AdSize.SMART_BANNER);
-                        mParentLayout.addView(publisherAdViewBottom);
-                        publisherAdViewBottom.loadAd(adRequest);
-                    }
-                }
+                publisherAdViewTop = new PublisherAdView(getActivity());
+                publisherAdViewBottom = new PublisherAdView(getActivity());
+                AdsConfig adsConfig = new AdsConfig();
+                adsConfig.setAdsBanner(publisherAdViewTop, Constant.unitIdTop, Constant.POSITION_BANNER_TOP, mParentLayout);
+                adsConfig.setAdsBanner(publisherAdViewBottom, Constant.unitIdBottom, Constant.POSITION_BANNER_BOTTOM, mParentLayout);
             }
         }
     }
@@ -227,14 +208,6 @@ public class HeadlineFragment extends Fragment implements
                                     }
                                 }
 
-                                //Get last published
-                                lastPublished = headlines.get(headlines.size()-1).getTimestamp();
-
-                                //Get dynamic ad
-                                /**
-                                 *
-                                 */
-
                                 if(headlines.size() > 0 || !headlines.isEmpty()) {
                                     headlineAdapter = new HeadlineAdapter(getActivity(), headlines);
                                     swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(headlineAdapter);
@@ -287,8 +260,6 @@ public class HeadlineFragment extends Fragment implements
                                     }
                                 }
                             }
-
-                            lastPublished = headlines.get(headlines.size()-1).getTimestamp();
 
                             if(headlines.size() > 0 || !headlines.isEmpty()) {
                                 headlineAdapter = new HeadlineAdapter(getActivity(), headlines);
@@ -349,8 +320,6 @@ public class HeadlineFragment extends Fragment implements
                             }
                         }
                     }
-
-                    lastPublished = headlines.get(headlines.size()-1).getTimestamp();
 
                     if(headlines.size() > 0 || !headlines.isEmpty()) {
                         headlineAdapter = new HeadlineAdapter(getActivity(), headlines);
@@ -433,15 +402,7 @@ public class HeadlineFragment extends Fragment implements
                                         }
                                     }
 
-                                    //Get last published
-                                    lastPublished = headlineArrayList.get(headlineArrayList.size()-1).getTimestamp();
-
-                                    //Get dynamic ad
-                                    /**
-                                     *
-                                     */
-
-                                    if(headlineArrayList.size() > 0 || !headlineArrayList.isEmpty()) {
+                                    if (headlineArrayList.size() > 0 || !headlineArrayList.isEmpty()) {
                                         headlineAdapter = new HeadlineAdapter(getActivity(), headlineArrayList);
                                         swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(headlineAdapter);
                                         swingBottomInAnimationAdapter.setAbsListView(listView);
@@ -490,80 +451,7 @@ public class HeadlineFragment extends Fragment implements
 
     @Override
     public void onLoadMore() {
-        Log.i(Constant.TAG, "Last Published : " + lastPublished);
-        page += 1;
-        if(isInternetPresent) {
-            analytics.getAnalyticByATInternet(Constant.HEADLINE_PAGE + String.valueOf(page));
-            analytics.getAnalyticByGoogleAnalytic(Constant.HEADLINE_PAGE + String.valueOf(page));
-            StringRequest stringRequest = new StringRequest(Request.Method.GET, Constant.NEW_HEADLINE +
-                    "published/" + lastPublished,
-                    new Response.Listener<String>() {
-                        @Override
-                        public void onResponse(String volleyResponse) {
-                            Log.i(Constant.TAG, volleyResponse);
-                            try {
-                                JSONObject jsonObject = new JSONObject(volleyResponse);
-                                jsonArrayResponses = jsonObject.getJSONArray(Constant.response);
-                                if(jsonArrayResponses != null) {
-                                    JSONObject objHeadline = jsonArrayResponses.getJSONObject(0);
-                                    if(objHeadline !=  null) {
-                                        jsonArraySegmentHeadline = objHeadline.getJSONArray(HEADLINES);
-                                        for(int i=0; i<jsonArraySegmentHeadline.length(); i++) {
-                                            JSONObject jsonHeadline = jsonArraySegmentHeadline.getJSONObject(i);
-                                            String id = jsonHeadline.getString(Constant.id);
-                                            String title = jsonHeadline.getString(Constant.title);
-                                            String slug = jsonHeadline.getString(Constant.slug);
-                                            String kanal = jsonHeadline.getString(Constant.kanal);
-                                            String url = jsonHeadline.getString(Constant.url);
-                                            String image_url = jsonHeadline.getString(Constant.image_url);
-                                            String date_publish = jsonHeadline.getString(Constant.date_publish);
-                                            String source = jsonHeadline.getString(Constant.source);
-                                            String timestamp = jsonHeadline.getString(Constant.timestamp);
-                                            headlineArrayList.add(new Headline(id, title, slug, kanal,
-                                                    image_url, date_publish, source, url, timestamp));
-                                        }
-                                    }
-                                }
-
-                                lastPublished = headlineArrayList.get(headlineArrayList.size()-1).getTimestamp();
-
-                                if(headlineArrayList.size() > 0 || !headlineArrayList.isEmpty()) {
-                                    swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(headlineAdapter);
-                                    swingBottomInAnimationAdapter.setAbsListView(listView);
-                                    assert swingBottomInAnimationAdapter.getViewAnimator() != null;
-                                    swingBottomInAnimationAdapter.getViewAnimator().setInitialDelayMillis(1000);
-                                    headlineAdapter.notifyDataSetChanged();
-                                    listView.onLoadMoreComplete();
-                                }
-                            } catch (Exception e) {
-                                e.getMessage();
-                            }
-                        }
-                    }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError volleyError) {
-                    listView.onLoadMoreComplete();
-                    listView.setSelection(0);
-                    if (mActivity != null) {
-                        Toast.makeText(mActivity, R.string.label_error, Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });
-            stringRequest.setShouldCache(true);
-            stringRequest.setRetryPolicy(new DefaultRetryPolicy(
-                    Constant.TIME_OUT,
-                    0,
-                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-            Global.getInstance(getActivity()).getRequestQueue().getCache().invalidate(Constant.NEW_HEADLINE +
-                    "published/" + lastPublished, true);
-            Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_HEADLINE +
-                    "published/" + lastPublished);
-            Global.getInstance(getActivity()).addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
-        } else {
-            listView.onLoadMoreComplete();
-            listView.setSelection(0);
-            Toast.makeText(mActivity, R.string.title_no_connection, Toast.LENGTH_SHORT).show();
-        }
+        listView.onLoadMoreComplete();
     }
 
     @Override

@@ -9,9 +9,24 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.google.android.gms.ads.InterstitialAd;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+
 import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.Global;
 import id.co.viva.news.app.R;
+import id.co.viva.news.app.ads.AdsConfig;
+import id.co.viva.news.app.model.Ads;
 import id.co.viva.news.app.services.GCM;
 
 /**
@@ -22,43 +37,65 @@ public class ActSplashScreen extends Activity {
     private ImageView imageSplash;
     private boolean isInternet = false;
     private GCM gcm;
+    public static ArrayList<Ads> adsArrayList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act_splash_screen);
 
-        isInternet = Global.getInstance(this).getConnectionStatus().isConnectingToInternet();
+        //Check connection
+        isInternet = Global.getInstance(this)
+                .getConnectionStatus().isConnectingToInternet();
+
+        //Initiate GCM Service
         gcm = GCM.getInstance(this);
 
+        //Set Animation Image
         imageSplash = (ImageView)findViewById(R.id.image_splash);
         imageSplash.setImageResource(R.drawable.icon_launcher);
         Animation fadeInAnimation = AnimationUtils.loadAnimation(this, R.anim.fade);
         imageSplash.startAnimation(fadeInAnimation);
 
-        if(isInternet) {
+        //Initiate list
+        adsArrayList = new ArrayList<>();
+
+        //Check existing connection
+        if (isInternet) {
             new GetRegistrationID().execute();
         } else {
             new Handler().postDelayed(
                     new Runnable() {
                         public void run() {
-                            goToApplication(Constant.MOVE_APPLICATION);
+                            checkFirstTime(Constant.MOVE_APPLICATION);
                         }
-                    }, 2000);
+                    }, 1000);
         }
     }
 
-    private void goToApplication(String intentType) {
+    private void checkFirstTime(String intentType) {
         if (intentType.equals(Constant.MOVE_APPLICATION)) {
-            Intent intents = new Intent(getApplicationContext(), ActLanding.class);
-            startActivity(intents);
-            overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
-            finish();
+            showAds();
         } else if (intentType.equals(Constant.MOVE_TUTORIAL)) {
-            Intent intent = new Intent(getApplicationContext(), ActTutorial.class);
-            startActivity(intent);
-            overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
-            finish();
+            moveTo(ActTutorial.class);
+        }
+    }
+
+    private void moveTo(Class<?> aClass) {
+        Intent intent = new Intent(getApplicationContext(), aClass);
+        startActivity(intent);
+        overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+        finish();
+    }
+
+    private void showAds() {
+        if (isInternet) {
+            InterstitialAd interstitialAd = new InterstitialAd(this);
+            AdsConfig adsConfig = new AdsConfig();
+            adsConfig.setAdsInterstitial(this, interstitialAd, Constant.unitIdInterstitialOpen,
+                    ActLanding.class, Constant.ADS_TYPE_OPENING, null, null);
+        } else {
+            moveTo(ActLanding.class);
         }
     }
 
@@ -71,19 +108,63 @@ public class ActSplashScreen extends Activity {
         @Override
         protected void onPostExecute(Object o) {
             super.onPostExecute(o);
-            new Handler().postDelayed(
-                    new Runnable() {
-                        public void run() {
-                            if (Global.getInstance(ActSplashScreen.this).getSharedPreferences(ActSplashScreen.this)
-                                    .getBoolean(Constant.FIRST_INSTALL_TUTORIAL, true)) {
-                                goToApplication(Constant.MOVE_TUTORIAL);
-                                Global.getInstance(ActSplashScreen.this).getSharedPreferences(ActSplashScreen.this).
-                                        edit().putBoolean(Constant.FIRST_INSTALL_TUTORIAL, false).commit();
-                            } else {
-                                goToApplication(Constant.MOVE_APPLICATION);
+            new Handler().postDelayed(new Runnable() {
+                public void run() {
+
+                    loadMainConfig();
+
+                }
+            }, 1000);
+        }
+    }
+
+    private void loadMainConfig() {
+        StringRequest request = new StringRequest(Request.Method.GET, Constant.MAIN_CONFIG,
+            new Response.Listener<String>() {
+                @Override
+                public void onResponse(String s) {
+                    try {
+                        JSONObject jsonObject = new JSONObject(s);
+                        JSONArray listAds = jsonObject.getJSONArray(Constant.adses);
+                        if (listAds.length() > 0) {
+                            for (int i=0; i<listAds.length(); i++) {
+                                JSONObject data = listAds.getJSONObject(i);
+                                String screen_name = data.getString(Constant.screen_name);
+                                String unit_id = data.getString(Constant.unit_id);
+                                int type = data.getInt(Constant.type);
+                                int position = data.getInt(Constant.position);
+                                adsArrayList.add(new Ads(screen_name, type, position, unit_id));
                             }
                         }
-                    }, 2000);
+                        checkPreferences();
+                    } catch (JSONException je) {
+                        je.printStackTrace();
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError volleyError) {
+                    checkPreferences();
+                }
+        });
+        request.setShouldCache(true);
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                Constant.TIME_OUT_LONG,
+                0,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        Global.getInstance(this).getRequestQueue().getCache().invalidate(Constant.MAIN_CONFIG, true);
+        Global.getInstance(this).getRequestQueue().getCache().get(Constant.MAIN_CONFIG);
+        Global.getInstance(this).addToRequestQueue(request, Constant.JSON_REQUEST);
+    }
+
+    private void checkPreferences() {
+        if (Global.getInstance(ActSplashScreen.this).getSharedPreferences(ActSplashScreen.this)
+                .getBoolean(Constant.FIRST_INSTALL_TUTORIAL, true)) {
+            checkFirstTime(Constant.MOVE_TUTORIAL);
+            Global.getInstance(ActSplashScreen.this).getSharedPreferences(ActSplashScreen.this).
+                    edit().putBoolean(Constant.FIRST_INSTALL_TUTORIAL, false).commit();
+        } else {
+            checkFirstTime(Constant.MOVE_APPLICATION);
         }
     }
 

@@ -1,0 +1,54 @@
+package id.co.viva.news.app.ads;
+
+import android.content.Context;
+import android.content.SharedPreferences;
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+
+import id.co.viva.news.app.Constant;
+import id.co.viva.news.app.model.Ads;
+
+/**
+ * Created by reza on 05/05/15.
+ */
+public class AdsConfigList {
+
+    private SharedPreferences settings;
+    private SharedPreferences.Editor editor;
+    private ArrayList<Ads> adsArrayList;
+
+    public AdsConfigList() {}
+
+    public void saveAds(Context context, ArrayList<Ads> adsArrayList) {
+        settings = context.getSharedPreferences(Constant.PREFS_ADS_NAME, Context.MODE_PRIVATE);
+        editor = settings.edit();
+        Gson gson = new Gson();
+        String jsonAds = gson.toJson(adsArrayList);
+        editor.putString(Constant.ADS_LIST, jsonAds);
+        editor.commit();
+    }
+
+    public void removeAds(Context context, Ads ads) {
+        ArrayList<Ads> adsArrayList = getFavorites(context);
+        if (adsArrayList != null) {
+            adsArrayList.remove(ads);
+            saveAds(context, adsArrayList);
+        }
+    }
+
+    public ArrayList<Ads> getFavorites(Context context) {
+        settings = context.getSharedPreferences(Constant.PREFS_ADS_NAME, Context.MODE_PRIVATE);
+        if (settings.contains(Constant.ADS_LIST)) {
+            String jsonFavorites = settings.getString(Constant.ADS_LIST, null);
+            Gson gson = new Gson();
+            Type type = new TypeToken<ArrayList<Ads>>(){}.getType();
+            adsArrayList = gson.fromJson(jsonFavorites, type);
+            return adsArrayList;
+        }
+        return null;
+    }
+
+}

@@ -23,29 +23,37 @@ import android.widget.ListView;
  */
 public class Constant {
 
+    //Kind of Timeout
     public static final int TIME_OUT = 3000;
     public static final int TIME_OUT_LONG = 6000;
     public static final int TIME_OUT_REGISTRATION = 15000;
     public static final int PROFILE_PIC_SIZE = 400;
     public final static int NUMBER_OF_TOP_LIST_ITEMS = 4;
+
+    //Facebook Image Url
     public final static String URL_FACEBOOK_PHOTO = "http://graph.facebook.com/";
 
+    //Social Media Login Code
     public static final String CODE_VIVA = "10";
     public static final String CODE_FACEBOOK = "11";
     public static final String CODE_PATH = "12";
     public static final String CODE_GPLUS = "13";
 
+    //Minimal time location update
     public static final int MIN_TIME_BW_UPDATES = 20000;
 
+    //Padding for some collections
     private static int PADDING_DYNAMIC_SIZE_GRID = 500;
     private static int PADDING_DYNAMIC_SIZE = 200;
     private static int PADDING_DYNAMIC_SIZE_SLIDER = 800;
 
+    //Separate list and grid
     public static String DYNAMIC_SIZE_GRID_TYPE = "grid_type";
     public static String DYNAMIC_SIZE_LIST_TYPE = "list_type";
     public static String DYNAMIC_SIZE_SLIDER_TYPE = "slider_type";
 
-    public static String SUPPPORT_EMAIL = "mobile-developer@viva.co.id";
+    //Label for support
+    public static String SUPPORT_EMAIL = "mobile-developer@viva.co.id";
     public static String EMAIL_SCHEME = "mailto";
 
     public static final String TAG_LOCATION_NAME = "nama";
@@ -66,9 +74,11 @@ public class Constant {
     public static final String FIRST_INSTALL_PROFILE = "first_install_profile";
     public static final String FIRST_INSTALL_TUTORIAL = "first_install_tutorial";
 
+    //Tag checking first installation
     public static final String MOVE_TUTORIAL = "move_tutorial";
     public static final String MOVE_APPLICATION = "move_application";
 
+    //Preference States
     public static final String FAVORITES_LIST = "favorites_list";
     public static final String FAVORITES_LIST_SIZE = "favorites_list_size";
     public static final String LOGIN_STATES_EMAIL = "login_states_email";
@@ -82,18 +92,26 @@ public class Constant {
     public static final String LOGIN_STATES_BIRTHDATE = "login_states_birthdate";
     public static final String LOGIN_STATES_PROVINCE = "login_states_province";
     public static final String LOGIN_STATES_COUNTRY = "login_states_country";
+    public static final String PREFS_ADS_NAME = "prefs_ads_name";
+    public static final String ADS_LIST = "ads_list";
 
+    //Separate some URL
     public static final String LINK_YOUTUBE = "www.youtube.com";
     public static final String LINK_VIDEO_VIVA = "video.viva.co.id";
     public static final String LINK_ARTICLE_VIVA = "viva.co.id/news/read";
 
+    //GCM
     public static final String GCM_SENDER_ID = "702339857576";
     public static final String GCM_URL_BACKEND_SERVER = "http://api.vivall.tv/rest/gcmreg";
 
+    //App Tagging Log
     public static final String TAG = VivaApp.class.getSimpleName();
     public static final String TAG_GCM = "VIVA-GCM";
 
+    //Main Content URL
     private static String BASE_URL_NEW = "http://api.viva.co.id/v/208/";
+    public static String MAIN_CONFIG = BASE_URL_NEW + "mainconf/app/android";
+    public static String BERITA_SEKITAR_URL = BASE_URL_NEW + "find/";
     public static String TUTORIAL_IMAGES_URL = BASE_URL_NEW + "coach";
     public static String NEW_HEADLINE = BASE_URL_NEW + "headlinelist/";
     public static String NEW_TERBARU = BASE_URL_NEW + "terbarulist/";
@@ -118,8 +136,10 @@ public class Constant {
     public static final String SUB_CHANNEL_LV_2_URL_PAGING = "/lv/2/s/";
     public static final String SUB_CHANNEL_LV_1_URL_PAGING = "/lv/1/s/";
 
+    //Request Queue Tag
     public static final String JSON_REQUEST = "json_obj_req";
 
+    //JSON Tag
     public static final String AllNews = "Semua Berita";
     public static final String response = "response";
     public static final String timestamp = "timestamp";
@@ -140,6 +160,14 @@ public class Constant {
     public static final String content = "content";
     public static final String data = "data";
 
+    //JSON Tag Ads
+    public static final String adses = "adses";
+    public static final String screen_name = "screen_name";
+    public static final String unit_id = "unit_id";
+    public static final String type = "type";
+    public static final String position = "position";
+
+    //Another from JSON
     public static final String name = "name";
     public static final String parent_id = "parent_id";
     public static final String comment_text = "comment_text";
@@ -149,7 +177,6 @@ public class Constant {
     public static final String image_caption = "image_caption";
     public static final String content_video = "content_video";
     public static final String text = "text";
-
     public static final String article_id = "article_id";
     public static final String related_article_id = "related_article_id";
     public static final String related_title = "related_title";
@@ -159,6 +186,7 @@ public class Constant {
     public static final String image = "image";
     public static final String content_images = "content_images";
 
+    //Calculate time
     private static final int SECOND_MILLIS = 1000;
     private static final int MINUTE_MILLIS = 60 * SECOND_MILLIS;
     private static final int HOUR_MILLIS = 60 * MINUTE_MILLIS;
@@ -167,11 +195,13 @@ public class Constant {
     private static final float BITMAP_SCALE = 0.4f;
     private static final float BLUR_RADIUS = 7.5f;
 
+    //AT Internet
     public static final String AT_LOG_DOMAIN = ".ati-host.net";
     public static final String AT_SUB_DOMAIN = "logw351";
     public static final String AT_SITE_ID = "551156";
     public static final String AT_SUB_SITE = "1";
 
+    //Path Configuration
     public static final String PATH_REDIRECT = "http://viva.co.id";
     public static final String PATH_CLIENT_ID = "29eb3edd59992f2418946e028774d91004bd05a9";
     public static final String PATH_SECRET_ID = "e8b08b8d51b679a3a33de1089ec373d6f5a38419";
@@ -263,8 +293,17 @@ public class Constant {
     public static final String CHANNEL_TRAVEL = "http://life.viva.co.id/travel";
     public static final String CHANNEL_HEALTHSEX = "http://life.viva.co.id/health_and_sex";
 
-    public static final String unitIdTop = "/11225321/viva_app_mobile_banner_bottom";
-    public static final String unitIdBottom = "/11225321/viva_app_mobile_banner_bottom";
+    //Dummy UnitId
+    public static final String unitIdTop = "";
+    public static final String unitIdBottom = "";
+    public static final String unitIdInterstitialOpen = "/11225321/viva_apps_mobile_interstitial_open";
+    public static final String unitIdInterstitialClose = "/11225321/viva_apps_mobile_interstitial_close";
+
+    public static final String ADS_TYPE_OPENING = "ads_opening";
+    public static final String ADS_TYPE_CLOSING = "ads_closing";
+
+    public static final int POSITION_BANNER_TOP = 1;
+    public static final int POSITION_BANNER_BOTTOM = 2;
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     public static Bitmap blur(Context ctx, Bitmap image) {

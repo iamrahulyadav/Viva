@@ -16,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -27,7 +28,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.flaviofaria.kenburnsview.KenBurnsView;
+import com.google.android.gms.ads.doubleclick.PublisherAdView;
 import com.squareup.picasso.Picasso;
 import com.viewpagerindicator.LinePageIndicator;
 
@@ -42,6 +43,7 @@ import id.co.viva.news.app.Global;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.adapter.ImageSliderAdapter;
 import id.co.viva.news.app.adapter.RelatedAdapter;
+import id.co.viva.news.app.ads.AdsConfig;
 import id.co.viva.news.app.component.CropSquareTransformation;
 import id.co.viva.news.app.component.ProgressWheel;
 import id.co.viva.news.app.model.Comment;
@@ -57,6 +59,7 @@ import id.co.viva.news.app.services.Analytics;
 public class ActDetailContentDefault extends ActionBarActivity
         implements AdapterView.OnItemClickListener, View.OnClickListener {
 
+    //All From JSON
     private String ids;
     private String title;
     private String channel_id;
@@ -76,30 +79,42 @@ public class ActDetailContentDefault extends ActionBarActivity
     private String shared_url;
     private String sliderPhotoUrl;
     private String sliderTitle;
+    private String favoriteList;
     private int count = 0;
 
+    //Define Views
     private TextView tvTitleDetail;
     private TextView tvDateDetail;
     private TextView tvReporterDetail;
     private TextView tvContentDetail;
-    private KenBurnsView ivThumbDetail;
+    private ImageView ivThumbDetail;
     private TextView tvPreviewCommentUser;
     private TextView tvPreviewCommentContent;
     private LinearLayout layoutCommentPreview;
-
     private RelativeLayout headerRelated;
-    private boolean isInternetPresent = false;
     private TextView tvNoResult;
+    private ProgressWheel progressWheel;
+    private TextView textLinkVideo;
+
+    //Ads AdMob DFP
+    private LinearLayout mParentLayout;
+    private PublisherAdView publisherAdViewBottom;
+    private PublisherAdView publisherAdViewTop;
+
+    //Checking Flag Internet
+    private boolean isInternetPresent = false;
+
+    //Data Collection
     private RelatedAdapter adapter;
     private ImageSliderAdapter imageSliderAdapter;
     private ListView listView;
     private ViewPager viewPager;
     private LinePageIndicator linePageIndicator;
-    private Analytics analytics;
-    private ProgressWheel progressWheel;
-    private String favoriteList;
-    private TextView textLinkVideo;
 
+    //Analytic
+    private Analytics analytics;
+
+    //Data List
     private ArrayList<Favorites> favoritesArrayList;
     private ArrayList<RelatedArticle> relatedArticleArrayList;
     private ArrayList<Comment> commentArrayList;
@@ -112,6 +127,7 @@ public class ActDetailContentDefault extends ActionBarActivity
         //Get Parameter Intent
         getParameterIntent();
 
+        //Check internet connection
         isInternetPresent = Global.getInstance(this).
                 getConnectionStatus().isConnectingToInternet();
 
@@ -120,8 +136,10 @@ public class ActDetailContentDefault extends ActionBarActivity
         //Define All View
         defineViews();
 
+        //Set actionbar based on channel
         setThemes();
 
+        //Get data
         if(isInternetPresent) {
             StringRequest request = new StringRequest(Request.Method.GET, Constant.NEW_DETAIL + "/id/" + id,
                     new Response.Listener<String>() {
@@ -423,6 +441,10 @@ public class ActDetailContentDefault extends ActionBarActivity
     }
 
     private void defineViews() {
+        //Add ads if exists
+        mParentLayout = (LinearLayout) findViewById(R.id.parent_layout);
+        setAds(mParentLayout);
+
         viewPager = (ViewPager) findViewById(R.id.horizontal_list);
         viewPager.setVisibility(View.GONE);
 
@@ -454,7 +476,7 @@ public class ActDetailContentDefault extends ActionBarActivity
         tvReporterDetail = (TextView) findViewById(R.id.reporter_detail_content_default);
         tvContentDetail = (TextView) findViewById(R.id.content_detail_content_default);
 
-        ivThumbDetail = (KenBurnsView) findViewById(R.id.thumb_detail_content_default);
+        ivThumbDetail = (ImageView) findViewById(R.id.thumb_detail_content_default);
         ivThumbDetail.setOnClickListener(this);
         ivThumbDetail.setFocusableInTouchMode(true);
 
@@ -471,10 +493,43 @@ public class ActDetailContentDefault extends ActionBarActivity
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        if (publisherAdViewBottom != null) {
+            publisherAdViewBottom.resume();
+        }
+        if (publisherAdViewTop != null) {
+            publisherAdViewTop.resume();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (publisherAdViewBottom != null) {
+            publisherAdViewBottom.pause();
+        }
+        if (publisherAdViewTop != null) {
+            publisherAdViewTop.pause();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (publisherAdViewBottom != null) {
+            publisherAdViewBottom.destroy();
+        }
+        if (publisherAdViewTop != null) {
+            publisherAdViewTop.destroy();
+        }
+    }
+
+    @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        if(shared_url == null) {
+        if (shared_url == null) {
             try {
-                if(Global.getInstance(this).getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + id) != null) {
+                if (Global.getInstance(this).getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + id) != null) {
                     String cachedResponse = new String(Global.getInstance(this).
                             getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + id).data);
                     JSONObject jsonObject = new JSONObject(cachedResponse);
@@ -757,6 +812,18 @@ public class ActDetailContentDefault extends ActionBarActivity
             }
         } else {
             Toast.makeText(this, R.string.title_no_connection, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void setAds(LinearLayout parentLayout) {
+        if (isInternetPresent) {
+            if (this != null) {
+                publisherAdViewTop = new PublisherAdView(this);
+                publisherAdViewBottom = new PublisherAdView(this);
+                AdsConfig adsConfig = new AdsConfig();
+                adsConfig.setAdsBanner(publisherAdViewTop, Constant.unitIdTop, Constant.POSITION_BANNER_TOP, parentLayout);
+                adsConfig.setAdsBanner(publisherAdViewBottom, Constant.unitIdBottom, Constant.POSITION_BANNER_BOTTOM, parentLayout);
+            }
         }
     }
 

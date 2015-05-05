@@ -47,7 +47,7 @@ public class ActTutorial extends FragmentActivity implements View.OnClickListene
     }
 
     private void defineViews() {
-        imageTutorials = new ArrayList<String>();
+        imageTutorials = new ArrayList<>();
         viewPager = (ViewPager) findViewById(R.id.tutorial_pager);
         circlePageIndicator = (CirclePageIndicator) findViewById(R.id.circle_indicator);
         btnSkip = (Button) findViewById(R.id.button_skip_tutorial);

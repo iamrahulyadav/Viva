@@ -7,14 +7,13 @@ import android.view.MenuItem;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.google.android.gms.ads.AdSize;
-import com.google.android.gms.ads.doubleclick.PublisherAdRequest;
 import com.google.android.gms.ads.doubleclick.PublisherAdView;
 
 import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.Global;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.adapter.DetailTerbaruAdapter;
+import id.co.viva.news.app.ads.AdsConfig;
 import id.co.viva.news.app.component.ZoomOutPageTransformer;
 import id.co.viva.news.app.fragment.TerbaruFragment;
 import id.co.viva.news.app.model.News;
@@ -92,26 +91,12 @@ public class ActDetailTerbaru extends ActionBarActivity {
 
     private void setAds(LinearLayout parentLayout) {
         if (isInternetPresent) {
-            PublisherAdRequest adRequest = new PublisherAdRequest.Builder().build();
-            //Ad Top
-            if (Constant.unitIdTop != null) {
-                if (Constant.unitIdTop.length() > 0) {
-                    publisherAdViewTop = new PublisherAdView(this);
-                    publisherAdViewTop.setAdUnitId(Constant.unitIdTop);
-                    publisherAdViewTop.setAdSizes(AdSize.SMART_BANNER);
-                    parentLayout.addView(publisherAdViewTop, 0);
-                    publisherAdViewTop.loadAd(adRequest);
-                }
-            }
-            //Ad Bottom
-            if (Constant.unitIdBottom != null) {
-                if (Constant.unitIdBottom.length() > 0) {
-                    publisherAdViewBottom = new PublisherAdView(this);
-                    publisherAdViewBottom.setAdUnitId(Constant.unitIdBottom);
-                    publisherAdViewBottom.setAdSizes(AdSize.SMART_BANNER);
-                    mParentLayout.addView(publisherAdViewBottom);
-                    publisherAdViewBottom.loadAd(adRequest);
-                }
+            if (this != null) {
+                publisherAdViewTop = new PublisherAdView(this);
+                publisherAdViewBottom = new PublisherAdView(this);
+                AdsConfig adsConfig = new AdsConfig();
+                adsConfig.setAdsBanner(publisherAdViewTop, Constant.unitIdTop, Constant.POSITION_BANNER_TOP, parentLayout);
+                adsConfig.setAdsBanner(publisherAdViewBottom, Constant.unitIdBottom, Constant.POSITION_BANNER_BOTTOM, parentLayout);
             }
         }
     }

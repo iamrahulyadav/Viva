@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,7 +22,6 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.flaviofaria.kenburnsview.KenBurnsView;
 import com.squareup.picasso.Picasso;
 import com.viewpagerindicator.LinePageIndicator;
 
@@ -58,7 +58,7 @@ public class ActFromUrl extends ActionBarActivity implements View.OnClickListene
     private TextView tvDateDetail;
     private TextView tvReporterDetail;
     private TextView tvContentDetail;
-    private KenBurnsView ivThumbDetail;
+    private ImageView ivThumbDetail;
     private TextView textLinkVideo;
     private String title;
     private String kanal;
@@ -109,7 +109,7 @@ public class ActFromUrl extends ActionBarActivity implements View.OnClickListene
         tvReporterDetail = (TextView) findViewById(R.id.reporter_detail_content);
         tvContentDetail = (TextView) findViewById(R.id.content_detail_content);
 
-        ivThumbDetail = (KenBurnsView) findViewById(R.id.thumb_detail_content);
+        ivThumbDetail = (ImageView) findViewById(R.id.thumb_detail_content);
         ivThumbDetail.setOnClickListener(this);
         ivThumbDetail.setFocusableInTouchMode(true);
 

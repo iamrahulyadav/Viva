@@ -35,7 +35,7 @@ public class ActRating extends ActionBarActivity implements OnCompleteListener,
     private String mIds;
     private String mFromKanal;
     private ActionProcessButton btnRate;
-    private String fullname;
+    private String fullName;
     private String email;
     private String amountRate;
     private TextView text_title;
@@ -104,7 +104,7 @@ public class ActRating extends ActionBarActivity implements OnCompleteListener,
 
     private void getStateUser() {
         Global.getInstance(this).getDefaultEditor();
-        fullname = Global.getInstance(this).getSharedPreferences(this)
+        fullName = Global.getInstance(this).getSharedPreferences(this)
                 .getString(Constant.LOGIN_STATES_FULLNAME, "");
         email = Global.getInstance(this).getSharedPreferences(this)
                 .getString(Constant.LOGIN_STATES_EMAIL, "");
@@ -192,9 +192,9 @@ public class ActRating extends ActionBarActivity implements OnCompleteListener,
     public void onClick(View view) {
         if(view.getId() == R.id.btn_send_rate) {
             if(isInternetPresent) {
-                if(fullname.length() > 0 || email.length() > 0) {
+                if(fullName.length() > 0 || email.length() > 0) {
                     if(amountRate != null) {
-                        userAccount = new UserAccount(fullname, email, mIds, amountRate, this, ActRating.this);
+                        userAccount = new UserAccount(fullName, email, mIds, amountRate, this, ActRating.this);
                         disableView();
                         btnRate.setProgress(1);
                         userAccount.sendRating();

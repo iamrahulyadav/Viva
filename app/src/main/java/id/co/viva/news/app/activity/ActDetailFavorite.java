@@ -7,9 +7,9 @@ import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.flaviofaria.kenburnsview.KenBurnsView;
 import com.squareup.picasso.Picasso;
 import com.viewpagerindicator.LinePageIndicator;
 
@@ -29,7 +29,7 @@ import id.co.viva.news.app.services.Analytics;
 public class ActDetailFavorite extends ActionBarActivity implements View.OnClickListener {
 
     private Intent intent;
-    private KenBurnsView imageDetail;
+    private ImageView imageDetail;
     private TextView tvTitle;
     private TextView tvDatePublish;
     private TextView tvContent;
@@ -108,7 +108,7 @@ public class ActDetailFavorite extends ActionBarActivity implements View.OnClick
     private void defineViews() {
         sliderContentImages = Global.getInstance(this).getInstanceGson().
                 fromJson(sThumbList, Global.getInstance(this).getTypeSlider());
-        imageDetail = (KenBurnsView)findViewById(R.id.thumb_detail_content_favorite);
+        imageDetail = (ImageView)findViewById(R.id.thumb_detail_content_favorite);
         tvTitle = (TextView)findViewById(R.id.title_detail_content_favorite);
         tvDatePublish = (TextView)findViewById(R.id.date_detail_content_favorite);
         tvContent = (TextView)findViewById(R.id.content_detail_content_favorite);

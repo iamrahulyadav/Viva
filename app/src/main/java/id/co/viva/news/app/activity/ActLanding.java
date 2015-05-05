@@ -26,6 +26,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.InterstitialAd;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -35,6 +36,7 @@ import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.Global;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.adapter.NavigationAdapter;
+import id.co.viva.news.app.ads.AdsConfig;
 import id.co.viva.news.app.component.CropSquareTransformation;
 import id.co.viva.news.app.fragment.AboutFragment;
 import id.co.viva.news.app.fragment.BeritaSekitarFragment;
@@ -57,9 +59,9 @@ public class ActLanding extends ActionBarActivity implements View.OnClickListene
     private NavigationAdapter adapter;
     private android.support.v4.app.Fragment fragment = null;
     private android.support.v4.app.FragmentManager fragmentManager;
-    private String mFullname;
+    private String mFullName;
     private String mEmail;
-    private String mPhotourl;
+    private String mPhotoUrl;
     private RelativeLayout mNavLayout;
     private ImageView mBackground;
     private ImageView mImgProfile;
@@ -166,7 +168,7 @@ public class ActLanding extends ActionBarActivity implements View.OnClickListene
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.profile_bg) {
-            if (mFullname.length() > 0 && mEmail.length() > 0) {
+            if (mFullName.length() > 0 && mEmail.length() > 0) {
                 Intent intent = new Intent(this, ActUserProfile.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
@@ -197,7 +199,7 @@ public class ActLanding extends ActionBarActivity implements View.OnClickListene
 
     private void sendEmail() {
         Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
-                Constant.EMAIL_SCHEME, Constant.SUPPPORT_EMAIL, null));
+                Constant.EMAIL_SCHEME, Constant.SUPPORT_EMAIL, null));
         startActivity(Intent.createChooser(emailIntent, "Send Email"));
     }
 
@@ -242,16 +244,16 @@ public class ActLanding extends ActionBarActivity implements View.OnClickListene
         mBackground.setOnClickListener(this);
         mNameProfile = (TextView) findViewById(R.id.tv_username);
         mEmailProfile = (TextView) findViewById(R.id.tv_user_email);
-        if(mFullname.length() > 0 && mEmail.length() > 0) {
-            mNameProfile.setText(mFullname);
+        if(mFullName.length() > 0 && mEmail.length() > 0) {
+            mNameProfile.setText(mFullName);
             mEmailProfile.setText(mEmail);
         } else {
             mNameProfile.setText(getResources().getString(R.string.label_not_logged_in));
         }
-        if(mPhotourl.length() > 0) {
+        if(mPhotoUrl.length() > 0) {
             if(isInternetPresent) {
-                Picasso.with(this).load(mPhotourl).transform(new CropSquareTransformation()).into(mImgProfile);
-                Picasso.with(this).load(mPhotourl).transform(new CropSquareTransformation()).into(target);
+                Picasso.with(this).load(mPhotoUrl).transform(new CropSquareTransformation()).into(mImgProfile);
+                Picasso.with(this).load(mPhotoUrl).transform(new CropSquareTransformation()).into(target);
             } else {
                 mImgProfile.setImageResource(R.drawable.ic_profile);
             }
@@ -282,21 +284,21 @@ public class ActLanding extends ActionBarActivity implements View.OnClickListene
 
     private void getProfile() {
         Global.getInstance(this).getDefaultEditor();
-        mFullname = Global.getInstance(this).getSharedPreferences(this)
+        mFullName = Global.getInstance(this).getSharedPreferences(this)
                 .getString(Constant.LOGIN_STATES_FULLNAME, "");
         mEmail = Global.getInstance(this).getSharedPreferences(this)
                 .getString(Constant.LOGIN_STATES_EMAIL, "");
-        mPhotourl = Global.getInstance(this).getSharedPreferences(this)
+        mPhotoUrl = Global.getInstance(this).getSharedPreferences(this)
                 .getString(Constant.LOGIN_STATES_URL_PHOTO, "");
     }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        if(fragment != null) {
-            if(fragment.getClass().toString().equals(Constant.fragment_bola)
+        if (fragment != null) {
+            if (fragment.getClass().toString().equals(Constant.fragment_bola)
                     || fragment.getClass().toString().equals(Constant.fragment_life)
                     || fragment.getClass().toString().equals(Constant.fragment_news)) {
-                if(mDrawerLayout.isDrawerOpen(mNavLayout)) {
+                if (mDrawerLayout.isDrawerOpen(mNavLayout)) {
                     menu.findItem(R.id.action_change_layout).setEnabled(false);
                 } else {
                     menu.findItem(R.id.action_change_layout).setEnabled(true);
@@ -340,8 +342,8 @@ public class ActLanding extends ActionBarActivity implements View.OnClickListene
         if (mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
-        if(item.getItemId() == R.id.action_change_layout) {
-            if(this != null) {
+        if (item.getItemId() == R.id.action_change_layout) {
+            if (this != null) {
                 invalidateOptionsMenu();
             }
         }
@@ -355,8 +357,19 @@ public class ActLanding extends ActionBarActivity implements View.OnClickListene
         } else {
             if(fragment != null) {
                 if(fragment.getClass().toString().equals(Constant.fragment_terbaru)) {
-                    getSupportFragmentManager().beginTransaction().remove(fragment).commit();
-                    finish();
+                    //Load ads
+                    if (isInternetPresent) {
+                        InterstitialAd interstitialAd = new InterstitialAd(this);
+                        AdsConfig adsConfig = new AdsConfig();
+                        adsConfig.setAdsInterstitial(this, interstitialAd,
+                                Constant.unitIdInterstitialClose, null, Constant.ADS_TYPE_CLOSING,
+                                fragment, ActLanding.this);
+                    } else {
+                        getSupportFragmentManager()
+                                .beginTransaction()
+                                .remove(fragment).commit();
+                        finish();
+                    }
                 } else {
                     backToFirst();
                 }

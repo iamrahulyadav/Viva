@@ -28,8 +28,6 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.google.android.gms.ads.AdSize;
-import com.google.android.gms.ads.doubleclick.PublisherAdRequest;
 import com.google.android.gms.ads.doubleclick.PublisherAdView;
 import com.nhaarman.listviewanimations.appearance.simple.SwingBottomInAnimationAdapter;
 import com.squareup.picasso.Picasso;
@@ -45,6 +43,7 @@ import id.co.viva.news.app.R;
 import id.co.viva.news.app.activity.ActDetailChannelBola;
 import id.co.viva.news.app.adapter.ChannelListTypeAdapter;
 import id.co.viva.news.app.adapter.FeaturedBolaAdapter;
+import id.co.viva.news.app.ads.AdsConfig;
 import id.co.viva.news.app.component.CropSquareTransformation;
 import id.co.viva.news.app.component.ExpandableHeightGridView;
 import id.co.viva.news.app.component.ProgressWheel;
@@ -90,28 +89,11 @@ public class BolaFragment extends Fragment implements View.OnClickListener {
         super.onActivityCreated(savedInstanceState);
         if (isInternetPresent) {
             if (getActivity() != null) {
-                //Load ad request
-                PublisherAdRequest adRequest = new PublisherAdRequest.Builder().build();
-                //Ad Top
-                if (Constant.unitIdTop != null) {
-                    if (Constant.unitIdTop.length() > 0) {
-                        publisherAdViewTop = new PublisherAdView(getActivity());
-                        publisherAdViewTop.setAdUnitId(Constant.unitIdTop);
-                        publisherAdViewTop.setAdSizes(AdSize.SMART_BANNER);
-                        mParentLayout.addView(publisherAdViewTop, 0);
-                        publisherAdViewTop.loadAd(adRequest);
-                    }
-                }
-                //Ad Bottom
-                if (Constant.unitIdBottom != null) {
-                    if (Constant.unitIdBottom.length() > 0) {
-                        publisherAdViewBottom = new PublisherAdView(getActivity());
-                        publisherAdViewBottom.setAdUnitId(Constant.unitIdBottom);
-                        publisherAdViewBottom.setAdSizes(AdSize.SMART_BANNER);
-                        mParentLayout.addView(publisherAdViewBottom);
-                        publisherAdViewBottom.loadAd(adRequest);
-                    }
-                }
+                publisherAdViewTop = new PublisherAdView(getActivity());
+                publisherAdViewBottom = new PublisherAdView(getActivity());
+                AdsConfig adsConfig = new AdsConfig();
+                adsConfig.setAdsBanner(publisherAdViewTop, Constant.unitIdTop, Constant.POSITION_BANNER_TOP, mParentLayout);
+                adsConfig.setAdsBanner(publisherAdViewBottom, Constant.unitIdBottom, Constant.POSITION_BANNER_BOTTOM, mParentLayout);
             }
         }
     }
@@ -272,11 +254,6 @@ public class BolaFragment extends Fragment implements View.OnClickListener {
                                     }
                                 }
 
-                                //Get dynamic ad
-                                /**
-                                 *
-                                 */
-
                                 featuredNewsArrayListTypeList.add(0, new FeaturedBola(channel_title_header_grid,
                                         null, id_header_grid, null, null, null, image_url_header_grid));
 
@@ -307,7 +284,6 @@ public class BolaFragment extends Fragment implements View.OnClickListener {
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError volleyError) {
-                            volleyError.getMessage();
                             progressWheel.setVisibility(View.GONE);
                             rippleView.setVisibility(View.VISIBLE);
                         }
@@ -549,10 +525,6 @@ public class BolaFragment extends Fragment implements View.OnClickListener {
                                             }
                                         }
                                     }
-
-                                    /**
-                                     *
-                                     */
 
                                     featuredNewsArrayListTypeList.add(0, new FeaturedBola(channel_title_header_grid,
                                             null, id_header_grid, null, null, null, image_url_header_grid));

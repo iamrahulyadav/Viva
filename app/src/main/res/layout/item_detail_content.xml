@@ -15,7 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/thumb_detail_content_layout">
-            <com.flaviofaria.kenburnsview.KenBurnsView
+            <ImageView
                 android:id="@+id/thumb_detail_content"
                 android:layout_width="match_parent"
                 android:layout_height="220dp"
