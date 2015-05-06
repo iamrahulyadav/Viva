@@ -299,9 +299,11 @@ public class Constant {
     public static final String unitIdInterstitialOpen = "/11225321/viva_apps_mobile_interstitial_open";
     public static final String unitIdInterstitialClose = "/11225321/viva_apps_mobile_interstitial_close";
 
+    //Banner Interstitial Position
     public static final String ADS_TYPE_OPENING = "ads_opening";
     public static final String ADS_TYPE_CLOSING = "ads_closing";
 
+    //Banner Position
     public static final int POSITION_BANNER_TOP = 1;
     public static final int POSITION_BANNER_BOTTOM = 2;
 

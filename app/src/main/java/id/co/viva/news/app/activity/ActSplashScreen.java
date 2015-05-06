@@ -26,6 +26,7 @@ import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.Global;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.ads.AdsConfig;
+import id.co.viva.news.app.ads.AdsConfigList;
 import id.co.viva.news.app.model.Ads;
 import id.co.viva.news.app.services.GCM;
 
@@ -36,8 +37,9 @@ public class ActSplashScreen extends Activity {
 
     private ImageView imageSplash;
     private boolean isInternet = false;
+    private ArrayList<Ads> adsList;
+    private AdsConfigList mConfigList;
     private GCM gcm;
-    public static ArrayList<Ads> adsArrayList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,25 +53,24 @@ public class ActSplashScreen extends Activity {
         //Initiate GCM Service
         gcm = GCM.getInstance(this);
 
+        //Initiate Ad list
+        mConfigList = new AdsConfigList();
+
         //Set Animation Image
         imageSplash = (ImageView)findViewById(R.id.image_splash);
         imageSplash.setImageResource(R.drawable.icon_launcher);
         Animation fadeInAnimation = AnimationUtils.loadAnimation(this, R.anim.fade);
         imageSplash.startAnimation(fadeInAnimation);
 
-        //Initiate list
-        adsArrayList = new ArrayList<>();
-
         //Check existing connection
         if (isInternet) {
             new GetRegistrationID().execute();
         } else {
-            new Handler().postDelayed(
-                    new Runnable() {
-                        public void run() {
-                            checkFirstTime(Constant.MOVE_APPLICATION);
-                        }
-                    }, 1000);
+            new Handler().postDelayed(new Runnable() {
+                public void run() {
+                    checkFirstTime(Constant.MOVE_APPLICATION);
+                }
+            }, 1000);
         }
     }
 
@@ -86,6 +87,11 @@ public class ActSplashScreen extends Activity {
         startActivity(intent);
         overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
         finish();
+    }
+
+    //TODO Getting ads
+    private void getAds() {
+        adsList = mConfigList.getAdList(this);
     }
 
     private void showAds() {
@@ -110,9 +116,7 @@ public class ActSplashScreen extends Activity {
             super.onPostExecute(o);
             new Handler().postDelayed(new Runnable() {
                 public void run() {
-
                     loadMainConfig();
-
                 }
             }, 1000);
         }
@@ -133,7 +137,7 @@ public class ActSplashScreen extends Activity {
                                 String unit_id = data.getString(Constant.unit_id);
                                 int type = data.getInt(Constant.type);
                                 int position = data.getInt(Constant.position);
-                                adsArrayList.add(new Ads(screen_name, type, position, unit_id));
+                                mConfigList.addAds(ActSplashScreen.this, new Ads(screen_name, type, position, unit_id));
                             }
                         }
                         checkPreferences();

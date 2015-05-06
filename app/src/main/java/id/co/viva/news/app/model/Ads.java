@@ -10,16 +10,16 @@ public class Ads {
     private int mPosition;
     private String mUnitId;
 
-    public int getmPosition() {
-        return mPosition;
-    }
-
     public String getmScreenName() {
         return mScreenName;
     }
 
     public int getmType() {
         return mType;
+    }
+
+    public int getmPosition() {
+        return mPosition;
     }
 
     public String getmUnitId() {
