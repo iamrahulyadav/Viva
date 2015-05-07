@@ -46,6 +46,7 @@ import id.co.viva.news.app.ads.AdsConfig;
 import id.co.viva.news.app.component.GoogleMusicDicesDrawable;
 import id.co.viva.news.app.component.LoadMoreListView;
 import id.co.viva.news.app.interfaces.OnLoadMoreListener;
+import id.co.viva.news.app.model.Ads;
 import id.co.viva.news.app.model.News;
 import id.co.viva.news.app.services.Analytics;
 
@@ -55,8 +56,8 @@ import id.co.viva.news.app.services.Analytics;
 public class TerbaruFragment extends Fragment implements AdapterView.OnItemClickListener,
         OnLoadMoreListener, View.OnClickListener {
 
-    private static String NEWS = "terbaru";
     public static ArrayList<News> newsArrayList;
+    private ArrayList<Ads> adsArrayList;
     private SwingBottomInAnimationAdapter swingBottomInAnimationAdapter;
     private TerbaruAdapter terbaruAdapter;
     private LoadMoreListView listView;
@@ -67,7 +68,8 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
     private ProgressBar loading_layout;
     private TextView labelLoadData;
     private Boolean isInternetPresent = false;
-    private JSONArray jsonArrayResponses, jsonArraySegmentNews;
+    private JSONArray jsonArrayResponses,
+            jsonArraySegmentNews, jsonArraySegmentAds;
     private TextView labelText;
     private SimpleDateFormat date, time;
     private Analytics analytics;
@@ -92,20 +94,6 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
         if (mActivity != null) {
             mActivity.getSupportActionBar().setBackgroundDrawable(colorDrawable);
             mActivity.getSupportActionBar().setIcon(R.drawable.logo_viva_coid_second);
-        }
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        if (isInternetPresent) {
-            if (getActivity() != null) {
-                publisherAdViewTop = new PublisherAdView(getActivity());
-                publisherAdViewBottom = new PublisherAdView(getActivity());
-                AdsConfig adsConfig = new AdsConfig();
-                adsConfig.setAdsBanner(publisherAdViewTop, Constant.unitIdTop, Constant.POSITION_BANNER_TOP, mParentLayout);
-                adsConfig.setAdsBanner(publisherAdViewBottom, Constant.unitIdBottom, Constant.POSITION_BANNER_BOTTOM, mParentLayout);
-            }
         }
     }
 
@@ -144,6 +132,7 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
 
         //Populate content
         newsArrayList = new ArrayList<>();
+        adsArrayList = new ArrayList<>();
         terbaruAdapter = new TerbaruAdapter(getActivity(), newsArrayList);
 
         //Content list
@@ -187,14 +176,13 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
                             try {
                                 JSONObject jsonObject = new JSONObject(volleyResponse);
                                 jsonArrayResponses = jsonObject.getJSONArray(Constant.response);
-
-                                //Retrieve meta-data
-                                if(jsonArrayResponses != null) {
+                                if (jsonArrayResponses.length() > 0) {
+                                    //Get content list
                                     JSONObject objTerbaru = jsonArrayResponses.getJSONObject(0);
-                                    if(objTerbaru !=  null) {
-                                        jsonArraySegmentNews = objTerbaru.getJSONArray(NEWS);
-                                        for(int i=0; i<jsonArraySegmentNews.length(); i++) {
-                                            JSONObject jsonTerbaru = jsonArraySegmentNews.getJSONObject(i);
+                                    jsonArraySegmentNews = objTerbaru.getJSONArray(Constant.NEWS);
+                                    if (jsonArraySegmentNews.length() > 0) {
+                                        for (int z=0; z<jsonArraySegmentNews.length(); z++) {
+                                            JSONObject jsonTerbaru = jsonArraySegmentNews.getJSONObject(z);
                                             String id = jsonTerbaru.getString(Constant.id);
                                             String title = jsonTerbaru.getString(Constant.title);
                                             String slug = jsonTerbaru.getString(Constant.slug);
@@ -203,16 +191,28 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
                                             String image_url = jsonTerbaru.getString(Constant.image_url);
                                             String date_publish = jsonTerbaru.getString(Constant.date_publish);
                                             String timestamp = jsonTerbaru.getString(Constant.timestamp);
-                                            news.add(new News(id, title, slug, kanal, url,
+                                            newsArrayList.add(new News(id, title, slug, kanal, url,
                                                     image_url, date_publish, timestamp));
-                                            Log.i(Constant.TAG, "NEWS : " + news.get(i).getTitle());
+                                            Log.i(Constant.TAG, "NEWS : " + newsArrayList.get(z).getTitle());
+                                        }
+                                    }
+                                    //Check Ads if exists
+                                    JSONObject objAds = jsonArrayResponses.getJSONObject(jsonArrayResponses.length() - 1);
+                                    jsonArraySegmentAds = objAds.getJSONArray(Constant.ADS);
+                                    if (jsonArraySegmentAds.length() > 0) {
+                                        for (int j=0; j<jsonArraySegmentAds.length(); j++) {
+                                            JSONObject jsonAds = jsonArraySegmentAds.getJSONObject(j);
+                                            String name = jsonAds.getString(Constant.name);
+                                            int position = jsonAds.getInt(Constant.position);
+                                            int type = jsonAds.getInt(Constant.type);
+                                            String unit_id = jsonAds.getString(Constant.unit_id);
+                                            adsArrayList.add(new Ads(name, type, position, unit_id));
+                                            Log.i(Constant.TAG, "ADS : " + adsArrayList.get(j).getmUnitId());
                                         }
                                     }
                                 }
-
                                 //Get last published
                                 lastPublished = news.get(news.size()-1).getTimeStamp();
-
                                 //Fill data from API
                                 if(news.size() > 0 || !news.isEmpty()) {
                                     swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(terbaruAdapter);
@@ -224,7 +224,6 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
                                     loading_layout.setVisibility(View.GONE);
                                     labelLoadData.setVisibility(View.GONE);
                                 }
-
                                 //Set local time
                                 Calendar cal=Calendar.getInstance();
                                 date = new SimpleDateFormat("dd MMM yyyy");
@@ -232,6 +231,8 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
                                 String date_name = date.format(cal.getTime());
                                 String time_name = time.format(cal.getTime());
                                 lastUpdate.setText(date_name + " | " + time_name);
+                                //Show Ads
+                                showAds();
                             } catch (Exception e) {
                                 e.getMessage();
                             }
@@ -247,7 +248,7 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
                             if(jsonArrayResponses != null) {
                                 JSONObject objTerbaru = jsonArrayResponses.getJSONObject(0);
                                 if(objTerbaru !=  null) {
-                                    jsonArraySegmentNews = objTerbaru.getJSONArray(NEWS);
+                                    jsonArraySegmentNews = objTerbaru.getJSONArray(Constant.NEWS);
                                     for(int i=0; i<jsonArraySegmentNews.length(); i++) {
                                         JSONObject jsonTerbaru = jsonArraySegmentNews.getJSONObject(i);
                                         String id = jsonTerbaru.getString(Constant.id);
@@ -307,7 +308,7 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
                     if(jsonArrayResponses != null) {
                         JSONObject objTerbaru = jsonArrayResponses.getJSONObject(0);
                         if(objTerbaru !=  null) {
-                            jsonArraySegmentNews = objTerbaru.getJSONArray(NEWS);
+                            jsonArraySegmentNews = objTerbaru.getJSONArray(Constant.NEWS);
                             for(int i=0; i<jsonArraySegmentNews.length(); i++) {
                                 JSONObject jsonTerbaru = jsonArraySegmentNews.getJSONObject(i);
                                 String id = jsonTerbaru.getString(Constant.id);
@@ -383,7 +384,7 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
                                     if(jsonArrayResponses != null) {
                                         JSONObject objTerbaru = jsonArrayResponses.getJSONObject(0);
                                         if(objTerbaru !=  null) {
-                                            jsonArraySegmentNews = objTerbaru.getJSONArray(NEWS);
+                                            jsonArraySegmentNews = objTerbaru.getJSONArray(Constant.NEWS);
                                             for(int i=0; i<jsonArraySegmentNews.length(); i++) {
                                                 JSONObject jsonTerbaru = jsonArraySegmentNews.getJSONObject(i);
                                                 String id = jsonTerbaru.getString(Constant.id);
@@ -458,12 +459,13 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
                                 try {
                                     JSONObject jsonObject = new JSONObject(volleyResponse);
                                     jsonArrayResponses = jsonObject.getJSONArray(Constant.response);
-                                    if(jsonArrayResponses != null) {
+                                    if (jsonArrayResponses.length() > 0) {
+                                        //Get content list
                                         JSONObject objTerbaru = jsonArrayResponses.getJSONObject(0);
-                                        if(objTerbaru !=  null) {
-                                            jsonArraySegmentNews = objTerbaru.getJSONArray(NEWS);
-                                            for(int i=0; i<jsonArraySegmentNews.length(); i++) {
-                                                JSONObject jsonTerbaru = jsonArraySegmentNews.getJSONObject(i);
+                                        jsonArraySegmentNews = objTerbaru.getJSONArray(Constant.NEWS);
+                                        if (jsonArraySegmentNews.length() > 0) {
+                                            for (int z=0; z<jsonArraySegmentNews.length(); z++) {
+                                                JSONObject jsonTerbaru = jsonArraySegmentNews.getJSONObject(z);
                                                 String id = jsonTerbaru.getString(Constant.id);
                                                 String title = jsonTerbaru.getString(Constant.title);
                                                 String slug = jsonTerbaru.getString(Constant.slug);
@@ -474,14 +476,27 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
                                                 String timestamp = jsonTerbaru.getString(Constant.timestamp);
                                                 newsArrayList.add(new News(id, title, slug, kanal, url,
                                                         image_url, date_publish, timestamp));
-                                                Log.i(Constant.TAG, "NEWS : " + newsArrayList.get(i).getTitle());
+                                                Log.i(Constant.TAG, "NEWS : " + newsArrayList.get(z).getTitle());
+                                            }
+                                        }
+                                        //Check Ads if exists
+                                        JSONObject objAds = jsonArrayResponses.getJSONObject(jsonArrayResponses.length() - 1);
+                                        jsonArraySegmentAds = objAds.getJSONArray(Constant.ADS);
+                                        if (jsonArraySegmentAds.length() > 0) {
+                                            for (int j=0; j<jsonArraySegmentAds.length(); j++) {
+                                                JSONObject jsonAds = jsonArraySegmentAds.getJSONObject(j);
+                                                String name = jsonAds.getString(Constant.name);
+                                                int position = jsonAds.getInt(Constant.position);
+                                                int type = jsonAds.getInt(Constant.type);
+                                                String unit_id = jsonAds.getString(Constant.unit_id);
+                                                adsArrayList.add(new Ads(name, type, position, unit_id));
+                                                Log.i(Constant.TAG, "ADS : " + adsArrayList.get(j).getmUnitId());
                                             }
                                         }
                                     }
-
                                     //Get last published
                                     lastPublished = newsArrayList.get(newsArrayList.size()-1).getTimeStamp();
-
+                                    //Fill content
                                     if (newsArrayList.size() > 0 || !newsArrayList.isEmpty()) {
                                         swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(terbaruAdapter);
                                         swingBottomInAnimationAdapter.setAbsListView(listView);
@@ -493,13 +508,15 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
                                         labelLoadData.setVisibility(View.GONE);
                                         rippleView.setVisibility(View.GONE);
                                     }
-
+                                    //Set time
                                     Calendar cal=Calendar.getInstance();
                                     date = new SimpleDateFormat("dd MMM yyyy");
                                     time = new SimpleDateFormat("HH:mm");
                                     String date_name = date.format(cal.getTime());
                                     String time_name = time.format(cal.getTime());
                                     lastUpdate.setText(date_name + " | " + time_name);
+                                    //Show Ads
+                                    showAds();
                                 } catch (Exception e) {
                                     e.getMessage();
                                 }
@@ -517,7 +534,7 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
                                 if(jsonArrayResponses != null) {
                                     JSONObject objTerbaru = jsonArrayResponses.getJSONObject(0);
                                     if(objTerbaru !=  null) {
-                                        jsonArraySegmentNews = objTerbaru.getJSONArray(NEWS);
+                                        jsonArraySegmentNews = objTerbaru.getJSONArray(Constant.NEWS);
                                         for(int i=0; i<jsonArraySegmentNews.length(); i++) {
                                             JSONObject jsonTerbaru = jsonArraySegmentNews.getJSONObject(i);
                                             String id = jsonTerbaru.getString(Constant.id);
@@ -572,6 +589,27 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
             }
         } else if(view.getId() == R.id.fab) {
             listView.setSelection(0);
+        }
+    }
+
+    private void showAds() {
+        if (getActivity() != null) {
+            if (adsArrayList != null) {
+                if (adsArrayList.size() > 0) {
+                    AdsConfig adsConfig = new AdsConfig();
+                    for (int i=0; i<adsArrayList.size(); i++) {
+                        if (adsArrayList.get(i).getmPosition() == Constant.POSITION_BANNER_TOP) {
+                            publisherAdViewTop = new PublisherAdView(getActivity());
+                            adsConfig.setAdsBanner(publisherAdViewTop,
+                                    adsArrayList.get(i).getmUnitId(), Constant.POSITION_BANNER_TOP, mParentLayout);
+                        } else if (adsArrayList.get(i).getmPosition() == Constant.POSITION_BANNER_BOTTOM) {
+                            publisherAdViewBottom = new PublisherAdView(getActivity());
+                            adsConfig.setAdsBanner(publisherAdViewBottom,
+                                    adsArrayList.get(i).getmUnitId(), Constant.POSITION_BANNER_BOTTOM, mParentLayout);
+                        }
+                    }
+                }
+            }
         }
     }
 

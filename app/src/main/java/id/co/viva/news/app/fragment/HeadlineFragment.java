@@ -46,6 +46,7 @@ import id.co.viva.news.app.ads.AdsConfig;
 import id.co.viva.news.app.component.GoogleMusicDicesDrawable;
 import id.co.viva.news.app.component.LoadMoreListView;
 import id.co.viva.news.app.interfaces.OnLoadMoreListener;
+import id.co.viva.news.app.model.Ads;
 import id.co.viva.news.app.model.Headline;
 import id.co.viva.news.app.services.Analytics;
 
@@ -55,8 +56,8 @@ import id.co.viva.news.app.services.Analytics;
 public class HeadlineFragment extends Fragment implements
         AdapterView.OnItemClickListener, View.OnClickListener, OnLoadMoreListener {
 
-    private static String HEADLINES = "headlines";
     public static ArrayList<Headline> headlineArrayList;
+    private ArrayList<Ads> adsArrayList;
     private ActionBarActivity mActivity;
     private SwingBottomInAnimationAdapter swingBottomInAnimationAdapter;
     private HeadlineAdapter headlineAdapter;
@@ -67,7 +68,8 @@ public class HeadlineFragment extends Fragment implements
     private TextView lastUpdate;
     private TextView labelLoadData;
     private Boolean isInternetPresent = false;
-    private JSONArray jsonArrayResponses, jsonArraySegmentHeadline;
+    private JSONArray jsonArrayResponses, jsonArraySegmentHeadline
+            , jsonArraySegmentAds;
     private TextView labelText;
     private SimpleDateFormat date, time;
     private Analytics analytics;
@@ -92,20 +94,6 @@ public class HeadlineFragment extends Fragment implements
         if (mActivity != null) {
             mActivity.getSupportActionBar().setBackgroundDrawable(colorDrawable);
             mActivity.getSupportActionBar().setIcon(R.drawable.logo_viva_coid_second);
-        }
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        if (isInternetPresent) {
-            if (getActivity() != null) {
-                publisherAdViewTop = new PublisherAdView(getActivity());
-                publisherAdViewBottom = new PublisherAdView(getActivity());
-                AdsConfig adsConfig = new AdsConfig();
-                adsConfig.setAdsBanner(publisherAdViewTop, Constant.unitIdTop, Constant.POSITION_BANNER_TOP, mParentLayout);
-                adsConfig.setAdsBanner(publisherAdViewBottom, Constant.unitIdBottom, Constant.POSITION_BANNER_BOTTOM, mParentLayout);
-            }
         }
     }
 
@@ -166,6 +154,7 @@ public class HeadlineFragment extends Fragment implements
 
         //Assign array
         headlineArrayList = new ArrayList<>();
+        adsArrayList = new ArrayList<>();
     }
 
     @Override
@@ -186,10 +175,11 @@ public class HeadlineFragment extends Fragment implements
                             try {
                                 JSONObject jsonObject = new JSONObject(volleyResponse);
                                 jsonArrayResponses = jsonObject.getJSONArray(Constant.response);
-                                if(jsonArrayResponses != null) {
+                                if (jsonArrayResponses.length() > 0) {
+                                    //Get content list
                                     JSONObject objHeadline = jsonArrayResponses.getJSONObject(0);
-                                    if(objHeadline !=  null) {
-                                        jsonArraySegmentHeadline = objHeadline.getJSONArray(HEADLINES);
+                                    jsonArraySegmentHeadline = objHeadline.getJSONArray(Constant.HEADLINES);
+                                    if (jsonArraySegmentHeadline.length() > 0) {
                                         for(int i=0; i<jsonArraySegmentHeadline.length(); i++) {
                                             JSONObject jsonHeadline = jsonArraySegmentHeadline.getJSONObject(i);
                                             String id = jsonHeadline.getString(Constant.id);
@@ -206,8 +196,22 @@ public class HeadlineFragment extends Fragment implements
                                             Log.i(Constant.TAG, "HEADLINES : " + headlines.get(i).getTitle());
                                         }
                                     }
+                                    //Check Ads if exists
+                                    JSONObject objAds = jsonArrayResponses.getJSONObject(jsonArrayResponses.length() - 1);
+                                    jsonArraySegmentAds = objAds.getJSONArray(Constant.ADS);
+                                    if (jsonArraySegmentAds.length() > 0) {
+                                        for (int j=0; j<jsonArraySegmentAds.length(); j++) {
+                                            JSONObject jsonAds = jsonArraySegmentAds.getJSONObject(j);
+                                            String name = jsonAds.getString(Constant.name);
+                                            int position = jsonAds.getInt(Constant.position);
+                                            int type = jsonAds.getInt(Constant.type);
+                                            String unit_id = jsonAds.getString(Constant.unit_id);
+                                            adsArrayList.add(new Ads(name, type, position, unit_id));
+                                            Log.i(Constant.TAG, "ADS : " + adsArrayList.get(j).getmUnitId());
+                                        }
+                                    }
                                 }
-
+                                //Fill data from API
                                 if(headlines.size() > 0 || !headlines.isEmpty()) {
                                     headlineAdapter = new HeadlineAdapter(getActivity(), headlines);
                                     swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(headlineAdapter);
@@ -219,13 +223,15 @@ public class HeadlineFragment extends Fragment implements
                                     loading_layout.setVisibility(View.GONE);
                                     labelLoadData.setVisibility(View.GONE);
                                 }
-
+                                //Set local time
                                 Calendar cal=Calendar.getInstance();
                                 date = new SimpleDateFormat("dd MMM yyyy");
                                 time = new SimpleDateFormat("HH:mm");
                                 String date_name = date.format(cal.getTime());
                                 String time_name = time.format(cal.getTime());
                                 lastUpdate.setText(date_name + " | " + time_name);
+                                //Show Ads
+                                showAds();
                             } catch (Exception e) {
                                 e.getMessage();
                             }
@@ -242,7 +248,7 @@ public class HeadlineFragment extends Fragment implements
                             if(jsonArrayResponses != null) {
                                 JSONObject objHeadline = jsonArrayResponses.getJSONObject(0);
                                 if(objHeadline !=  null) {
-                                    jsonArraySegmentHeadline = objHeadline.getJSONArray(HEADLINES);
+                                    jsonArraySegmentHeadline = objHeadline.getJSONArray(Constant.HEADLINES);
                                     for(int i=0; i<jsonArraySegmentHeadline.length(); i++) {
                                         JSONObject jsonHeadline = jsonArraySegmentHeadline.getJSONObject(i);
                                         String id = jsonHeadline.getString(Constant.id);
@@ -302,7 +308,7 @@ public class HeadlineFragment extends Fragment implements
                     if(jsonArrayResponses != null) {
                         JSONObject objHeadline = jsonArrayResponses.getJSONObject(0);
                         if(objHeadline !=  null) {
-                            jsonArraySegmentHeadline = objHeadline.getJSONArray(HEADLINES);
+                            jsonArraySegmentHeadline = objHeadline.getJSONArray(Constant.HEADLINES);
                             for(int i=0; i<jsonArraySegmentHeadline.length(); i++) {
                                 JSONObject jsonHeadline = jsonArraySegmentHeadline.getJSONObject(i);
                                 String id = jsonHeadline.getString(Constant.id);
@@ -380,10 +386,11 @@ public class HeadlineFragment extends Fragment implements
                                 try {
                                     JSONObject jsonObject = new JSONObject(volleyResponse);
                                     jsonArrayResponses = jsonObject.getJSONArray(Constant.response);
-                                    if(jsonArrayResponses != null) {
+                                    if (jsonArrayResponses.length() > 0) {
+                                        //Get content list
                                         JSONObject objHeadline = jsonArrayResponses.getJSONObject(0);
-                                        if(objHeadline !=  null) {
-                                            jsonArraySegmentHeadline = objHeadline.getJSONArray(HEADLINES);
+                                        jsonArraySegmentHeadline = objHeadline.getJSONArray(Constant.HEADLINES);
+                                        if (jsonArraySegmentHeadline.length() > 0) {
                                             for(int i=0; i<jsonArraySegmentHeadline.length(); i++) {
                                                 JSONObject jsonHeadline = jsonArraySegmentHeadline.getJSONObject(i);
                                                 String id = jsonHeadline.getString(Constant.id);
@@ -400,8 +407,22 @@ public class HeadlineFragment extends Fragment implements
                                                 Log.i(Constant.TAG, "HEADLINES : " + headlineArrayList.get(i).getTitle());
                                             }
                                         }
+                                        //Check Ads if exists
+                                        JSONObject objAds = jsonArrayResponses.getJSONObject(jsonArrayResponses.length() - 1);
+                                        jsonArraySegmentAds = objAds.getJSONArray(Constant.ADS);
+                                        if (jsonArraySegmentAds.length() > 0) {
+                                            for (int j=0; j<jsonArraySegmentAds.length(); j++) {
+                                                JSONObject jsonAds = jsonArraySegmentAds.getJSONObject(j);
+                                                String name = jsonAds.getString(Constant.name);
+                                                int position = jsonAds.getInt(Constant.position);
+                                                int type = jsonAds.getInt(Constant.type);
+                                                String unit_id = jsonAds.getString(Constant.unit_id);
+                                                adsArrayList.add(new Ads(name, type, position, unit_id));
+                                                Log.i(Constant.TAG, "ADS : " + adsArrayList.get(j).getmUnitId());
+                                            }
+                                        }
                                     }
-
+                                    //Fill data from API
                                     if (headlineArrayList.size() > 0 || !headlineArrayList.isEmpty()) {
                                         headlineAdapter = new HeadlineAdapter(getActivity(), headlineArrayList);
                                         swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(headlineAdapter);
@@ -414,13 +435,15 @@ public class HeadlineFragment extends Fragment implements
                                         labelLoadData.setVisibility(View.GONE);
                                         rippleView.setVisibility(View.GONE);
                                     }
-
+                                    //Set local time
                                     Calendar cal=Calendar.getInstance();
                                     date = new SimpleDateFormat("dd MMM yyyy");
                                     time = new SimpleDateFormat("HH:mm");
                                     String date_name = date.format(cal.getTime());
                                     String time_name = time.format(cal.getTime());
                                     lastUpdate.setText(date_name + " | " + time_name);
+                                    //Show Ads
+                                    showAds();
                                 } catch (Exception e) {
                                     e.getMessage();
                                 }
@@ -446,6 +469,27 @@ public class HeadlineFragment extends Fragment implements
             }
         } else if(view.getId() == R.id.fab) {
             listView.setSelection(0);
+        }
+    }
+
+    private void showAds() {
+        if (getActivity() != null) {
+            if (adsArrayList != null) {
+                if (adsArrayList.size() > 0) {
+                    AdsConfig adsConfig = new AdsConfig();
+                    for (int i=0; i<adsArrayList.size(); i++) {
+                        if (adsArrayList.get(i).getmPosition() == Constant.POSITION_BANNER_TOP) {
+                            publisherAdViewTop = new PublisherAdView(getActivity());
+                            adsConfig.setAdsBanner(publisherAdViewTop,
+                                    adsArrayList.get(i).getmUnitId(), Constant.POSITION_BANNER_TOP, mParentLayout);
+                        } else if (adsArrayList.get(i).getmPosition() == Constant.POSITION_BANNER_BOTTOM) {
+                            publisherAdViewBottom = new PublisherAdView(getActivity());
+                            adsConfig.setAdsBanner(publisherAdViewBottom,
+                                    adsArrayList.get(i).getmUnitId(), Constant.POSITION_BANNER_BOTTOM, mParentLayout);
+                        }
+                    }
+                }
+            }
         }
     }
 

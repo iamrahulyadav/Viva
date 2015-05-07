@@ -54,6 +54,7 @@ import id.co.viva.news.app.interfaces.LocationResult;
 import id.co.viva.news.app.interfaces.OnGPSListener;
 import id.co.viva.news.app.interfaces.OnLoadMoreListener;
 import id.co.viva.news.app.location.LocationFinder;
+import id.co.viva.news.app.model.Ads;
 import id.co.viva.news.app.model.BeritaSekitar;
 import id.co.viva.news.app.services.Analytics;
 
@@ -82,7 +83,7 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
     private TextView labelText;
     private TextView lastUpdate;
     private LocationFinder locationFinder;
-    private JSONArray jsonArrayResponses;
+    private JSONArray jsonArrayResponses, jsonArrayResponsesAds;
     private BeritaSekitarAdapter adapter;
     private ActionBarActivity mActivity;
     private int page = 1;
@@ -109,20 +110,6 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
         colorDrawable.setColor(getResources().getColor(R.color.new_base_color));
         mActivity.getSupportActionBar().setBackgroundDrawable(colorDrawable);
         mActivity.getSupportActionBar().setIcon(R.drawable.logo_viva_coid_second);
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        if (isInternetPresent) {
-            if (getActivity() != null) {
-                publisherAdViewTop = new PublisherAdView(getActivity());
-                publisherAdViewBottom = new PublisherAdView(getActivity());
-                AdsConfig adsConfig = new AdsConfig();
-                adsConfig.setAdsBanner(publisherAdViewTop, Constant.unitIdTop, Constant.POSITION_BANNER_TOP, mParentLayout);
-                adsConfig.setAdsBanner(publisherAdViewBottom, Constant.unitIdBottom, Constant.POSITION_BANNER_BOTTOM, mParentLayout);
-            }
-        }
     }
 
     @Override
@@ -193,6 +180,7 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
         });
 
         //Assign array
+        adsArrayList = new ArrayList<>();
         beritaSekitarArrayList = new ArrayList<>();
         if (getActivity() != null) {
             adapter = new BeritaSekitarAdapter(getActivity(), beritaSekitarArrayList);
@@ -267,7 +255,7 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
                                     JSONObject jsonObject = new JSONObject(s);
                                     JSONObject response = jsonObject.getJSONObject(Constant.response);
                                     jsonArrayResponses = response.getJSONArray(Constant.search);
-                                    if (jsonArrayResponses != null) {
+                                    if (jsonArrayResponses.length() > 0) {
                                         for (int i=0; i<jsonArrayResponses.length(); i++) {
                                             JSONObject jsonHeadline = jsonArrayResponses.getJSONObject(i);
                                             String id = jsonHeadline.getString(Constant.id);
@@ -280,6 +268,20 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
                                                     title, url, date_publish));
                                         }
                                     }
+
+                                    //TODO Lanjut besok
+                                    jsonArrayResponsesAds = response.getJSONArray(Constant.adses);
+                                    if (jsonArrayResponsesAds.length() > 0) {
+                                        for (int j=0; j<jsonArrayResponsesAds.length(); j++) {
+                                            JSONObject jsonAds = jsonArrayResponsesAds.getJSONObject(j);
+                                            String name = jsonAds.getString(Constant.name);
+                                            int position = jsonAds.getInt(Constant.position);
+                                            int type = jsonAds.getInt(Constant.type);
+                                            String unit_id = jsonAds.getString(Constant.unit_id);
+                                            adsArrayList.add(new Ads(name, type, position, unit_id));
+                                        }
+                                    }
+
                                     if (beritaSekitarArrayList.size() > 0 || !beritaSekitarArrayList.isEmpty()) {
                                         swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(adapter);
                                         swingBottomInAnimationAdapter.setAbsListView(listView);
@@ -578,6 +580,27 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
                     });
             AlertDialog alert = builder.create();
             alert.show();
+        }
+    }
+
+    private void showAds() {
+        if (getActivity() != null) {
+            if (adsArrayList != null) {
+                if (adsArrayList.size() > 0) {
+                    AdsConfig adsConfig = new AdsConfig();
+                    for (int i=0; i<adsArrayList.size(); i++) {
+                        if (adsArrayList.get(i).getmPosition() == Constant.POSITION_BANNER_TOP) {
+                            publisherAdViewTop = new PublisherAdView(getActivity());
+                            adsConfig.setAdsBanner(publisherAdViewTop,
+                                    adsArrayList.get(i).getmUnitId(), Constant.POSITION_BANNER_TOP, mParentLayout);
+                        } else if (adsArrayList.get(i).getmPosition() == Constant.POSITION_BANNER_BOTTOM) {
+                            publisherAdViewBottom = new PublisherAdView(getActivity());
+                            adsConfig.setAdsBanner(publisherAdViewBottom,
+                                    adsArrayList.get(i).getmUnitId(), Constant.POSITION_BANNER_BOTTOM, mParentLayout);
+                        }
+                    }
+                }
+            }
         }
     }
 
