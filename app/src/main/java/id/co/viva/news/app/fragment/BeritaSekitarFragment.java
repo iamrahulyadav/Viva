@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,6 +66,7 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
         OnLoadMoreListener, AdapterView.OnItemClickListener, LocationResult, OnGPSListener {
 
     public static ArrayList<BeritaSekitar> beritaSekitarArrayList;
+    private ArrayList<Ads> adsArrayList;
     private SwingBottomInAnimationAdapter swingBottomInAnimationAdapter;
     private boolean isInternetPresent = false;
     private boolean isResume;
@@ -245,15 +247,16 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
                 labelLoadData.setVisibility(View.VISIBLE);
                 labelLoadData.setText(getResources().getString(R.string.label_get_location));
                 StringRequest request = new StringRequest(Request.Method.GET,
-                        Constant.BERITA_SEKITAR_URL + "p/" + getParamLocation(mCitySubLocality, LOCATION_LOCALITY)
-                                + "/q/" + getParamLocation(mCitySubLocality, LOCATION_SUB_LOCALITY)
-                                + "/r/" + getParamLocation(mCitySubLocality, LOCATION_ADMIN_AREA) + "/s/0",
+                        Constant.BERITA_SEKITAR_URL + "p/" + getParamLocation(mCitySubLocality, LOCATION_LOCALITY).replace(" ", "%20")
+                                + "/q/" + getParamLocation(mCitySubLocality, LOCATION_SUB_LOCALITY).replace(" ", "%20")
+                                + "/r/" + getParamLocation(mCitySubLocality, LOCATION_ADMIN_AREA).replace(" ", "%20") + "/s/0",
                         new Response.Listener<String>() {
                             @Override
                             public void onResponse(String s) {
                                 try {
                                     JSONObject jsonObject = new JSONObject(s);
                                     JSONObject response = jsonObject.getJSONObject(Constant.response);
+                                    //Get content list
                                     jsonArrayResponses = response.getJSONArray(Constant.search);
                                     if (jsonArrayResponses.length() > 0) {
                                         for (int i=0; i<jsonArrayResponses.length(); i++) {
@@ -268,8 +271,7 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
                                                     title, url, date_publish));
                                         }
                                     }
-
-                                    //TODO Lanjut besok
+                                    //Get ads list
                                     jsonArrayResponsesAds = response.getJSONArray(Constant.adses);
                                     if (jsonArrayResponsesAds.length() > 0) {
                                         for (int j=0; j<jsonArrayResponsesAds.length(); j++) {
@@ -281,7 +283,7 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
                                             adsArrayList.add(new Ads(name, type, position, unit_id));
                                         }
                                     }
-
+                                    //Show content list
                                     if (beritaSekitarArrayList.size() > 0 || !beritaSekitarArrayList.isEmpty()) {
                                         swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(adapter);
                                         swingBottomInAnimationAdapter.setAbsListView(listView);
@@ -293,6 +295,8 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
                                         labelLoadData.setVisibility(View.GONE);
                                         lastUpdate.setText(getParamLocation(mCitySubLocality, LOCATION_LOCALITY));
                                     }
+                                    //Show Ads
+                                    showAds();
                                 } catch (Exception e) {
                                     e.getMessage();
                                 }
@@ -304,6 +308,9 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
                             Toast.makeText(mActivity, getResources()
                                     .getString(R.string.title_failed_get_location), Toast.LENGTH_SHORT).show();
                         }
+                        Log.i(Constant.TAG, "URL : " + Constant.BERITA_SEKITAR_URL + "p/" + getParamLocation(mCitySubLocality, LOCATION_LOCALITY)
+                                + "/q/" + getParamLocation(mCitySubLocality, LOCATION_SUB_LOCALITY)
+                                + "/r/" + getParamLocation(mCitySubLocality, LOCATION_ADMIN_AREA) + "/s/0");
                         loading_layout.setVisibility(View.GONE);
                         labelLoadData.setVisibility(View.GONE);
                         rippleView.setVisibility(View.VISIBLE);
@@ -331,9 +338,9 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
         if (isInternetPresent) {
             setAnalytics(String.valueOf(page));
             StringRequest request = new StringRequest(Request.Method.GET,
-                    Constant.BERITA_SEKITAR_URL + "p/" + getParamLocation(mCitySubLocality, LOCATION_LOCALITY)
-                            + "/q/" + getParamLocation(mCitySubLocality, LOCATION_SUB_LOCALITY)
-                            + "/r/" + getParamLocation(mCitySubLocality, LOCATION_ADMIN_AREA) + "/s/" + lastPaging,
+                    Constant.BERITA_SEKITAR_URL + "p/" + getParamLocation(mCitySubLocality, LOCATION_LOCALITY).replace(" ", "%20")
+                            + "/q/" + getParamLocation(mCitySubLocality, LOCATION_SUB_LOCALITY).replace(" ", "%20")
+                            + "/r/" + getParamLocation(mCitySubLocality, LOCATION_ADMIN_AREA).replace(" ", "%20") + "/s/" + lastPaging,
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String s) {
@@ -479,15 +486,16 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
                 if (mCitySubLocality != null) {
                     if (mCitySubLocality.length() > 0) {
                         StringRequest request = new StringRequest(Request.Method.GET,
-                                Constant.BERITA_SEKITAR_URL + "p/" + getParamLocation(mCitySubLocality, LOCATION_LOCALITY)
-                                + "/q/" + getParamLocation(mCitySubLocality, LOCATION_SUB_LOCALITY)
-                                + "/r/" + getParamLocation(mCitySubLocality, LOCATION_ADMIN_AREA) + "/s/0",
+                                Constant.BERITA_SEKITAR_URL + "p/" + getParamLocation(mCitySubLocality, LOCATION_LOCALITY).replace(" ", "%20")
+                                + "/q/" + getParamLocation(mCitySubLocality, LOCATION_SUB_LOCALITY).replace(" ", "%20")
+                                + "/r/" + getParamLocation(mCitySubLocality, LOCATION_ADMIN_AREA).replace(" ", "%20") + "/s/0",
                                 new Response.Listener<String>() {
                                     @Override
                                     public void onResponse(String s) {
                                         try {
                                             JSONObject jsonObject = new JSONObject(s);
                                             JSONObject response = jsonObject.getJSONObject(Constant.response);
+                                            //Get content list
                                             jsonArrayResponses = response.getJSONArray(Constant.search);
                                             if(jsonArrayResponses != null) {
                                                 for(int i=0; i<jsonArrayResponses.length(); i++) {
@@ -502,6 +510,19 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
                                                             title, url, date_publish));
                                                 }
                                             }
+                                            //Get ads list
+                                            jsonArrayResponsesAds = response.getJSONArray(Constant.adses);
+                                            if (jsonArrayResponsesAds.length() > 0) {
+                                                for (int j=0; j<jsonArrayResponsesAds.length(); j++) {
+                                                    JSONObject jsonAds = jsonArrayResponsesAds.getJSONObject(j);
+                                                    String name = jsonAds.getString(Constant.name);
+                                                    int position = jsonAds.getInt(Constant.position);
+                                                    int type = jsonAds.getInt(Constant.type);
+                                                    String unit_id = jsonAds.getString(Constant.unit_id);
+                                                    adsArrayList.add(new Ads(name, type, position, unit_id));
+                                                }
+                                            }
+                                            //Show content list
                                             if (beritaSekitarArrayList.size() > 0 || !beritaSekitarArrayList.isEmpty()) {
                                                 swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(adapter);
                                                 swingBottomInAnimationAdapter.setAbsListView(listView);
@@ -513,6 +534,8 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
                                                 labelLoadData.setVisibility(View.GONE);
                                                 lastUpdate.setText(getParamLocation(mCitySubLocality, LOCATION_LOCALITY));
                                             }
+                                            //Show Ads
+                                            showAds();
                                         } catch (Exception e) {
                                             e.getMessage();
                                         }
@@ -590,13 +613,17 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
                     AdsConfig adsConfig = new AdsConfig();
                     for (int i=0; i<adsArrayList.size(); i++) {
                         if (adsArrayList.get(i).getmPosition() == Constant.POSITION_BANNER_TOP) {
-                            publisherAdViewTop = new PublisherAdView(getActivity());
-                            adsConfig.setAdsBanner(publisherAdViewTop,
-                                    adsArrayList.get(i).getmUnitId(), Constant.POSITION_BANNER_TOP, mParentLayout);
+                            if (publisherAdViewTop == null) {
+                                publisherAdViewTop = new PublisherAdView(getActivity());
+                                adsConfig.setAdsBanner(publisherAdViewTop,
+                                        adsArrayList.get(i).getmUnitId(), Constant.POSITION_BANNER_TOP, mParentLayout);
+                            }
                         } else if (adsArrayList.get(i).getmPosition() == Constant.POSITION_BANNER_BOTTOM) {
-                            publisherAdViewBottom = new PublisherAdView(getActivity());
-                            adsConfig.setAdsBanner(publisherAdViewBottom,
-                                    adsArrayList.get(i).getmUnitId(), Constant.POSITION_BANNER_BOTTOM, mParentLayout);
+                            if (publisherAdViewBottom == null) {
+                                publisherAdViewBottom = new PublisherAdView(getActivity());
+                                adsConfig.setAdsBanner(publisherAdViewBottom,
+                                        adsArrayList.get(i).getmUnitId(), Constant.POSITION_BANNER_BOTTOM, mParentLayout);
+                            }
                         }
                     }
                 }

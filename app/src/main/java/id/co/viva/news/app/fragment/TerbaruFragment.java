@@ -198,7 +198,7 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
                                     }
                                     //Check Ads if exists
                                     JSONObject objAds = jsonArrayResponses.getJSONObject(jsonArrayResponses.length() - 1);
-                                    jsonArraySegmentAds = objAds.getJSONArray(Constant.ADS);
+                                    jsonArraySegmentAds = objAds.getJSONArray(Constant.adses);
                                     if (jsonArraySegmentAds.length() > 0) {
                                         for (int j=0; j<jsonArraySegmentAds.length(); j++) {
                                             JSONObject jsonAds = jsonArraySegmentAds.getJSONObject(j);
@@ -481,7 +481,7 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
                                         }
                                         //Check Ads if exists
                                         JSONObject objAds = jsonArrayResponses.getJSONObject(jsonArrayResponses.length() - 1);
-                                        jsonArraySegmentAds = objAds.getJSONArray(Constant.ADS);
+                                        jsonArraySegmentAds = objAds.getJSONArray(Constant.adses);
                                         if (jsonArraySegmentAds.length() > 0) {
                                             for (int j=0; j<jsonArraySegmentAds.length(); j++) {
                                                 JSONObject jsonAds = jsonArraySegmentAds.getJSONObject(j);
@@ -599,13 +599,17 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
                     AdsConfig adsConfig = new AdsConfig();
                     for (int i=0; i<adsArrayList.size(); i++) {
                         if (adsArrayList.get(i).getmPosition() == Constant.POSITION_BANNER_TOP) {
-                            publisherAdViewTop = new PublisherAdView(getActivity());
-                            adsConfig.setAdsBanner(publisherAdViewTop,
-                                    adsArrayList.get(i).getmUnitId(), Constant.POSITION_BANNER_TOP, mParentLayout);
+                            if (publisherAdViewTop == null) {
+                                publisherAdViewTop = new PublisherAdView(getActivity());
+                                adsConfig.setAdsBanner(publisherAdViewTop,
+                                        adsArrayList.get(i).getmUnitId(), Constant.POSITION_BANNER_TOP, mParentLayout);
+                            }
                         } else if (adsArrayList.get(i).getmPosition() == Constant.POSITION_BANNER_BOTTOM) {
-                            publisherAdViewBottom = new PublisherAdView(getActivity());
-                            adsConfig.setAdsBanner(publisherAdViewBottom,
-                                    adsArrayList.get(i).getmUnitId(), Constant.POSITION_BANNER_BOTTOM, mParentLayout);
+                            if (publisherAdViewBottom == null) {
+                                publisherAdViewBottom = new PublisherAdView(getActivity());
+                                adsConfig.setAdsBanner(publisherAdViewBottom,
+                                        adsArrayList.get(i).getmUnitId(), Constant.POSITION_BANNER_BOTTOM, mParentLayout);
+                            }
                         }
                     }
                 }

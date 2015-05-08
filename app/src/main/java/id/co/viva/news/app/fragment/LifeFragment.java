@@ -48,6 +48,7 @@ import id.co.viva.news.app.ads.AdsConfig;
 import id.co.viva.news.app.component.CropSquareTransformation;
 import id.co.viva.news.app.component.ExpandableHeightGridView;
 import id.co.viva.news.app.component.ProgressWheel;
+import id.co.viva.news.app.model.Ads;
 import id.co.viva.news.app.model.FeaturedLife;
 import id.co.viva.news.app.services.Analytics;
 
@@ -58,6 +59,7 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
 
     private ArrayList<FeaturedLife> featuredNewsArrayList;
     private ArrayList<FeaturedLife> featuredNewsArrayListTypeList;
+    private ArrayList<Ads> adsArrayList;
     private SwingBottomInAnimationAdapter swingBottomInAnimationAdapter;
     private boolean isInternetPresent = false;
     private PublisherAdView publisherAdViewBottom;
@@ -82,21 +84,8 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        isInternetPresent = Global.getInstance(getActivity()).getConnectionStatus().isConnectingToInternet();
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        if (isInternetPresent) {
-            if (getActivity() != null) {
-                publisherAdViewTop = new PublisherAdView(getActivity());
-                publisherAdViewBottom = new PublisherAdView(getActivity());
-                AdsConfig adsConfig = new AdsConfig();
-                adsConfig.setAdsBanner(publisherAdViewTop, Constant.unitIdTop, Constant.POSITION_BANNER_TOP, mParentLayout);
-                adsConfig.setAdsBanner(publisherAdViewBottom, Constant.unitIdBottom, Constant.POSITION_BANNER_BOTTOM, mParentLayout);
-            }
-        }
+        isInternetPresent = Global.getInstance(getActivity())
+                .getConnectionStatus().isConnectingToInternet();
     }
 
     @Override
@@ -106,8 +95,10 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
         ColorDrawable colorDrawable = new ColorDrawable();
         colorDrawable.setColor(getResources().getColor(R.color.color_life));
         ActionBarActivity mActivity = (ActionBarActivity) activity;
-        mActivity.getSupportActionBar().setBackgroundDrawable(colorDrawable);
-        mActivity.getSupportActionBar().setIcon(R.drawable.logo_viva_coid_second);
+        if (mActivity != null) {
+            mActivity.getSupportActionBar().setBackgroundDrawable(colorDrawable);
+            mActivity.getSupportActionBar().setIcon(R.drawable.logo_viva_coid_second);
+        }
     }
 
     @Override
@@ -205,17 +196,18 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
 
         featuredNewsArrayList = new ArrayList<>();
         featuredNewsArrayListTypeList = new ArrayList<>();
+        adsArrayList = new ArrayList<>();
 
-        if(isInternetPresent) {
+        if (isInternetPresent) {
             StringRequest request = new StringRequest(Request.Method.GET, Constant.NEW_LIFE,
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String s) {
-                            Log.i(Constant.TAG, "KANAL LIFE RESPONSE : " + s);
+                            Log.i(Constant.TAG, "LIFE RESPONSE : " + s);
                             try {
                                 JSONObject jsonObject = new JSONObject(s);
                                 JSONArray response = jsonObject.getJSONArray(Constant.response);
-
+                                //Get News Index
                                 int lastIndex = response.length() - 1;
                                 JSONObject objs = response.getJSONObject(lastIndex);
                                 if(objs != null) {
@@ -232,7 +224,7 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
                                     Picasso.with(getActivity()).load(image_url_header_grid)
                                             .transform(new CropSquareTransformation()).into(imageHeader);
                                 }
-
+                                //Get each channel
                                 for(int i=0; i<response.length()-1; i++) {
                                     JSONObject obj = response.getJSONObject(i);
                                     if(obj != null) {
@@ -253,7 +245,7 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
                                         }
                                     }
                                 }
-
+                                //Get content list type
                                 for(int i=0; i<response.length()-1; i++) {
                                     JSONObject obj = response.getJSONObject(i);
                                     if(obj != null) {
@@ -274,10 +266,23 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
                                         }
                                     }
                                 }
-
+                                //Check Ads if exists
+                                JSONArray adsList = jsonObject.getJSONArray(Constant.adses);
+                                if (adsList.length() > 0) {
+                                    for (int j=0; j<adsList.length(); j++) {
+                                        JSONObject jsonAds = adsList.getJSONObject(j);
+                                        String name = jsonAds.getString(Constant.name);
+                                        int position = jsonAds.getInt(Constant.position);
+                                        int type = jsonAds.getInt(Constant.type);
+                                        String unit_id = jsonAds.getString(Constant.unit_id);
+                                        adsArrayList.add(new Ads(name, type, position, unit_id));
+                                        Log.i(Constant.TAG, "ADS : " + adsArrayList.get(j).getmUnitId());
+                                    }
+                                }
+                                //Populate content list type
                                 featuredNewsArrayListTypeList.add(0, new FeaturedLife(channel_title_header_grid,
                                         null, id_header_grid, null, null, null, image_url_header_grid, share_url_header_grid));
-
+                                //Populate content grid type
                                 if(featuredNewsArrayList.size() > 0 || !featuredNewsArrayList.isEmpty()) {
                                     swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(
                                             new FeaturedLifeAdapter(getActivity(), featuredNewsArrayList));
@@ -286,7 +291,7 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
                                     swingBottomInAnimationAdapter.getViewAnimator().setInitialDelayMillis(0000);
                                     gridLife.setAdapter(swingBottomInAnimationAdapter);
                                 }
-
+                                //End of process
                                 if(featuredNewsArrayListTypeList.size() > 0 || !featuredNewsArrayListTypeList.isEmpty()) {
                                     if(channelListTypeAdapter == null) {
                                         channelListTypeAdapter = new ChannelListTypeAdapter(
@@ -297,6 +302,8 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
                                     channelListTypeAdapter.notifyDataSetChanged();
                                     progressWheel.setVisibility(View.GONE);
                                 }
+                                //Show ads
+                                showAds();
                             } catch (Exception e) {
                                 e.getMessage();
                             }
@@ -305,7 +312,6 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError volleyError) {
-                            volleyError.getMessage();
                             progressWheel.setVisibility(View.GONE);
                             rippleView.setVisibility(View.VISIBLE);
                         }
@@ -436,12 +442,12 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
                                 try {
                                     JSONObject jsonObject = new JSONObject(s);
                                     JSONArray response = jsonObject.getJSONArray(Constant.response);
-
+                                    //Get News Index
                                     int lastIndex = response.length() - 1;
                                     JSONObject objs = response.getJSONObject(lastIndex);
-                                    if(objs != null) {
+                                    if (objs != null) {
                                         JSONArray objKanal = objs.getJSONArray("all");
-                                        for(int j=0; j<objKanal.length(); j++) {
+                                        for (int j=0; j<objKanal.length(); j++) {
                                             JSONObject field = objKanal.getJSONObject(j);
                                             id_header_grid = field.getString("channel_id");
                                             channel_title_header_grid = field.getString("channel_title");
@@ -453,12 +459,12 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
                                         Picasso.with(getActivity()).load(image_url_header_grid)
                                                 .transform(new CropSquareTransformation()).into(imageHeader);
                                     }
-
-                                    for(int i=0; i<response.length()-1; i++) {
+                                    //Get each channel
+                                    for (int i=0; i<response.length()-1; i++) {
                                         JSONObject obj = response.getJSONObject(i);
-                                        if(obj != null) {
+                                        if (obj != null) {
                                             JSONArray objKanal = obj.getJSONArray("news");
-                                            for(int j=0; j<objKanal.length(); j++) {
+                                            for (int j=0; j<objKanal.length(); j++) {
                                                 JSONObject field = objKanal.getJSONObject(j);
                                                 String channel_title = field.getString("channel_title");
                                                 String id = field.getString("id");
@@ -474,7 +480,7 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
                                             }
                                         }
                                     }
-
+                                    //Get content list type
                                     for(int i=0; i<response.length()-1; i++) {
                                         JSONObject obj = response.getJSONObject(i);
                                         if(obj != null) {
@@ -495,10 +501,23 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
                                             }
                                         }
                                     }
-
+                                    //Check Ads if exists
+                                    JSONArray adsList = jsonObject.getJSONArray(Constant.adses);
+                                    if (adsList.length() > 0) {
+                                        for (int j=0; j<adsList.length(); j++) {
+                                            JSONObject jsonAds = adsList.getJSONObject(j);
+                                            String name = jsonAds.getString(Constant.name);
+                                            int position = jsonAds.getInt(Constant.position);
+                                            int type = jsonAds.getInt(Constant.type);
+                                            String unit_id = jsonAds.getString(Constant.unit_id);
+                                            adsArrayList.add(new Ads(name, type, position, unit_id));
+                                            Log.i(Constant.TAG, "ADS : " + adsArrayList.get(j).getmUnitId());
+                                        }
+                                    }
+                                    //Populate content list type
                                     featuredNewsArrayListTypeList.add(0, new FeaturedLife(channel_title_header_grid,
                                             null, id_header_grid, null, null, null, image_url_header_grid, share_url_header_grid));
-
+                                    //Populate content grid type
                                     if(featuredNewsArrayList.size() > 0 || !featuredNewsArrayList.isEmpty()) {
                                         swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(
                                                 new FeaturedLifeAdapter(getActivity(), featuredNewsArrayList));
@@ -507,7 +526,7 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
                                         swingBottomInAnimationAdapter.getViewAnimator().setInitialDelayMillis(0000);
                                         gridLife.setAdapter(swingBottomInAnimationAdapter);
                                     }
-
+                                    //End of process
                                     if(featuredNewsArrayListTypeList.size() > 0 || !featuredNewsArrayListTypeList.isEmpty()) {
                                         if(channelListTypeAdapter == null) {
                                             channelListTypeAdapter = new ChannelListTypeAdapter(
@@ -518,6 +537,8 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
                                         channelListTypeAdapter.notifyDataSetChanged();
                                         progressWheel.setVisibility(View.GONE);
                                     }
+                                    //Show ads
+                                    showAds();
                                 } catch (Exception e) {
                                     e.getMessage();
                                 }
@@ -526,7 +547,6 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
                         new Response.ErrorListener() {
                             @Override
                             public void onErrorResponse(VolleyError volleyError) {
-                                volleyError.getMessage();
                                 progressWheel.setVisibility(View.GONE);
                                 rippleView.setVisibility(View.VISIBLE);
                             }
@@ -609,6 +629,31 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_frag_channel, menu);
         super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    private void showAds() {
+        if (getActivity() != null) {
+            if (adsArrayList != null) {
+                if (adsArrayList.size() > 0) {
+                    AdsConfig adsConfig = new AdsConfig();
+                    for (int i=0; i<adsArrayList.size(); i++) {
+                        if (adsArrayList.get(i).getmPosition() == Constant.POSITION_BANNER_TOP) {
+                            if (publisherAdViewTop == null) {
+                                publisherAdViewTop = new PublisherAdView(getActivity());
+                                adsConfig.setAdsBanner(publisherAdViewTop,
+                                        adsArrayList.get(i).getmUnitId(), Constant.POSITION_BANNER_TOP, mParentLayout);
+                            }
+                        } else if (adsArrayList.get(i).getmPosition() == Constant.POSITION_BANNER_BOTTOM) {
+                            if (publisherAdViewBottom == null) {
+                                publisherAdViewBottom = new PublisherAdView(getActivity());
+                                adsConfig.setAdsBanner(publisherAdViewBottom,
+                                        adsArrayList.get(i).getmUnitId(), Constant.POSITION_BANNER_BOTTOM, mParentLayout);
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     @Override

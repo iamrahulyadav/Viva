@@ -47,6 +47,7 @@ import id.co.viva.news.app.ads.AdsConfig;
 import id.co.viva.news.app.component.CropSquareTransformation;
 import id.co.viva.news.app.component.ExpandableHeightGridView;
 import id.co.viva.news.app.component.ProgressWheel;
+import id.co.viva.news.app.model.Ads;
 import id.co.viva.news.app.model.FeaturedBola;
 import id.co.viva.news.app.services.Analytics;
 
@@ -57,6 +58,7 @@ public class BolaFragment extends Fragment implements View.OnClickListener {
 
     private ArrayList<FeaturedBola> featuredNewsArrayList;
     private ArrayList<FeaturedBola> featuredNewsArrayListTypeList;
+    private ArrayList<Ads> adsArrayList;
     private boolean isInternetPresent = false;
     private ExpandableHeightGridView gridBola;
     private PublisherAdView publisherAdViewBottom;
@@ -82,20 +84,6 @@ public class BolaFragment extends Fragment implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         isInternetPresent = Global.getInstance(getActivity())
                 .getConnectionStatus().isConnectingToInternet();
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        if (isInternetPresent) {
-            if (getActivity() != null) {
-                publisherAdViewTop = new PublisherAdView(getActivity());
-                publisherAdViewBottom = new PublisherAdView(getActivity());
-                AdsConfig adsConfig = new AdsConfig();
-                adsConfig.setAdsBanner(publisherAdViewTop, Constant.unitIdTop, Constant.POSITION_BANNER_TOP, mParentLayout);
-                adsConfig.setAdsBanner(publisherAdViewBottom, Constant.unitIdBottom, Constant.POSITION_BANNER_BOTTOM, mParentLayout);
-            }
-        }
     }
 
     @Override
@@ -180,6 +168,7 @@ public class BolaFragment extends Fragment implements View.OnClickListener {
             }
         });
 
+        adsArrayList = new ArrayList<>();
         featuredNewsArrayList = new ArrayList<>();
         featuredNewsArrayListTypeList = new ArrayList<>();
 
@@ -188,17 +177,16 @@ public class BolaFragment extends Fragment implements View.OnClickListener {
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String s) {
-                            Log.i(Constant.TAG, "KANAL BOLA RESPONSE : " + s);
+                            Log.i(Constant.TAG, "BOLA RESPONSE : " + s);
                             try {
                                 JSONObject jsonObject = new JSONObject(s);
                                 JSONArray response = jsonObject.getJSONArray(Constant.response);
-
                                 //Get Ready For Header
                                 int lastIndex = response.length() - 1;
                                 JSONObject objs = response.getJSONObject(lastIndex);
-                                if(objs != null) {
+                                if (objs != null) {
                                     JSONArray objKanal = objs.getJSONArray("all");
-                                    for(int j=0; j<objKanal.length(); j++) {
+                                    for (int j=0; j<objKanal.length(); j++) {
                                         JSONObject field = objKanal.getJSONObject(j);
                                         id_header_grid = field.getString("channel_id");
                                         channel_title_header_grid = field.getString("channel_title");
@@ -209,13 +197,12 @@ public class BolaFragment extends Fragment implements View.OnClickListener {
                                     Picasso.with(getActivity()).load(image_url_header_grid)
                                             .transform(new CropSquareTransformation()).into(imageHeader);
                                 }
-
                                 //Get Grid
-                                for(int i=0; i<response.length()-1; i++) {
+                                for (int i=0; i<response.length()-1; i++) {
                                     JSONObject obj = response.getJSONObject(i);
-                                    if(obj != null) {
+                                    if (obj != null) {
                                         JSONArray objKanal = obj.getJSONArray("news");
-                                        for(int j=0; j<objKanal.length(); j++) {
+                                        for (int j=0; j<objKanal.length(); j++) {
                                             JSONObject field = objKanal.getJSONObject(j);
                                             String channel_title = field.getString("channel_title");
                                             String id = field.getString("id");
@@ -232,13 +219,12 @@ public class BolaFragment extends Fragment implements View.OnClickListener {
                                         }
                                     }
                                 }
-
                                 //Get Content List
-                                for(int i=0; i<response.length()-1; i++) {
+                                for (int i=0; i<response.length()-1; i++) {
                                     JSONObject obj = response.getJSONObject(i);
-                                    if(obj != null) {
+                                    if (obj != null) {
                                         JSONArray objKanal = obj.getJSONArray("news");
-                                        for(int j=0; j<objKanal.length(); j++) {
+                                        for (int j=0; j<objKanal.length(); j++) {
                                             JSONObject field = objKanal.getJSONObject(j);
                                             String channel_title = field.getString("channel_title");
                                             String id = field.getString("id");
@@ -253,10 +239,23 @@ public class BolaFragment extends Fragment implements View.OnClickListener {
                                         }
                                     }
                                 }
-
+                                //Check Ads if exists
+                                JSONArray adsList = jsonObject.getJSONArray(Constant.adses);
+                                if (adsList.length() > 0) {
+                                    for (int j=0; j<adsList.length(); j++) {
+                                        JSONObject jsonAds = adsList.getJSONObject(j);
+                                        String name = jsonAds.getString(Constant.name);
+                                        int position = jsonAds.getInt(Constant.position);
+                                        int type = jsonAds.getInt(Constant.type);
+                                        String unit_id = jsonAds.getString(Constant.unit_id);
+                                        adsArrayList.add(new Ads(name, type, position, unit_id));
+                                        Log.i(Constant.TAG, "ADS : " + adsArrayList.get(j).getmUnitId());
+                                    }
+                                }
+                                //Collect for list type
                                 featuredNewsArrayListTypeList.add(0, new FeaturedBola(channel_title_header_grid,
                                         null, id_header_grid, null, null, null, image_url_header_grid));
-
+                                //Collect for grid type
                                 if (featuredNewsArrayList.size() > 0 || !featuredNewsArrayList.isEmpty()) {
                                     swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(
                                             new FeaturedBolaAdapter(getActivity(), featuredNewsArrayList));
@@ -265,7 +264,7 @@ public class BolaFragment extends Fragment implements View.OnClickListener {
                                     swingBottomInAnimationAdapter.getViewAnimator().setInitialDelayMillis(0000);
                                     gridBola.setAdapter(swingBottomInAnimationAdapter);
                                 }
-
+                                //End of process
                                 if (featuredNewsArrayListTypeList.size() > 0 || !featuredNewsArrayListTypeList.isEmpty()) {
                                     if (channelListTypeAdapter == null) {
                                         channelListTypeAdapter = new ChannelListTypeAdapter(
@@ -276,6 +275,8 @@ public class BolaFragment extends Fragment implements View.OnClickListener {
                                     channelListTypeAdapter.notifyDataSetChanged();
                                     progressWheel.setVisibility(View.GONE);
                                 }
+                                //Show ads
+                                showAds();
                             } catch (Exception e) {
                                 e.getMessage();
                             }
@@ -466,16 +467,16 @@ public class BolaFragment extends Fragment implements View.OnClickListener {
                         new Response.Listener<String>() {
                             @Override
                             public void onResponse(String s) {
-                                Log.i(Constant.TAG, "KANAL BOLA RESPONSE : " + s);
+                                Log.i(Constant.TAG, "BOLA RESPONSE : " + s);
                                 try {
                                     JSONObject jsonObject = new JSONObject(s);
                                     JSONArray response = jsonObject.getJSONArray(Constant.response);
-
+                                    //Get Ready For Header
                                     int lastIndex = response.length() - 1;
                                     JSONObject objs = response.getJSONObject(lastIndex);
-                                    if(objs != null) {
+                                    if (objs != null) {
                                         JSONArray objKanal = objs.getJSONArray("all");
-                                        for(int j=0; j<objKanal.length(); j++) {
+                                        for (int j=0; j<objKanal.length(); j++) {
                                             JSONObject field = objKanal.getJSONObject(j);
                                             id_header_grid = field.getString("channel_id");
                                             channel_title_header_grid = field.getString("channel_title");
@@ -483,14 +484,15 @@ public class BolaFragment extends Fragment implements View.OnClickListener {
                                         }
                                         textHeader.setText(channel_title_header_grid.toUpperCase());
                                         layoutTransparentHeader.setVisibility(View.VISIBLE);
-                                        Picasso.with(getActivity()).load(image_url_header_grid).transform(new CropSquareTransformation()).into(imageHeader);
+                                        Picasso.with(getActivity()).load(image_url_header_grid)
+                                                .transform(new CropSquareTransformation()).into(imageHeader);
                                     }
-
-                                    for(int i=0; i<response.length()-1; i++) {
+                                    //Load data for grid type
+                                    for (int i=0; i<response.length()-1; i++) {
                                         JSONObject obj = response.getJSONObject(i);
-                                        if(obj != null) {
+                                        if (obj != null) {
                                             JSONArray objKanal = obj.getJSONArray("news");
-                                            for(int j=0; j<objKanal.length(); j++) {
+                                            for (int j=0; j<objKanal.length(); j++) {
                                                 JSONObject field = objKanal.getJSONObject(j);
                                                 String channel_title = field.getString("channel_title");
                                                 String id = field.getString("id");
@@ -506,7 +508,7 @@ public class BolaFragment extends Fragment implements View.OnClickListener {
                                             }
                                         }
                                     }
-
+                                    //Load data for list type
                                     for(int i=0; i<response.length()-1; i++) {
                                         JSONObject obj = response.getJSONObject(i);
                                         if(obj != null) {
@@ -525,10 +527,23 @@ public class BolaFragment extends Fragment implements View.OnClickListener {
                                             }
                                         }
                                     }
-
+                                    //Check Ads if exists
+                                    JSONArray adsList = jsonObject.getJSONArray(Constant.adses);
+                                    if (adsList.length() > 0) {
+                                        for (int j=0; j<adsList.length(); j++) {
+                                            JSONObject jsonAds = adsList.getJSONObject(j);
+                                            String name = jsonAds.getString(Constant.name);
+                                            int position = jsonAds.getInt(Constant.position);
+                                            int type = jsonAds.getInt(Constant.type);
+                                            String unit_id = jsonAds.getString(Constant.unit_id);
+                                            adsArrayList.add(new Ads(name, type, position, unit_id));
+                                            Log.i(Constant.TAG, "ADS : " + adsArrayList.get(j).getmUnitId());
+                                        }
+                                    }
+                                    //Populate data for list type
                                     featuredNewsArrayListTypeList.add(0, new FeaturedBola(channel_title_header_grid,
                                             null, id_header_grid, null, null, null, image_url_header_grid));
-
+                                    //Populate data for grid type
                                     if(featuredNewsArrayList.size() > 0 || !featuredNewsArrayList.isEmpty()) {
                                         swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(
                                                 new FeaturedBolaAdapter(getActivity(), featuredNewsArrayList));
@@ -537,7 +552,7 @@ public class BolaFragment extends Fragment implements View.OnClickListener {
                                         swingBottomInAnimationAdapter.getViewAnimator().setInitialDelayMillis(0000);
                                         gridBola.setAdapter(swingBottomInAnimationAdapter);
                                     }
-
+                                    //End of process
                                     if(featuredNewsArrayListTypeList.size() > 0 || !featuredNewsArrayListTypeList.isEmpty()) {
                                         if(channelListTypeAdapter == null) {
                                             channelListTypeAdapter = new ChannelListTypeAdapter(
@@ -548,6 +563,8 @@ public class BolaFragment extends Fragment implements View.OnClickListener {
                                         channelListTypeAdapter.notifyDataSetChanged();
                                         progressWheel.setVisibility(View.GONE);
                                     }
+                                    //Show ads
+                                    showAds();
                                 } catch (Exception e) {
                                     e.getMessage();
                                 }
@@ -556,7 +573,6 @@ public class BolaFragment extends Fragment implements View.OnClickListener {
                         new Response.ErrorListener() {
                             @Override
                             public void onErrorResponse(VolleyError volleyError) {
-                                volleyError.getMessage();
                                 progressWheel.setVisibility(View.GONE);
                                 rippleView.setVisibility(View.VISIBLE);
                             }
@@ -581,6 +597,31 @@ public class BolaFragment extends Fragment implements View.OnClickListener {
                 intent.putExtras(bundle);
                 getActivity().startActivity(intent);
                 getActivity().overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+            }
+        }
+    }
+
+    private void showAds() {
+        if (getActivity() != null) {
+            if (adsArrayList != null) {
+                if (adsArrayList.size() > 0) {
+                    AdsConfig adsConfig = new AdsConfig();
+                    for (int i=0; i<adsArrayList.size(); i++) {
+                        if (adsArrayList.get(i).getmPosition() == Constant.POSITION_BANNER_TOP) {
+                            if (publisherAdViewTop == null) {
+                                publisherAdViewTop = new PublisherAdView(getActivity());
+                                adsConfig.setAdsBanner(publisherAdViewTop,
+                                        adsArrayList.get(i).getmUnitId(), Constant.POSITION_BANNER_TOP, mParentLayout);
+                            }
+                        } else if (adsArrayList.get(i).getmPosition() == Constant.POSITION_BANNER_BOTTOM) {
+                            if (publisherAdViewBottom == null) {
+                                publisherAdViewBottom = new PublisherAdView(getActivity());
+                                adsConfig.setAdsBanner(publisherAdViewBottom,
+                                        adsArrayList.get(i).getmUnitId(), Constant.POSITION_BANNER_BOTTOM, mParentLayout);
+                            }
+                        }
+                    }
+                }
             }
         }
     }

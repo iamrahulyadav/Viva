@@ -76,7 +76,6 @@ public class Constant {
 
     public static String NEWS = "terbaru";
     public static String HEADLINES = "headlines";
-    public static String ADS = "adses";
 
     //Tag checking first installation
     public static final String MOVE_TUTORIAL = "move_tutorial";
@@ -115,10 +114,11 @@ public class Constant {
     //Main Content URL
     private static String BASE_URL_NEW = "http://api.viva.co.id/v/208/";
     private static String BASE_URL_NEW_STAGGING = "http://api.viva.co.id/v/2081/";
+
     public static String MAIN_CONFIG = BASE_URL_NEW + "mainconf/app/android";
-    public static String BERITA_SEKITAR_URL = BASE_URL_NEW + "find/";
     public static String TUTORIAL_IMAGES_URL = BASE_URL_NEW + "coach";
 
+    public static String BERITA_SEKITAR_URL = BASE_URL_NEW_STAGGING + "find/";
     public static String NEW_HEADLINE = BASE_URL_NEW_STAGGING + "headlinelist/";
     public static String NEW_TERBARU = BASE_URL_NEW_STAGGING + "terbarulist/";
 
