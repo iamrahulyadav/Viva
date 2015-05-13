@@ -27,9 +27,11 @@ public class DetailContentAdapterLife extends FragmentStatePagerAdapter {
     private ArrayList<Fragment.SavedState> mSavedState = new ArrayList<Fragment.SavedState>();
     private final FragmentManager mFragmentManager;
     private int mPosition;
+    private String mChannelTitle;
 
-    public DetailContentAdapterLife(FragmentManager fragmentManager, ArrayList<ChannelLife> channelLifeArrayList) {
+    public DetailContentAdapterLife(FragmentManager fragmentManager, ArrayList<ChannelLife> channelLifeArrayList, String channelTitle) {
         super(fragmentManager);
+        mChannelTitle = channelTitle;
         mFragmentManager = fragmentManager;
         this.channelLifeArrayList = channelLifeArrayList;
     }
@@ -37,7 +39,7 @@ public class DetailContentAdapterLife extends FragmentStatePagerAdapter {
     @Override
     public Fragment getItem(int position) {
         mPosition = position;
-        return DetailIndexContent.newInstance(channelLifeArrayList.get(position).getId(), "vivalife");
+        return DetailIndexContent.newInstance(channelLifeArrayList.get(position).getId(), "vivalife", mChannelTitle);
     }
 
     @Override

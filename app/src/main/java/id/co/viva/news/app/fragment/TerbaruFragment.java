@@ -354,10 +354,11 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-        if(newsArrayList.size() > 0) {
+        if (newsArrayList.size() > 0) {
             News news = newsArrayList.get(position);
             Bundle bundle = new Bundle();
             bundle.putString("id", news.getId());
+            bundle.putString(Constant.terbaru_detail_screen, Constant.terbaru_detail_screen);
             Intent intent = new Intent(getActivity(), ActDetailTerbaru.class);
             intent.putExtras(bundle);
             getActivity().startActivity(intent);

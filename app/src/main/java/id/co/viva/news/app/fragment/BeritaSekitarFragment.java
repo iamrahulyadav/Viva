@@ -405,6 +405,7 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
             BeritaSekitar beritaSekitar = beritaSekitarArrayList.get(position);
             Bundle bundle = new Bundle();
             bundle.putString("id", beritaSekitar.getId());
+            bundle.putString(Constant.berita_sekitar_detail_screen, Constant.berita_sekitar_detail_screen);
             Intent intent = new Intent(getActivity(), ActDetailBeritaSekitar.class);
             intent.putExtras(bundle);
             getActivity().startActivity(intent);

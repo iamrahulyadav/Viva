@@ -172,7 +172,7 @@ public class BolaFragment extends Fragment implements View.OnClickListener {
         featuredNewsArrayList = new ArrayList<>();
         featuredNewsArrayListTypeList = new ArrayList<>();
 
-        if(isInternetPresent) {
+        if (isInternetPresent) {
             StringRequest request = new StringRequest(Request.Method.GET, Constant.NEW_BOLA,
                     new Response.Listener<String>() {
                         @Override

@@ -56,24 +56,29 @@ public class Constant {
     public static String SUPPORT_EMAIL = "mobile-developer@viva.co.id";
     public static String EMAIL_SCHEME = "mailto";
 
+    //Data Location Tag
     public static final String TAG_LOCATION_NAME = "nama";
     public static final String TAG_LOCATION_PROVINCE_ID = "id_propinsi";
     public static final String TAG_LOCATION_KABUPATEN_ID = "id_kabupaten";
 
+    //Tag adapter for province and city
     public static final String ADAPTER_PROVINCE = "adapter_province";
     public static final String ADAPTER_CITY = "adapter_city";
     public static final String ADAPTER_CHANNEL_BOLA = "adapter_channel_bola";
     public static final String ADAPTER_CHANNEL_LIFE = "adapter_channel_life";
     public static final String ADAPTER_CHANNEL_NEWS = "adapter_channel_news";
 
+    //Class fragment
     public static final String fragment_terbaru = "class id.co.viva.news.app.fragment.TerbaruFragment";
     public static final String fragment_bola = "class id.co.viva.news.app.fragment.BolaFragment";
     public static final String fragment_life = "class id.co.viva.news.app.fragment.LifeFragment";
     public static final String fragment_news = "class id.co.viva.news.app.fragment.NewsFragment";
 
+    //Tag for tutorial and coach-mark
     public static final String FIRST_INSTALL_PROFILE = "first_install_profile";
     public static final String FIRST_INSTALL_TUTORIAL = "first_install_tutorial";
 
+    //Terbaru and Headline
     public static String NEWS = "terbaru";
     public static String HEADLINES = "headlines";
 
@@ -111,23 +116,22 @@ public class Constant {
     public static final String TAG = VivaApp.class.getSimpleName();
     public static final String TAG_GCM = "VIVA-GCM";
 
-    //Main Content URL
-    private static String BASE_URL_NEW = "http://api.viva.co.id/v/208/";
-    private static String BASE_URL_NEW_STAGGING = "http://api.viva.co.id/v/2081/";
+    //Base URL
+    private static String BASE_URL_NEW = "http://api.viva.co.id/v/209/";
+//    private static String BASE_URL_NEW_STAGGING = "http://api.viva.co.id/v/2081/";
 
+    //Main Content URL
     public static String MAIN_CONFIG = BASE_URL_NEW + "mainconf/app/android";
     public static String TUTORIAL_IMAGES_URL = BASE_URL_NEW + "coach";
-
-    public static String BERITA_SEKITAR_URL = BASE_URL_NEW_STAGGING + "find/";
-    public static String NEW_HEADLINE = BASE_URL_NEW_STAGGING + "headlinelist/";
-    public static String NEW_TERBARU = BASE_URL_NEW_STAGGING + "terbarulist/";
-
+    public static String BERITA_SEKITAR_URL = BASE_URL_NEW + "find/";
+    public static String NEW_HEADLINE = BASE_URL_NEW + "headlinelist/";
+    public static String NEW_TERBARU = BASE_URL_NEW + "terbarulist/";
     public static String NEW_NEWS = BASE_URL_NEW + "knews";
     public static String NEW_LIFE = BASE_URL_NEW + "klife";
     public static String NEW_BOLA = BASE_URL_NEW + "kbola";
-    public static String NEW_SEARCH = BASE_URL_NEW + "search/";
     public static String NEW_KANAL = BASE_URL_NEW + "kanal/";
     public static String NEW_DETAIL = BASE_URL_NEW + "detail/";
+    public static String NEW_SEARCH = BASE_URL_NEW + "search/";
     public static String NEW_LOGIN = BASE_URL_NEW + "login";
     public static String NEW_REGISTER = BASE_URL_NEW + "register2";
     public static String NEW_COMMENTS = BASE_URL_NEW + "sendcomment/";
@@ -199,6 +203,7 @@ public class Constant {
     private static final int HOUR_MILLIS = 60 * MINUTE_MILLIS;
     private static final int DAY_MILLIS = 24 * HOUR_MILLIS;
 
+    //Bitmap scaling
     private static final float BITMAP_SCALE = 0.4f;
     private static final float BLUR_RADIUS = 7.5f;
 
@@ -218,25 +223,22 @@ public class Constant {
     public static final String ATTRIBUTE_PATH_ACCESS_TOKEN = "access_token";
     public static final String ATTRIBUTE_PATH_USER_ID = "user_id";
 
+    //Analytic Tagging
     public static final String BERITA_SEKITAR_PAGE = "BERITA_SEKITAR_HAL_";
     public static final String BERITA_SEKITAR_DETAIL_PAGE = "BERITA_SEKITAR_DETAIL_";
     public static final String HEADLINE_PAGE = "HEADLINE_HAL_";
     public static final String HEADLINE_DETAIL_PAGE = "HEADLINE_DETAIL_";
     public static final String TERBARU_PAGE = "TERBARU_HAL_";
     public static final String TERBARU_DETAIL_PAGE = "TERBARU_DETAIL_";
-
     public static final String KANAL_NEWS_PAGE = "KANAL_NEWS_PAGE";
     public static final String SUBKANAL_NEWS_PAGE = "SUBKANAL_NEWS_";
     public static final String DETAIL_CONTENT_NEWS_PAGE = "DetailArticle_NEWS_";
-
     public static final String KANAL_BOLA_PAGE = "KANAL_BOLA_PAGE";
     public static final String SUBKANAL_BOLA_PAGE = "SUBKANAL_BOLA_";
     public static final String DETAIL_CONTENT_BOLA_PAGE = "DetailArticle_BOLA_";
-
     public static final String KANAL_LIFE_PAGE = "KANAL_LIFE_PAGE";
     public static final String SUBKANAL_LIFE_PAGE = "SUBKANAL_LIFE_";
     public static final String DETAIL_CONTENT_LIFE_PAGE = "DetailArticle_LIFE_";
-
     public static final String SEARCH_RESULT_PAGE = "SEARCH_RESULT_PAGE_";
     public static final String FROM_SEARCH_RESULT_DETAIL_CONTENT = "FROM_SEARCH_RESULT_DETAIL_CONTENT_";
     public static final String FROM_RELATED_ARTICLE_DETAIL_CONTENT = "FROM_RELATED_ARTICLE_DETAIL_CONTENT_";
@@ -247,6 +249,7 @@ public class Constant {
     public static final String RATING_ARTICLE = "RATING_ARTICLE";
     public static final String ARTICLE_FROM_NOTIFICATION = "DETAIL_ARTICLE";
 
+    //Label News
     public static String LABEL_CHANNEL_POLITIK = "Politik";
     public static String LABEL_CHANNEL_BISNIS = "Bisnis";
     public static String LABEL_CHANNEL_NASIONAL = "Nasional";
@@ -258,6 +261,7 @@ public class Constant {
     public static String LABEL_CHANNEL_WAWANCARA = "Wawancara";
     public static String LABEL_CHANNEL_FOKUS = "Fokus";
 
+    //Label Bola
     public static String LABEL_CHANNEL_LIGA_INDONESIA = "Liga Indonesia";
     public static String LABEL_CHANNEL_LIGA_INGGRIS = "Liga Inggris";
     public static String LABEL_CHANNEL_LIGA_SPANYOL = "Liga Spanyol";
@@ -265,14 +269,17 @@ public class Constant {
     public static String LABEL_CHANNEL_BOLA_NASIONAL = "Nasional";
     public static String LABEL_CHANNEL_BOLA_SEJAGAT = "Bola Sejagat";
 
+    //Label Life
     public static String LABEL_CHANNEL_STYLE = "Style";
     public static String LABEL_CHANNEL_FOODLIVING = "Food & Living";
     public static String LABEL_CHANNEL_SHOWBIZ = "Show Biz";
     public static String LABEL_CHANNEL_TRAVEL = "Travel";
     public static String LABEL_CHANNEL_HEALTHSEX = "Health + Sex";
 
+    //Url search from mobile site
     public static String SEARCH_KEYWORD = "search.viva.co.id/search?q=";
 
+    //Viva Url News
     public static final String CHANNEL_INDEX_NEWS = "http://news.viva.co.id/";
     public static final String CHANNEL_POLITIK = "http://politik.news.viva.co.id/";
     public static final String CHANNEL_BISNIS = "http://bisnis.news.viva.co.id/";
@@ -285,6 +292,7 @@ public class Constant {
     public static final String CHANNEL_WAWANCARA = "http://analisis.news.viva.co.id/";
     public static final String CHANNEL_FOKUS = "http://fokus.news.viva.co.id/";
 
+    //Viva Url Bola
     public static final String CHANNEL_INDEX_BOLA = "http://bola.viva.co.id/";
     public static final String CHANNEL_LIGA_INGGRIS = "http://bola.viva.co.id/liga/inggris";
     public static final String CHANNEL_LIGA_INDONESIA = "http://bola.viva.co.id/liga/indonesia";
@@ -293,6 +301,7 @@ public class Constant {
     public static final String CHANNEL_BOLA_NASIONAL = "http://bola.viva.co.id/nasional";
     public static final String CHANNEL_BOLA_SEJAGAT = "http://bola.viva.co.id/bolasejagad";
 
+    //Viva Url Life
     public static final String CHANNEL_INDEX_LIFE = "http://life.viva.co.id/";
     public static final String CHANNEL_STYLE = "http://life.viva.co.id/style";
     public static final String CHANNEL_SHOWBIZ = "http://life.viva.co.id/showbiz";
@@ -300,19 +309,45 @@ public class Constant {
     public static final String CHANNEL_TRAVEL = "http://life.viva.co.id/travel";
     public static final String CHANNEL_HEALTHSEX = "http://life.viva.co.id/health_and_sex";
 
-    //Dummy UnitId
-    public static final String unitIdTop = "";
-    public static final String unitIdBottom = "";
-    public static final String unitIdInterstitialOpen = "/11225321/viva_apps_mobile_interstitial_open";
-    public static final String unitIdInterstitialClose = "/11225321/viva_apps_mobile_interstitial_close";
-
     //Banner Interstitial Position
     public static final String ADS_TYPE_OPENING = "ads_opening";
     public static final String ADS_TYPE_CLOSING = "ads_closing";
+    public static final int ADS_TYPE_OPENING_POSITION = 1;
+    public static final int ADS_TYPE_CLOSING_POSITION = 2;
 
     //Banner Position
     public static final int POSITION_BANNER_TOP = 1;
     public static final int POSITION_BANNER_BOTTOM = 2;
+
+    //Additional Parameter in Detail Articles
+    public static final String terbaru_detail_screen = "terbaru_detail_screen";
+    public static final String headline_detail_screen = "headline_detail_screen";
+    public static final String berita_sekitar_detail_screen = "berita_sekitar_detail_screen";
+    public static final String berita_semua_detail_screen = "berita_semua_detail_screen";
+    public static final String politik_detail_screen = "politik_detail_screen";
+    public static final String bisnis_detail_screen = "bisnis_detail_screen";
+    public static final String nasional_detail_screen = "nasional_detail_screen";
+    public static final String metro_detail_screen = "metro_detail_screen";
+    public static final String berita_dunia_detail_screen = "berita_dunia_detail_screen";
+    public static final String berita_teknologi_detail_screen = "berita_teknologi_detail_screen";
+    public static final String berita_otomotif_detail_screen = "berita_otomotif_detail_screen";
+    public static final String berita_sorot_detail_screen = "berita_sorot_detail_screen";
+    public static final String berita_wawancara_detail_screen = "berita_wawancara_detail_screen";
+    public static final String berita_fokus_detail_screen = "berita_fokus_detail_screen";
+    public static final String bola_semua_berita_detail_screen = "bola_semua_berita_detail_screen";
+    public static final String bola_indonesia_detail_screen = "bola_indonesia_detail_screen";
+    public static final String bola_inggris_detail_screen = "bola_inggris_detail_screen";
+    public static final String bola_italia_detail_screen = "bola_italia_detail_screen";
+    public static final String bola_spanyol_detail_screen = "bola_spanyol_detail_screen";
+    public static final String bola_nasional_detail_screen = "bola_nasional_detail_screen";
+    public static final String bola_sejagat_detail_screen = "bola_sejagat_detail_screen";
+    public static final String life_semua_berita_detail_screen = "life_semua_berita_detail_screen";
+    public static final String life_style_detail_screen = "life_style_detail_screen";
+    public static final String life_food_detail_screen = "life_food_detail_screen";
+    public static final String life_showbiz_detail_screen = "life_showbiz_detail_screen";
+    public static final String life_travel_detail_screen = "life_travel_detail_screen";
+    public static final String life_health_detail_screen = "life_health_detail_screen";
+    public static final String search_screen = "search_screen";
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     public static Bitmap blur(Context ctx, Bitmap image) {
@@ -427,6 +462,63 @@ public class Constant {
             }
         }
         return null;
+    }
+
+    public static String getScreenParameter(String channel, String channelTitle) {
+        if (channel != null && channelTitle != null) {
+            if (channelTitle.length() > 0) {
+                if (channel.equalsIgnoreCase("news") && channelTitle.equalsIgnoreCase(AllNews)) {
+                    return berita_semua_detail_screen;
+                } else if (channel.equalsIgnoreCase("news") && channelTitle.equalsIgnoreCase(LABEL_CHANNEL_POLITIK)) {
+                    return politik_detail_screen;
+                } else if (channel.equalsIgnoreCase("news") && channelTitle.equalsIgnoreCase(LABEL_CHANNEL_BISNIS)) {
+                    return bisnis_detail_screen;
+                } else if (channel.equalsIgnoreCase("news") && channelTitle.equalsIgnoreCase(LABEL_CHANNEL_NASIONAL)) {
+                    return nasional_detail_screen;
+                } else if (channel.equalsIgnoreCase("news") && channelTitle.equalsIgnoreCase(LABEL_CHANNEL_METRO)) {
+                    return metro_detail_screen;
+                } else if (channel.equalsIgnoreCase("news") && channelTitle.equalsIgnoreCase(LABEL_CHANNEL_DUNIA)) {
+                    return berita_dunia_detail_screen;
+                } else if (channel.equalsIgnoreCase("news") && channelTitle.equalsIgnoreCase(LABEL_CHANNEL_TEKNOLOGI)) {
+                    return berita_teknologi_detail_screen;
+                } else if (channel.equalsIgnoreCase("news") && channelTitle.equalsIgnoreCase(LABEL_CHANNEL_OTOMOTIF)) {
+                    return berita_otomotif_detail_screen;
+                } else if (channel.equalsIgnoreCase("news") && channelTitle.equalsIgnoreCase(LABEL_CHANNEL_SOROT)) {
+                    return berita_sorot_detail_screen;
+                } else if (channel.equalsIgnoreCase("news") && channelTitle.equalsIgnoreCase(LABEL_CHANNEL_WAWANCARA)) {
+                    return berita_wawancara_detail_screen;
+                } else if (channel.equalsIgnoreCase("news") && channelTitle.equalsIgnoreCase(LABEL_CHANNEL_FOKUS)) {
+                    return berita_fokus_detail_screen;
+                } else if (channel.equalsIgnoreCase("bola") && channelTitle.equalsIgnoreCase(AllNews)) {
+                    return bola_semua_berita_detail_screen;
+                } else if (channel.equalsIgnoreCase("bola") && channelTitle.equalsIgnoreCase(LABEL_CHANNEL_LIGA_INDONESIA)) {
+                    return bola_indonesia_detail_screen;
+                } else if (channel.equalsIgnoreCase("bola") && channelTitle.equalsIgnoreCase(LABEL_CHANNEL_LIGA_INGGRIS)) {
+                    return bola_inggris_detail_screen;
+                } else if (channel.equalsIgnoreCase("bola") && channelTitle.equalsIgnoreCase(LABEL_CHANNEL_LIGA_ITALIA)) {
+                    return bola_italia_detail_screen;
+                } else if (channel.equalsIgnoreCase("bola") && channelTitle.equalsIgnoreCase(LABEL_CHANNEL_LIGA_SPANYOL)) {
+                    return bola_spanyol_detail_screen;
+                } else if (channel.equalsIgnoreCase("bola") && channelTitle.equalsIgnoreCase(LABEL_CHANNEL_BOLA_NASIONAL)) {
+                    return bola_nasional_detail_screen;
+                } else if (channel.equalsIgnoreCase("bola") && channelTitle.equalsIgnoreCase(LABEL_CHANNEL_BOLA_SEJAGAT)) {
+                    return bola_sejagat_detail_screen;
+                } else if (channel.equalsIgnoreCase("vivalife") && channelTitle.equalsIgnoreCase(AllNews)) {
+                    return life_semua_berita_detail_screen;
+                } else if (channel.equalsIgnoreCase("vivalife") && channelTitle.equalsIgnoreCase(LABEL_CHANNEL_STYLE)) {
+                    return life_style_detail_screen;
+                } else if (channel.equalsIgnoreCase("vivalife") && channelTitle.equalsIgnoreCase(LABEL_CHANNEL_FOODLIVING)) {
+                    return life_food_detail_screen;
+                } else if (channel.equalsIgnoreCase("vivalife") && channelTitle.equalsIgnoreCase(LABEL_CHANNEL_SHOWBIZ)) {
+                    return life_showbiz_detail_screen;
+                } else if (channel.equalsIgnoreCase("vivalife") && channelTitle.equalsIgnoreCase(LABEL_CHANNEL_TRAVEL)) {
+                    return life_travel_detail_screen;
+                } else if (channel.equalsIgnoreCase("vivalife") && channelTitle.equalsIgnoreCase(LABEL_CHANNEL_HEALTHSEX)) {
+                    return life_health_detail_screen;
+                }
+            }
+        }
+        return "";
     }
 
 }

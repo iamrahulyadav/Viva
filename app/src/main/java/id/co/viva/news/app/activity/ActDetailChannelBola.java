@@ -42,6 +42,7 @@ import id.co.viva.news.app.ads.AdsConfig;
 import id.co.viva.news.app.component.LoadMoreListView;
 import id.co.viva.news.app.component.ProgressWheel;
 import id.co.viva.news.app.interfaces.OnLoadMoreListener;
+import id.co.viva.news.app.model.Ads;
 import id.co.viva.news.app.model.ChannelBola;
 import id.co.viva.news.app.services.Analytics;
 
@@ -52,6 +53,7 @@ public class ActDetailChannelBola extends ActionBarActivity implements
         OnLoadMoreListener, AdapterView.OnItemClickListener, View.OnClickListener {
 
     public static ArrayList<ChannelBola> channelBolaArrayList;
+    private ArrayList<Ads> adsArrayList;
     private String id;
     private String channel_title;
     private String timeStamp;
@@ -93,7 +95,7 @@ public class ActDetailChannelBola extends ActionBarActivity implements
         //Define All Views
         defineViews();
 
-        if(isInternetPresent) {
+        if (isInternetPresent) {
             StringRequest stringRequest = new StringRequest(Request.Method.GET, getUrl(channel_title),
                     new Response.Listener<String>() {
                         @Override
@@ -102,10 +104,11 @@ public class ActDetailChannelBola extends ActionBarActivity implements
                             try {
                                 JSONObject jsonObject = new JSONObject(volleyResponse);
                                 jsonArrayResponses = jsonObject.getJSONArray(Constant.response);
-                                if (jsonArrayResponses != null) {
+                                if (jsonArrayResponses.length() > 0) {
+                                    //Get content
                                     JSONObject objHeadline = jsonArrayResponses.getJSONObject(0);
-                                    if (objHeadline != null) {
-                                        jsonArraySegmentHeadline = objHeadline.getJSONArray(Constant.headlines);
+                                    jsonArraySegmentHeadline = objHeadline.getJSONArray(Constant.headlines);
+                                    if (jsonArraySegmentHeadline.length() > 0) {
                                         for (int i = 0; i < jsonArraySegmentHeadline.length(); i++) {
                                             JSONObject jsonHeadline = jsonArraySegmentHeadline.getJSONObject(i);
                                             String id = jsonHeadline.getString(Constant.id);
@@ -120,10 +123,24 @@ public class ActDetailChannelBola extends ActionBarActivity implements
                                             Log.i(Constant.TAG, "CHANNEL BOLA : " + channelBolaArrayList.get(i).getTitle());
                                         }
                                     }
+                                    //Check Ads if exists
+                                    JSONObject objAds = jsonArrayResponses.getJSONObject(jsonArrayResponses.length() - 1);
+                                    JSONArray jsonArraySegmentAds = objAds.getJSONArray(Constant.adses);
+                                    if (jsonArraySegmentAds.length() > 0) {
+                                        for (int j=0; j<jsonArraySegmentAds.length(); j++) {
+                                            JSONObject jsonAds = jsonArraySegmentAds.getJSONObject(j);
+                                            String name = jsonAds.getString(Constant.name);
+                                            int position = jsonAds.getInt(Constant.position);
+                                            int type = jsonAds.getInt(Constant.type);
+                                            String unit_id = jsonAds.getString(Constant.unit_id);
+                                            adsArrayList.add(new Ads(name, type, position, unit_id));
+                                            Log.i(Constant.TAG, "ADS : " + adsArrayList.get(j).getmUnitId());
+                                        }
+                                    }
                                 }
-
+                                //Get last published
                                 timeStamp = channelBolaArrayList.get(channelBolaArrayList.size()-1).getTimestamp();
-
+                                //Populate content
                                 if (channelBolaArrayList.size() > 0 || !channelBolaArrayList.isEmpty()) {
                                     mAnimAdapter = new ScaleInAnimationAdapter(adapter);
                                     mAnimAdapter.setAbsListView(listView);
@@ -131,6 +148,8 @@ public class ActDetailChannelBola extends ActionBarActivity implements
                                     mAnimAdapter.notifyDataSetChanged();
                                     progressWheel.setVisibility(View.GONE);
                                 }
+                                //Show Ads
+                                showAds();
                             } catch (Exception e) {
                                 e.getMessage();
                             }
@@ -160,7 +179,7 @@ public class ActDetailChannelBola extends ActionBarActivity implements
                 try{
                     JSONObject jsonObject = new JSONObject(cachedResponse);
                     jsonArrayResponses = jsonObject.getJSONArray(Constant.response);
-                    if(jsonArrayResponses != null) {
+                    if (jsonArrayResponses != null) {
                         JSONObject objHeadline = jsonArrayResponses.getJSONObject(0);
                         if (objHeadline != null) {
                             jsonArraySegmentHeadline = objHeadline.getJSONArray(Constant.headlines);
@@ -182,7 +201,7 @@ public class ActDetailChannelBola extends ActionBarActivity implements
 
                     timeStamp = channelBolaArrayList.get(channelBolaArrayList.size()-1).getTimestamp();
 
-                    if(channelBolaArrayList.size() > 0 || !channelBolaArrayList.isEmpty()) {
+                    if (channelBolaArrayList.size() > 0 || !channelBolaArrayList.isEmpty()) {
                         mAnimAdapter = new ScaleInAnimationAdapter(adapter);
                         mAnimAdapter.setAbsListView(listView);
                         listView.setAdapter(mAnimAdapter);
@@ -197,19 +216,29 @@ public class ActDetailChannelBola extends ActionBarActivity implements
                 tvNoResult.setVisibility(View.VISIBLE);
             }
         }
-
-       //Set ads if exists
-        setAds(mParentLayout);
     }
 
-    private void setAds(LinearLayout parentLayout) {
-        if (isInternetPresent) {
-            if (this != null) {
-                publisherAdViewTop = new PublisherAdView(this);
-                publisherAdViewBottom = new PublisherAdView(this);
-                AdsConfig adsConfig = new AdsConfig();
-                adsConfig.setAdsBanner(publisherAdViewTop, Constant.unitIdTop, Constant.POSITION_BANNER_TOP, parentLayout);
-                adsConfig.setAdsBanner(publisherAdViewBottom, Constant.unitIdBottom, Constant.POSITION_BANNER_BOTTOM, parentLayout);
+    private void showAds() {
+        if (ActDetailChannelBola.this != null) {
+            if (adsArrayList != null) {
+                if (adsArrayList.size() > 0) {
+                    AdsConfig adsConfig = new AdsConfig();
+                    for (int i=0; i<adsArrayList.size(); i++) {
+                        if (adsArrayList.get(i).getmPosition() == Constant.POSITION_BANNER_TOP) {
+                            if (publisherAdViewTop == null) {
+                                publisherAdViewTop = new PublisherAdView(this);
+                                adsConfig.setAdsBanner(publisherAdViewTop,
+                                        adsArrayList.get(i).getmUnitId(), Constant.POSITION_BANNER_TOP, mParentLayout);
+                            }
+                        } else if (adsArrayList.get(i).getmPosition() == Constant.POSITION_BANNER_BOTTOM) {
+                            if (publisherAdViewBottom == null) {
+                                publisherAdViewBottom = new PublisherAdView(this);
+                                adsConfig.setAdsBanner(publisherAdViewBottom,
+                                        adsArrayList.get(i).getmUnitId(), Constant.POSITION_BANNER_BOTTOM, mParentLayout);
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -290,10 +319,9 @@ public class ActDetailChannelBola extends ActionBarActivity implements
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError volleyError) {
-                            volleyError.getMessage();
                             listView.onLoadMoreComplete();
                             listView.setSelection(0);
-                            if(this != null) {
+                            if (this != null) {
                                 Toast.makeText(ActDetailChannelBola.this, R.string.label_error, Toast.LENGTH_SHORT).show();
                             }
                         }
@@ -311,7 +339,7 @@ public class ActDetailChannelBola extends ActionBarActivity implements
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-        if(channelBolaArrayList.size() > 0) {
+        if (channelBolaArrayList.size() > 0) {
             ChannelBola channelBola = channelBolaArrayList.get(position);
             Bundle bundle = new Bundle();
             bundle.putString("id", channelBola.getId());
@@ -326,7 +354,7 @@ public class ActDetailChannelBola extends ActionBarActivity implements
     @Override
     public void onClick(View view) {
         if(view.getId() == R.id.layout_ripple_view) {
-            if(isInternetPresent) {
+            if (isInternetPresent) {
                 rippleView.setVisibility(View.GONE);
                 progressWheel.setVisibility(View.VISIBLE);
                 StringRequest stringRequest = new StringRequest(Request.Method.GET, getUrl(channel_title),
@@ -337,10 +365,11 @@ public class ActDetailChannelBola extends ActionBarActivity implements
                                 try {
                                     JSONObject jsonObject = new JSONObject(volleyResponse);
                                     jsonArrayResponses = jsonObject.getJSONArray(Constant.response);
-                                    if (jsonArrayResponses != null) {
+                                    if (jsonArrayResponses.length() > 0) {
+                                        //Get content
                                         JSONObject objHeadline = jsonArrayResponses.getJSONObject(0);
-                                        if (objHeadline != null) {
-                                            jsonArraySegmentHeadline = objHeadline.getJSONArray(Constant.headlines);
+                                        jsonArraySegmentHeadline = objHeadline.getJSONArray(Constant.headlines);
+                                        if (jsonArraySegmentHeadline.length() > 0) {
                                             for (int i = 0; i < jsonArraySegmentHeadline.length(); i++) {
                                                 JSONObject jsonHeadline = jsonArraySegmentHeadline.getJSONObject(i);
                                                 String id = jsonHeadline.getString(Constant.id);
@@ -355,10 +384,24 @@ public class ActDetailChannelBola extends ActionBarActivity implements
                                                 Log.i(Constant.TAG, "CHANNEL BOLA : " + channelBolaArrayList.get(i).getTitle());
                                             }
                                         }
+                                        //Check Ads if exists
+                                        JSONObject objAds = jsonArrayResponses.getJSONObject(jsonArrayResponses.length() - 1);
+                                        JSONArray jsonArraySegmentAds = objAds.getJSONArray(Constant.adses);
+                                        if (jsonArraySegmentAds.length() > 0) {
+                                            for (int j=0; j<jsonArraySegmentAds.length(); j++) {
+                                                JSONObject jsonAds = jsonArraySegmentAds.getJSONObject(j);
+                                                String name = jsonAds.getString(Constant.name);
+                                                int position = jsonAds.getInt(Constant.position);
+                                                int type = jsonAds.getInt(Constant.type);
+                                                String unit_id = jsonAds.getString(Constant.unit_id);
+                                                adsArrayList.add(new Ads(name, type, position, unit_id));
+                                                Log.i(Constant.TAG, "ADS : " + adsArrayList.get(j).getmUnitId());
+                                            }
+                                        }
                                     }
-
+                                    //Get last published
                                     timeStamp = channelBolaArrayList.get(channelBolaArrayList.size()-1).getTimestamp();
-
+                                    //Populate content
                                     if (channelBolaArrayList.size() > 0 || !channelBolaArrayList.isEmpty()) {
                                         mAnimAdapter = new ScaleInAnimationAdapter(adapter);
                                         mAnimAdapter.setAbsListView(listView);
@@ -369,6 +412,8 @@ public class ActDetailChannelBola extends ActionBarActivity implements
                                             rippleView.setVisibility(View.GONE);
                                         }
                                     }
+                                    //Show Ads
+                                    showAds();
                                 } catch (Exception e) {
                                     e.getMessage();
                                 }
@@ -377,7 +422,6 @@ public class ActDetailChannelBola extends ActionBarActivity implements
                         new Response.ErrorListener() {
                             @Override
                             public void onErrorResponse(VolleyError volleyError) {
-                                volleyError.getMessage();
                                 progressWheel.setVisibility(View.GONE);
                                 rippleView.setVisibility(View.VISIBLE);
                             }
@@ -398,7 +442,7 @@ public class ActDetailChannelBola extends ActionBarActivity implements
 
     private String getUrl(String channelTitle) {
         String url_channel;
-        if(channelTitle.equalsIgnoreCase(Constant.AllNews)) {
+        if (channelTitle.equalsIgnoreCase(Constant.AllNews)) {
             url_channel = Constant.NEW_KANAL + "ch/" + id + Constant.ALL_NEWS_URL;
         } else {
             url_channel = Constant.NEW_KANAL + "ch/" + id + Constant.SUB_CHANNEL_LV_2_URL;
@@ -477,6 +521,7 @@ public class ActDetailChannelBola extends ActionBarActivity implements
         tvNoResult.setVisibility(View.GONE);
 
         channelBolaArrayList = new ArrayList<>();
+        adsArrayList = new ArrayList<>();
         adapter = new ChannelBolaAdapter(this, channelBolaArrayList);
 
         listView = (LoadMoreListView) findViewById(R.id.list_channel_bola);

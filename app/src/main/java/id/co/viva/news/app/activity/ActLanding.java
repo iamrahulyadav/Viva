@@ -358,18 +358,18 @@ public class ActLanding extends ActionBarActivity implements View.OnClickListene
             if(fragment != null) {
                 if(fragment.getClass().toString().equals(Constant.fragment_terbaru)) {
                     //Load ads
-                    if (isInternetPresent) {
-                        InterstitialAd interstitialAd = new InterstitialAd(this);
-                        AdsConfig adsConfig = new AdsConfig();
-                        adsConfig.setAdsInterstitial(this, interstitialAd,
-                                Constant.unitIdInterstitialClose, null, Constant.ADS_TYPE_CLOSING,
-                                fragment, ActLanding.this);
-                    } else {
+//                    if (isInternetPresent) {
+//                        InterstitialAd interstitialAd = new InterstitialAd(this);
+//                        AdsConfig adsConfig = new AdsConfig();
+//                        adsConfig.setAdsInterstitial(this, interstitialAd,
+//                                Constant.unitIdInterstitialClose, null, Constant.ADS_TYPE_CLOSING,
+//                                fragment, ActLanding.this);
+//                    } else {
                         getSupportFragmentManager()
                                 .beginTransaction()
                                 .remove(fragment).commit();
                         finish();
-                    }
+//                    }
                 } else {
                     backToFirst();
                 }

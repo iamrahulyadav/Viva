@@ -359,6 +359,7 @@ public class HeadlineFragment extends Fragment implements
             Log.i(Constant.TAG, "ID : " + headline.getId());
             Bundle bundle = new Bundle();
             bundle.putString("id", headline.getId());
+            bundle.putString(Constant.headline_detail_screen, Constant.headline_detail_screen);
             Intent intent = new Intent(getActivity(), ActDetailHeadline.class);
             intent.putExtras(bundle);
             getActivity().startActivity(intent);

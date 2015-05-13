@@ -42,6 +42,7 @@ import id.co.viva.news.app.ads.AdsConfig;
 import id.co.viva.news.app.component.LoadMoreListView;
 import id.co.viva.news.app.component.ProgressWheel;
 import id.co.viva.news.app.interfaces.OnLoadMoreListener;
+import id.co.viva.news.app.model.Ads;
 import id.co.viva.news.app.model.ChannelNews;
 import id.co.viva.news.app.services.Analytics;
 
@@ -52,6 +53,7 @@ public class ActDetailChannelNews extends ActionBarActivity implements
         AdapterView.OnItemClickListener, OnLoadMoreListener, View.OnClickListener {
 
     public static ArrayList<ChannelNews> channelNewsArrayList;
+    private ArrayList <Ads> adsArrayList;
     private String id;
     private String channel_title;
     private String timeStamp;
@@ -94,7 +96,7 @@ public class ActDetailChannelNews extends ActionBarActivity implements
         //Define All Views
         defineViews();
 
-        if(isInternetPresent) {
+        if (isInternetPresent) {
             StringRequest stringRequest = new StringRequest(Request.Method.GET, getUrl(channel_title),
                     new Response.Listener<String>() {
                         @Override
@@ -103,10 +105,11 @@ public class ActDetailChannelNews extends ActionBarActivity implements
                             try {
                                 JSONObject jsonObject = new JSONObject(volleyResponse);
                                 jsonArrayResponses = jsonObject.getJSONArray(Constant.response);
-                                if (jsonArrayResponses != null) {
+                                if (jsonArrayResponses.length() > 0) {
+                                    //Get content
                                     JSONObject objHeadline = jsonArrayResponses.getJSONObject(0);
-                                    if (objHeadline != null) {
-                                        jsonArraySegmentHeadline = objHeadline.getJSONArray(Constant.headlines);
+                                    jsonArraySegmentHeadline = objHeadline.getJSONArray(Constant.headlines);
+                                    if (jsonArraySegmentHeadline.length() > 0) {
                                         for (int i = 0; i < jsonArraySegmentHeadline.length(); i++) {
                                             JSONObject jsonHeadline = jsonArraySegmentHeadline.getJSONObject(i);
                                             String id = jsonHeadline.getString(Constant.id);
@@ -121,10 +124,24 @@ public class ActDetailChannelNews extends ActionBarActivity implements
                                             Log.i(Constant.TAG, "CHANNEL NEWS : " + channelNewsArrayList.get(i).getTitle());
                                         }
                                     }
+                                    //Check Ads if exists
+                                    JSONObject objAds = jsonArrayResponses.getJSONObject(jsonArrayResponses.length() - 1);
+                                    JSONArray jsonArraySegmentAds = objAds.getJSONArray(Constant.adses);
+                                    if (jsonArraySegmentAds.length() > 0) {
+                                        for (int j=0; j<jsonArraySegmentAds.length(); j++) {
+                                            JSONObject jsonAds = jsonArraySegmentAds.getJSONObject(j);
+                                            String name = jsonAds.getString(Constant.name);
+                                            int position = jsonAds.getInt(Constant.position);
+                                            int type = jsonAds.getInt(Constant.type);
+                                            String unit_id = jsonAds.getString(Constant.unit_id);
+                                            adsArrayList.add(new Ads(name, type, position, unit_id));
+                                            Log.i(Constant.TAG, "ADS : " + adsArrayList.get(j).getmUnitId());
+                                        }
+                                    }
                                 }
-
+                                //Get last published
                                 timeStamp = channelNewsArrayList.get(channelNewsArrayList.size()-1).getTimestamp();
-
+                                //Populate content
                                 if (channelNewsArrayList.size() > 0 || !channelNewsArrayList.isEmpty()) {
                                     mAnimAdapter = new ScaleInAnimationAdapter(adapter);
                                     mAnimAdapter.setAbsListView(listView);
@@ -132,6 +149,8 @@ public class ActDetailChannelNews extends ActionBarActivity implements
                                     mAnimAdapter.notifyDataSetChanged();
                                     progressWheel.setVisibility(View.GONE);
                                 }
+                                //Show ads
+                                showAds();
                             } catch (Exception e) {
                                 e.getMessage();
                             }
@@ -198,21 +217,6 @@ public class ActDetailChannelNews extends ActionBarActivity implements
                 tvNoResult.setVisibility(View.VISIBLE);
             }
         }
-
-        //Set ads if exists
-        setAds(mParentLayout);
-    }
-
-    private void setAds(LinearLayout parentLayout) {
-        if (isInternetPresent) {
-            if (this != null) {
-                publisherAdViewTop = new PublisherAdView(this);
-                publisherAdViewBottom = new PublisherAdView(this);
-                AdsConfig adsConfig = new AdsConfig();
-                adsConfig.setAdsBanner(publisherAdViewTop, Constant.unitIdTop, Constant.POSITION_BANNER_TOP, parentLayout);
-                adsConfig.setAdsBanner(publisherAdViewBottom, Constant.unitIdBottom, Constant.POSITION_BANNER_BOTTOM, parentLayout);
-            }
-        }
     }
 
     @Override
@@ -260,7 +264,7 @@ public class ActDetailChannelNews extends ActionBarActivity implements
     public void onLoadMore() {
         data = String.valueOf(dataSize += 10);
         paging += 1;
-        if(isInternetPresent) {
+        if (isInternetPresent) {
             setAnalytics(String.valueOf(paging));
             StringRequest stringRequest = new StringRequest(Request.Method.GET, getPagingUrl(channel_title, data, timeStamp),
                     new Response.Listener<String>() {
@@ -305,7 +309,6 @@ public class ActDetailChannelNews extends ActionBarActivity implements
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError volleyError) {
-                            volleyError.getMessage();
                             listView.onLoadMoreComplete();
                             listView.setSelection(0);
                             if(this != null) {
@@ -326,8 +329,8 @@ public class ActDetailChannelNews extends ActionBarActivity implements
 
     @Override
     public void onClick(View view) {
-        if(view.getId() == R.id.layout_ripple_view) {
-            if(isInternetPresent) {
+        if (view.getId() == R.id.layout_ripple_view) {
+            if (isInternetPresent) {
                 rippleView.setVisibility(View.GONE);
                 progressWheel.setVisibility(View.VISIBLE);
                 StringRequest stringRequest = new StringRequest(Request.Method.GET, getUrl(channel_title),
@@ -338,10 +341,11 @@ public class ActDetailChannelNews extends ActionBarActivity implements
                                 try {
                                     JSONObject jsonObject = new JSONObject(volleyResponse);
                                     jsonArrayResponses = jsonObject.getJSONArray(Constant.response);
-                                    if (jsonArrayResponses != null) {
+                                    if (jsonArrayResponses.length() > 0) {
+                                        //Get content
                                         JSONObject objHeadline = jsonArrayResponses.getJSONObject(0);
-                                        if (objHeadline != null) {
-                                            jsonArraySegmentHeadline = objHeadline.getJSONArray(Constant.headlines);
+                                        jsonArraySegmentHeadline = objHeadline.getJSONArray(Constant.headlines);
+                                        if (jsonArraySegmentHeadline.length() > 0) {
                                             for (int i = 0; i < jsonArraySegmentHeadline.length(); i++) {
                                                 JSONObject jsonHeadline = jsonArraySegmentHeadline.getJSONObject(i);
                                                 String id = jsonHeadline.getString(Constant.id);
@@ -356,10 +360,24 @@ public class ActDetailChannelNews extends ActionBarActivity implements
                                                 Log.i(Constant.TAG, "CHANNEL NEWS : " + channelNewsArrayList.get(i).getTitle());
                                             }
                                         }
+                                        //Check Ads if exists
+                                        JSONObject objAds = jsonArrayResponses.getJSONObject(jsonArrayResponses.length() - 1);
+                                        JSONArray jsonArraySegmentAds = objAds.getJSONArray(Constant.adses);
+                                        if (jsonArraySegmentAds.length() > 0) {
+                                            for (int j=0; j<jsonArraySegmentAds.length(); j++) {
+                                                JSONObject jsonAds = jsonArraySegmentAds.getJSONObject(j);
+                                                String name = jsonAds.getString(Constant.name);
+                                                int position = jsonAds.getInt(Constant.position);
+                                                int type = jsonAds.getInt(Constant.type);
+                                                String unit_id = jsonAds.getString(Constant.unit_id);
+                                                adsArrayList.add(new Ads(name, type, position, unit_id));
+                                                Log.i(Constant.TAG, "ADS : " + adsArrayList.get(j).getmUnitId());
+                                            }
+                                        }
                                     }
-
+                                    //Get last published
                                     timeStamp = channelNewsArrayList.get(channelNewsArrayList.size()-1).getTimestamp();
-
+                                    //Populate content
                                     if (channelNewsArrayList.size() > 0 || !channelNewsArrayList.isEmpty()) {
                                         mAnimAdapter = new ScaleInAnimationAdapter(adapter);
                                         mAnimAdapter.setAbsListView(listView);
@@ -370,6 +388,8 @@ public class ActDetailChannelNews extends ActionBarActivity implements
                                             rippleView.setVisibility(View.GONE);
                                         }
                                     }
+                                    //Show ads
+                                    showAds();
                                 } catch (Exception e) {
                                     e.getMessage();
                                 }
@@ -413,6 +433,7 @@ public class ActDetailChannelNews extends ActionBarActivity implements
         tvNoResult.setVisibility(View.GONE);
 
         channelNewsArrayList = new ArrayList<>();
+        adsArrayList = new ArrayList<>();
         adapter = new ChannelNewsAdapter(this, channelNewsArrayList);
 
         listView = (LoadMoreListView) findViewById(R.id.list_channel_news);
@@ -449,6 +470,31 @@ public class ActDetailChannelNews extends ActionBarActivity implements
         Bundle bundle = getIntent().getExtras();
         id = bundle.getString("id");
         channel_title = bundle.getString("channel_title");
+    }
+
+    private void showAds() {
+        if (ActDetailChannelNews.this != null) {
+            if (adsArrayList != null) {
+                if (adsArrayList.size() > 0) {
+                    AdsConfig adsConfig = new AdsConfig();
+                    for (int i=0; i<adsArrayList.size(); i++) {
+                        if (adsArrayList.get(i).getmPosition() == Constant.POSITION_BANNER_TOP) {
+                            if (publisherAdViewTop == null) {
+                                publisherAdViewTop = new PublisherAdView(this);
+                                adsConfig.setAdsBanner(publisherAdViewTop,
+                                        adsArrayList.get(i).getmUnitId(), Constant.POSITION_BANNER_TOP, mParentLayout);
+                            }
+                        } else if (adsArrayList.get(i).getmPosition() == Constant.POSITION_BANNER_BOTTOM) {
+                            if (publisherAdViewBottom == null) {
+                                publisherAdViewBottom = new PublisherAdView(this);
+                                adsConfig.setAdsBanner(publisherAdViewBottom,
+                                        adsArrayList.get(i).getmUnitId(), Constant.POSITION_BANNER_BOTTOM, mParentLayout);
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private void setAnalytics() {

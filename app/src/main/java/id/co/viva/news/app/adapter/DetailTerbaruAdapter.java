@@ -22,15 +22,17 @@ import id.co.viva.news.app.model.News;
 public class DetailTerbaruAdapter extends FragmentStatePagerAdapter {
 
     private ArrayList<News> newsArrayList;
-    private ArrayList<Fragment> mFragments = new ArrayList<Fragment>();
+    private ArrayList<Fragment> mFragments = new ArrayList<>();
     private FragmentTransaction mCurTransaction = null;
     private final FragmentManager mFragmentManager;
     private int mPosition;
-    private ArrayList<Fragment.SavedState> mSavedState = new ArrayList<Fragment.SavedState>();
+    private ArrayList<Fragment.SavedState> mSavedState = new ArrayList<>();
+    private String mDetailParameter;
 
-    public DetailTerbaruAdapter(FragmentManager fragmentManager, ArrayList<News> newsArrayList) {
+    public DetailTerbaruAdapter(FragmentManager fragmentManager, ArrayList<News> newsArrayList, String dataParameter) {
         super(fragmentManager);
         mFragmentManager = fragmentManager;
+        mDetailParameter = dataParameter;
         this.newsArrayList = newsArrayList;
     }
 
@@ -39,7 +41,7 @@ public class DetailTerbaruAdapter extends FragmentStatePagerAdapter {
         mPosition = position;
         return DetailMainIndexFragment
                 .newInstance(newsArrayList.get(position).getId(),
-                        Constant.TERBARU_DETAIL_PAGE);
+                        Constant.TERBARU_DETAIL_PAGE, mDetailParameter);
     }
 
     @Override

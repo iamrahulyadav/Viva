@@ -89,17 +89,29 @@ public class ActSplashScreen extends Activity {
         finish();
     }
 
-    //TODO Getting ads
     private void getAds() {
         adsList = mConfigList.getAdList(this);
+        if (adsList != null) {
+            if (adsList.size() > 0) {
+                for (int i=0; i<adsList.size(); i++) {
+                    if (adsList.get(i).getmPosition() == Constant.ADS_TYPE_OPENING_POSITION) {
+                        InterstitialAd interstitialAd = new InterstitialAd(this);
+                        AdsConfig adsConfig = new AdsConfig();
+                        adsConfig.setAdsInterstitial(this, interstitialAd, adsList.get(i).getmUnitId(),
+                                ActLanding.class, Constant.ADS_TYPE_OPENING, null, null);
+                    }
+                }
+            } else {
+                moveTo(ActLanding.class);
+            }
+        } else {
+            moveTo(ActLanding.class);
+        }
     }
 
     private void showAds() {
         if (isInternet) {
-            InterstitialAd interstitialAd = new InterstitialAd(this);
-            AdsConfig adsConfig = new AdsConfig();
-            adsConfig.setAdsInterstitial(this, interstitialAd, Constant.unitIdInterstitialOpen,
-                    ActLanding.class, Constant.ADS_TYPE_OPENING, null, null);
+            getAds();
         } else {
             moveTo(ActLanding.class);
         }

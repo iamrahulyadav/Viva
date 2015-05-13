@@ -173,7 +173,7 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
                     FeaturedLife featuredLife = featuredNewsArrayListTypeList.get(position);
                     Bundle bundle = new Bundle();
                     int lastIndex = featuredNewsArrayListTypeList.size() - 1;
-                    if(position == lastIndex) {
+                    if (position == lastIndex) {
                         Intent intent = new Intent(getActivity(), ActDetailContentDefault.class);
                         bundle.putString("id", featuredLife.getId());
                         bundle.putString("kanal", featuredLife.getKanal());

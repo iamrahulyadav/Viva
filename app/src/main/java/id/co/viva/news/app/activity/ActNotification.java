@@ -48,6 +48,7 @@ import id.co.viva.news.app.adapter.RelatedAdapter;
 import id.co.viva.news.app.ads.AdsConfig;
 import id.co.viva.news.app.component.CropSquareTransformation;
 import id.co.viva.news.app.component.ProgressWheel;
+import id.co.viva.news.app.model.Ads;
 import id.co.viva.news.app.model.Favorites;
 import id.co.viva.news.app.model.RelatedArticle;
 import id.co.viva.news.app.model.SliderContentImage;
@@ -71,6 +72,7 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
     private ArrayList<Favorites> favoritesArrayList;
     private ArrayList<RelatedArticle> relatedArticleArrayList;
     private ArrayList<Video> videoArrayList;
+    private ArrayList<Ads> adsArrayList;
 
     //All Views
     private TextView tvTitleDetail;
@@ -116,7 +118,7 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
         super.onCreate(savedInstanceState);
         //Get some param from notification
         Bundle extras = getIntent().getExtras();
-        if(extras != null) {
+        if (extras != null) {
             idFromNotification = extras.containsKey(Constant.id) ? extras.getString(Constant.id) : "";
             kanalFromNotification = extras.containsKey(Constant.kanal) ? extras.getString(Constant.kanal) : "";
         }
@@ -140,7 +142,6 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
     private void defineViews() {
         //Add ads if exists
         mParentLayout = (LinearLayout) findViewById(R.id.parent_layout);
-        setAds(mParentLayout);
 
         viewPager = (ViewPager) findViewById(R.id.horizontal_list);
         viewPager.setVisibility(View.GONE);
@@ -161,6 +162,7 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
         relatedArticleArrayList = new ArrayList<>();
         sliderContentImages = new ArrayList<>();
         videoArrayList = new ArrayList<>();
+        adsArrayList = new ArrayList<>();
 
         listView = (ListView) findViewById(R.id.list_related_article_notification);
         listView.setOnItemClickListener(this);
@@ -186,18 +188,6 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
                     Constant.getDynamicImageSize(this, Constant.DYNAMIC_SIZE_GRID_TYPE);
             viewPager.getLayoutParams().height =
                     Constant.getDynamicImageSize(this, Constant.DYNAMIC_SIZE_SLIDER_TYPE);
-        }
-    }
-
-    private void setAds(LinearLayout parentLayout) {
-        if (isInternetPresent) {
-            if (this != null) {
-                publisherAdViewTop = new PublisherAdView(this);
-                publisherAdViewBottom = new PublisherAdView(this);
-                AdsConfig adsConfig = new AdsConfig();
-                adsConfig.setAdsBanner(publisherAdViewTop, Constant.unitIdTop, Constant.POSITION_BANNER_TOP, parentLayout);
-                adsConfig.setAdsBanner(publisherAdViewBottom, Constant.unitIdBottom, Constant.POSITION_BANNER_BOTTOM, parentLayout);
-            }
         }
     }
 
@@ -279,7 +269,7 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
 
     private void getContent() {
         if (isInternetPresent) {
-            StringRequest request = new StringRequest(Request.Method.GET, Constant.NEW_DETAIL + "/id/" + idFromNotification,
+            StringRequest request = new StringRequest(Request.Method.GET, Constant.NEW_DETAIL + "id/" + idFromNotification,
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String volleyResponse) {
@@ -287,6 +277,7 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
                             try {
                                 JSONObject jsonObject = new JSONObject(volleyResponse);
                                 JSONObject response = jsonObject.getJSONObject(Constant.response);
+                                //Get content detail
                                 JSONObject detail = response.getJSONObject(Constant.detail);
                                 title = detail.getString(Constant.title);
                                 image_url = detail.getString(Constant.image_url);
@@ -296,7 +287,7 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
                                 image_caption = detail.getString(Constant.image_caption);
                                 shared_url = detail.getString(Constant.url);
                                 channel_id = detail.getString((Constant.channel_id));
-
+                                //Get image content
                                 JSONArray sliderImageArray = detail.getJSONArray(Constant.content_images);
                                 if(sliderImageArray != null) {
                                     for(int i=0; i<sliderImageArray.length(); i++) {
@@ -306,7 +297,7 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
                                         sliderContentImages.add(new SliderContentImage(sliderPhotoUrl, sliderTitle));
                                     }
                                 }
-
+                                //Get video content
                                 JSONArray content_video = detail.getJSONArray(Constant.content_video);
                                 if(content_video != null && content_video.length() > 0) {
                                     for(int i=0; i<content_video.length(); i++) {
@@ -315,9 +306,9 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
                                         videoArrayList.add(new Video(urlVideo, null, null));
                                     }
                                 }
-
+                                //Get related article
                                 JSONArray related_article = response.getJSONArray(Constant.related_article);
-                                for(int i=0; i<related_article.length(); i++) {
+                                for (int i=0; i<related_article.length(); i++) {
                                     JSONObject objRelated = related_article.getJSONObject(i);
                                     String id = objRelated.getString(Constant.id);
                                     String article_id = objRelated.getString(Constant.article_id);
@@ -332,16 +323,29 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
                                     relatedArticleArrayList.add(new RelatedArticle(id, article_id, related_article_id, related_title,
                                             related_channel_level_1_id, channel_id, related_date_publish, image, kanal, shared_url));
                                 }
-
+                                //Get ads list
+                                JSONArray ad_list = response.getJSONArray(Constant.adses);
+                                if (ad_list.length() > 0) {
+                                    for (int i=0; i<ad_list.length(); i++) {
+                                        JSONObject jsonAds = ad_list.getJSONObject(i);
+                                        String name = jsonAds.getString(Constant.name);
+                                        int position = jsonAds.getInt(Constant.position);
+                                        int type = jsonAds.getInt(Constant.type);
+                                        String unit_id = jsonAds.getString(Constant.unit_id);
+                                        adsArrayList.add(new Ads(name, type, position, unit_id));
+                                    }
+                                }
+                                //Send Analytic
                                 getAnalytics(title);
-
+                                //Set data to view
                                 tvTitleDetail.setText(title);
                                 tvDateDetail.setText(date_publish);
                                 setTextViewHTML(tvContentDetail, content);
                                 tvReporterDetail.setText(reporter_name);
-                                Picasso.with(ActNotification.this).load(image_url).transform(new CropSquareTransformation()).into(ivThumbDetail);
-
-                                if(sliderContentImages.size() > 0) {
+                                Picasso.with(ActNotification.this).load(image_url)
+                                        .transform(new CropSquareTransformation()).into(ivThumbDetail);
+                                //Checking for image content
+                                if (sliderContentImages.size() > 0) {
                                     imageSliderAdapter = new ImageSliderAdapter(getSupportFragmentManager(), sliderContentImages);
                                     viewPager.setAdapter(imageSliderAdapter);
                                     viewPager.setCurrentItem(0);
@@ -350,17 +354,17 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
                                     viewPager.setVisibility(View.VISIBLE);
                                     linePageIndicator.setVisibility(View.VISIBLE);
                                 }
-
-                                if(relatedArticleArrayList.size() > 0 || !relatedArticleArrayList.isEmpty()) {
+                                //Checking for related article
+                                if (relatedArticleArrayList.size() > 0 || !relatedArticleArrayList.isEmpty()) {
                                     adapter = new RelatedAdapter(ActNotification.this, relatedArticleArrayList);
                                     listView.setAdapter(adapter);
                                     Constant.setListViewHeightBasedOnChildren(listView);
                                     adapter.notifyDataSetChanged();
                                     headerRelated.setVisibility(View.VISIBLE);
-                                    if(kanalFromNotification != null) {
-                                        if(kanalFromNotification.equalsIgnoreCase("bola")) {
+                                    if (kanalFromNotification != null) {
+                                        if (kanalFromNotification.equalsIgnoreCase("bola")) {
                                             headerRelated.setBackgroundResource(R.color.color_bola);
-                                        } else if(kanalFromNotification.equalsIgnoreCase("vivalife")) {
+                                        } else if (kanalFromNotification.equalsIgnoreCase("vivalife")) {
                                             headerRelated.setBackgroundResource(R.color.color_life);
                                         } else {
                                             headerRelated.setBackgroundResource(R.color.color_news);
@@ -369,19 +373,20 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
                                         headerRelated.setBackgroundResource(R.color.header_grey);
                                     }
                                 }
-
-                                if(rippleView.getVisibility() == View.VISIBLE) {
+                                //Hide 'Retry' button
+                                if (rippleView.getVisibility() == View.VISIBLE) {
                                     rippleView.setVisibility(View.GONE);
                                 }
-
+                                //Hide progress bar
                                 progressWheel.setVisibility(View.GONE);
-
                                 //For updating content
                                 invalidateOptionsMenu();
-
-                                if(urlVideo.length() > 0) {
+                                //Show url video if it exist
+                                if (urlVideo.length() > 0) {
                                     textLinkVideo.setVisibility(View.VISIBLE);
                                 }
+                                //Show Ads
+                                showAds();
                             } catch (Exception e) {
                                 e.getMessage();
                             }
@@ -398,13 +403,13 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
                     });
             request.setShouldCache(true);
             request.setRetryPolicy(new DefaultRetryPolicy(
-                    Constant.TIME_OUT,
+                    Constant.TIME_OUT_REGISTRATION,
                     0,
                     DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
             Global.getInstance(ActNotification.this).getRequestQueue()
-                    .getCache().invalidate(Constant.NEW_DETAIL + "/id/" + idFromNotification, true);
+                    .getCache().invalidate(Constant.NEW_DETAIL + "id/" + idFromNotification, true);
             Global.getInstance(ActNotification.this)
-                    .getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + idFromNotification);
+                    .getRequestQueue().getCache().get(Constant.NEW_DETAIL + "id/" + idFromNotification);
             Global.getInstance(ActNotification.this).addToRequestQueue(request, Constant.JSON_REQUEST);
         } else {
             if (tvNoResult.getVisibility() == View.VISIBLE) {
@@ -544,7 +549,7 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
     public boolean onPrepareOptionsMenu(Menu menu) {
         if(shared_url == null || shared_url.length() < 1) {
             try {
-                if(Global.getInstance(this).getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + idFromNotification) != null) {
+                if (Global.getInstance(this).getRequestQueue().getCache().get(Constant.NEW_DETAIL + "id/" + idFromNotification) != null) {
                     String cachedResponse = new String(Global.getInstance(this).
                             getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + idFromNotification).data);
                     JSONObject jsonObject = new JSONObject(cachedResponse);
@@ -590,7 +595,7 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
         ListView listview = (ListView) adapterView;
         if (listview.getId() == R.id.list_related_article_notification) {
-            if(relatedArticleArrayList.size() > 0) {
+            if (relatedArticleArrayList.size() > 0) {
                 RelatedArticle relatedArticles = relatedArticleArrayList.get(position);
                 Bundle bundle = new Bundle();
                 bundle.putString("id", relatedArticles.getRelated_article_id());
@@ -651,6 +656,31 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
             }
         } else {
             Toast.makeText(this, R.string.title_no_connection, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void showAds() {
+        if (this != null) {
+            if (adsArrayList != null) {
+                if (adsArrayList.size() > 0) {
+                    AdsConfig adsConfig = new AdsConfig();
+                    for (int i=0; i<adsArrayList.size(); i++) {
+                        if (adsArrayList.get(i).getmPosition() == Constant.POSITION_BANNER_TOP) {
+                            if (publisherAdViewTop == null) {
+                                publisherAdViewTop = new PublisherAdView(this);
+                                adsConfig.setAdsBanner(publisherAdViewTop,
+                                        adsArrayList.get(i).getmUnitId(), Constant.POSITION_BANNER_TOP, mParentLayout);
+                            }
+                        } else if (adsArrayList.get(i).getmPosition() == Constant.POSITION_BANNER_BOTTOM) {
+                            if (publisherAdViewBottom == null) {
+                                publisherAdViewBottom = new PublisherAdView(this);
+                                adsConfig.setAdsBanner(publisherAdViewBottom,
+                                        adsArrayList.get(i).getmUnitId(), Constant.POSITION_BANNER_BOTTOM, mParentLayout);
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 

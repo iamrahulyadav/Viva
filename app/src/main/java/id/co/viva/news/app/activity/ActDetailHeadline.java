@@ -4,16 +4,11 @@ import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.google.android.gms.ads.doubleclick.PublisherAdView;
-
 import id.co.viva.news.app.Constant;
-import id.co.viva.news.app.Global;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.adapter.DetailHeadlineAdapter;
-import id.co.viva.news.app.ads.AdsConfig;
 import id.co.viva.news.app.component.ZoomOutPageTransformer;
 import id.co.viva.news.app.fragment.HeadlineFragment;
 import id.co.viva.news.app.model.Headline;
@@ -24,12 +19,9 @@ import id.co.viva.news.app.model.Headline;
 public class ActDetailHeadline extends ActionBarActivity {
 
     private String id;
+    private String detailParam;
     private ViewPager viewPager;
     private DetailHeadlineAdapter adapter;
-    private Boolean isInternetPresent = false;
-    private LinearLayout mParentLayout;
-    private PublisherAdView publisherAdViewBottom;
-    private PublisherAdView publisherAdViewTop;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,19 +29,12 @@ public class ActDetailHeadline extends ActionBarActivity {
         //Get parameter
         Bundle bundle = getIntent().getExtras();
         id = bundle.getString("id");
-
-        //Check internet connection
-        isInternetPresent = Global.getInstance(this)
-                .getConnectionStatus().isConnectingToInternet();
+        detailParam = bundle.getString(Constant.headline_detail_screen);
 
         setContentView(R.layout.act_detail_main_article);
 
         //Set Actionbar
         setActionBar();
-
-        //Add ads if exists
-        mParentLayout = (LinearLayout) findViewById(R.id.parent_layout);
-        setAds(mParentLayout);
 
         //Set Detail Pager
         int position = 0;
@@ -60,7 +45,7 @@ public class ActDetailHeadline extends ActionBarActivity {
                     position++;
                 }
             }
-            adapter = new DetailHeadlineAdapter(getSupportFragmentManager(), HeadlineFragment.headlineArrayList);
+            adapter = new DetailHeadlineAdapter(getSupportFragmentManager(), HeadlineFragment.headlineArrayList, detailParam);
             viewPager = (ViewPager)findViewById(R.id.vp_detail_main_article);
             viewPager.setAdapter(adapter);
             viewPager.setPageTransformer(true, new ZoomOutPageTransformer());
@@ -87,51 +72,6 @@ public class ActDetailHeadline extends ActionBarActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
         getSupportActionBar().setTitle(getResources().getString(R.string.label_headline_detail));
-    }
-
-    private void setAds(LinearLayout parentLayout) {
-        if (isInternetPresent) {
-            if (this != null) {
-                publisherAdViewTop = new PublisherAdView(this);
-                publisherAdViewBottom = new PublisherAdView(this);
-                AdsConfig adsConfig = new AdsConfig();
-                adsConfig.setAdsBanner(publisherAdViewTop, Constant.unitIdTop, Constant.POSITION_BANNER_TOP, parentLayout);
-                adsConfig.setAdsBanner(publisherAdViewBottom, Constant.unitIdBottom, Constant.POSITION_BANNER_BOTTOM, parentLayout);
-            }
-        }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (publisherAdViewBottom != null) {
-            publisherAdViewBottom.resume();
-        }
-        if (publisherAdViewTop != null) {
-            publisherAdViewTop.resume();
-        }
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        if (publisherAdViewBottom != null) {
-            publisherAdViewBottom.pause();
-        }
-        if (publisherAdViewTop != null) {
-            publisherAdViewTop.pause();
-        }
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (publisherAdViewBottom != null) {
-            publisherAdViewBottom.destroy();
-        }
-        if (publisherAdViewTop != null) {
-            publisherAdViewTop.destroy();
-        }
     }
 
 }

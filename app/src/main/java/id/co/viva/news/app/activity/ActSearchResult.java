@@ -38,6 +38,7 @@ import id.co.viva.news.app.ads.AdsConfig;
 import id.co.viva.news.app.component.LoadMoreListView;
 import id.co.viva.news.app.component.ProgressWheel;
 import id.co.viva.news.app.interfaces.OnLoadMoreListener;
+import id.co.viva.news.app.model.Ads;
 import id.co.viva.news.app.model.SearchResult;
 import id.co.viva.news.app.services.Analytics;
 
@@ -51,8 +52,8 @@ public class ActSearchResult extends ActionBarActivity implements
     private LoadMoreListView listSearchResult;
     private String mQuery;
     private boolean isInternetPresent = false;
-    private JSONArray jsonArrayResponses;
     private ArrayList<SearchResult> resultArrayList;
+    private ArrayList<Ads> adsArrayList;
     private TextView tvNoResult;
     private AnimationAdapter mAnimAdapter;
     private Analytics analytics;
@@ -62,27 +63,19 @@ public class ActSearchResult extends ActionBarActivity implements
     private ProgressWheel progressWheel;
     private SearchResultAdapter searchResultAdapter;
     private String mKeywordFromScan;
-
     private LinearLayout mParentLayout;
     private PublisherAdView publisherAdViewBottom;
     private PublisherAdView publisherAdViewTop;
-
-    private String id ;
-    private String kanal ;
-    private String image_url ;
-    private String title ;
-    private String slug ;
-    private String date_publish ;
-    private String url ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act_search_result);
-
+        //Header
         getSupportActionBar()
                 .setTitle(getResources().getString(R.string.label_pencarian));
 
+        //Check current internet connection
         isInternetPresent = Global.getInstance(this).
                 getConnectionStatus().isConnectingToInternet();
 
@@ -114,6 +107,7 @@ public class ActSearchResult extends ActionBarActivity implements
 
     private void defineViews() {
         mParentLayout = (LinearLayout) findViewById(R.id.parent_layout);
+        adsArrayList = new ArrayList<>();
         resultArrayList = new ArrayList<>();
         searchResultAdapter = new SearchResultAdapter(this, resultArrayList);
         tvSearchResult = (TextView)findViewById(R.id.text_search_result);
@@ -122,16 +116,6 @@ public class ActSearchResult extends ActionBarActivity implements
         listSearchResult.setOnLoadMoreListener(this);
         tvNoResult = (TextView)findViewById(R.id.text_no_result);
         progressWheel = (ProgressWheel)findViewById(R.id.progress_wheel);
-    }
-
-    private void setAds(LinearLayout parentLayout) {
-        if (this != null) {
-            publisherAdViewTop = new PublisherAdView(this);
-            publisherAdViewBottom = new PublisherAdView(this);
-            AdsConfig adsConfig = new AdsConfig();
-            adsConfig.setAdsBanner(publisherAdViewTop, Constant.unitIdTop, Constant.POSITION_BANNER_TOP, parentLayout);
-            adsConfig.setAdsBanner(publisherAdViewBottom, Constant.unitIdBottom, Constant.POSITION_BANNER_BOTTOM, parentLayout);
-        }
     }
 
     private void getParamFromScan() {
@@ -153,7 +137,8 @@ public class ActSearchResult extends ActionBarActivity implements
     }
 
     private void loadQuery(String query) {
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, Constant.NEW_SEARCH + "q/" + query.replaceAll(" ", "%20") + "/s/0",
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, Constant.NEW_SEARCH + "q/"
+                + query.replaceAll(" ", "%20") + "/s/0/" + Constant.search_screen,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String volleyResponse) {
@@ -161,22 +146,37 @@ public class ActSearchResult extends ActionBarActivity implements
                         try {
                             JSONObject jsonObject = new JSONObject(volleyResponse);
                             JSONObject response = jsonObject.getJSONObject(Constant.response);
-                            jsonArrayResponses = response.getJSONArray(Constant.search);
-                            if(jsonArrayResponses != null) {
-                                for(int i=0; i<jsonArrayResponses.length(); i++) {
+                            //Get search result list
+                            JSONArray jsonArrayResponses = response.getJSONArray(Constant.search);
+                            if (jsonArrayResponses.length() > 0) {
+                                for (int i=0; i<jsonArrayResponses.length(); i++) {
                                     JSONObject jsonHeadline = jsonArrayResponses.getJSONObject(i);
-                                    id = jsonHeadline.getString(Constant.id);
-                                    kanal = jsonHeadline.getString(Constant.kanal);
-                                    image_url = jsonHeadline.getString(Constant.image_url);
-                                    title = jsonHeadline.getString(Constant.title);
-                                    slug = jsonHeadline.getString(Constant.slug);
-                                    date_publish = jsonHeadline.getString(Constant.date_publish);
-                                    url = jsonHeadline.getString(Constant.url);
+                                    String id = jsonHeadline.getString(Constant.id);
+                                    String kanal = jsonHeadline.getString(Constant.kanal);
+                                    String image_url = jsonHeadline.getString(Constant.image_url);
+                                    String title = jsonHeadline.getString(Constant.title);
+                                    String slug = jsonHeadline.getString(Constant.slug);
+                                    String date_publish = jsonHeadline.getString(Constant.date_publish);
+                                    String url = jsonHeadline.getString(Constant.url);
                                     resultArrayList.add(new SearchResult(id, kanal, image_url,
                                             title, slug, date_publish, url));
                                     Log.i(Constant.TAG, "SEARCH RESULTS : " + resultArrayList.get(i).getTitle());
                                 }
                             }
+                            //Get ads list
+                            JSONArray jsonAds = response.getJSONArray(Constant.adses);
+                            if (jsonAds.length() > 0) {
+                                for (int j=0; j<jsonAds.length(); j++) {
+                                    JSONObject adObj = jsonAds.getJSONObject(j);
+                                    String name = adObj.getString(Constant.name);
+                                    int position = adObj.getInt(Constant.position);
+                                    int type = adObj.getInt(Constant.type);
+                                    String unit_id = adObj.getString(Constant.unit_id);
+                                    adsArrayList.add(new Ads(name, type, position, unit_id));
+                                    Log.i(Constant.TAG, "ADS : " + adsArrayList.get(j).getmUnitId());
+                                }
+                            }
+                            //Populate content
                             if (resultArrayList.size() > 0 || !resultArrayList.isEmpty()) {
                                 mAnimAdapter = new ScaleInAnimationAdapter(searchResultAdapter);
                                 mAnimAdapter.setAbsListView(listSearchResult);
@@ -185,7 +185,7 @@ public class ActSearchResult extends ActionBarActivity implements
                                 progressWheel.setVisibility(View.GONE);
                             }
                             //Set ads if exists
-                            setAds(mParentLayout);
+                            showAds();
                         } catch (Exception e) {
                             e.getMessage();
                         }
@@ -202,11 +202,13 @@ public class ActSearchResult extends ActionBarActivity implements
         });
         stringRequest.setShouldCache(true);
         stringRequest.setRetryPolicy(new DefaultRetryPolicy(
-                Constant.TIME_OUT,
+                Constant.TIME_OUT_REGISTRATION,
                 0,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        Global.getInstance(this).getRequestQueue().getCache().invalidate(Constant.NEW_SEARCH + "q/" + query.replaceAll(" ", "%20") + "/s/0", true);
-        Global.getInstance(this).getRequestQueue().getCache().get(Constant.NEW_SEARCH + "q/" + query.replaceAll(" ", "%20") + "/s/0");
+        Global.getInstance(this).getRequestQueue().getCache().invalidate(Constant.NEW_SEARCH + "q/"
+                + query.replaceAll(" ", "%20") + "/s/0/" + Constant.search_screen, true);
+        Global.getInstance(this).getRequestQueue().getCache().get(Constant.NEW_SEARCH + "q/"
+                + query.replaceAll(" ", "%20") + "/s/0/" + Constant.search_screen);
         Global.getInstance(this).addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
     }
 
@@ -223,7 +225,7 @@ public class ActSearchResult extends ActionBarActivity implements
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-        if(resultArrayList.size() > 0) {
+        if (resultArrayList.size() > 0) {
             SearchResult searchResult = resultArrayList.get(position);
             Bundle bundle = new Bundle();
             bundle.putString("id", searchResult.getId());
@@ -300,25 +302,25 @@ public class ActSearchResult extends ActionBarActivity implements
 
     private void loadMoreData(final String query) {
         if(isInternetPresent) {
-            StringRequest stringRequest = new StringRequest(Request.Method.GET, Constant.NEW_SEARCH + "q/" + query.replaceAll(" ", "%20") + "/s/" + data,
+            StringRequest stringRequest = new StringRequest(Request.Method.GET, Constant.NEW_SEARCH + "q/"
+                    + query.replaceAll(" ", "%20") + "/s/" + data + "/" + Constant.search_screen,
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String volleyResponse) {
-                            Log.i(Constant.TAG, "LOAD MORE SEARCH RESPONSES : " + Constant.NEW_SEARCH + "q/" + query.replaceAll(" ", "%20") + "/s/" + data);
                             try {
                                 JSONObject jsonObject = new JSONObject(volleyResponse);
                                 JSONObject response = jsonObject.getJSONObject(Constant.response);
-                                jsonArrayResponses = response.getJSONArray(Constant.search);
-                                if(jsonArrayResponses != null) {
-                                    for(int i=0; i<jsonArrayResponses.length(); i++) {
+                                JSONArray jsonArrayResponses = response.getJSONArray(Constant.search);
+                                if (jsonArrayResponses != null) {
+                                    for (int i=0; i<jsonArrayResponses.length(); i++) {
                                         JSONObject jsonHeadline = jsonArrayResponses.getJSONObject(i);
-                                        id = jsonHeadline.getString(Constant.id);
-                                        kanal = jsonHeadline.getString(Constant.kanal);
-                                        image_url = jsonHeadline.getString(Constant.image_url);
-                                        title = jsonHeadline.getString(Constant.title);
-                                        slug = jsonHeadline.getString(Constant.slug);
-                                        date_publish = jsonHeadline.getString(Constant.date_publish);
-                                        url = jsonHeadline.getString(Constant.url);
+                                        String id = jsonHeadline.getString(Constant.id);
+                                        String kanal = jsonHeadline.getString(Constant.kanal);
+                                        String image_url = jsonHeadline.getString(Constant.image_url);
+                                        String title = jsonHeadline.getString(Constant.title);
+                                        String slug = jsonHeadline.getString(Constant.slug);
+                                        String date_publish = jsonHeadline.getString(Constant.date_publish);
+                                        String url = jsonHeadline.getString(Constant.url);
                                         resultArrayList.add(new SearchResult(id, kanal, image_url,
                                                 title, slug, date_publish, url));
                                         Log.i(Constant.TAG, "LOAD MORE SEARCH RESULTS : " + resultArrayList.get(i).getTitle());
@@ -347,11 +349,38 @@ public class ActSearchResult extends ActionBarActivity implements
                     Constant.TIME_OUT,
                     0,
                     DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-            Global.getInstance(this).getRequestQueue().getCache().invalidate(Constant.NEW_SEARCH + "q/" + query.replaceAll(" ", "%20") + "/s/" + data, true);
-            Global.getInstance(this).getRequestQueue().getCache().get(Constant.NEW_SEARCH + "q/" + query.replaceAll(" ", "%20") + "/s/" + data);
+            Global.getInstance(this).getRequestQueue().getCache().invalidate(Constant.NEW_SEARCH + "q/"
+                    + query.replaceAll(" ", "%20") + "/s/" + data + "/" + Constant.search_screen, true);
+            Global.getInstance(this).getRequestQueue().getCache().get(Constant.NEW_SEARCH + "q/"
+                    + query.replaceAll(" ", "%20") + "/s/" + data + "/" + Constant.search_screen);
             Global.getInstance(this).addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
         } else {
             Toast.makeText(this, R.string.title_no_connection, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void showAds() {
+        if (ActSearchResult.this != null) {
+            if (adsArrayList != null) {
+                if (adsArrayList.size() > 0) {
+                    AdsConfig adsConfig = new AdsConfig();
+                    for (int i=0; i<adsArrayList.size(); i++) {
+                        if (adsArrayList.get(i).getmPosition() == Constant.POSITION_BANNER_TOP) {
+                            if (publisherAdViewTop == null) {
+                                publisherAdViewTop = new PublisherAdView(this);
+                                adsConfig.setAdsBanner(publisherAdViewTop,
+                                        adsArrayList.get(i).getmUnitId(), Constant.POSITION_BANNER_TOP, mParentLayout);
+                            }
+                        } else if (adsArrayList.get(i).getmPosition() == Constant.POSITION_BANNER_BOTTOM) {
+                            if (publisherAdViewBottom == null) {
+                                publisherAdViewBottom = new PublisherAdView(this);
+                                adsConfig.setAdsBanner(publisherAdViewBottom,
+                                        adsArrayList.get(i).getmUnitId(), Constant.POSITION_BANNER_BOTTOM, mParentLayout);
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 

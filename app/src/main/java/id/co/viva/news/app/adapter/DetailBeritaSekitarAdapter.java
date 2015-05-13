@@ -27,10 +27,12 @@ public class DetailBeritaSekitarAdapter extends FragmentStatePagerAdapter {
     private final FragmentManager mFragmentManager;
     private ArrayList<Fragment.SavedState> mSavedState = new ArrayList<Fragment.SavedState>();
     private int mPosition;
+    private String mDetailParam;
 
-    public DetailBeritaSekitarAdapter(FragmentManager fragmentManager, ArrayList<BeritaSekitar> beritaSekitarArrayList) {
+    public DetailBeritaSekitarAdapter(FragmentManager fragmentManager, ArrayList<BeritaSekitar> beritaSekitarArrayList, String detailParam) {
         super(fragmentManager);
         mFragmentManager = fragmentManager;
+        mDetailParam = detailParam;
         this.beritaSekitarArrayList = beritaSekitarArrayList;
     }
 
@@ -39,7 +41,7 @@ public class DetailBeritaSekitarAdapter extends FragmentStatePagerAdapter {
         mPosition = position;
         return DetailMainIndexFragment
                 .newInstance(beritaSekitarArrayList.get(position).getId(),
-                        Constant.BERITA_SEKITAR_DETAIL_PAGE);
+                        Constant.BERITA_SEKITAR_DETAIL_PAGE, mDetailParam);
     }
 
     @Override
@@ -118,7 +120,7 @@ public class DetailBeritaSekitarAdapter extends FragmentStatePagerAdapter {
     @Override
     public Parcelable saveState() {
         Bundle state = null;
-        if(mSavedState.size() > 0) {
+        if (mSavedState.size() > 0) {
             state = new Bundle();
             Fragment.SavedState[] fss = new Fragment.SavedState[mSavedState.size()];
             mSavedState.toArray(fss);
@@ -126,8 +128,8 @@ public class DetailBeritaSekitarAdapter extends FragmentStatePagerAdapter {
         }
         for (int i=0; i<mFragments.size(); i++) {
             Fragment f = mFragments.get(i);
-            if(f != null) {
-                if(state == null) {
+            if (f != null) {
+                if (state == null) {
                     state = new Bundle();
                 }
                 String key = "f" + i;
@@ -139,13 +141,13 @@ public class DetailBeritaSekitarAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public void restoreState(Parcelable state, ClassLoader loader) {
-        if(state != null) {
+        if (state != null) {
             Bundle bundle = (Bundle)state;
             bundle.setClassLoader(loader);
             Parcelable[] fss = bundle.getParcelableArray("states");
             mSavedState.clear();
             mFragments.clear();
-            if(fss != null) {
+            if (fss != null) {
                 for(int i=0; i<fss.length; i++) {
                     mSavedState.add((Fragment.SavedState)fss[i]);
                 }

@@ -27,9 +27,11 @@ public class DetailContentAdapterBola extends FragmentStatePagerAdapter {
     private ArrayList<Fragment.SavedState> mSavedState = new ArrayList<Fragment.SavedState>();
     private final FragmentManager mFragmentManager;
     private int mPosition;
+    private String mChannelTitle;
 
-    public DetailContentAdapterBola(FragmentManager fragmentManager, ArrayList<ChannelBola> channelBolaArrayList) {
+    public DetailContentAdapterBola(FragmentManager fragmentManager, ArrayList<ChannelBola> channelBolaArrayList, String channelTitle) {
         super(fragmentManager);
+        mChannelTitle = channelTitle;
         mFragmentManager = fragmentManager;
         this.channelBolaArrayList = channelBolaArrayList;
     }
@@ -38,7 +40,7 @@ public class DetailContentAdapterBola extends FragmentStatePagerAdapter {
     public Fragment getItem(int position) {
         mPosition = position;
         return DetailIndexContent.newInstance(channelBolaArrayList
-                .get(position).getId(), "bola");
+                .get(position).getId(), "bola", mChannelTitle);
     }
 
     @Override

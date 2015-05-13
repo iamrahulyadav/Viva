@@ -28,7 +28,6 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.google.android.gms.ads.doubleclick.PublisherAdView;
 import com.squareup.picasso.Picasso;
 import com.viewpagerindicator.LinePageIndicator;
 
@@ -43,7 +42,6 @@ import id.co.viva.news.app.Global;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.adapter.ImageSliderAdapter;
 import id.co.viva.news.app.adapter.RelatedAdapter;
-import id.co.viva.news.app.ads.AdsConfig;
 import id.co.viva.news.app.component.CropSquareTransformation;
 import id.co.viva.news.app.component.ProgressWheel;
 import id.co.viva.news.app.model.Comment;
@@ -96,11 +94,6 @@ public class ActDetailContentDefault extends ActionBarActivity
     private ProgressWheel progressWheel;
     private TextView textLinkVideo;
 
-    //Ads AdMob DFP
-    private LinearLayout mParentLayout;
-    private PublisherAdView publisherAdViewBottom;
-    private PublisherAdView publisherAdViewTop;
-
     //Checking Flag Internet
     private boolean isInternetPresent = false;
 
@@ -140,7 +133,7 @@ public class ActDetailContentDefault extends ActionBarActivity
         setThemes();
 
         //Get data
-        if(isInternetPresent) {
+        if (isInternetPresent) {
             StringRequest request = new StringRequest(Request.Method.GET, Constant.NEW_DETAIL + "/id/" + id,
                     new Response.Listener<String>() {
                         @Override
@@ -306,7 +299,7 @@ public class ActDetailContentDefault extends ActionBarActivity
             Global.getInstance(this).getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + id);
             Global.getInstance(this).addToRequestQueue(request, Constant.JSON_REQUEST);
         } else {
-            if(Global.getInstance(this).getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + id) != null) {
+            if (Global.getInstance(this).getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + id) != null) {
                 String cachedResponse = new String(Global.getInstance(this).
                         getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + id).data);
                 try {
@@ -441,10 +434,6 @@ public class ActDetailContentDefault extends ActionBarActivity
     }
 
     private void defineViews() {
-        //Add ads if exists
-        mParentLayout = (LinearLayout) findViewById(R.id.parent_layout);
-        setAds(mParentLayout);
-
         viewPager = (ViewPager) findViewById(R.id.horizontal_list);
         viewPager.setVisibility(View.GONE);
 
@@ -489,39 +478,6 @@ public class ActDetailContentDefault extends ActionBarActivity
                     Constant.getDynamicImageSize(this, Constant.DYNAMIC_SIZE_GRID_TYPE);
             viewPager.getLayoutParams().height =
                     Constant.getDynamicImageSize(this, Constant.DYNAMIC_SIZE_SLIDER_TYPE);
-        }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (publisherAdViewBottom != null) {
-            publisherAdViewBottom.resume();
-        }
-        if (publisherAdViewTop != null) {
-            publisherAdViewTop.resume();
-        }
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        if (publisherAdViewBottom != null) {
-            publisherAdViewBottom.pause();
-        }
-        if (publisherAdViewTop != null) {
-            publisherAdViewTop.pause();
-        }
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (publisherAdViewBottom != null) {
-            publisherAdViewBottom.destroy();
-        }
-        if (publisherAdViewTop != null) {
-            publisherAdViewTop.destroy();
         }
     }
 
@@ -812,18 +768,6 @@ public class ActDetailContentDefault extends ActionBarActivity
             }
         } else {
             Toast.makeText(this, R.string.title_no_connection, Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void setAds(LinearLayout parentLayout) {
-        if (isInternetPresent) {
-            if (this != null) {
-                publisherAdViewTop = new PublisherAdView(this);
-                publisherAdViewBottom = new PublisherAdView(this);
-                AdsConfig adsConfig = new AdsConfig();
-                adsConfig.setAdsBanner(publisherAdViewTop, Constant.unitIdTop, Constant.POSITION_BANNER_TOP, parentLayout);
-                adsConfig.setAdsBanner(publisherAdViewBottom, Constant.unitIdBottom, Constant.POSITION_BANNER_BOTTOM, parentLayout);
-            }
         }
     }
 

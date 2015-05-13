@@ -27,17 +27,19 @@ public class DetailContentAdapterNews extends FragmentStatePagerAdapter {
     private ArrayList<Fragment.SavedState> mSavedState = new ArrayList<Fragment.SavedState>();
     private final FragmentManager mFragmentManager;
     private int mPosition;
+    private String channelTitle;
 
-    public DetailContentAdapterNews(FragmentManager fragmentManager, ArrayList<ChannelNews> channelNewsArrayList) {
+    public DetailContentAdapterNews(FragmentManager fragmentManager, ArrayList<ChannelNews> channelNewsArrayList, String channelTitle) {
         super(fragmentManager);
         mFragmentManager = fragmentManager;
+        this.channelTitle = channelTitle;
         this.channelNewsArrayList = channelNewsArrayList;
     }
 
     @Override
     public Fragment getItem(int position) {
         mPosition = position;
-        return DetailIndexContent.newInstance(channelNewsArrayList.get(position).getId(), "news");
+        return DetailIndexContent.newInstance(channelNewsArrayList.get(position).getId(), "news", channelTitle);
     }
 
     @Override
