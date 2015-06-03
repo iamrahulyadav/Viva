@@ -535,7 +535,7 @@ public class ActDetailChannelBola extends ActionBarActivity implements
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                 super.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
                 int firstIndex = listView.getFirstVisiblePosition();
-                if(firstIndex > Constant.NUMBER_OF_TOP_LIST_ITEMS) {
+                if(firstIndex > Constant.NUMBER_OF_TOP_LIST_ITEMS_BIG_CARD) {
                     floatingActionButton.setVisibility(View.VISIBLE);
                 } else {
                     floatingActionButton.setVisibility(View.GONE);

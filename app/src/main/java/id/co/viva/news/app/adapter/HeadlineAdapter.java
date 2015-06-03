@@ -50,46 +50,49 @@ public class HeadlineAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View view, ViewGroup viewGroup) {
-        ViewHolder holder;
-
-        if(view == null) {
+        ViewHolderBigCard holderBig;
+        //Checking view
+        if (view == null) {
             LayoutInflater inflater = LayoutInflater.from(context);
+            //Checking list type
             view = inflater.inflate(R.layout.item_latest_terbaru, null);
-            holder = new ViewHolder();
-            holder.icon_item_news = (ImageView) view.findViewById(R.id.image_item_news);
-            holder.icon_item_viva_news = (ImageView) view.findViewById(R.id.icon_headline_terbaru);
-            holder.title_item_news = (TextView) view.findViewById(R.id.title_item_latest);
-            holder.date_item_news = (TextView) view.findViewById(R.id.date_item_news);
-            view.setTag(holder);
+            holderBig = new ViewHolderBigCard();
+            holderBig.icon_item_news = (ImageView) view.findViewById(R.id.image_item_news);
+            holderBig.icon_item_viva_news = (ImageView) view.findViewById(R.id.icon_headline_terbaru);
+            holderBig.title_item_news = (TextView) view.findViewById(R.id.title_item_latest);
+            holderBig.date_item_news = (TextView) view.findViewById(R.id.date_item_news);
+            view.setTag(holderBig);
         } else {
-            holder = (ViewHolder) view.getTag();
+            holderBig = (ViewHolderBigCard) view.getTag();
         }
-
+        //Get position each item
         Headline headline = headlineArrayList.get(position);
-
+        //Set image
         if (headline.getImage_url().length() > 0) {
             Picasso.with(context).load(headline.getImage_url())
-                    .transform(new CropSquareTransformation()).into(holder.icon_item_news);
+                    .transform(new CropSquareTransformation()).into(holderBig.icon_item_news);
+            //Check is tablet or not
             if (Constant.isTablet(context)) {
-                holder.icon_item_news.getLayoutParams().height = Constant.getDynamicImageSize(context, Constant.DYNAMIC_SIZE_LIST_TYPE);
-                holder.icon_item_news.requestLayout();
+                holderBig.icon_item_news.getLayoutParams().height =
+                        Constant.getDynamicImageSize(context, Constant.DYNAMIC_SIZE_LIST_TYPE);
+                holderBig.icon_item_news.requestLayout();
             }
         }
-
-        holder.title_item_news.setText(headline.getTitle());
-
+        //Set title
+        holderBig.title_item_news.setText(headline.getTitle());
+        //Set theme icon
         if (headline.getKanal().equalsIgnoreCase("bola")) {
-            holder.icon_item_viva_news.setImageResource(R.drawable.icon_viva_bola);
+            holderBig.icon_item_viva_news.setImageResource(R.drawable.icon_viva_bola);
         } else if(headline.getKanal().equalsIgnoreCase("vivalife")) {
-            holder.icon_item_viva_news.setImageResource(R.drawable.icon_viva_life);
+            holderBig.icon_item_viva_news.setImageResource(R.drawable.icon_viva_life);
         } else {
-            holder.icon_item_viva_news.setImageResource(R.drawable.icon_viva_news);
+            holderBig.icon_item_viva_news.setImageResource(R.drawable.icon_viva_news);
         }
-
+        //Set time
         try {
             DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             Date date = formatter.parse(headline.getDate_publish());
-            holder.date_item_news.setText(Constant.getTimeAgo(date.getTime()));
+            holderBig.date_item_news.setText(Constant.getTimeAgo(date.getTime()));
         } catch (Exception e) {
             e.getMessage();
         }
@@ -97,7 +100,7 @@ public class HeadlineAdapter extends BaseAdapter {
         return view;
     }
 
-    private static class ViewHolder {
+    private static class ViewHolderBigCard {
         public TextView title_item_news;
         public TextView date_item_news;
         public ImageView icon_item_news;

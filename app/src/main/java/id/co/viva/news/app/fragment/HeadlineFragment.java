@@ -11,6 +11,9 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -28,6 +31,8 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.google.android.gms.ads.doubleclick.PublisherAdView;
 import com.melnykov.fab.FloatingActionButton;
+import com.nhaarman.listviewanimations.appearance.AnimationAdapter;
+import com.nhaarman.listviewanimations.appearance.simple.ScaleInAnimationAdapter;
 import com.nhaarman.listviewanimations.appearance.simple.SwingBottomInAnimationAdapter;
 
 import org.json.JSONArray;
@@ -42,6 +47,7 @@ import id.co.viva.news.app.Global;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.activity.ActDetailHeadline;
 import id.co.viva.news.app.adapter.HeadlineAdapter;
+import id.co.viva.news.app.adapter.MainListAdapter;
 import id.co.viva.news.app.ads.AdsConfig;
 import id.co.viva.news.app.component.GoogleMusicDicesDrawable;
 import id.co.viva.news.app.component.LoadMoreListView;
@@ -60,8 +66,11 @@ public class HeadlineFragment extends Fragment implements
     private ArrayList<Ads> adsArrayList;
     private ActionBarActivity mActivity;
     private SwingBottomInAnimationAdapter swingBottomInAnimationAdapter;
+    private AnimationAdapter mAnimAdapter;
     private HeadlineAdapter headlineAdapter;
+    private MainListAdapter headlineSmallAdapter;
     private LoadMoreListView listView;
+    private LoadMoreListView listViewSmallCard;
     private LinearLayout mParentLayout;
     private PublisherAdView publisherAdViewBottom;
     private PublisherAdView publisherAdViewTop;
@@ -88,6 +97,7 @@ public class HeadlineFragment extends Fragment implements
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        setHasOptionsMenu(true);
         ColorDrawable colorDrawable = new ColorDrawable();
         colorDrawable.setColor(getResources().getColor(R.color.new_base_color));
         mActivity = (ActionBarActivity) activity;
@@ -130,26 +140,47 @@ public class HeadlineFragment extends Fragment implements
         labelText = (TextView) rootView.findViewById(R.id.text_terbaru_headline);
         labelText.setText(getString(R.string.label_headline));
 
-        //List Content
+        //Big Card List Content
         listView = (LoadMoreListView) rootView.findViewById(R.id.list_terbaru_headline);
+        listView.setVisibility(View.GONE);
         listView.setOnItemClickListener(this);
         listView.setOnLoadMoreListener(this);
+
+        //Small Card List Content
+        listViewSmallCard = (LoadMoreListView) rootView.findViewById(R.id.list_terbaru_headline_small_card);
+        listViewSmallCard.setOnItemClickListener(this);
+        listViewSmallCard.setOnLoadMoreListener(this);
 
         //Set 'go to the top' button
         floatingActionButton = (FloatingActionButton) rootView.findViewById(R.id.fab);
         floatingActionButton.setVisibility(View.GONE);
+        //Set floating button into big card list
         floatingActionButton.attachToListView(listView, new FloatingActionButton.FabOnScrollListener() {
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                 super.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
                 int firstIndex = listView.getFirstVisiblePosition();
-                if (firstIndex > Constant.NUMBER_OF_TOP_LIST_ITEMS) {
+                if (firstIndex > Constant.NUMBER_OF_TOP_LIST_ITEMS_BIG_CARD) {
                     floatingActionButton.setVisibility(View.VISIBLE);
                 } else {
                     floatingActionButton.setVisibility(View.GONE);
                 }
             }
         });
+        //Set floating button into small card list
+        floatingActionButton.attachToListView(listViewSmallCard, new FloatingActionButton.FabOnScrollListener() {
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                super.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
+                int firstIndex = listViewSmallCard.getFirstVisiblePosition();
+                if (firstIndex > Constant.NUMBER_OF_TOP_LIST_ITEMS_SMALL_CARD) {
+                    floatingActionButton.setVisibility(View.VISIBLE);
+                } else {
+                    floatingActionButton.setVisibility(View.GONE);
+                }
+            }
+        });
+        //Handle floating onClick
         floatingActionButton.setOnClickListener(this);
 
         //Assign array
@@ -166,7 +197,7 @@ public class HeadlineFragment extends Fragment implements
     }
 
     private void parseJson(final ArrayList<Headline> headlines) {
-        if(isInternetPresent) {
+        if (isInternetPresent) {
             StringRequest stringRequest = new StringRequest(Request.Method.GET, Constant.NEW_HEADLINE,
                     new Response.Listener<String>() {
                         @Override
@@ -212,14 +243,32 @@ public class HeadlineFragment extends Fragment implements
                                     }
                                 }
                                 //Fill data from API
-                                if(headlines.size() > 0 || !headlines.isEmpty()) {
-                                    headlineAdapter = new HeadlineAdapter(getActivity(), headlines);
-                                    swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(headlineAdapter);
+                                if (headlines.size() > 0 || !headlines.isEmpty()) {
+                                    //Big Card List Style
+                                    if (headlineAdapter == null) {
+                                        headlineAdapter = new HeadlineAdapter(getActivity(), headlines);
+                                    }
+                                    if (swingBottomInAnimationAdapter == null) {
+                                        swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(headlineAdapter);
+                                    }
                                     swingBottomInAnimationAdapter.setAbsListView(listView);
                                     assert swingBottomInAnimationAdapter.getViewAnimator() != null;
                                     swingBottomInAnimationAdapter.getViewAnimator().setInitialDelayMillis(1000);
                                     listView.setAdapter(swingBottomInAnimationAdapter);
                                     headlineAdapter.notifyDataSetChanged();
+
+                                    //Small Card List Style
+                                    if (headlineSmallAdapter == null) {
+                                        headlineSmallAdapter = new MainListAdapter(getActivity(), Constant.HEADLINES_LIST, headlines, null);
+                                    }
+                                    if (mAnimAdapter == null) {
+                                        mAnimAdapter = new ScaleInAnimationAdapter(headlineSmallAdapter);
+                                    }
+                                    mAnimAdapter.setAbsListView(listViewSmallCard);
+                                    listViewSmallCard.setAdapter(mAnimAdapter);
+                                    mAnimAdapter.notifyDataSetChanged();
+
+                                    //Hide progress
                                     loading_layout.setVisibility(View.GONE);
                                     labelLoadData.setVisibility(View.GONE);
                                 }
@@ -245,11 +294,11 @@ public class HeadlineFragment extends Fragment implements
                             Log.i(Constant.TAG, "From Cached : " + cachedResponse);
                             JSONObject jsonObject = new JSONObject(cachedResponse);
                             jsonArrayResponses = jsonObject.getJSONArray(Constant.response);
-                            if(jsonArrayResponses != null) {
+                            if (jsonArrayResponses != null) {
                                 JSONObject objHeadline = jsonArrayResponses.getJSONObject(0);
-                                if(objHeadline !=  null) {
+                                if (objHeadline !=  null) {
                                     jsonArraySegmentHeadline = objHeadline.getJSONArray(Constant.HEADLINES);
-                                    for(int i=0; i<jsonArraySegmentHeadline.length(); i++) {
+                                    for (int i=0; i<jsonArraySegmentHeadline.length(); i++) {
                                         JSONObject jsonHeadline = jsonArraySegmentHeadline.getJSONObject(i);
                                         String id = jsonHeadline.getString(Constant.id);
                                         String title = jsonHeadline.getString(Constant.title);
@@ -267,14 +316,32 @@ public class HeadlineFragment extends Fragment implements
                                 }
                             }
 
-                            if(headlines.size() > 0 || !headlines.isEmpty()) {
-                                headlineAdapter = new HeadlineAdapter(getActivity(), headlines);
-                                swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(headlineAdapter);
+                            if (headlines.size() > 0 || !headlines.isEmpty()) {
+                                //Big Card List Style
+                                if (headlineAdapter == null) {
+                                    headlineAdapter = new HeadlineAdapter(getActivity(), headlines);
+                                }
+                                if (swingBottomInAnimationAdapter == null) {
+                                    swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(headlineAdapter);
+                                }
                                 swingBottomInAnimationAdapter.setAbsListView(listView);
                                 assert swingBottomInAnimationAdapter.getViewAnimator() != null;
                                 swingBottomInAnimationAdapter.getViewAnimator().setInitialDelayMillis(1000);
                                 listView.setAdapter(swingBottomInAnimationAdapter);
                                 headlineAdapter.notifyDataSetChanged();
+
+                                //Small Card List Style
+                                if (headlineSmallAdapter == null) {
+                                    headlineSmallAdapter = new MainListAdapter(getActivity(), Constant.HEADLINES_LIST, headlines, null);
+                                }
+                                if (mAnimAdapter == null) {
+                                    mAnimAdapter = new ScaleInAnimationAdapter(headlineSmallAdapter);
+                                }
+                                mAnimAdapter.setAbsListView(listViewSmallCard);
+                                listViewSmallCard.setAdapter(mAnimAdapter);
+                                mAnimAdapter.notifyDataSetChanged();
+
+                                //Hide progress
                                 loading_layout.setVisibility(View.GONE);
                                 labelLoadData.setVisibility(View.GONE);
                             }
@@ -327,14 +394,32 @@ public class HeadlineFragment extends Fragment implements
                         }
                     }
 
-                    if(headlines.size() > 0 || !headlines.isEmpty()) {
-                        headlineAdapter = new HeadlineAdapter(getActivity(), headlines);
-                        swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(headlineAdapter);
+                    if (headlines.size() > 0 || !headlines.isEmpty()) {
+                        //Big Card List Style
+                        if (headlineAdapter == null) {
+                            headlineAdapter = new HeadlineAdapter(getActivity(), headlines);
+                        }
+                        if (swingBottomInAnimationAdapter == null) {
+                            swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(headlineAdapter);
+                        }
                         swingBottomInAnimationAdapter.setAbsListView(listView);
                         assert swingBottomInAnimationAdapter.getViewAnimator() != null;
                         swingBottomInAnimationAdapter.getViewAnimator().setInitialDelayMillis(1000);
                         listView.setAdapter(swingBottomInAnimationAdapter);
                         headlineAdapter.notifyDataSetChanged();
+
+                        //Small Card List Style
+                        if (headlineSmallAdapter == null) {
+                            headlineSmallAdapter = new MainListAdapter(getActivity(), Constant.HEADLINES_LIST, headlines, null);
+                        }
+                        if (mAnimAdapter == null) {
+                            mAnimAdapter = new ScaleInAnimationAdapter(headlineSmallAdapter);
+                        }
+                        mAnimAdapter.setAbsListView(listViewSmallCard);
+                        listViewSmallCard.setAdapter(mAnimAdapter);
+                        mAnimAdapter.notifyDataSetChanged();
+
+                        //Hide progress
                         loading_layout.setVisibility(View.GONE);
                         labelLoadData.setVisibility(View.GONE);
                     }
@@ -369,8 +454,8 @@ public class HeadlineFragment extends Fragment implements
 
     @Override
     public void onClick(View view) {
-        if(view.getId() == R.id.layout_ripple_view) {
-            if(isInternetPresent) {
+        if (view.getId() == R.id.layout_ripple_view) {
+            if (isInternetPresent) {
                 loading_layout.setVisibility(View.VISIBLE);
                 labelLoadData.setVisibility(View.VISIBLE);
                 rippleView.setVisibility(View.GONE);
@@ -379,7 +464,7 @@ public class HeadlineFragment extends Fragment implements
                             @Override
                             public void onResponse(String volleyResponse) {
                                 Log.i(Constant.TAG, volleyResponse);
-                                if(volleyResponse.contains("null")) {
+                                if (volleyResponse.contains("null")) {
                                     loading_layout.setVisibility(View.GONE);
                                     labelLoadData.setVisibility(View.GONE);
                                     rippleView.setVisibility(View.VISIBLE);
@@ -392,7 +477,7 @@ public class HeadlineFragment extends Fragment implements
                                         JSONObject objHeadline = jsonArrayResponses.getJSONObject(0);
                                         jsonArraySegmentHeadline = objHeadline.getJSONArray(Constant.HEADLINES);
                                         if (jsonArraySegmentHeadline.length() > 0) {
-                                            for(int i=0; i<jsonArraySegmentHeadline.length(); i++) {
+                                            for (int i=0; i<jsonArraySegmentHeadline.length(); i++) {
                                                 JSONObject jsonHeadline = jsonArraySegmentHeadline.getJSONObject(i);
                                                 String id = jsonHeadline.getString(Constant.id);
                                                 String title = jsonHeadline.getString(Constant.title);
@@ -425,17 +510,36 @@ public class HeadlineFragment extends Fragment implements
                                     }
                                     //Fill data from API
                                     if (headlineArrayList.size() > 0 || !headlineArrayList.isEmpty()) {
-                                        headlineAdapter = new HeadlineAdapter(getActivity(), headlineArrayList);
-                                        swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(headlineAdapter);
+                                        //Big Card List Style
+                                        if (headlineAdapter == null) {
+                                            headlineAdapter = new HeadlineAdapter(getActivity(), headlineArrayList);
+                                        }
+                                        if (swingBottomInAnimationAdapter == null) {
+                                            swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(headlineAdapter);
+                                        }
                                         swingBottomInAnimationAdapter.setAbsListView(listView);
                                         assert swingBottomInAnimationAdapter.getViewAnimator() != null;
                                         swingBottomInAnimationAdapter.getViewAnimator().setInitialDelayMillis(1000);
                                         listView.setAdapter(swingBottomInAnimationAdapter);
                                         headlineAdapter.notifyDataSetChanged();
+
+                                        //Small Card List Style
+                                        if (headlineSmallAdapter == null) {
+                                            headlineSmallAdapter = new MainListAdapter(getActivity(), Constant.HEADLINES_LIST, headlineArrayList, null);
+                                        }
+                                        if (mAnimAdapter == null) {
+                                            mAnimAdapter = new ScaleInAnimationAdapter(headlineSmallAdapter);
+                                        }
+                                        mAnimAdapter.setAbsListView(listViewSmallCard);
+                                        listViewSmallCard.setAdapter(mAnimAdapter);
+                                        mAnimAdapter.notifyDataSetChanged();
+
+                                        //Hide progress
                                         loading_layout.setVisibility(View.GONE);
                                         labelLoadData.setVisibility(View.GONE);
                                         rippleView.setVisibility(View.GONE);
                                     }
+
                                     //Set local time
                                     Calendar cal=Calendar.getInstance();
                                     date = new SimpleDateFormat("dd MMM yyyy");
@@ -469,7 +573,11 @@ public class HeadlineFragment extends Fragment implements
                 Toast.makeText(mActivity, R.string.title_no_connection, Toast.LENGTH_SHORT).show();
             }
         } else if(view.getId() == R.id.fab) {
-            listView.setSelection(0);
+            if (listView.getVisibility() == View.VISIBLE) {
+                listView.setSelection(0);
+            } else if (listViewSmallCard.getVisibility() == View.VISIBLE) {
+                listViewSmallCard.setSelection(0);
+            }
         }
     }
 
@@ -500,7 +608,11 @@ public class HeadlineFragment extends Fragment implements
 
     @Override
     public void onLoadMore() {
-        listView.onLoadMoreComplete();
+        if (listView.getVisibility() == View.VISIBLE) {
+            listView.onLoadMoreComplete();
+        } else if (listViewSmallCard.getVisibility() == View.VISIBLE) {
+            listViewSmallCard.onLoadMoreComplete();
+        }
     }
 
     @Override
@@ -534,6 +646,54 @@ public class HeadlineFragment extends Fragment implements
         if (publisherAdViewTop != null) {
             publisherAdViewTop.destroy();
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_change_layout) {
+            if (getActivity() != null) {
+                getActivity().invalidateOptionsMenu();
+            }
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        if (listViewSmallCard.getVisibility() == View.VISIBLE) {
+            listViewSmallCard.setVisibility(View.GONE);
+            listView.setVisibility(View.VISIBLE);
+            if (menu != null) {
+                if (menu.hasVisibleItems()) {
+                    if (menu.findItem(R.id.action_change_layout) != null) {
+                        menu.removeItem(R.id.action_change_layout);
+                    }
+                }
+            }
+            MenuItem mi = menu.add(Menu.NONE, R.id.action_change_layout, 2, "");
+            mi.setIcon(R.drawable.ic_preview_small);
+            mi.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        } else {
+            listViewSmallCard.setVisibility(View.VISIBLE);
+            listView.setVisibility(View.GONE);
+            if (menu != null) {
+                if (menu.hasVisibleItems()) {
+                    if (menu.findItem(R.id.action_change_layout) != null) {
+                        menu.removeItem(R.id.action_change_layout);
+                    }
+                }
+            }
+            MenuItem mi = menu.add(Menu.NONE, R.id.action_change_layout, 2, "");
+            mi.setIcon(R.drawable.ic_preview_big);
+            mi.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        }
+        super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_frag_channel, menu);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
 }

@@ -11,6 +11,9 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -28,6 +31,8 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.google.android.gms.ads.doubleclick.PublisherAdView;
 import com.melnykov.fab.FloatingActionButton;
+import com.nhaarman.listviewanimations.appearance.AnimationAdapter;
+import com.nhaarman.listviewanimations.appearance.simple.ScaleInAnimationAdapter;
 import com.nhaarman.listviewanimations.appearance.simple.SwingBottomInAnimationAdapter;
 
 import org.json.JSONArray;
@@ -41,6 +46,7 @@ import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.Global;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.activity.ActDetailTerbaru;
+import id.co.viva.news.app.adapter.MainListAdapter;
 import id.co.viva.news.app.adapter.TerbaruAdapter;
 import id.co.viva.news.app.ads.AdsConfig;
 import id.co.viva.news.app.component.GoogleMusicDicesDrawable;
@@ -59,8 +65,11 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
     public static ArrayList<News> newsArrayList;
     private ArrayList<Ads> adsArrayList;
     private SwingBottomInAnimationAdapter swingBottomInAnimationAdapter;
+    private AnimationAdapter mAnimAdapter;
     private TerbaruAdapter terbaruAdapter;
+    private MainListAdapter newsSmallAdapter;
     private LoadMoreListView listView;
+    private LoadMoreListView listViewSmallCard;
     private LinearLayout mParentLayout;
     private PublisherAdView publisherAdViewBottom;
     private PublisherAdView publisherAdViewTop;
@@ -88,6 +97,7 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        setHasOptionsMenu(true);
         ColorDrawable colorDrawable = new ColorDrawable();
         colorDrawable.setColor(getResources().getColor(R.color.new_base_color));
         ActionBarActivity mActivity = (ActionBarActivity) activity;
@@ -130,32 +140,52 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
         labelText.setText(getString(R.string.label_terbaru));
         lastUpdate = (TextView) rootView.findViewById(R.id.date_terbaru_headline);
 
-        //Populate content
-        newsArrayList = new ArrayList<>();
-        adsArrayList = new ArrayList<>();
-        terbaruAdapter = new TerbaruAdapter(getActivity(), newsArrayList);
-
-        //Content list
+        //Big Card List Content
         listView = (LoadMoreListView) rootView.findViewById(R.id.list_terbaru_headline);
+        listView.setVisibility(View.GONE);
         listView.setOnItemClickListener(this);
         listView.setOnLoadMoreListener(this);
+
+        //Small Card List Content
+        listViewSmallCard = (LoadMoreListView) rootView.findViewById(R.id.list_terbaru_headline_small_card);
+        listViewSmallCard.setOnItemClickListener(this);
+        listViewSmallCard.setOnLoadMoreListener(this);
 
         //Set 'go to the top' button
         floatingActionButton = (FloatingActionButton) rootView.findViewById(R.id.fab);
         floatingActionButton.setVisibility(View.GONE);
+        //Set floating button into big card list
         floatingActionButton.attachToListView(listView, new FloatingActionButton.FabOnScrollListener() {
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                 super.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
                 int firstIndex = listView.getFirstVisiblePosition();
-                if (firstIndex > Constant.NUMBER_OF_TOP_LIST_ITEMS) {
+                if (firstIndex > Constant.NUMBER_OF_TOP_LIST_ITEMS_BIG_CARD) {
                     floatingActionButton.setVisibility(View.VISIBLE);
                 } else {
                     floatingActionButton.setVisibility(View.GONE);
                 }
             }
         });
+        //Set floating button into small card list
+        floatingActionButton.attachToListView(listViewSmallCard, new FloatingActionButton.FabOnScrollListener() {
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                super.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
+                int firstIndex = listViewSmallCard.getFirstVisiblePosition();
+                if (firstIndex > Constant.NUMBER_OF_TOP_LIST_ITEMS_SMALL_CARD) {
+                    floatingActionButton.setVisibility(View.VISIBLE);
+                } else {
+                    floatingActionButton.setVisibility(View.GONE);
+                }
+            }
+        });
+        //Handle floating onClick
         floatingActionButton.setOnClickListener(this);
+
+        //Populate content
+        newsArrayList = new ArrayList<>();
+        adsArrayList = new ArrayList<>();
     }
 
     @Override
@@ -191,7 +221,7 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
                                             String image_url = jsonTerbaru.getString(Constant.image_url);
                                             String date_publish = jsonTerbaru.getString(Constant.date_publish);
                                             String timestamp = jsonTerbaru.getString(Constant.timestamp);
-                                            newsArrayList.add(new News(id, title, slug, kanal, url,
+                                            news.add(new News(id, title, slug, kanal, url,
                                                     image_url, date_publish, timestamp));
                                             Log.i(Constant.TAG, "NEWS : " + newsArrayList.get(z).getTitle());
                                         }
@@ -214,13 +244,32 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
                                 //Get last published
                                 lastPublished = news.get(news.size()-1).getTimeStamp();
                                 //Fill data from API
-                                if(news.size() > 0 || !news.isEmpty()) {
-                                    swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(terbaruAdapter);
+                                if (news.size() > 0 || !news.isEmpty()) {
+                                    //Big Card List Style
+                                    if (terbaruAdapter == null) {
+                                        terbaruAdapter = new TerbaruAdapter(getActivity(), news);
+                                    }
+                                    if (swingBottomInAnimationAdapter == null) {
+                                        swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(terbaruAdapter);
+                                    }
                                     swingBottomInAnimationAdapter.setAbsListView(listView);
                                     assert swingBottomInAnimationAdapter.getViewAnimator() != null;
                                     swingBottomInAnimationAdapter.getViewAnimator().setInitialDelayMillis(1000);
                                     listView.setAdapter(swingBottomInAnimationAdapter);
                                     terbaruAdapter.notifyDataSetChanged();
+
+                                    //Small Card List Style
+                                    if (newsSmallAdapter == null) {
+                                        newsSmallAdapter = new MainListAdapter(getActivity(), Constant.NEWS_LIST, null, news);
+                                    }
+                                    if (mAnimAdapter == null) {
+                                        mAnimAdapter = new ScaleInAnimationAdapter(newsSmallAdapter);
+                                    }
+                                    mAnimAdapter.setAbsListView(listViewSmallCard);
+                                    listViewSmallCard.setAdapter(mAnimAdapter);
+                                    mAnimAdapter.notifyDataSetChanged();
+
+                                    //Hide progress
                                     loading_layout.setVisibility(View.GONE);
                                     labelLoadData.setVisibility(View.GONE);
                                 }
@@ -241,15 +290,15 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
                 @Override
                 public void onErrorResponse(VolleyError volleyError) {
                     try {
-                        if(Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_TERBARU) != null) {
+                        if (Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_TERBARU) != null) {
                             String cachedResponse = new String(Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_TERBARU).data);
                             JSONObject jsonObject = new JSONObject(cachedResponse);
                             jsonArrayResponses = jsonObject.getJSONArray(Constant.response);
-                            if(jsonArrayResponses != null) {
+                            if (jsonArrayResponses != null) {
                                 JSONObject objTerbaru = jsonArrayResponses.getJSONObject(0);
-                                if(objTerbaru !=  null) {
+                                if (objTerbaru !=  null) {
                                     jsonArraySegmentNews = objTerbaru.getJSONArray(Constant.NEWS);
-                                    for(int i=0; i<jsonArraySegmentNews.length(); i++) {
+                                    for (int i=0; i<jsonArraySegmentNews.length(); i++) {
                                         JSONObject jsonTerbaru = jsonArraySegmentNews.getJSONObject(i);
                                         String id = jsonTerbaru.getString(Constant.id);
                                         String title = jsonTerbaru.getString(Constant.title);
@@ -268,13 +317,32 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
 
                             lastPublished = news.get(news.size()-1).getTimeStamp();
 
-                            if(news.size() > 0 || !news.isEmpty()) {
-                                swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(terbaruAdapter);
+                            if (news.size() > 0 || !news.isEmpty()) {
+                                //Big Card List Style
+                                if (terbaruAdapter == null) {
+                                    terbaruAdapter = new TerbaruAdapter(getActivity(), news);
+                                }
+                                if (swingBottomInAnimationAdapter == null) {
+                                    swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(terbaruAdapter);
+                                }
                                 swingBottomInAnimationAdapter.setAbsListView(listView);
                                 assert swingBottomInAnimationAdapter.getViewAnimator() != null;
                                 swingBottomInAnimationAdapter.getViewAnimator().setInitialDelayMillis(1000);
                                 listView.setAdapter(swingBottomInAnimationAdapter);
                                 terbaruAdapter.notifyDataSetChanged();
+
+                                //Small Card List Style
+                                if (newsSmallAdapter == null) {
+                                    newsSmallAdapter = new MainListAdapter(getActivity(), Constant.NEWS_LIST, null, news);
+                                }
+                                if (mAnimAdapter == null) {
+                                    mAnimAdapter = new ScaleInAnimationAdapter(newsSmallAdapter);
+                                }
+                                mAnimAdapter.setAbsListView(listViewSmallCard);
+                                listViewSmallCard.setAdapter(mAnimAdapter);
+                                mAnimAdapter.notifyDataSetChanged();
+
+                                //Hide progress
                                 loading_layout.setVisibility(View.GONE);
                                 labelLoadData.setVisibility(View.GONE);
                             }
@@ -300,16 +368,16 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
             Global.getInstance(getActivity()).addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
         } else {
             try {
-                if(Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_TERBARU) != null) {
+                if (Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_TERBARU) != null) {
                     String cachedResponse = new String(Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_TERBARU).data);
                     Log.i(Constant.TAG, "From Cached : " + cachedResponse);
                     JSONObject jsonObject = new JSONObject(cachedResponse);
                     jsonArrayResponses = jsonObject.getJSONArray(Constant.response);
-                    if(jsonArrayResponses != null) {
+                    if (jsonArrayResponses != null) {
                         JSONObject objTerbaru = jsonArrayResponses.getJSONObject(0);
-                        if(objTerbaru !=  null) {
+                        if (objTerbaru !=  null) {
                             jsonArraySegmentNews = objTerbaru.getJSONArray(Constant.NEWS);
-                            for(int i=0; i<jsonArraySegmentNews.length(); i++) {
+                            for (int i=0; i<jsonArraySegmentNews.length(); i++) {
                                 JSONObject jsonTerbaru = jsonArraySegmentNews.getJSONObject(i);
                                 String id = jsonTerbaru.getString(Constant.id);
                                 String title = jsonTerbaru.getString(Constant.title);
@@ -328,13 +396,33 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
 
                     lastPublished = news.get(news.size()-1).getTimeStamp();
 
-                    if(news.size() > 0 || !news.isEmpty()) {
-                        swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(terbaruAdapter);
+                    //Fill data from API
+                    if (news.size() > 0 || !news.isEmpty()) {
+                        //Big Card List Style
+                        if (terbaruAdapter == null) {
+                            terbaruAdapter = new TerbaruAdapter(getActivity(), news);
+                        }
+                        if (swingBottomInAnimationAdapter == null) {
+                            swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(terbaruAdapter);
+                        }
                         swingBottomInAnimationAdapter.setAbsListView(listView);
                         assert swingBottomInAnimationAdapter.getViewAnimator() != null;
                         swingBottomInAnimationAdapter.getViewAnimator().setInitialDelayMillis(1000);
                         listView.setAdapter(swingBottomInAnimationAdapter);
                         terbaruAdapter.notifyDataSetChanged();
+
+                        //Small Card List Style
+                        if (newsSmallAdapter == null) {
+                            newsSmallAdapter = new MainListAdapter(getActivity(), Constant.NEWS_LIST, null, news);
+                        }
+                        if (mAnimAdapter == null) {
+                            mAnimAdapter = new ScaleInAnimationAdapter(newsSmallAdapter);
+                        }
+                        mAnimAdapter.setAbsListView(listViewSmallCard);
+                        listViewSmallCard.setAdapter(mAnimAdapter);
+                        mAnimAdapter.notifyDataSetChanged();
+
+                        //Hide progress
                         loading_layout.setVisibility(View.GONE);
                         labelLoadData.setVisibility(View.GONE);
                     }
@@ -370,7 +458,7 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
     public void onLoadMore() {
         Log.i(Constant.TAG, "Last Published : " + lastPublished);
         page += 1;
-        if(isInternetPresent) {
+        if (isInternetPresent) {
             analytics.getAnalyticByATInternet(Constant.TERBARU_PAGE + String.valueOf(page));
             analytics.getAnalyticByGoogleAnalytic(Constant.TERBARU_PAGE + String.valueOf(page));
                 StringRequest stringRequest = new StringRequest(Request.Method.GET, Constant.NEW_TERBARU +
@@ -405,12 +493,18 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
                                     lastPublished = newsArrayList.get(newsArrayList.size()-1).getTimeStamp();
 
                                     if(newsArrayList.size() > 0 || !newsArrayList.isEmpty()) {
+                                        //Big Card List Style
                                         swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(terbaruAdapter);
                                         swingBottomInAnimationAdapter.setAbsListView(listView);
                                         assert swingBottomInAnimationAdapter.getViewAnimator() != null;
                                         swingBottomInAnimationAdapter.getViewAnimator().setInitialDelayMillis(1000);
                                         terbaruAdapter.notifyDataSetChanged();
                                         listView.onLoadMoreComplete();
+                                        //Small Card List Style
+                                        mAnimAdapter = new ScaleInAnimationAdapter(newsSmallAdapter);
+                                        mAnimAdapter.setAbsListView(listViewSmallCard);
+                                        mAnimAdapter.notifyDataSetChanged();
+                                        listViewSmallCard.onLoadMoreComplete();
                                     }
                                 } catch (Exception e) {
                                     e.getMessage();
@@ -419,9 +513,14 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
                         }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError volleyError) {
-                        listView.onLoadMoreComplete();
-                        listView.setSelection(0);
-                        if(getActivity() != null) {
+                        if (listView.getVisibility() == View.VISIBLE) {
+                            listView.onLoadMoreComplete();
+                            listView.setSelection(0);
+                        } else if (listViewSmallCard.getVisibility() == View.VISIBLE) {
+                            listViewSmallCard.onLoadMoreComplete();
+                            listViewSmallCard.setSelection(0);
+                        }
+                        if (getActivity() != null) {
                             Toast.makeText(getActivity(), R.string.label_error, Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -437,8 +536,13 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
                         "published/" + lastPublished);
                 Global.getInstance(getActivity()).addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
         } else {
-            listView.onLoadMoreComplete();
-            listView.setSelection(0);
+            if (listView.getVisibility() == View.VISIBLE) {
+                listView.onLoadMoreComplete();
+                listView.setSelection(0);
+            } else if (listViewSmallCard.getVisibility() == View.VISIBLE) {
+                listViewSmallCard.onLoadMoreComplete();
+                listViewSmallCard.setSelection(0);
+            }
             if (getActivity() != null) {
                 Toast.makeText(getActivity(), R.string.title_no_connection, Toast.LENGTH_SHORT).show();
             }
@@ -447,8 +551,8 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
 
     @Override
     public void onClick(View view) {
-        if(view.getId() == R.id.layout_ripple_view) {
-            if(isInternetPresent) {
+        if (view.getId() == R.id.layout_ripple_view) {
+            if (isInternetPresent) {
                 loading_layout.setVisibility(View.VISIBLE);
                 labelLoadData.setVisibility(View.VISIBLE);
                 rippleView.setVisibility(View.GONE);
@@ -499,12 +603,31 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
                                     lastPublished = newsArrayList.get(newsArrayList.size()-1).getTimeStamp();
                                     //Fill content
                                     if (newsArrayList.size() > 0 || !newsArrayList.isEmpty()) {
-                                        swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(terbaruAdapter);
+                                        //Big Card List Style
+                                        if (terbaruAdapter == null) {
+                                            terbaruAdapter = new TerbaruAdapter(getActivity(), newsArrayList);
+                                        }
+                                        if (swingBottomInAnimationAdapter == null) {
+                                            swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(terbaruAdapter);
+                                        }
                                         swingBottomInAnimationAdapter.setAbsListView(listView);
                                         assert swingBottomInAnimationAdapter.getViewAnimator() != null;
                                         swingBottomInAnimationAdapter.getViewAnimator().setInitialDelayMillis(1000);
                                         listView.setAdapter(swingBottomInAnimationAdapter);
                                         terbaruAdapter.notifyDataSetChanged();
+
+                                        //Small Card List Style
+                                        if (newsSmallAdapter == null) {
+                                            newsSmallAdapter = new MainListAdapter(getActivity(), Constant.NEWS_LIST, null, newsArrayList);
+                                        }
+                                        if (mAnimAdapter == null) {
+                                            mAnimAdapter = new ScaleInAnimationAdapter(newsSmallAdapter);
+                                        }
+                                        mAnimAdapter.setAbsListView(listViewSmallCard);
+                                        listViewSmallCard.setAdapter(mAnimAdapter);
+                                        mAnimAdapter.notifyDataSetChanged();
+
+                                        //Hide progress
                                         loading_layout.setVisibility(View.GONE);
                                         labelLoadData.setVisibility(View.GONE);
                                         rippleView.setVisibility(View.GONE);
@@ -555,13 +678,32 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
 
                                 lastPublished = newsArrayList.get(newsArrayList.size()-1).getTimeStamp();
 
-                                if(newsArrayList.size() > 0 || !newsArrayList.isEmpty()) {
-                                    swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(terbaruAdapter);
+                                if (newsArrayList.size() > 0 || !newsArrayList.isEmpty()) {
+                                    //Big Card List Style
+                                    if (terbaruAdapter == null) {
+                                        terbaruAdapter = new TerbaruAdapter(getActivity(), newsArrayList);
+                                    }
+                                    if (swingBottomInAnimationAdapter == null) {
+                                        swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(terbaruAdapter);
+                                    }
                                     swingBottomInAnimationAdapter.setAbsListView(listView);
                                     assert swingBottomInAnimationAdapter.getViewAnimator() != null;
                                     swingBottomInAnimationAdapter.getViewAnimator().setInitialDelayMillis(1000);
                                     listView.setAdapter(swingBottomInAnimationAdapter);
                                     terbaruAdapter.notifyDataSetChanged();
+
+                                    //Small Card List Style
+                                    if (newsSmallAdapter == null) {
+                                        newsSmallAdapter = new MainListAdapter(getActivity(), Constant.NEWS_LIST, null, newsArrayList);
+                                    }
+                                    if (mAnimAdapter == null) {
+                                        mAnimAdapter = new ScaleInAnimationAdapter(newsSmallAdapter);
+                                    }
+                                    mAnimAdapter.setAbsListView(listViewSmallCard);
+                                    listViewSmallCard.setAdapter(mAnimAdapter);
+                                    mAnimAdapter.notifyDataSetChanged();
+
+                                    //Hide progress
                                     loading_layout.setVisibility(View.GONE);
                                     labelLoadData.setVisibility(View.GONE);
                                 }
@@ -589,7 +731,11 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
                 Toast.makeText(getActivity(), R.string.title_no_connection, Toast.LENGTH_SHORT).show();
             }
         } else if(view.getId() == R.id.fab) {
-            listView.setSelection(0);
+            if (listView.getVisibility() == View.VISIBLE) {
+                listView.setSelection(0);
+            } else if (listViewSmallCard.getVisibility() == View.VISIBLE) {
+                listViewSmallCard.setSelection(0);
+            }
         }
     }
 
@@ -649,6 +795,54 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
         if (publisherAdViewTop != null) {
             publisherAdViewTop.destroy();
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_change_layout) {
+            if (getActivity() != null) {
+                getActivity().invalidateOptionsMenu();
+            }
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        if (listViewSmallCard.getVisibility() == View.VISIBLE) {
+            listViewSmallCard.setVisibility(View.GONE);
+            listView.setVisibility(View.VISIBLE);
+            if (menu != null) {
+                if (menu.hasVisibleItems()) {
+                    if (menu.findItem(R.id.action_change_layout) != null) {
+                        menu.removeItem(R.id.action_change_layout);
+                    }
+                }
+            }
+            MenuItem mi = menu.add(Menu.NONE, R.id.action_change_layout, 2, "");
+            mi.setIcon(R.drawable.ic_preview_small);
+            mi.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        } else {
+            listViewSmallCard.setVisibility(View.VISIBLE);
+            listView.setVisibility(View.GONE);
+            if (menu != null) {
+                if (menu.hasVisibleItems()) {
+                    if (menu.findItem(R.id.action_change_layout) != null) {
+                        menu.removeItem(R.id.action_change_layout);
+                    }
+                }
+            }
+            MenuItem mi = menu.add(Menu.NONE, R.id.action_change_layout, 2, "");
+            mi.setIcon(R.drawable.ic_preview_big);
+            mi.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        }
+        super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_frag_channel, menu);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
 }

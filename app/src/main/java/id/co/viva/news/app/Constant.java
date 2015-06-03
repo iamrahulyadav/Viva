@@ -24,11 +24,12 @@ import android.widget.ListView;
 public class Constant {
 
     //Kind of Timeout
-    public static final int TIME_OUT = 3000;
-    public static final int TIME_OUT_LONG = 6000;
+    public static final int TIME_OUT = 15000;
+    public static final int TIME_OUT_LONG = 15000;
     public static final int TIME_OUT_REGISTRATION = 15000;
     public static final int PROFILE_PIC_SIZE = 400;
-    public final static int NUMBER_OF_TOP_LIST_ITEMS = 4;
+    public final static int NUMBER_OF_TOP_LIST_ITEMS_BIG_CARD = 4;
+    public final static int NUMBER_OF_TOP_LIST_ITEMS_SMALL_CARD = 3;
 
     //Facebook Image Url
     public final static String URL_FACEBOOK_PHOTO = "http://graph.facebook.com/";
@@ -313,7 +314,7 @@ public class Constant {
     public static final String ADS_TYPE_OPENING = "ads_opening";
     public static final String ADS_TYPE_CLOSING = "ads_closing";
     public static final int ADS_TYPE_OPENING_POSITION = 1;
-    public static final int ADS_TYPE_CLOSING_POSITION = 2;
+//    public static final int ADS_TYPE_CLOSING_POSITION = 2;
 
     //Banner Position
     public static final int POSITION_BANNER_TOP = 1;
@@ -348,6 +349,9 @@ public class Constant {
     public static final String life_travel_detail_screen = "life_travel_detail_screen";
     public static final String life_health_detail_screen = "life_health_detail_screen";
     public static final String search_screen = "search_screen";
+
+    public static final int HEADLINES_LIST = 1;
+    public static final int NEWS_LIST = 2;
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     public static Bitmap blur(Context ctx, Bitmap image) {
