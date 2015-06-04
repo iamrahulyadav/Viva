@@ -106,7 +106,7 @@ public class ActLanding extends ActionBarActivity implements View.OnClickListene
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
-        if(savedInstanceState == null) {
+        if (savedInstanceState == null) {
             displayView(0);
         }
     }
@@ -149,7 +149,7 @@ public class ActLanding extends ActionBarActivity implements View.OnClickListene
             default:
                 break;
         }
-        if(fragment != null) {
+        if (fragment != null) {
             fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction()
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
@@ -242,14 +242,14 @@ public class ActLanding extends ActionBarActivity implements View.OnClickListene
         mBackground.setOnClickListener(this);
         mNameProfile = (TextView) findViewById(R.id.tv_username);
         mEmailProfile = (TextView) findViewById(R.id.tv_user_email);
-        if(mFullName.length() > 0 && mEmail.length() > 0) {
+        if (mFullName.length() > 0 && mEmail.length() > 0) {
             mNameProfile.setText(mFullName);
             mEmailProfile.setText(mEmail);
         } else {
             mNameProfile.setText(getResources().getString(R.string.label_not_logged_in));
         }
-        if(mPhotoUrl.length() > 0) {
-            if(isInternetPresent) {
+        if (mPhotoUrl.length() > 0) {
+            if (isInternetPresent) {
                 Picasso.with(this).load(mPhotoUrl).transform(new CropSquareTransformation()).into(mImgProfile);
                 Picasso.with(this).load(mPhotoUrl).transform(new CropSquareTransformation()).into(target);
             } else {
@@ -291,22 +291,6 @@ public class ActLanding extends ActionBarActivity implements View.OnClickListene
     }
 
     @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        if (fragment != null) {
-            if (fragment.getClass().toString().equals(Constant.fragment_bola)
-                    || fragment.getClass().toString().equals(Constant.fragment_life)
-                    || fragment.getClass().toString().equals(Constant.fragment_news)) {
-                if (mDrawerLayout.isDrawerOpen(mNavLayout)) {
-                    menu.findItem(R.id.action_change_layout).setEnabled(false);
-                } else {
-                    menu.findItem(R.id.action_change_layout).setEnabled(true);
-                }
-            }
-        }
-        return super.onPrepareOptionsMenu(menu);
-    }
-
-    @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         mDrawerToggle.syncState();
@@ -340,21 +324,16 @@ public class ActLanding extends ActionBarActivity implements View.OnClickListene
         if (mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
-        if (item.getItemId() == R.id.action_change_layout) {
-            if (this != null) {
-                invalidateOptionsMenu();
-            }
-        }
         return false;
     }
 
     @Override
     public void onBackPressed() {
-        if(mDrawerLayout.isDrawerOpen(mNavLayout)) {
+        if (mDrawerLayout.isDrawerOpen(mNavLayout)) {
             mDrawerLayout.closeDrawer(mNavLayout);
         } else {
-            if(fragment != null) {
-                if(fragment.getClass().toString().equals(Constant.fragment_terbaru)) {
+            if (fragment != null) {
+                if (fragment.getClass().toString().equals(Constant.fragment_terbaru)) {
                     //Load ads
 //                    if (isInternetPresent) {
 //                        InterstitialAd interstitialAd = new InterstitialAd(this);

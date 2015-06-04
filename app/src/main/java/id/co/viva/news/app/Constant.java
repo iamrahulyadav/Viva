@@ -65,15 +65,9 @@ public class Constant {
     //Tag adapter for province and city
     public static final String ADAPTER_PROVINCE = "adapter_province";
     public static final String ADAPTER_CITY = "adapter_city";
-    public static final String ADAPTER_CHANNEL_BOLA = "adapter_channel_bola";
-    public static final String ADAPTER_CHANNEL_LIFE = "adapter_channel_life";
-    public static final String ADAPTER_CHANNEL_NEWS = "adapter_channel_news";
 
     //Class fragment
     public static final String fragment_terbaru = "class id.co.viva.news.app.fragment.TerbaruFragment";
-    public static final String fragment_bola = "class id.co.viva.news.app.fragment.BolaFragment";
-    public static final String fragment_life = "class id.co.viva.news.app.fragment.LifeFragment";
-    public static final String fragment_news = "class id.co.viva.news.app.fragment.NewsFragment";
 
     //Tag for tutorial and coach-mark
     public static final String FIRST_INSTALL_PROFILE = "first_install_profile";

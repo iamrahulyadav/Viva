@@ -492,7 +492,7 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
 
                                     lastPublished = newsArrayList.get(newsArrayList.size()-1).getTimeStamp();
 
-                                    if(newsArrayList.size() > 0 || !newsArrayList.isEmpty()) {
+                                    if (newsArrayList.size() > 0 || !newsArrayList.isEmpty()) {
                                         //Big Card List Style
                                         swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(terbaruAdapter);
                                         swingBottomInAnimationAdapter.setAbsListView(listView);
@@ -809,6 +809,12 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_frag_channel, menu);
         if (listViewSmallCard.getVisibility() == View.VISIBLE) {
             listViewSmallCard.setVisibility(View.GONE);
             listView.setVisibility(View.VISIBLE);
@@ -836,12 +842,6 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
             mi.setIcon(R.drawable.ic_preview_big);
             mi.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_IF_ROOM);
         }
-        super.onPrepareOptionsMenu(menu);
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_frag_channel, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 

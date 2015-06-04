@@ -9,15 +9,11 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,7 +38,6 @@ import id.co.viva.news.app.Global;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.activity.ActDetailChannelLife;
 import id.co.viva.news.app.activity.ActDetailContentDefault;
-import id.co.viva.news.app.adapter.ChannelListTypeAdapter;
 import id.co.viva.news.app.adapter.FeaturedLifeAdapter;
 import id.co.viva.news.app.ads.AdsConfig;
 import id.co.viva.news.app.component.CropSquareTransformation;
@@ -58,7 +53,6 @@ import id.co.viva.news.app.services.Analytics;
 public class LifeFragment extends Fragment implements View.OnClickListener {
 
     private ArrayList<FeaturedLife> featuredNewsArrayList;
-    private ArrayList<FeaturedLife> featuredNewsArrayListTypeList;
     private ArrayList<Ads> adsArrayList;
     private SwingBottomInAnimationAdapter swingBottomInAnimationAdapter;
     private boolean isInternetPresent = false;
@@ -66,10 +60,8 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
     private PublisherAdView publisherAdViewTop;
     private LinearLayout mParentLayout;
     private ExpandableHeightGridView gridLife;
-    private ListView listLife;
     private String cachedResponse;
     private ProgressWheel progressWheel;
-    private ChannelListTypeAdapter channelListTypeAdapter;
     private TextView tvNoResult;
     private TextView textHeader;
     private ImageView imageHeader;
@@ -78,7 +70,6 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
     private String channel_title_header_grid;
     private String id_header_grid;
     private String image_url_header_grid;
-    private String share_url_header_grid;
     private RelativeLayout layoutTransparentHeader;
 
     @Override
@@ -91,7 +82,6 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        setHasOptionsMenu(true);
         ColorDrawable colorDrawable = new ColorDrawable();
         colorDrawable.setColor(getResources().getColor(R.color.color_life));
         ActionBarActivity mActivity = (ActionBarActivity) activity;
@@ -165,37 +155,7 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
             }
         });
 
-        listLife = (ListView) rootView.findViewById(R.id.list_life);
-        listLife.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                if(featuredNewsArrayListTypeList.size() > 0) {
-                    FeaturedLife featuredLife = featuredNewsArrayListTypeList.get(position);
-                    Bundle bundle = new Bundle();
-                    int lastIndex = featuredNewsArrayListTypeList.size() - 1;
-                    if (position == lastIndex) {
-                        Intent intent = new Intent(getActivity(), ActDetailContentDefault.class);
-                        bundle.putString("id", featuredLife.getId());
-                        bundle.putString("kanal", featuredLife.getKanal());
-                        bundle.putString("shared_url", featuredLife.getUrl());
-                        bundle.putString("type", "editor_choice");
-                        intent.putExtras(bundle);
-                        getActivity().startActivity(intent);
-                        getActivity().overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
-                    } else {
-                        Intent intent = new Intent(getActivity(), ActDetailChannelLife.class);
-                        bundle.putString("id", featuredLife.getChannel_id());
-                        bundle.putString("channel_title", featuredLife.getChannel_title());
-                        intent.putExtras(bundle);
-                        getActivity().startActivity(intent);
-                        getActivity().overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
-                    }
-                }
-            }
-        });
-
         featuredNewsArrayList = new ArrayList<>();
-        featuredNewsArrayListTypeList = new ArrayList<>();
         adsArrayList = new ArrayList<>();
 
         if (isInternetPresent) {
@@ -217,7 +177,6 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
                                         id_header_grid = field.getString("channel_id");
                                         channel_title_header_grid = field.getString("channel_title");
                                         image_url_header_grid = field.getString("image_url");
-                                        share_url_header_grid = field.getString("url");
                                     }
                                     textHeader.setText(channel_title_header_grid.toUpperCase());
                                     layoutTransparentHeader.setVisibility(View.VISIBLE);
@@ -245,27 +204,6 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
                                         }
                                     }
                                 }
-                                //Get content list type
-                                for(int i=0; i<response.length()-1; i++) {
-                                    JSONObject obj = response.getJSONObject(i);
-                                    if(obj != null) {
-                                        JSONArray objKanal = obj.getJSONArray("news");
-                                        for(int j=0; j<objKanal.length(); j++) {
-                                            JSONObject field = objKanal.getJSONObject(j);
-                                            String channel_title = field.getString("channel_title");
-                                            String id = field.getString("id");
-                                            String channel_id = field.getString("channel_id");
-                                            String level = field.getString("level");
-                                            String title = field.getString("title");
-                                            String kanal = field.getString("kanal");
-                                            String image_url = field.getString("image_url");
-                                            String url = field.getString("url");
-                                            featuredNewsArrayListTypeList.add(new FeaturedLife(channel_title, id,
-                                                    channel_id, level, title, kanal, image_url, url));
-                                            Log.i(Constant.TAG, "Title List : " + featuredNewsArrayListTypeList.get(j).getChannel_title());
-                                        }
-                                    }
-                                }
                                 //Check Ads if exists
                                 JSONArray adsList = jsonObject.getJSONArray(Constant.adses);
                                 if (adsList.length() > 0) {
@@ -279,11 +217,8 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
                                         Log.i(Constant.TAG, "ADS : " + adsArrayList.get(j).getmUnitId());
                                     }
                                 }
-                                //Populate content list type
-                                featuredNewsArrayListTypeList.add(0, new FeaturedLife(channel_title_header_grid,
-                                        null, id_header_grid, null, null, null, image_url_header_grid, share_url_header_grid));
                                 //Populate content grid type
-                                if(featuredNewsArrayList.size() > 0 || !featuredNewsArrayList.isEmpty()) {
+                                if (featuredNewsArrayList.size() > 0 || !featuredNewsArrayList.isEmpty()) {
                                     swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(
                                             new FeaturedLifeAdapter(getActivity(), featuredNewsArrayList));
                                     swingBottomInAnimationAdapter.setAbsListView(gridLife);
@@ -292,16 +227,7 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
                                     gridLife.setAdapter(swingBottomInAnimationAdapter);
                                 }
                                 //End of process
-                                if(featuredNewsArrayListTypeList.size() > 0 || !featuredNewsArrayListTypeList.isEmpty()) {
-                                    if(channelListTypeAdapter == null) {
-                                        channelListTypeAdapter = new ChannelListTypeAdapter(
-                                                getActivity(), null, featuredNewsArrayListTypeList, null, Constant.ADAPTER_CHANNEL_LIFE);
-                                    }
-                                    listLife.setAdapter(channelListTypeAdapter);
-                                    Constant.setListViewHeightBasedOnChildren(listLife);
-                                    channelListTypeAdapter.notifyDataSetChanged();
-                                    progressWheel.setVisibility(View.GONE);
-                                }
+                                progressWheel.setVisibility(View.GONE);
                                 //Show ads
                                 showAds();
                             } catch (Exception e) {
@@ -326,7 +252,7 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
             Global.getInstance(getActivity()).addToRequestQueue(request, Constant.JSON_REQUEST);
         } else {
             Toast.makeText(getActivity(), R.string.title_no_connection, Toast.LENGTH_SHORT).show();
-            if(Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_LIFE) != null) {
+            if (Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_LIFE) != null) {
                 cachedResponse = new String(Global.getInstance(getActivity()).
                         getRequestQueue().getCache().get(Constant.NEW_LIFE).data);
                 Log.i(Constant.TAG, "KANAL LIFE CACHED : " + cachedResponse);
@@ -336,14 +262,13 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
 
                     int lastIndex = response.length() - 1;
                     JSONObject objs = response.getJSONObject(lastIndex);
-                    if(objs != null) {
+                    if (objs != null) {
                         JSONArray objKanal = objs.getJSONArray("all");
-                        for(int j=0; j<objKanal.length(); j++) {
+                        for (int j=0; j<objKanal.length(); j++) {
                             JSONObject field = objKanal.getJSONObject(j);
                             id_header_grid = field.getString("channel_id");
                             channel_title_header_grid = field.getString("channel_title");
                             image_url_header_grid = field.getString("image_url");
-                            share_url_header_grid = field.getString("url");
                         }
                         textHeader.setText(channel_title_header_grid.toUpperCase());
                         layoutTransparentHeader.setVisibility(View.VISIBLE);
@@ -372,31 +297,7 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
                         }
                     }
 
-                    for(int i=0; i<response.length()-1; i++) {
-                        JSONObject obj = response.getJSONObject(i);
-                        if(obj != null) {
-                            JSONArray objKanal = obj.getJSONArray("news");
-                            for(int j=0; j<objKanal.length(); j++) {
-                                JSONObject field = objKanal.getJSONObject(j);
-                                String channel_title = field.getString("channel_title");
-                                String id = field.getString("id");
-                                String channel_id = field.getString("channel_id");
-                                String level = field.getString("level");
-                                String title = field.getString("title");
-                                String kanal = field.getString("kanal");
-                                String image_url = field.getString("image_url");
-                                String url = field.getString("url");
-                                featuredNewsArrayListTypeList.add(new FeaturedLife(channel_title, id,
-                                        channel_id, level, title, kanal, image_url, url));
-                                Log.i(Constant.TAG, "Title List : " + featuredNewsArrayListTypeList.get(j).getChannel_title());
-                            }
-                        }
-                    }
-
-                    featuredNewsArrayListTypeList.add(0, new FeaturedLife(channel_title_header_grid,
-                            null, id_header_grid, null, null, null, image_url_header_grid, share_url_header_grid));
-
-                    if(featuredNewsArrayList.size() > 0 || !featuredNewsArrayList.isEmpty()) {
+                    if (featuredNewsArrayList.size() > 0 || !featuredNewsArrayList.isEmpty()) {
                         swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(
                                 new FeaturedLifeAdapter(getActivity(), featuredNewsArrayList));
                         swingBottomInAnimationAdapter.setAbsListView(gridLife);
@@ -405,16 +306,7 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
                         gridLife.setAdapter(swingBottomInAnimationAdapter);
                     }
 
-                    if(featuredNewsArrayListTypeList.size() > 0 || !featuredNewsArrayListTypeList.isEmpty()) {
-                        if(channelListTypeAdapter == null) {
-                            channelListTypeAdapter = new ChannelListTypeAdapter(
-                                    getActivity(), null, featuredNewsArrayListTypeList, null, Constant.ADAPTER_CHANNEL_LIFE);
-                        }
-                        listLife.setAdapter(channelListTypeAdapter);
-                        Constant.setListViewHeightBasedOnChildren(listLife);
-                        channelListTypeAdapter.notifyDataSetChanged();
-                        progressWheel.setVisibility(View.GONE);
-                    }
+                    progressWheel.setVisibility(View.GONE);
                 } catch (Exception e) {
                     e.getMessage();
                 }
@@ -430,8 +322,8 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-        if(view.getId() == R.id.layout_ripple_view) {
-            if(isInternetPresent) {
+        if (view.getId() == R.id.layout_ripple_view) {
+            if (isInternetPresent) {
                 rippleView.setVisibility(View.GONE);
                 progressWheel.setVisibility(View.VISIBLE);
                 StringRequest request = new StringRequest(Request.Method.GET, Constant.NEW_LIFE,
@@ -452,7 +344,6 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
                                             id_header_grid = field.getString("channel_id");
                                             channel_title_header_grid = field.getString("channel_title");
                                             image_url_header_grid = field.getString("image_url");
-                                            share_url_header_grid = field.getString("url");
                                         }
                                         textHeader.setText(channel_title_header_grid.toUpperCase());
                                         layoutTransparentHeader.setVisibility(View.VISIBLE);
@@ -480,27 +371,6 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
                                             }
                                         }
                                     }
-                                    //Get content list type
-                                    for(int i=0; i<response.length()-1; i++) {
-                                        JSONObject obj = response.getJSONObject(i);
-                                        if(obj != null) {
-                                            JSONArray objKanal = obj.getJSONArray("news");
-                                            for(int j=0; j<objKanal.length(); j++) {
-                                                JSONObject field = objKanal.getJSONObject(j);
-                                                String channel_title = field.getString("channel_title");
-                                                String id = field.getString("id");
-                                                String channel_id = field.getString("channel_id");
-                                                String level = field.getString("level");
-                                                String title = field.getString("title");
-                                                String kanal = field.getString("kanal");
-                                                String image_url = field.getString("image_url");
-                                                String url = field.getString("url");
-                                                featuredNewsArrayListTypeList.add(new FeaturedLife(channel_title, id,
-                                                        channel_id, level, title, kanal, image_url, url));
-                                                Log.i(Constant.TAG, "Title List : " + featuredNewsArrayListTypeList.get(j).getChannel_title());
-                                            }
-                                        }
-                                    }
                                     //Check Ads if exists
                                     JSONArray adsList = jsonObject.getJSONArray(Constant.adses);
                                     if (adsList.length() > 0) {
@@ -514,11 +384,8 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
                                             Log.i(Constant.TAG, "ADS : " + adsArrayList.get(j).getmUnitId());
                                         }
                                     }
-                                    //Populate content list type
-                                    featuredNewsArrayListTypeList.add(0, new FeaturedLife(channel_title_header_grid,
-                                            null, id_header_grid, null, null, null, image_url_header_grid, share_url_header_grid));
                                     //Populate content grid type
-                                    if(featuredNewsArrayList.size() > 0 || !featuredNewsArrayList.isEmpty()) {
+                                    if (featuredNewsArrayList.size() > 0 || !featuredNewsArrayList.isEmpty()) {
                                         swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(
                                                 new FeaturedLifeAdapter(getActivity(), featuredNewsArrayList));
                                         swingBottomInAnimationAdapter.setAbsListView(gridLife);
@@ -527,16 +394,7 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
                                         gridLife.setAdapter(swingBottomInAnimationAdapter);
                                     }
                                     //End of process
-                                    if(featuredNewsArrayListTypeList.size() > 0 || !featuredNewsArrayListTypeList.isEmpty()) {
-                                        if(channelListTypeAdapter == null) {
-                                            channelListTypeAdapter = new ChannelListTypeAdapter(
-                                                    getActivity(), null, featuredNewsArrayListTypeList, null, Constant.ADAPTER_CHANNEL_LIFE);
-                                        }
-                                        listLife.setAdapter(channelListTypeAdapter);
-                                        Constant.setListViewHeightBasedOnChildren(listLife);
-                                        channelListTypeAdapter.notifyDataSetChanged();
-                                        progressWheel.setVisibility(View.GONE);
-                                    }
+                                    progressWheel.setVisibility(View.GONE);
                                     //Show ads
                                     showAds();
                                 } catch (Exception e) {
@@ -573,62 +431,6 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
                 getActivity().overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
             }
         }
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_change_layout) {
-            if (getActivity() != null) {
-                getActivity().invalidateOptionsMenu();
-            }
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onPrepareOptionsMenu(Menu menu) {
-        if (listLife.getVisibility() == View.VISIBLE) {
-            listLife.setVisibility(View.GONE);
-            layoutTransparentHeader.setVisibility(View.VISIBLE);
-            layoutTransparentHeader.setBackgroundColor(getResources().getColor(R.color.transparent));
-            gridLife.setVisibility(View.VISIBLE);
-            imageHeader.setVisibility(View.VISIBLE);
-            textHeader.setVisibility(View.VISIBLE);
-            imageHeader.requestFocus();
-            if (menu != null) {
-                if (menu.hasVisibleItems()) {
-                    if (menu.findItem(R.id.action_change_layout) != null) {
-                        menu.removeItem(R.id.action_change_layout);
-                    }
-                }
-            }
-            MenuItem mi = menu.add(Menu.NONE, R.id.action_change_layout, 2, "");
-            mi.setIcon(R.drawable.ic_preview_small);
-            mi.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-        } else {
-            listLife.setVisibility(View.VISIBLE);
-            layoutTransparentHeader.setVisibility(View.GONE);
-            gridLife.setVisibility(View.GONE);
-            imageHeader.setVisibility(View.GONE);
-            textHeader.setVisibility(View.GONE);
-            if (menu != null) {
-                if (menu.hasVisibleItems()) {
-                    if (menu.findItem(R.id.action_change_layout) != null) {
-                        menu.removeItem(R.id.action_change_layout);
-                    }
-                }
-            }
-            MenuItem mi = menu.add(Menu.NONE, R.id.action_change_layout, 2, "");
-            mi.setIcon(R.drawable.ic_preview_big);
-            mi.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-        }
-        super.onPrepareOptionsMenu(menu);
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_frag_channel, menu);
-        super.onCreateOptionsMenu(menu, inflater);
     }
 
     private void showAds() {

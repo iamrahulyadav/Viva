@@ -585,7 +585,7 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
     }
 
     private void alertEnableGPS() {
-        if(getActivity() != null) {
+        if (getActivity() != null) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setMessage(getResources().getString(R.string.label_title_gps))
                     .setCancelable(false)
