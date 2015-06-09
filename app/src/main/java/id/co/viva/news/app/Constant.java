@@ -24,7 +24,7 @@ import android.widget.ListView;
 public class Constant {
 
     //Kind of Timeout
-    public static final int TIME_OUT = 15000;
+    public static final int TIME_OUT = 6000;
     public static final int TIME_OUT_LONG = 15000;
     public static final int TIME_OUT_REGISTRATION = 15000;
     public static final int PROFILE_PIC_SIZE = 400;
@@ -344,8 +344,14 @@ public class Constant {
     public static final String life_health_detail_screen = "life_health_detail_screen";
     public static final String search_screen = "search_screen";
 
+    //Type list
     public static final int HEADLINES_LIST = 1;
     public static final int NEWS_LIST = 2;
+    public static final int BERITA_SEKITAR_LIST = 3;
+    public static final int BIG_CARD_CHANNEL_BOLA_LIST = 4;
+    public static final int BIG_CARD_CHANNEL_NEWS_LIST = 5;
+    public static final int BIG_CARD_CHANNEL_LIFE_LIST = 6;
+    public static final int BIG_CARD_SEARCH_RESULT = 7;
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     public static Bitmap blur(Context ctx, Bitmap image) {

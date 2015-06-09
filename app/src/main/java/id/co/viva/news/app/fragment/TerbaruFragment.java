@@ -260,7 +260,7 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
 
                                     //Small Card List Style
                                     if (newsSmallAdapter == null) {
-                                        newsSmallAdapter = new MainListAdapter(getActivity(), Constant.NEWS_LIST, null, news);
+                                        newsSmallAdapter = new MainListAdapter(getActivity(), Constant.NEWS_LIST, null, news, null);
                                     }
                                     if (mAnimAdapter == null) {
                                         mAnimAdapter = new ScaleInAnimationAdapter(newsSmallAdapter);
@@ -333,7 +333,7 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
 
                                 //Small Card List Style
                                 if (newsSmallAdapter == null) {
-                                    newsSmallAdapter = new MainListAdapter(getActivity(), Constant.NEWS_LIST, null, news);
+                                    newsSmallAdapter = new MainListAdapter(getActivity(), Constant.NEWS_LIST, null, news, null);
                                 }
                                 if (mAnimAdapter == null) {
                                     mAnimAdapter = new ScaleInAnimationAdapter(newsSmallAdapter);
@@ -413,7 +413,7 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
 
                         //Small Card List Style
                         if (newsSmallAdapter == null) {
-                            newsSmallAdapter = new MainListAdapter(getActivity(), Constant.NEWS_LIST, null, news);
+                            newsSmallAdapter = new MainListAdapter(getActivity(), Constant.NEWS_LIST, null, news, null);
                         }
                         if (mAnimAdapter == null) {
                             mAnimAdapter = new ScaleInAnimationAdapter(newsSmallAdapter);
@@ -618,7 +618,7 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
 
                                         //Small Card List Style
                                         if (newsSmallAdapter == null) {
-                                            newsSmallAdapter = new MainListAdapter(getActivity(), Constant.NEWS_LIST, null, newsArrayList);
+                                            newsSmallAdapter = new MainListAdapter(getActivity(), Constant.NEWS_LIST, null, newsArrayList, null);
                                         }
                                         if (mAnimAdapter == null) {
                                             mAnimAdapter = new ScaleInAnimationAdapter(newsSmallAdapter);
@@ -694,7 +694,7 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
 
                                     //Small Card List Style
                                     if (newsSmallAdapter == null) {
-                                        newsSmallAdapter = new MainListAdapter(getActivity(), Constant.NEWS_LIST, null, newsArrayList);
+                                        newsSmallAdapter = new MainListAdapter(getActivity(), Constant.NEWS_LIST, null, newsArrayList, null);
                                     }
                                     if (mAnimAdapter == null) {
                                         mAnimAdapter = new ScaleInAnimationAdapter(newsSmallAdapter);

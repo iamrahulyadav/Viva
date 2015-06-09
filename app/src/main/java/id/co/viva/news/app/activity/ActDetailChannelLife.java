@@ -28,6 +28,7 @@ import com.google.android.gms.ads.doubleclick.PublisherAdView;
 import com.melnykov.fab.FloatingActionButton;
 import com.nhaarman.listviewanimations.appearance.AnimationAdapter;
 import com.nhaarman.listviewanimations.appearance.simple.ScaleInAnimationAdapter;
+import com.nhaarman.listviewanimations.appearance.simple.SwingBottomInAnimationAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -37,6 +38,7 @@ import java.util.ArrayList;
 import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.Global;
 import id.co.viva.news.app.R;
+import id.co.viva.news.app.adapter.ChannelBigAdapter;
 import id.co.viva.news.app.adapter.ChannelLifeAdapter;
 import id.co.viva.news.app.ads.AdsConfig;
 import id.co.viva.news.app.component.LoadMoreListView;
@@ -63,11 +65,14 @@ public class ActDetailChannelLife extends ActionBarActivity implements
     private TextView tvNoResult;
     private TextView tvChannel;
     private LoadMoreListView listView;
+    private LoadMoreListView listViewBigCard;
     private String cachedResponse;
     private AnimationAdapter mAnimAdapter;
+    private SwingBottomInAnimationAdapter swingBottomInAnimationAdapter;
     private JSONArray jsonArrayResponses, jsonArraySegmentHeadline;
     private Analytics analytics;
     private ChannelLifeAdapter adapter;
+    private ChannelBigAdapter bigAdapter;
     private int dataSize = 0;
     private String data;
     private RippleView rippleView;
@@ -143,10 +148,19 @@ public class ActDetailChannelLife extends ActionBarActivity implements
                                 timeStamp = channelLifeArrayList.get(channelLifeArrayList.size()-1).getTimeStamp();
                                 //Populate content
                                 if (channelLifeArrayList.size() > 0 || !channelLifeArrayList.isEmpty()) {
+                                    //Small Card List Style
                                     mAnimAdapter = new ScaleInAnimationAdapter(adapter);
                                     mAnimAdapter.setAbsListView(listView);
                                     listView.setAdapter(mAnimAdapter);
                                     mAnimAdapter.notifyDataSetChanged();
+                                    //Big Card List Style
+                                    swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(bigAdapter);
+                                    swingBottomInAnimationAdapter.setAbsListView(listViewBigCard);
+                                    assert swingBottomInAnimationAdapter.getViewAnimator() != null;
+                                    swingBottomInAnimationAdapter.getViewAnimator().setInitialDelayMillis(1000);
+                                    listViewBigCard.setAdapter(swingBottomInAnimationAdapter);
+                                    bigAdapter.notifyDataSetChanged();
+                                    //Hide progress
                                     progressWheel.setVisibility(View.GONE);
                                 }
                                 //Show Ads
@@ -173,18 +187,18 @@ public class ActDetailChannelLife extends ActionBarActivity implements
             Global.getInstance(this).addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
         } else {
             Toast.makeText(this, R.string.title_no_connection, Toast.LENGTH_SHORT).show();
-            if(Global.getInstance(this).getRequestQueue().getCache().get(getUrl(channel_title)) != null) {
+            if (Global.getInstance(this).getRequestQueue().getCache().get(getUrl(channel_title)) != null) {
                 cachedResponse = new String(Global.getInstance(this).
                         getRequestQueue().getCache().get(getUrl(channel_title)).data);
                 Log.i(Constant.TAG, "CHANNEL LIFE CACHED RESPONSE : " + cachedResponse);
                 try{
                     JSONObject jsonObject = new JSONObject(cachedResponse);
                     jsonArrayResponses = jsonObject.getJSONArray(Constant.response);
-                    if(jsonArrayResponses != null) {
+                    if (jsonArrayResponses != null) {
                         JSONObject objHeadline = jsonArrayResponses.getJSONObject(0);
                         if (objHeadline != null) {
                             jsonArraySegmentHeadline = objHeadline.getJSONArray(Constant.headlines);
-                            for(int i=0; i<jsonArraySegmentHeadline.length(); i++) {
+                            for (int i=0; i<jsonArraySegmentHeadline.length(); i++) {
                                 JSONObject jsonHeadline = jsonArraySegmentHeadline.getJSONObject(i);
                                 String id = jsonHeadline.getString(Constant.id);
                                 String title = jsonHeadline.getString(Constant.title);
@@ -200,13 +214,26 @@ public class ActDetailChannelLife extends ActionBarActivity implements
                         }
                     }
 
-                    timeStamp = channelLifeArrayList.get(channelLifeArrayList.size()-1).getTimeStamp();
+                    timeStamp = channelLifeArrayList.get(channelLifeArrayList.size() - 1).getTimeStamp();
 
-                    if(channelLifeArrayList.size() > 0 || !channelLifeArrayList.isEmpty()) {
-                        mAnimAdapter = new ScaleInAnimationAdapter(adapter);
+                    if (channelLifeArrayList.size() > 0 || !channelLifeArrayList.isEmpty()) {
+                        //Small Card List Style
+                        if (mAnimAdapter == null) {
+                            mAnimAdapter = new ScaleInAnimationAdapter(adapter);
+                        }
                         mAnimAdapter.setAbsListView(listView);
                         listView.setAdapter(mAnimAdapter);
                         mAnimAdapter.notifyDataSetChanged();
+                        //Big Card List Style
+                        if (swingBottomInAnimationAdapter == null) {
+                            swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(bigAdapter);
+                        }
+                        swingBottomInAnimationAdapter.setAbsListView(listViewBigCard);
+                        assert swingBottomInAnimationAdapter.getViewAnimator() != null;
+                        swingBottomInAnimationAdapter.getViewAnimator().setInitialDelayMillis(1000);
+                        listViewBigCard.setAdapter(swingBottomInAnimationAdapter);
+                        bigAdapter.notifyDataSetChanged();
+                        //Hide progress
                         progressWheel.setVisibility(View.GONE);
                     }
                 } catch (Exception e) {
@@ -226,13 +253,49 @@ public class ActDetailChannelLife extends ActionBarActivity implements
                 finish();
                 return true;
         }
+        if (item.getItemId() == R.id.action_change_layout) {
+            invalidateOptionsMenu();
+        }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        //Switch View
+        if (listView.getVisibility() == View.VISIBLE) {
+            listView.setVisibility(View.GONE);
+            listViewBigCard.setVisibility(View.VISIBLE);
+            if (menu != null) {
+                if (menu.hasVisibleItems()) {
+                    if (menu.findItem(R.id.action_change_layout) != null) {
+                        menu.removeItem(R.id.action_change_layout);
+                    }
+                }
+            }
+            MenuItem mi = menu.add(Menu.NONE, R.id.action_change_layout, 2, "");
+            mi.setIcon(R.drawable.ic_preview_small);
+            mi.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        } else {
+            listViewBigCard.setVisibility(View.GONE);
+            listView.setVisibility(View.VISIBLE);
+            if (menu != null) {
+                if (menu.hasVisibleItems()) {
+                    if (menu.findItem(R.id.action_change_layout) != null) {
+                        menu.removeItem(R.id.action_change_layout);
+                    }
+                }
+            }
+            MenuItem mi = menu.add(Menu.NONE, R.id.action_change_layout, 2, "");
+            mi.setIcon(R.drawable.ic_preview_big);
+            mi.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        }
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_frag_default, menu);
+        inflater.inflate(R.menu.menu_channel_detail, menu);
         //SearchView OnClick
         SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
@@ -296,10 +359,18 @@ public class ActDetailChannelLife extends ActionBarActivity implements
                                 timeStamp = channelLifeArrayList.get(channelLifeArrayList.size()-1).getTimeStamp();
 
                                 if (channelLifeArrayList.size() > 0 || !channelLifeArrayList.isEmpty()) {
+                                    //Small Card List Style
                                     mAnimAdapter = new ScaleInAnimationAdapter(adapter);
                                     mAnimAdapter.setAbsListView(listView);
                                     mAnimAdapter.notifyDataSetChanged();
                                     listView.onLoadMoreComplete();
+                                    //Big Card List Style
+                                    swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(bigAdapter);
+                                    swingBottomInAnimationAdapter.setAbsListView(listViewBigCard);
+                                    assert swingBottomInAnimationAdapter.getViewAnimator() != null;
+                                    swingBottomInAnimationAdapter.getViewAnimator().setInitialDelayMillis(1000);
+                                    bigAdapter.notifyDataSetChanged();
+                                    listViewBigCard.onLoadMoreComplete();
                                 }
                             } catch (Exception e) {
                                 e.getMessage();
@@ -309,9 +380,14 @@ public class ActDetailChannelLife extends ActionBarActivity implements
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError volleyError) {
-                            listView.onLoadMoreComplete();
-                            listView.setSelection(0);
-                            if(this != null) {
+                            if (listView.getVisibility() == View.VISIBLE) {
+                                listView.onLoadMoreComplete();
+                                listView.setSelection(0);
+                            } else if (listViewBigCard.getVisibility() == View.VISIBLE) {
+                                listViewBigCard.onLoadMoreComplete();
+                                listViewBigCard.setSelection(0);
+                            }
+                            if (this != null) {
                                 Toast.makeText(ActDetailChannelLife.this, R.string.label_error, Toast.LENGTH_SHORT).show();
                             }
                         }
@@ -379,12 +455,21 @@ public class ActDetailChannelLife extends ActionBarActivity implements
                                     timeStamp = channelLifeArrayList.get(channelLifeArrayList.size()-1).getTimeStamp();
                                     //Populate content
                                     if (channelLifeArrayList.size() > 0 || !channelLifeArrayList.isEmpty()) {
+                                        //Small Card List Style
                                         mAnimAdapter = new ScaleInAnimationAdapter(adapter);
                                         mAnimAdapter.setAbsListView(listView);
                                         listView.setAdapter(mAnimAdapter);
                                         mAnimAdapter.notifyDataSetChanged();
+                                        //Big Card List Style
+                                        swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(bigAdapter);
+                                        swingBottomInAnimationAdapter.setAbsListView(listViewBigCard);
+                                        assert swingBottomInAnimationAdapter.getViewAnimator() != null;
+                                        swingBottomInAnimationAdapter.getViewAnimator().setInitialDelayMillis(1000);
+                                        listViewBigCard.setAdapter(swingBottomInAnimationAdapter);
+                                        bigAdapter.notifyDataSetChanged();
+                                        //Hide progress
                                         progressWheel.setVisibility(View.GONE);
-                                        if(rippleView.getVisibility() == View.VISIBLE) {
+                                        if (rippleView.getVisibility() == View.VISIBLE) {
                                             rippleView.setVisibility(View.GONE);
                                         }
                                     }
@@ -412,7 +497,11 @@ public class ActDetailChannelLife extends ActionBarActivity implements
                 Global.getInstance(this).addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
             }
         } else if(view.getId() == R.id.fab) {
-            listView.setSelection(0);
+            if (listView.getVisibility() == View.VISIBLE) {
+                listView.setSelection(0);
+            } else if (listViewBigCard.getVisibility() == View.VISIBLE) {
+                listViewBigCard.setSelection(0);
+            }
         }
     }
 
@@ -431,28 +520,55 @@ public class ActDetailChannelLife extends ActionBarActivity implements
         tvNoResult = (TextView) findViewById(R.id.text_no_result_detail_channel_life);
         tvNoResult.setVisibility(View.GONE);
 
+        //Collections
         channelLifeArrayList = new ArrayList<>();
         adsArrayList = new ArrayList<>();
-        adapter = new ChannelLifeAdapter(this, channelLifeArrayList);
 
+        //Adapter
+        adapter = new ChannelLifeAdapter(this, channelLifeArrayList);
+        bigAdapter = new ChannelBigAdapter(this, Constant.BIG_CARD_CHANNEL_LIFE_LIST, null, null, channelLifeArrayList, null);
+
+        //Small Card List
         listView = (LoadMoreListView) findViewById(R.id.list_channel_life);
+        listView.setVisibility(View.GONE);
         listView.setOnItemClickListener(this);
         listView.setOnLoadMoreListener(this);
 
+        //Big Card List
+        listViewBigCard = (LoadMoreListView) findViewById(R.id.list_detail_channel_big_card);
+        listViewBigCard.setOnItemClickListener(this);
+        listViewBigCard.setOnLoadMoreListener(this);
+
+        //Set floating button into list
         floatingActionButton = (FloatingActionButton) findViewById(R.id.fab);
         floatingActionButton.setVisibility(View.GONE);
+        //Set floating button into small card list
         floatingActionButton.attachToListView(listView, new FloatingActionButton.FabOnScrollListener() {
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                 super.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
                 int firstIndex = listView.getFirstVisiblePosition();
-                if(firstIndex > Constant.NUMBER_OF_TOP_LIST_ITEMS_BIG_CARD) {
+                if (firstIndex > Constant.NUMBER_OF_TOP_LIST_ITEMS_BIG_CARD) {
                     floatingActionButton.setVisibility(View.VISIBLE);
                 } else {
                     floatingActionButton.setVisibility(View.GONE);
                 }
             }
         });
+        //Set floating button into big card list
+        floatingActionButton.attachToListView(listViewBigCard, new FloatingActionButton.FabOnScrollListener() {
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                super.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
+                int firstIndex = listViewBigCard.getFirstVisiblePosition();
+                if (firstIndex > Constant.NUMBER_OF_TOP_LIST_ITEMS_BIG_CARD) {
+                    floatingActionButton.setVisibility(View.VISIBLE);
+                } else {
+                    floatingActionButton.setVisibility(View.GONE);
+                }
+            }
+        });
+        //Handle floating click
         floatingActionButton.setOnClickListener(this);
     }
 

@@ -259,7 +259,7 @@ public class HeadlineFragment extends Fragment implements
 
                                     //Small Card List Style
                                     if (headlineSmallAdapter == null) {
-                                        headlineSmallAdapter = new MainListAdapter(getActivity(), Constant.HEADLINES_LIST, headlines, null);
+                                        headlineSmallAdapter = new MainListAdapter(getActivity(), Constant.HEADLINES_LIST, headlines, null, null);
                                     }
                                     if (mAnimAdapter == null) {
                                         mAnimAdapter = new ScaleInAnimationAdapter(headlineSmallAdapter);
@@ -332,7 +332,7 @@ public class HeadlineFragment extends Fragment implements
 
                                 //Small Card List Style
                                 if (headlineSmallAdapter == null) {
-                                    headlineSmallAdapter = new MainListAdapter(getActivity(), Constant.HEADLINES_LIST, headlines, null);
+                                    headlineSmallAdapter = new MainListAdapter(getActivity(), Constant.HEADLINES_LIST, headlines, null, null);
                                 }
                                 if (mAnimAdapter == null) {
                                     mAnimAdapter = new ScaleInAnimationAdapter(headlineSmallAdapter);
@@ -410,7 +410,7 @@ public class HeadlineFragment extends Fragment implements
 
                         //Small Card List Style
                         if (headlineSmallAdapter == null) {
-                            headlineSmallAdapter = new MainListAdapter(getActivity(), Constant.HEADLINES_LIST, headlines, null);
+                            headlineSmallAdapter = new MainListAdapter(getActivity(), Constant.HEADLINES_LIST, headlines, null, null);
                         }
                         if (mAnimAdapter == null) {
                             mAnimAdapter = new ScaleInAnimationAdapter(headlineSmallAdapter);
@@ -525,7 +525,7 @@ public class HeadlineFragment extends Fragment implements
 
                                         //Small Card List Style
                                         if (headlineSmallAdapter == null) {
-                                            headlineSmallAdapter = new MainListAdapter(getActivity(), Constant.HEADLINES_LIST, headlineArrayList, null);
+                                            headlineSmallAdapter = new MainListAdapter(getActivity(), Constant.HEADLINES_LIST, headlineArrayList, null, null);
                                         }
                                         if (mAnimAdapter == null) {
                                             mAnimAdapter = new ScaleInAnimationAdapter(headlineSmallAdapter);

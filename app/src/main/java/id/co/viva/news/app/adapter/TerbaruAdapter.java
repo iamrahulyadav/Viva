@@ -52,9 +52,9 @@ public class TerbaruAdapter extends BaseAdapter {
     public View getView(int position, View view, ViewGroup viewGroup) {
         ViewHolder holder;
 
-        if(view == null) {
+        if (view == null) {
             LayoutInflater inflater = LayoutInflater.from(context);
-            view = inflater.inflate(R.layout.item_latest_terbaru, null);
+            view = inflater.inflate(R.layout.item_big_card, null);
             holder = new ViewHolder();
             holder.icon_item_news = (ImageView) view.findViewById(R.id.image_item_news);
             holder.icon_item_viva_news = (ImageView) view.findViewById(R.id.icon_headline_terbaru);

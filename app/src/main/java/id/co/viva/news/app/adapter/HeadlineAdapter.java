@@ -55,7 +55,7 @@ public class HeadlineAdapter extends BaseAdapter {
         if (view == null) {
             LayoutInflater inflater = LayoutInflater.from(context);
             //Checking list type
-            view = inflater.inflate(R.layout.item_latest_terbaru, null);
+            view = inflater.inflate(R.layout.item_big_card, null);
             holderBig = new ViewHolderBigCard();
             holderBig.icon_item_news = (ImageView) view.findViewById(R.id.image_item_news);
             holderBig.icon_item_viva_news = (ImageView) view.findViewById(R.id.icon_headline_terbaru);

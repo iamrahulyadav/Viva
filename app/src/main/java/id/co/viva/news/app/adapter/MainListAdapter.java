@@ -18,6 +18,7 @@ import java.util.Date;
 import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.component.CropSquareTransformation;
+import id.co.viva.news.app.model.BeritaSekitar;
 import id.co.viva.news.app.model.Headline;
 import id.co.viva.news.app.model.News;
 
@@ -29,14 +30,18 @@ public class MainListAdapter extends BaseAdapter {
     private Context context;
     private ArrayList<Headline> headlineArrayList;
     private ArrayList<News> newsArrayList;
+    private ArrayList<BeritaSekitar> beritaSekitarArrayList;
     private int typeList;
 
     public MainListAdapter(Context context, int typeList,
-                           ArrayList<Headline> headlineArrayList, ArrayList<News> newsArrayList) {
+                           ArrayList<Headline> headlineArrayList,
+                           ArrayList<News> newsArrayList,
+                           ArrayList<BeritaSekitar> beritaSekitarArrayList) {
         this.context = context;
         this.typeList = typeList;
         this.headlineArrayList = headlineArrayList;
         this.newsArrayList = newsArrayList;
+        this.beritaSekitarArrayList = beritaSekitarArrayList;
     }
 
     @Override
@@ -46,6 +51,8 @@ public class MainListAdapter extends BaseAdapter {
                 return headlineArrayList.size();
             case Constant.NEWS_LIST:
                 return newsArrayList.size();
+            case Constant.BERITA_SEKITAR_LIST:
+                return beritaSekitarArrayList.size();
             default:
                 break;
         }
@@ -59,6 +66,8 @@ public class MainListAdapter extends BaseAdapter {
                 return headlineArrayList.get(position);
             case Constant.NEWS_LIST:
                 return newsArrayList.get(position);
+            case Constant.BERITA_SEKITAR_LIST:
+                return beritaSekitarArrayList.get(position);
             default:
                 break;
         }
@@ -137,6 +146,25 @@ public class MainListAdapter extends BaseAdapter {
                 } catch (Exception e) {
                     e.getMessage();
                 }
+                break;
+            case Constant.BERITA_SEKITAR_LIST:
+                //Get position each item
+                BeritaSekitar beritaSekitar = beritaSekitarArrayList.get(position);
+                //Set image
+                if (beritaSekitar.getImage_url().length() > 0) {
+                    Picasso.with(context).load(beritaSekitar.getImage_url())
+                            .transform(new CropSquareTransformation()).into(holderSmall.icon_item_news);
+                    //Check is tablet or not
+                    if (Constant.isTablet(context)) {
+                        holderSmall.icon_item_news.getLayoutParams().height =
+                                Constant.getDynamicImageSize(context, Constant.DYNAMIC_SIZE_LIST_TYPE);
+                        holderSmall.icon_item_news.requestLayout();
+                    }
+                }
+                //Set title
+                holderSmall.title_item_news.setText(beritaSekitar.getTitle());
+                //Set time
+                holderSmall.date_item_news.setText(beritaSekitar.getDate_publish());
                 break;
             default:
                 break;

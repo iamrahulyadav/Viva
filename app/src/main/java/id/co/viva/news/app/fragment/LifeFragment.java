@@ -125,7 +125,6 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
         rippleView.setOnClickListener(this);
 
         gridLife = (ExpandableHeightGridView) rootView.findViewById(R.id.grid_life);
-        gridLife.setVisibility(View.GONE);
         gridLife.setExpanded(true);
         gridLife.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -217,6 +216,7 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
                                         Log.i(Constant.TAG, "ADS : " + adsArrayList.get(j).getmUnitId());
                                     }
                                 }
+
                                 //Populate content grid type
                                 if (featuredNewsArrayList.size() > 0 || !featuredNewsArrayList.isEmpty()) {
                                     swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(

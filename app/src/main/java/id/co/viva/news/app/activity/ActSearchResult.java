@@ -24,6 +24,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.google.android.gms.ads.doubleclick.PublisherAdView;
 import com.nhaarman.listviewanimations.appearance.AnimationAdapter;
 import com.nhaarman.listviewanimations.appearance.simple.ScaleInAnimationAdapter;
+import com.nhaarman.listviewanimations.appearance.simple.SwingBottomInAnimationAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -33,6 +34,7 @@ import java.util.ArrayList;
 import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.Global;
 import id.co.viva.news.app.R;
+import id.co.viva.news.app.adapter.ChannelBigAdapter;
 import id.co.viva.news.app.adapter.SearchResultAdapter;
 import id.co.viva.news.app.ads.AdsConfig;
 import id.co.viva.news.app.component.LoadMoreListView;
@@ -50,18 +52,21 @@ public class ActSearchResult extends ActionBarActivity implements
 
     private TextView tvSearchResult;
     private LoadMoreListView listSearchResult;
+    private LoadMoreListView listSearchResultBigCard;
     private String mQuery;
     private boolean isInternetPresent = false;
     private ArrayList<SearchResult> resultArrayList;
     private ArrayList<Ads> adsArrayList;
     private TextView tvNoResult;
     private AnimationAdapter mAnimAdapter;
+    private SwingBottomInAnimationAdapter swingBottomInAnimationAdapter;
     private Analytics analytics;
     private Menu mMenu;
     private int dataSize = 0;
     private String data;
     private ProgressWheel progressWheel;
     private SearchResultAdapter searchResultAdapter;
+    private ChannelBigAdapter bigAdapter;
     private String mKeywordFromScan;
     private LinearLayout mParentLayout;
     private PublisherAdView publisherAdViewBottom;
@@ -107,14 +112,26 @@ public class ActSearchResult extends ActionBarActivity implements
 
     private void defineViews() {
         mParentLayout = (LinearLayout) findViewById(R.id.parent_layout);
+        //Collections
         adsArrayList = new ArrayList<>();
         resultArrayList = new ArrayList<>();
+        //Adapter
         searchResultAdapter = new SearchResultAdapter(this, resultArrayList);
+        bigAdapter = new ChannelBigAdapter(this, Constant.BIG_CARD_SEARCH_RESULT, null, null, null, resultArrayList);
+        //Result label
         tvSearchResult = (TextView)findViewById(R.id.text_search_result);
+        //Small Card List
         listSearchResult = (LoadMoreListView)findViewById(R.id.list_search_result);
+        listSearchResult.setVisibility(View.GONE);
         listSearchResult.setOnItemClickListener(this);
         listSearchResult.setOnLoadMoreListener(this);
+        //Big Card List
+        listSearchResultBigCard = (LoadMoreListView)findViewById(R.id.list_search_result_big_card);
+        listSearchResultBigCard.setOnItemClickListener(this);
+        listSearchResultBigCard.setOnLoadMoreListener(this);
+        //No result text
         tvNoResult = (TextView)findViewById(R.id.text_no_result);
+        //Progress wheel
         progressWheel = (ProgressWheel)findViewById(R.id.progress_wheel);
     }
 
@@ -178,10 +195,19 @@ public class ActSearchResult extends ActionBarActivity implements
                             }
                             //Populate content
                             if (resultArrayList.size() > 0 || !resultArrayList.isEmpty()) {
+                                //Small Card List Style
                                 mAnimAdapter = new ScaleInAnimationAdapter(searchResultAdapter);
                                 mAnimAdapter.setAbsListView(listSearchResult);
                                 listSearchResult.setAdapter(mAnimAdapter);
                                 mAnimAdapter.notifyDataSetChanged();
+                                //Big Card List Style
+                                swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(bigAdapter);
+                                swingBottomInAnimationAdapter.setAbsListView(listSearchResultBigCard);
+                                assert swingBottomInAnimationAdapter.getViewAnimator() != null;
+                                swingBottomInAnimationAdapter.getViewAnimator().setInitialDelayMillis(1000);
+                                listSearchResultBigCard.setAdapter(swingBottomInAnimationAdapter);
+                                bigAdapter.notifyDataSetChanged();
+                                //Hide progress
                                 progressWheel.setVisibility(View.GONE);
                             }
                             //Set ads if exists
@@ -243,7 +269,7 @@ public class ActSearchResult extends ActionBarActivity implements
     public boolean onCreateOptionsMenu(Menu menu) {
         mMenu = menu;
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_frag_default, menu);
+        inflater.inflate(R.menu.menu_channel_detail, menu);
         //SearchView OnClick
         SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
@@ -301,7 +327,7 @@ public class ActSearchResult extends ActionBarActivity implements
     }
 
     private void loadMoreData(final String query) {
-        if(isInternetPresent) {
+        if (isInternetPresent) {
             StringRequest stringRequest = new StringRequest(Request.Method.GET, Constant.NEW_SEARCH + "q/"
                     + query.replaceAll(" ", "%20") + "/s/" + data + "/" + Constant.search_screen,
                     new Response.Listener<String>() {
@@ -327,10 +353,18 @@ public class ActSearchResult extends ActionBarActivity implements
                                     }
                                 }
                                 if (resultArrayList.size() > 0 || !resultArrayList.isEmpty()) {
+                                    //Small Card List Style
                                     mAnimAdapter = new ScaleInAnimationAdapter(searchResultAdapter);
                                     mAnimAdapter.setAbsListView(listSearchResult);
                                     mAnimAdapter.notifyDataSetChanged();
                                     listSearchResult.onLoadMoreComplete();
+                                    //Big Card List Style
+                                    swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(bigAdapter);
+                                    swingBottomInAnimationAdapter.setAbsListView(listSearchResultBigCard);
+                                    assert swingBottomInAnimationAdapter.getViewAnimator() != null;
+                                    swingBottomInAnimationAdapter.getViewAnimator().setInitialDelayMillis(1000);
+                                    bigAdapter.notifyDataSetChanged();
+                                    listSearchResultBigCard.onLoadMoreComplete();
                                 }
                             } catch (Exception e) {
                                 e.getMessage();
@@ -339,8 +373,13 @@ public class ActSearchResult extends ActionBarActivity implements
                     }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError volleyError) {
-                    listSearchResult.onLoadMoreComplete();
-                    listSearchResult.setSelection(0);
+                    if (listSearchResult.getVisibility() == View.VISIBLE) {
+                        listSearchResult.onLoadMoreComplete();
+                        listSearchResult.setSelection(0);
+                    } else if (listSearchResultBigCard.getVisibility() == View.VISIBLE) {
+                        listSearchResultBigCard.onLoadMoreComplete();
+                        listSearchResultBigCard.setSelection(0);
+                    }
                     Toast.makeText(ActSearchResult.this, R.string.label_error, Toast.LENGTH_SHORT).show();
                 }
             });
@@ -382,6 +421,52 @@ public class ActSearchResult extends ActionBarActivity implements
                 }
             }
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+        if (item.getItemId() == R.id.action_change_layout) {
+            invalidateOptionsMenu();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        //Switch View
+        if (listSearchResult.getVisibility() == View.VISIBLE) {
+            listSearchResult.setVisibility(View.GONE);
+            listSearchResultBigCard.setVisibility(View.VISIBLE);
+            if (menu != null) {
+                if (menu.hasVisibleItems()) {
+                    if (menu.findItem(R.id.action_change_layout) != null) {
+                        menu.removeItem(R.id.action_change_layout);
+                    }
+                }
+            }
+            MenuItem mi = menu.add(Menu.NONE, R.id.action_change_layout, 2, "");
+            mi.setIcon(R.drawable.ic_preview_small);
+            mi.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        } else {
+            listSearchResultBigCard.setVisibility(View.GONE);
+            listSearchResult.setVisibility(View.VISIBLE);
+            if (menu != null) {
+                if (menu.hasVisibleItems()) {
+                    if (menu.findItem(R.id.action_change_layout) != null) {
+                        menu.removeItem(R.id.action_change_layout);
+                    }
+                }
+            }
+            MenuItem mi = menu.add(Menu.NONE, R.id.action_change_layout, 2, "");
+            mi.setIcon(R.drawable.ic_preview_big);
+            mi.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        }
+        return super.onPrepareOptionsMenu(menu);
     }
 
 }

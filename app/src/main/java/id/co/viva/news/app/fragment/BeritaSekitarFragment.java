@@ -14,8 +14,10 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -33,6 +35,8 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.google.android.gms.ads.doubleclick.PublisherAdView;
 import com.melnykov.fab.FloatingActionButton;
+import com.nhaarman.listviewanimations.appearance.AnimationAdapter;
+import com.nhaarman.listviewanimations.appearance.simple.ScaleInAnimationAdapter;
 import com.nhaarman.listviewanimations.appearance.simple.SwingBottomInAnimationAdapter;
 
 import org.json.JSONArray;
@@ -48,6 +52,7 @@ import id.co.viva.news.app.Global;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.activity.ActDetailBeritaSekitar;
 import id.co.viva.news.app.adapter.BeritaSekitarAdapter;
+import id.co.viva.news.app.adapter.MainListAdapter;
 import id.co.viva.news.app.ads.AdsConfig;
 import id.co.viva.news.app.component.GoogleMusicDicesDrawable;
 import id.co.viva.news.app.component.LoadMoreListView;
@@ -68,12 +73,14 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
     public static ArrayList<BeritaSekitar> beritaSekitarArrayList;
     private ArrayList<Ads> adsArrayList;
     private SwingBottomInAnimationAdapter swingBottomInAnimationAdapter;
+    private AnimationAdapter mAnimAdapter;
     private boolean isInternetPresent = false;
     private boolean isResume;
     private String lastPaging;
     private int dataSize = 0;
     private String mCitySubLocality;
     private LoadMoreListView listView;
+    private LoadMoreListView listViewSmallCard;
     private LinearLayout mParentLayout;
     private PublisherAdView publisherAdViewBottom;
     private PublisherAdView publisherAdViewTop;
@@ -87,6 +94,7 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
     private LocationFinder locationFinder;
     private JSONArray jsonArrayResponses, jsonArrayResponsesAds;
     private BeritaSekitarAdapter adapter;
+    private MainListAdapter smallAdapter;
     private ActionBarActivity mActivity;
     private int page = 1;
     //Type Number
@@ -107,6 +115,7 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        setHasOptionsMenu(true);
         mActivity = (ActionBarActivity) activity;
         ColorDrawable colorDrawable = new ColorDrawable();
         colorDrawable.setColor(getResources().getColor(R.color.new_base_color));
@@ -159,15 +168,22 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
         labelText = (TextView) rootView.findViewById(R.id.text_berita_sekitar);
         labelText.setText(getString(R.string.label_berita_sekitar));
 
-        //List Content
+        //Big Card List Content
         listView = (LoadMoreListView) rootView.findViewById(R.id.list_berita_sekitar);
         listView.setOnItemClickListener(this);
         listView.setOnLoadMoreListener(this);
+
+        //Small Card List Content
+        listViewSmallCard = (LoadMoreListView) rootView.findViewById(R.id.list_berita_sekitar_small_card);
+        listView.setVisibility(View.GONE);
+        listViewSmallCard.setOnItemClickListener(this);
+        listViewSmallCard.setOnLoadMoreListener(this);
 
         //'Go to top' button
         floatingActionButton = (FloatingActionButton) rootView.findViewById(R.id.fab);
         floatingActionButton.setVisibility(View.GONE);
         floatingActionButton.setOnClickListener(this);
+        //Set floating button into big card list
         floatingActionButton.attachToListView(listView, new FloatingActionButton.FabOnScrollListener() {
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
@@ -180,14 +196,35 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
                 }
             }
         });
+        //Set floating button into small card list
+        floatingActionButton.attachToListView(listViewSmallCard, new FloatingActionButton.FabOnScrollListener() {
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                super.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
+                int firstIndex = listViewSmallCard.getFirstVisiblePosition();
+                if (firstIndex > Constant.NUMBER_OF_TOP_LIST_ITEMS_SMALL_CARD) {
+                    floatingActionButton.setVisibility(View.VISIBLE);
+                } else {
+                    floatingActionButton.setVisibility(View.GONE);
+                }
+            }
+        });
 
         //Assign array
         adsArrayList = new ArrayList<>();
         beritaSekitarArrayList = new ArrayList<>();
+
+        //Check adapter
         if (getActivity() != null) {
-            adapter = new BeritaSekitarAdapter(getActivity(), beritaSekitarArrayList);
+            if (adapter == null) {
+                adapter = new BeritaSekitarAdapter(getActivity(), beritaSekitarArrayList);
+            }
+            if (smallAdapter == null) {
+                smallAdapter = new MainListAdapter(getActivity(), Constant.BERITA_SEKITAR_LIST, null, null, beritaSekitarArrayList);
+            }
         } else {
             adapter = new BeritaSekitarAdapter(mActivity, beritaSekitarArrayList);
+            smallAdapter = new MainListAdapter(getActivity(), Constant.BERITA_SEKITAR_LIST, null, null, beritaSekitarArrayList);
         }
 
         //Checking process when find some locations
@@ -285,12 +322,23 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
                                     }
                                     //Show content list
                                     if (beritaSekitarArrayList.size() > 0 || !beritaSekitarArrayList.isEmpty()) {
-                                        swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(adapter);
+                                        //Big Card List Style
+                                        if (swingBottomInAnimationAdapter == null) {
+                                            swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(adapter);
+                                        }
                                         swingBottomInAnimationAdapter.setAbsListView(listView);
                                         assert swingBottomInAnimationAdapter.getViewAnimator() != null;
                                         swingBottomInAnimationAdapter.getViewAnimator().setInitialDelayMillis(1000);
                                         listView.setAdapter(swingBottomInAnimationAdapter);
                                         adapter.notifyDataSetChanged();
+                                        //Small Card List Style
+                                        if (mAnimAdapter == null) {
+                                            mAnimAdapter = new ScaleInAnimationAdapter(smallAdapter);
+                                        }
+                                        mAnimAdapter.setAbsListView(listViewSmallCard);
+                                        listViewSmallCard.setAdapter(mAnimAdapter);
+                                        mAnimAdapter.notifyDataSetChanged();
+
                                         loading_layout.setVisibility(View.GONE);
                                         labelLoadData.setVisibility(View.GONE);
                                         lastUpdate.setText(getParamLocation(mCitySubLocality, LOCATION_LOCALITY));
@@ -308,9 +356,6 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
                             Toast.makeText(mActivity, getResources()
                                     .getString(R.string.title_failed_get_location), Toast.LENGTH_SHORT).show();
                         }
-                        Log.i(Constant.TAG, "URL : " + Constant.BERITA_SEKITAR_URL + "p/" + getParamLocation(mCitySubLocality, LOCATION_LOCALITY)
-                                + "/q/" + getParamLocation(mCitySubLocality, LOCATION_SUB_LOCALITY)
-                                + "/r/" + getParamLocation(mCitySubLocality, LOCATION_ADMIN_AREA) + "/s/0");
                         loading_layout.setVisibility(View.GONE);
                         labelLoadData.setVisibility(View.GONE);
                         rippleView.setVisibility(View.VISIBLE);
@@ -327,7 +372,11 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
                 }
             }
         } else if(view.getId() == R.id.fab) {
-            listView.setSelection(0);
+            if (listView.getVisibility() == View.VISIBLE) {
+                listView.setSelection(0);
+            } else if (listViewSmallCard.getVisibility() == View.VISIBLE) {
+                listViewSmallCard.setSelection(0);
+            }
         }
     }
 
@@ -348,8 +397,8 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
                                 JSONObject jsonObject = new JSONObject(s);
                                 JSONObject response = jsonObject.getJSONObject(Constant.response);
                                 jsonArrayResponses = response.getJSONArray(Constant.search);
-                                if(jsonArrayResponses != null) {
-                                    for(int i=0; i<jsonArrayResponses.length(); i++) {
+                                if (jsonArrayResponses != null) {
+                                    for (int i=0; i<jsonArrayResponses.length(); i++) {
                                         JSONObject jsonHeadline = jsonArrayResponses.getJSONObject(i);
                                         String id = jsonHeadline.getString(Constant.id);
                                         String kanal = jsonHeadline.getString(Constant.kanal);
@@ -362,12 +411,18 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
                                     }
                                 }
                                 if (beritaSekitarArrayList.size() > 0 || !beritaSekitarArrayList.isEmpty()) {
+                                    //Big Card List Style
                                     swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(adapter);
                                     swingBottomInAnimationAdapter.setAbsListView(listView);
                                     assert swingBottomInAnimationAdapter.getViewAnimator() != null;
                                     swingBottomInAnimationAdapter.getViewAnimator().setInitialDelayMillis(1000);
                                     adapter.notifyDataSetChanged();
                                     listView.onLoadMoreComplete();
+                                    //Small Card List Style
+                                    mAnimAdapter = new ScaleInAnimationAdapter(smallAdapter);
+                                    mAnimAdapter.setAbsListView(listViewSmallCard);
+                                    mAnimAdapter.notifyDataSetChanged();
+                                    listViewSmallCard.onLoadMoreComplete();
                                 }
                             } catch (Exception e) {
                                 e.getMessage();
@@ -376,8 +431,13 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
                     }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError volleyError) {
-                    listView.onLoadMoreComplete();
-                    listView.setSelection(0);
+                    if (listView.getVisibility() == View.VISIBLE) {
+                        listView.onLoadMoreComplete();
+                        listView.setSelection(0);
+                    } else if (listViewSmallCard.getVisibility() == View.VISIBLE) {
+                        listViewSmallCard.onLoadMoreComplete();
+                        listViewSmallCard.setSelection(0);
+                    }
                     if (isAdded()) {
                         Toast.makeText(mActivity,
                                 R.string.label_error, Toast.LENGTH_SHORT).show();
@@ -498,8 +558,8 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
                                             JSONObject response = jsonObject.getJSONObject(Constant.response);
                                             //Get content list
                                             jsonArrayResponses = response.getJSONArray(Constant.search);
-                                            if(jsonArrayResponses != null) {
-                                                for(int i=0; i<jsonArrayResponses.length(); i++) {
+                                            if (jsonArrayResponses != null) {
+                                                for (int i=0; i<jsonArrayResponses.length(); i++) {
                                                     JSONObject jsonHeadline = jsonArrayResponses.getJSONObject(i);
                                                     String id = jsonHeadline.getString(Constant.id);
                                                     String kanal = jsonHeadline.getString(Constant.kanal);
@@ -525,12 +585,23 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
                                             }
                                             //Show content list
                                             if (beritaSekitarArrayList.size() > 0 || !beritaSekitarArrayList.isEmpty()) {
-                                                swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(adapter);
+                                                //Big Card List Style
+                                                if (swingBottomInAnimationAdapter == null) {
+                                                    swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(adapter);
+                                                }
                                                 swingBottomInAnimationAdapter.setAbsListView(listView);
                                                 assert swingBottomInAnimationAdapter.getViewAnimator() != null;
                                                 swingBottomInAnimationAdapter.getViewAnimator().setInitialDelayMillis(1000);
                                                 listView.setAdapter(swingBottomInAnimationAdapter);
                                                 adapter.notifyDataSetChanged();
+                                                //Small Card List Style
+                                                if (mAnimAdapter == null) {
+                                                    mAnimAdapter = new ScaleInAnimationAdapter(smallAdapter);
+                                                }
+                                                mAnimAdapter.setAbsListView(listViewSmallCard);
+                                                listViewSmallCard.setAdapter(mAnimAdapter);
+                                                mAnimAdapter.notifyDataSetChanged();
+                                                //After successful getting data
                                                 loading_layout.setVisibility(View.GONE);
                                                 labelLoadData.setVisibility(View.GONE);
                                                 lastUpdate.setText(getParamLocation(mCitySubLocality, LOCATION_LOCALITY));
@@ -651,6 +722,54 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
         if (publisherAdViewTop != null) {
             publisherAdViewTop.destroy();
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_change_layout) {
+            if (getActivity() != null) {
+                getActivity().invalidateOptionsMenu();
+            }
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        if (listViewSmallCard.getVisibility() == View.VISIBLE) {
+            listViewSmallCard.setVisibility(View.GONE);
+            listView.setVisibility(View.VISIBLE);
+            if (menu != null) {
+                if (menu.hasVisibleItems()) {
+                    if (menu.findItem(R.id.action_change_layout) != null) {
+                        menu.removeItem(R.id.action_change_layout);
+                    }
+                }
+            }
+            MenuItem mi = menu.add(Menu.NONE, R.id.action_change_layout, 2, "");
+            mi.setIcon(R.drawable.ic_preview_small);
+            mi.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        } else {
+            listViewSmallCard.setVisibility(View.VISIBLE);
+            listView.setVisibility(View.GONE);
+            if (menu != null) {
+                if (menu.hasVisibleItems()) {
+                    if (menu.findItem(R.id.action_change_layout) != null) {
+                        menu.removeItem(R.id.action_change_layout);
+                    }
+                }
+            }
+            MenuItem mi = menu.add(Menu.NONE, R.id.action_change_layout, 2, "");
+            mi.setIcon(R.drawable.ic_preview_big);
+            mi.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        }
+        super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_frag_channel, menu);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
 }

@@ -256,8 +256,8 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
                                 }
                                 //Get video content
                                 JSONArray content_video = detail.getJSONArray(Constant.content_video);
-                                if(content_video != null && content_video.length() > 0) {
-                                    for(int i=0; i<content_video.length(); i++) {
+                                if (content_video != null && content_video.length() > 0) {
+                                    for (int i=0; i<content_video.length(); i++) {
                                         JSONObject objVideo = content_video.getJSONObject(i);
                                         urlVideo = objVideo.getString("src_1");
                                         String widthVideo = objVideo.getString("src_2");
@@ -267,7 +267,7 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
                                 }
                                 //Get related article
                                 JSONArray related_article = response.getJSONArray(Constant.related_article);
-                                for(int i=0; i<related_article.length(); i++) {
+                                for (int i=0; i<related_article.length(); i++) {
                                     JSONObject objRelated = related_article.getJSONObject(i);
                                     String id = objRelated.getString(Constant.id);
                                     String article_id = objRelated.getString(Constant.article_id);
@@ -338,7 +338,7 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
                                             try {
                                                 while (true) {
                                                     Thread.sleep(3000);
-                                                    if(getActivity() == null) {
+                                                    if (getActivity() == null) {
                                                         return;
                                                     }
                                                     getActivity().runOnUiThread(new Runnable() {
@@ -364,12 +364,12 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
                                 getActivity().invalidateOptionsMenu();
                                 //Hide progress bar
                                 progressWheel.setVisibility(View.GONE);
+                                //Show Ads
+                                showAds();
                                 //Show video link
                                 if (urlVideo.length() > 0) {
                                     textLinkVideo.setVisibility(View.VISIBLE);
                                 }
-                                //Show Ads
-                                showAds();
                             } catch (Exception e) {
                                 e.getMessage();
                             }
@@ -440,7 +440,7 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
                                     tvReporterHeadlineDetail.setText(reporter_name);
                                     Picasso.with(getActivity()).load(image_url).transform(new CropSquareTransformation()).into(ivThumbDetailHeadline);
 
-                                    if(sliderContentImages.size() > 0) {
+                                    if (sliderContentImages.size() > 0) {
                                         imageSliderAdapter = new ImageSliderAdapter(getFragmentManager(), sliderContentImages);
                                         viewPager.setAdapter(imageSliderAdapter);
                                         viewPager.setCurrentItem(0);
@@ -450,7 +450,7 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
                                         linePageIndicator.setVisibility(View.VISIBLE);
                                     }
 
-                                    if(relatedArticleArrayList.size() > 0 || !relatedArticleArrayList.isEmpty()) {
+                                    if (relatedArticleArrayList.size() > 0 || !relatedArticleArrayList.isEmpty()) {
                                         adapter = new RelatedAdapter(getActivity(), relatedArticleArrayList);
                                         listView.setAdapter(adapter);
                                         Constant.setListViewHeightBasedOnChildren(listView);
@@ -458,7 +458,7 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
                                         headerRelated.setVisibility(View.VISIBLE);
                                     }
 
-                                    if(commentArrayList.size() > 0) {
+                                    if (commentArrayList.size() > 0) {
                                         layoutCommentPreview.setVisibility(View.VISIBLE);
                                         Thread thread = new Thread() {
                                             @Override
@@ -529,7 +529,7 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
                     image_caption = detail.getString(Constant.image_caption);
 
                     JSONArray sliderImageArray = detail.getJSONArray(Constant.content_images);
-                    if(sliderImageArray != null) {
+                    if (sliderImageArray != null) {
                         for(int i=0; i<sliderImageArray.length(); i++) {
                             JSONObject objSlider = sliderImageArray.getJSONObject(i);
                             String sliderPhotoUrl = objSlider.getString("src");
@@ -539,7 +539,7 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
                     }
 
                     JSONArray related_article = response.getJSONArray(Constant.related_article);
-                    for(int i=0; i<related_article.length(); i++) {
+                    for (int i=0; i<related_article.length(); i++) {
                         JSONObject objRelated = related_article.getJSONObject(i);
                         String id = objRelated.getString(Constant.id);
                         String article_id = objRelated.getString(Constant.article_id);
@@ -557,7 +557,7 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
                     }
 
                     JSONArray comment_list = response.getJSONArray(Constant.comment_list);
-                    for(int i=0; i<comment_list.length(); i++) {
+                    for (int i=0; i<comment_list.length(); i++) {
                         JSONObject objRelated = comment_list.getJSONObject(i);
                         String id = objRelated.getString(Constant.id);
                         String name = objRelated.getString(Constant.name);
@@ -572,7 +572,7 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
                     tvReporterHeadlineDetail.setText(reporter_name);
                     Picasso.with(getActivity()).load(image_url).transform(new CropSquareTransformation()).into(ivThumbDetailHeadline);
 
-                    if(sliderContentImages.size() > 0) {
+                    if (sliderContentImages.size() > 0) {
                         imageSliderAdapter = new ImageSliderAdapter(getFragmentManager(), sliderContentImages);
                         viewPager.setAdapter(imageSliderAdapter);
                         viewPager.setCurrentItem(0);
@@ -582,7 +582,7 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
                         linePageIndicator.setVisibility(View.VISIBLE);
                     }
 
-                    if(relatedArticleArrayList.size() > 0 || !relatedArticleArrayList.isEmpty()) {
+                    if (relatedArticleArrayList.size() > 0 || !relatedArticleArrayList.isEmpty()) {
                         adapter = new RelatedAdapter(getActivity(), relatedArticleArrayList);
                         listView.setAdapter(adapter);
                         Constant.setListViewHeightBasedOnChildren(listView);
@@ -590,7 +590,7 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
                         headerRelated.setVisibility(View.VISIBLE);
                     }
 
-                    if(commentArrayList.size() > 0) {
+                    if (commentArrayList.size() > 0) {
                         layoutCommentPreview.setVisibility(View.VISIBLE);
 
                         Thread thread = new Thread() {
@@ -760,7 +760,7 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
 
     @Override
     public void onClick(View view) {
-        if(view.getId() == R.id.layout_ripple_view) {
+        if (view.getId() == R.id.layout_ripple_view) {
             if (isInternetPresent) {
                 rippleView.setVisibility(View.GONE);
                 progressWheel.setVisibility(View.VISIBLE);
@@ -786,8 +786,8 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
                                     image_caption = detail.getString(Constant.image_caption);
                                     //Get list content image
                                     JSONArray sliderImageArray = detail.getJSONArray(Constant.content_images);
-                                    if(sliderImageArray != null) {
-                                        for(int i=0; i<sliderImageArray.length(); i++) {
+                                    if (sliderImageArray != null) {
+                                        for (int i=0; i<sliderImageArray.length(); i++) {
                                             JSONObject objSlider = sliderImageArray.getJSONObject(i);
                                             String sliderPhotoUrl = objSlider.getString("src");
                                             String sliderTitle = objSlider.getString("title");
@@ -796,8 +796,8 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
                                     }
                                     //Get list content video
                                     JSONArray content_video = detail.getJSONArray(Constant.content_video);
-                                    if(content_video != null && content_video.length() > 0) {
-                                        for(int i=0; i<content_video.length(); i++) {
+                                    if (content_video != null && content_video.length() > 0) {
+                                        for (int i=0; i<content_video.length(); i++) {
                                             JSONObject objVideo = content_video.getJSONObject(i);
                                             urlVideo = objVideo.getString("src_1");
                                             String widthVideo = objVideo.getString("src_2");
@@ -807,7 +807,7 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
                                     }
                                     //Get related article
                                     JSONArray related_article = response.getJSONArray(Constant.related_article);
-                                    for(int i=0; i<related_article.length(); i++) {
+                                    for (int i=0; i<related_article.length(); i++) {
                                         JSONObject objRelated = related_article.getJSONObject(i);
                                         String id = objRelated.getString(Constant.id);
                                         String article_id = objRelated.getString(Constant.article_id);
@@ -907,12 +907,12 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
                                     getActivity().invalidateOptionsMenu();
                                     //Hide progress bar
                                     progressWheel.setVisibility(View.GONE);
+                                    //Show Ads
+                                    showAds();
                                     //Show url video
                                     if (urlVideo.length() > 0) {
                                         textLinkVideo.setVisibility(View.VISIBLE);
                                     }
-                                    //Show Ads
-                                    showAds();
                                 } catch (Exception e) {
                                     e.getMessage();
                                 }
@@ -940,9 +940,9 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
                 progressWheel.setVisibility(View.GONE);
                 tvNoResult.setVisibility(View.VISIBLE);
             }
-        } else if(view.getId() == R.id.thumb_detail) {
-            if(image_url != null) {
-                if(image_url.length() > 0) {
+        } else if (view.getId() == R.id.thumb_detail) {
+            if (image_url != null) {
+                if (image_url.length() > 0) {
                     Bundle bundle = new Bundle();
                     bundle.putString("photoUrl", image_url);
                     bundle.putString("image_caption", image_caption);
@@ -952,9 +952,9 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
                     getActivity().overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
                 }
             }
-        } else if(view.getId() == R.id.layout_preview_comment_list) {
+        } else if (view.getId() == R.id.layout_preview_comment_list) {
             moveCommentPage();
-        } else if(view.getId() == R.id.text_move_video) {
+        } else if (view.getId() == R.id.text_move_video) {
             moveVideoPage(urlVideo);
         }
     }

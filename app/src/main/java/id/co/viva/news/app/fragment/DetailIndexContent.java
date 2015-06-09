@@ -393,12 +393,12 @@ public class DetailIndexContent extends Fragment implements
                                 getActivity().invalidateOptionsMenu();
                                 //Hide progress bar
                                 progressWheel.setVisibility(View.GONE);
+                                //Show Ads
+                                showAds();
                                 //Show url video
                                 if(urlVideo.length() > 0) {
                                     textLinkVideo.setVisibility(View.VISIBLE);
                                 }
-                                //Show Ads
-                                showAds();
                             } catch (Exception e) {
                                 e.getMessage();
                             }
@@ -407,7 +407,7 @@ public class DetailIndexContent extends Fragment implements
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError volleyError) {
-                            if(Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + id) != null) {
+                            if (Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + id) != null) {
                                 String cachedResponse = new String(Global.getInstance(getActivity()).
                                         getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + id).data);
                                 try {
@@ -426,8 +426,8 @@ public class DetailIndexContent extends Fragment implements
                                     image_caption = detail.getString(Constant.image_caption);
 
                                     JSONArray sliderImageArray = detail.getJSONArray(Constant.content_images);
-                                    if(sliderImageArray != null) {
-                                        for(int i=0; i<sliderImageArray.length(); i++) {
+                                    if (sliderImageArray != null) {
+                                        for (int i=0; i<sliderImageArray.length(); i++) {
                                             JSONObject objSlider = sliderImageArray.getJSONObject(i);
                                             sliderPhotoUrl = objSlider.getString("src");
                                             sliderTitle = objSlider.getString("title");
@@ -436,7 +436,7 @@ public class DetailIndexContent extends Fragment implements
                                     }
 
                                     JSONArray related_article = response.getJSONArray(Constant.related_article);
-                                    for(int i=0; i<related_article.length(); i++) {
+                                    for (int i=0; i<related_article.length(); i++) {
                                         JSONObject objRelated = related_article.getJSONObject(i);
                                         String id = objRelated.getString(Constant.id);
                                         String article_id = objRelated.getString(Constant.article_id);
@@ -453,7 +453,7 @@ public class DetailIndexContent extends Fragment implements
                                     }
 
                                     JSONArray comment_list = response.getJSONArray(Constant.comment_list);
-                                    for(int i=0; i<comment_list.length(); i++) {
+                                    for (int i=0; i<comment_list.length(); i++) {
                                         JSONObject objRelated = comment_list.getJSONObject(i);
                                         String id = objRelated.getString(Constant.id);
                                         String name = objRelated.getString(Constant.name);
@@ -467,7 +467,7 @@ public class DetailIndexContent extends Fragment implements
                                     tvReporterDetail.setText(reporter_name);
                                     Picasso.with(getActivity()).load(image_url).transform(new CropSquareTransformation()).into(ivThumbDetail);
 
-                                    if(sliderContentImages.size() > 0) {
+                                    if (sliderContentImages.size() > 0) {
                                         imageSliderAdapter = new ImageSliderAdapter(getFragmentManager(), sliderContentImages);
                                         viewPager.setAdapter(imageSliderAdapter);
                                         viewPager.setCurrentItem(0);
@@ -477,17 +477,17 @@ public class DetailIndexContent extends Fragment implements
                                         linePageIndicator.setVisibility(View.VISIBLE);
                                     }
 
-                                    if(relatedArticleArrayList.size() > 0 || !relatedArticleArrayList.isEmpty()) {
+                                    if (relatedArticleArrayList.size() > 0 || !relatedArticleArrayList.isEmpty()) {
                                         adapter = new RelatedAdapter(getActivity(), relatedArticleArrayList);
                                         listView.setAdapter(adapter);
                                         Constant.setListViewHeightBasedOnChildren(listView);
                                         adapter.notifyDataSetChanged();
                                         headerRelated.setVisibility(View.VISIBLE);
                                         Log.i(Constant.TAG, "KANALS : " + kanals);
-                                        if(kanals != null) {
-                                            if(kanals.equalsIgnoreCase("bola")) {
+                                        if (kanals != null) {
+                                            if (kanals.equalsIgnoreCase("bola")) {
                                                 headerRelated.setBackgroundResource(R.color.color_bola);
-                                            } else if(kanals.equalsIgnoreCase("vivalife")) {
+                                            } else if (kanals.equalsIgnoreCase("vivalife")) {
                                                 headerRelated.setBackgroundResource(R.color.color_life);
                                             } else {
                                                 headerRelated.setBackgroundResource(R.color.color_news);
@@ -495,7 +495,7 @@ public class DetailIndexContent extends Fragment implements
                                         }
                                     }
 
-                                    if(commentArrayList.size() > 0) {
+                                    if (commentArrayList.size() > 0) {
                                         layoutCommentPreview.setVisibility(View.VISIBLE);
 
                                         Thread thread = new Thread() {
@@ -534,10 +534,10 @@ public class DetailIndexContent extends Fragment implements
                             } else {
                                 progressWheel.setVisibility(View.GONE);
                                 rippleView.setVisibility(View.VISIBLE);
-                                if(kanals != null) {
-                                    if(kanals.equalsIgnoreCase("bola")) {
+                                if (kanals != null) {
+                                    if (kanals.equalsIgnoreCase("bola")) {
                                         btnRetry.setBackgroundResource(R.drawable.shadow_button_bola);
-                                    } else if(kanals.equalsIgnoreCase("vivalife")) {
+                                    } else if (kanals.equalsIgnoreCase("vivalife")) {
                                         btnRetry.setBackgroundResource(R.drawable.shadow_button_life);
                                     } else {
                                         btnRetry.setBackgroundResource(R.drawable.shadow_button_news);
@@ -557,7 +557,7 @@ public class DetailIndexContent extends Fragment implements
                     + Constant.getScreenParameter(kanals, mChannelTitle));
             Global.getInstance(getActivity()).addToRequestQueue(request, Constant.JSON_REQUEST);
         } else {
-            if(Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + id) != null) {
+            if (Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + id) != null) {
                 String cachedResponse = new String(Global.getInstance(getActivity()).
                         getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + id).data);
                 try {
@@ -576,8 +576,8 @@ public class DetailIndexContent extends Fragment implements
                     image_caption = detail.getString(Constant.image_caption);
 
                     JSONArray sliderImageArray = detail.getJSONArray(Constant.content_images);
-                    if(sliderImageArray != null) {
-                        for(int i=0; i<sliderImageArray.length(); i++) {
+                    if (sliderImageArray != null) {
+                        for (int i=0; i<sliderImageArray.length(); i++) {
                             JSONObject objSlider = sliderImageArray.getJSONObject(i);
                             sliderPhotoUrl = objSlider.getString("src");
                             sliderTitle = objSlider.getString("title");
@@ -586,7 +586,7 @@ public class DetailIndexContent extends Fragment implements
                     }
 
                     JSONArray related_article = response.getJSONArray(Constant.related_article);
-                    for(int i=0; i<related_article.length(); i++) {
+                    for (int i=0; i<related_article.length(); i++) {
                         JSONObject objRelated = related_article.getJSONObject(i);
                         String id = objRelated.getString(Constant.id);
                         String article_id = objRelated.getString(Constant.article_id);
@@ -603,7 +603,7 @@ public class DetailIndexContent extends Fragment implements
                     }
 
                     JSONArray comment_list = response.getJSONArray(Constant.comment_list);
-                    for(int i=0; i<comment_list.length(); i++) {
+                    for (int i=0; i<comment_list.length(); i++) {
                         JSONObject objRelated = comment_list.getJSONObject(i);
                         String id = objRelated.getString(Constant.id);
                         String name = objRelated.getString(Constant.name);
@@ -990,12 +990,12 @@ public class DetailIndexContent extends Fragment implements
                                     getActivity().invalidateOptionsMenu();
                                     //Hide progress bar
                                     progressWheel.setVisibility(View.GONE);
+                                    //Show Ads
+                                    showAds();
                                     //Show video link
                                     if (urlVideo.length() > 0) {
                                         textLinkVideo.setVisibility(View.VISIBLE);
                                     }
-                                    //Show Ads
-                                    showAds();
                                 } catch (Exception e) {
                                     e.getMessage();
                                 }

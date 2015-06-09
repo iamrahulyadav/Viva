@@ -35,6 +35,7 @@
                 android:textStyle="bold"
                 android:textSize="14sp"/>
         </RelativeLayout>
+        <!-- Big Card -->
         <id.co.viva.news.app.component.LoadMoreListView
             xmlns:tools="http://schemas.android.com/tools"
             android:id="@+id/list_berita_sekitar"
@@ -49,6 +50,18 @@
             tools:ignore="overdraw"
             android:layout_below="@id/header_berita_sekitar_and_date"
             android:layout_height="match_parent"/>
+        <!-- Small Card -->
+        <id.co.viva.news.app.component.LoadMoreListView
+            android:id="@+id/list_berita_sekitar_small_card"
+            android:layout_width="fill_parent"
+            android:layout_below="@id/header_berita_sekitar_and_date"
+            android:choiceMode="singleChoice"
+            android:divider="@color/list_divider"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginBottom="5dp"
+            android:dividerHeight="0dp"
+            android:layout_height="fill_parent"/>
         <ProgressBar
             android:id="@+id/loading_progress_layout_berita_sekitar"
             android:layout_width="60dp"
