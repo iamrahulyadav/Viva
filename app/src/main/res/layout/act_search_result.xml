@@ -11,23 +11,34 @@
         android:layout_weight="1">
         <id.co.viva.news.app.component.RobotoBoldTextView
             android:layout_width="wrap_content"
-            android:text="@string/abc_searchview_description_search"
             android:layout_height="wrap_content"
             android:textStyle="bold"
             android:textColor="@color/header_headline_terbaru_new"
             android:textSize="18sp"
-            android:layout_margin="10dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="5dp"
             android:id="@+id/text_search_result"/>
+        <id.co.viva.news.app.component.RobotoBoldTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/text_search_result"
+            android:textStyle="bold"
+            android:textColor="@color/header_headline_terbaru_new"
+            android:textSize="18sp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginRight="5dp"
+            android:id="@+id/text_search_result_number"/>
         <!-- Small Card -->
         <id.co.viva.news.app.component.LoadMoreListView
             android:id="@+id/list_search_result"
             android:layout_width="fill_parent"
-            android:layout_below="@id/text_search_result"
+            android:layout_below="@id/text_search_result_number"
             android:choiceMode="singleChoice"
             android:divider="@color/list_divider"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
-            android:layout_marginBottom="10dp"
             android:dividerHeight="0dp"
             android:layout_height="fill_parent"/>
         <!-- Big Card -->
@@ -40,10 +51,11 @@
             android:dividerHeight="8dp"
             android:fadingEdge="none"
             android:fitsSystemWindows="true"
-            android:padding="12dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             android:scrollbarStyle="outsideOverlay"
             tools:ignore="overdraw"
-            android:layout_below="@id/text_search_result"
+            android:layout_below="@id/text_search_result_number"
             android:layout_height="match_parent"/>
         <id.co.viva.news.app.component.ProgressWheel
             android:id="@+id/progress_wheel"

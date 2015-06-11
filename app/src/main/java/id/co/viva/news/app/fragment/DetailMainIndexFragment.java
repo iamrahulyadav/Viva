@@ -21,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -99,6 +100,7 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
     private TextView tvPreviewCommentUser;
     private TextView tvPreviewCommentContent;
     private LinearLayout layoutCommentPreview;
+    private Button btnComment;
     private ViewPager viewPager;
     private LinePageIndicator linePageIndicator;
     private int count = 0;
@@ -160,6 +162,12 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
         //Indicator Slider Image
         linePageIndicator = (LinePageIndicator) view.findViewById(R.id.indicator);
         linePageIndicator.setVisibility(View.GONE);
+
+        //Button comment
+        btnComment = (Button) view.findViewById(R.id.btn_comment);
+        btnComment.setBackgroundColor(getResources().getColor(R.color.new_base_color));
+        btnComment.setOnClickListener(this);
+        btnComment.setTransformationMethod(null);
 
         //Layout Comment
         layoutCommentPreview = (LinearLayout) view.findViewById(R.id.layout_preview_comment_list);
@@ -359,6 +367,8 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
                                         }
                                     };
                                     thread.start();
+                                } else {
+                                    btnComment.setVisibility(View.VISIBLE);
                                 }
                                 //Update by calling invalidateOptionsMenu()
                                 getActivity().invalidateOptionsMenu();
@@ -397,8 +407,8 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
                                     image_caption = detail.getString(Constant.image_caption);
 
                                     JSONArray sliderImageArray = detail.getJSONArray(Constant.content_images);
-                                    if(sliderImageArray != null) {
-                                        for(int i=0; i<sliderImageArray.length(); i++) {
+                                    if (sliderImageArray != null) {
+                                        for (int i=0; i<sliderImageArray.length(); i++) {
                                             JSONObject objSlider = sliderImageArray.getJSONObject(i);
                                             String sliderPhotoUrl = objSlider.getString("src");
                                             String sliderTitle = objSlider.getString("title");
@@ -407,7 +417,7 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
                                     }
 
                                     JSONArray related_article = response.getJSONArray(Constant.related_article);
-                                    for(int i=0; i<related_article.length(); i++) {
+                                    for (int i=0; i<related_article.length(); i++) {
                                         JSONObject objRelated = related_article.getJSONObject(i);
                                         String id = objRelated.getString(Constant.id);
                                         String article_id = objRelated.getString(Constant.article_id);
@@ -425,7 +435,7 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
                                     }
 
                                     JSONArray comment_list = response.getJSONArray(Constant.comment_list);
-                                    for(int i=0; i<comment_list.length(); i++) {
+                                    for (int i=0; i<comment_list.length(); i++) {
                                         JSONObject objRelated = comment_list.getJSONObject(i);
                                         String id = objRelated.getString(Constant.id);
                                         String name = objRelated.getString(Constant.name);
@@ -487,6 +497,8 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
                                             }
                                         };
                                         thread.start();
+                                    } else {
+                                        btnComment.setVisibility(View.VISIBLE);
                                     }
 
                                     progressWheel.setVisibility(View.GONE);
@@ -620,6 +632,8 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
                             }
                         };
                         thread.start();
+                    } else {
+                        btnComment.setVisibility(View.VISIBLE);
                     }
 
                     progressWheel.setVisibility(View.GONE);
@@ -825,7 +839,7 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
                                     }
                                     //Get comment list
                                     JSONArray comment_list = response.getJSONArray(Constant.comment_list);
-                                    for(int i=0; i<comment_list.length(); i++) {
+                                    for (int i=0; i<comment_list.length(); i++) {
                                         JSONObject objRelated = comment_list.getJSONObject(i);
                                         String id = objRelated.getString(Constant.id);
                                         String name = objRelated.getString(Constant.name);
@@ -902,6 +916,8 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
                                             }
                                         };
                                         thread.start();
+                                    } else {
+                                        btnComment.setVisibility(View.VISIBLE);
                                     }
                                     //Invalidate content
                                     getActivity().invalidateOptionsMenu();
@@ -956,6 +972,8 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
             moveCommentPage();
         } else if (view.getId() == R.id.text_move_video) {
             moveVideoPage(urlVideo);
+        } else if (view.getId() == R.id.btn_comment) {
+            moveCommentPage();
         }
     }
 

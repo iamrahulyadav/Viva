@@ -13,13 +13,13 @@ xmlns:app="http://schemas.android.com/apk/res-auto">
         <menu>
             <item android:id="@+id/subaction_favorites"
                 android:icon="@drawable/icon_favorites"
-                android:title="Favorites"/>
+                android:title="Favorit"/>
             <item android:id="@+id/subaction_comments"
                 android:icon="@drawable/ic_action_comment"
-                android:title="Comments"/>
+                android:title="Komentar"/>
             <item android:id="@+id/subaction_rate"
                 android:icon="@drawable/ic_action_rate"
-                android:title="Rates"/>
+                android:title="Rating"/>
         </menu>
     </item>
 </menu>

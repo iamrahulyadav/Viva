@@ -51,19 +51,21 @@ public class ActSearchResult extends ActionBarActivity implements
         AdapterView.OnItemClickListener, OnLoadMoreListener {
 
     private TextView tvSearchResult;
+    private TextView tvSearchResultNumber;
+    private TextView tvNoResult;
     private LoadMoreListView listSearchResult;
     private LoadMoreListView listSearchResultBigCard;
     private String mQuery;
     private boolean isInternetPresent = false;
     private ArrayList<SearchResult> resultArrayList;
     private ArrayList<Ads> adsArrayList;
-    private TextView tvNoResult;
     private AnimationAdapter mAnimAdapter;
     private SwingBottomInAnimationAdapter swingBottomInAnimationAdapter;
     private Analytics analytics;
     private Menu mMenu;
     private int dataSize = 0;
     private String data;
+    private String mTotalFound;
     private ProgressWheel progressWheel;
     private SearchResultAdapter searchResultAdapter;
     private ChannelBigAdapter bigAdapter;
@@ -96,7 +98,7 @@ public class ActSearchResult extends ActionBarActivity implements
             if (mKeywordFromScan != null) {
                 if (mKeywordFromScan.length() > 0) {
                     setAnalytics(mKeywordFromScan);
-                    tvSearchResult.setText("Hasil Pencarian : " + mKeywordFromScan.replace("%20", " "));
+                    tvSearchResult.setText(Constant.SEARCH_RESULT_LABEL + mKeywordFromScan.replace("%20", " "));
                     loadQuery(mKeywordFromScan);
                 }
             } else {
@@ -120,6 +122,9 @@ public class ActSearchResult extends ActionBarActivity implements
         bigAdapter = new ChannelBigAdapter(this, Constant.BIG_CARD_SEARCH_RESULT, null, null, null, resultArrayList);
         //Result label
         tvSearchResult = (TextView)findViewById(R.id.text_search_result);
+        tvSearchResultNumber = (TextView)findViewById(R.id.text_search_result_number);
+        tvSearchResultNumber.setVisibility(View.GONE);
+        tvNoResult = (TextView)findViewById(R.id.text_no_result);
         //Small Card List
         listSearchResult = (LoadMoreListView)findViewById(R.id.list_search_result);
         listSearchResult.setVisibility(View.GONE);
@@ -129,8 +134,6 @@ public class ActSearchResult extends ActionBarActivity implements
         listSearchResultBigCard = (LoadMoreListView)findViewById(R.id.list_search_result_big_card);
         listSearchResultBigCard.setOnItemClickListener(this);
         listSearchResultBigCard.setOnLoadMoreListener(this);
-        //No result text
-        tvNoResult = (TextView)findViewById(R.id.text_no_result);
         //Progress wheel
         progressWheel = (ProgressWheel)findViewById(R.id.progress_wheel);
     }
@@ -163,6 +166,8 @@ public class ActSearchResult extends ActionBarActivity implements
                         try {
                             JSONObject jsonObject = new JSONObject(volleyResponse);
                             JSONObject response = jsonObject.getJSONObject(Constant.response);
+                            //Get total news found
+                            mTotalFound = response.getString(Constant.numFound);
                             //Get search result list
                             JSONArray jsonArrayResponses = response.getJSONArray(Constant.search);
                             if (jsonArrayResponses.length() > 0) {
@@ -195,6 +200,9 @@ public class ActSearchResult extends ActionBarActivity implements
                             }
                             //Populate content
                             if (resultArrayList.size() > 0 || !resultArrayList.isEmpty()) {
+                                //Show amount of query result
+                                tvSearchResultNumber.setVisibility(View.VISIBLE);
+                                tvSearchResultNumber.setText(Constant.SEARCH_RESULT_NUMBER_LABEL + mTotalFound);
                                 //Small Card List Style
                                 mAnimAdapter = new ScaleInAnimationAdapter(searchResultAdapter);
                                 mAnimAdapter.setAbsListView(listSearchResult);
@@ -219,6 +227,9 @@ public class ActSearchResult extends ActionBarActivity implements
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
+                if (tvSearchResultNumber.getVisibility() == View.VISIBLE) {
+                    tvSearchResultNumber.setVisibility(View.GONE);
+                }
                 progressWheel.setVisibility(View.GONE);
                 MenuItem searchItem = mMenu.findItem(R.id.action_search);
                 android.support.v7.widget.SearchView searchView =
@@ -241,7 +252,7 @@ public class ActSearchResult extends ActionBarActivity implements
     private void handleIntent(Intent intent) {
         if (Intent.ACTION_SEARCH.equalsIgnoreCase(intent.getAction())) {
             mQuery = intent.getStringExtra(SearchManager.QUERY);
-            tvSearchResult.setText("Hasil Pencarian : " + mQuery);
+            tvSearchResult.setText(Constant.SEARCH_RESULT_LABEL + mQuery);
             //Analytic
             setAnalytics(mQuery);
             //Load Data

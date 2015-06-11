@@ -16,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -86,6 +87,7 @@ public class ActDetailContentDefault extends ActionBarActivity
     private TextView tvReporterDetail;
     private TextView tvContentDetail;
     private ImageView ivThumbDetail;
+    private Button btnComment;
     private TextView tvPreviewCommentUser;
     private TextView tvPreviewCommentContent;
     private LinearLayout layoutCommentPreview;
@@ -155,8 +157,8 @@ public class ActDetailContentDefault extends ActionBarActivity
                                 image_caption = detail.getString(Constant.image_caption);
 
                                 JSONArray sliderImageArray = detail.getJSONArray(Constant.content_images);
-                                if(sliderImageArray != null) {
-                                    for(int i=0; i<sliderImageArray.length(); i++) {
+                                if (sliderImageArray != null) {
+                                    for (int i=0; i<sliderImageArray.length(); i++) {
                                         JSONObject objSlider = sliderImageArray.getJSONObject(i);
                                         sliderPhotoUrl = objSlider.getString("src");
                                         sliderTitle = objSlider.getString("title");
@@ -165,8 +167,8 @@ public class ActDetailContentDefault extends ActionBarActivity
                                 }
 
                                 JSONArray content_video = detail.getJSONArray(Constant.content_video);
-                                if(content_video != null && content_video.length() > 0) {
-                                    for(int i=0; i<content_video.length(); i++) {
+                                if (content_video != null && content_video.length() > 0) {
+                                    for (int i=0; i<content_video.length(); i++) {
                                         JSONObject objVideo = content_video.getJSONObject(i);
                                         urlVideo = objVideo.getString("src_1");
                                         widthVideo = objVideo.getString("src_2");
@@ -176,7 +178,7 @@ public class ActDetailContentDefault extends ActionBarActivity
                                 }
 
                                 JSONArray related_article = response.getJSONArray(Constant.related_article);
-                                for(int i=0; i<related_article.length(); i++) {
+                                for (int i=0; i<related_article.length(); i++) {
                                     JSONObject objRelated = related_article.getJSONObject(i);
                                     String id = objRelated.getString(Constant.id);
                                     String article_id = objRelated.getString(Constant.article_id);
@@ -193,7 +195,7 @@ public class ActDetailContentDefault extends ActionBarActivity
                                 }
 
                                 JSONArray comment_list = response.getJSONArray(Constant.comment_list);
-                                for(int i=0; i<comment_list.length(); i++) {
+                                for (int i=0; i<comment_list.length(); i++) {
                                     JSONObject objRelated = comment_list.getJSONObject(i);
                                     String id = objRelated.getString(Constant.id);
                                     String name = objRelated.getString(Constant.name);
@@ -226,10 +228,10 @@ public class ActDetailContentDefault extends ActionBarActivity
                                     Constant.setListViewHeightBasedOnChildren(listView);
                                     adapter.notifyDataSetChanged();
                                     headerRelated.setVisibility(View.VISIBLE);
-                                    if(fromkanal != null) {
-                                        if(fromkanal.equalsIgnoreCase("bola")) {
+                                    if (fromkanal != null) {
+                                        if (fromkanal.equalsIgnoreCase("bola")) {
                                             headerRelated.setBackgroundResource(R.color.color_bola);
-                                        } else if(fromkanal.equalsIgnoreCase("vivalife")) {
+                                        } else if (fromkanal.equalsIgnoreCase("vivalife")) {
                                             headerRelated.setBackgroundResource(R.color.color_life);
                                         } else {
                                             headerRelated.setBackgroundResource(R.color.color_news);
@@ -239,7 +241,7 @@ public class ActDetailContentDefault extends ActionBarActivity
                                     }
                                 }
 
-                                if(commentArrayList.size() > 0) {
+                                if (commentArrayList.size() > 0) {
                                     layoutCommentPreview.setVisibility(View.VISIBLE);
 
                                     Thread thread = new Thread() {
@@ -269,13 +271,26 @@ public class ActDetailContentDefault extends ActionBarActivity
                                         }
                                     };
                                     thread.start();
+                                } else {
+                                    btnComment.setVisibility(View.VISIBLE);
+                                    if (fromkanal != null) {
+                                        if (fromkanal.equalsIgnoreCase("bola")) {
+                                            btnComment.setBackgroundColor(getResources().getColor(R.color.color_bola));
+                                        } else if(fromkanal.equalsIgnoreCase("vivalife")) {
+                                            btnComment.setBackgroundColor(getResources().getColor(R.color.color_life));
+                                        } else {
+                                            btnComment.setBackgroundColor(getResources().getColor(R.color.color_news));
+                                        }
+                                    } else {
+                                        btnComment.setBackgroundColor(getResources().getColor(R.color.new_base_color));
+                                    }
                                 }
 
                                 invalidateOptionsMenu();
 
                                 progressWheel.setVisibility(View.GONE);
 
-                                if(urlVideo.length() > 0) {
+                                if (urlVideo.length() > 0) {
                                     textLinkVideo.setVisibility(View.VISIBLE);
                                 }
                             } catch (Exception e) {
@@ -318,8 +333,8 @@ public class ActDetailContentDefault extends ActionBarActivity
                     image_caption = detail.getString(Constant.image_caption);
 
                     JSONArray sliderImageArray = detail.getJSONArray(Constant.content_images);
-                    if(sliderImageArray != null) {
-                        for(int i=0; i<sliderImageArray.length(); i++) {
+                    if (sliderImageArray != null) {
+                        for (int i=0; i<sliderImageArray.length(); i++) {
                             JSONObject objSlider = sliderImageArray.getJSONObject(i);
                             sliderPhotoUrl = objSlider.getString("src");
                             sliderTitle = objSlider.getString("title");
@@ -328,7 +343,7 @@ public class ActDetailContentDefault extends ActionBarActivity
                     }
 
                     JSONArray related_article = response.getJSONArray(Constant.related_article);
-                    for(int i=0; i<related_article.length(); i++) {
+                    for (int i=0; i<related_article.length(); i++) {
                         JSONObject objRelated = related_article.getJSONObject(i);
                         String id = objRelated.getString(Constant.id);
                         String article_id = objRelated.getString(Constant.article_id);
@@ -346,7 +361,7 @@ public class ActDetailContentDefault extends ActionBarActivity
                     }
 
                     JSONArray comment_list = response.getJSONArray(Constant.comment_list);
-                    for(int i=0; i<comment_list.length(); i++) {
+                    for (int i=0; i<comment_list.length(); i++) {
                         JSONObject objRelated = comment_list.getJSONObject(i);
                         String id = objRelated.getString(Constant.id);
                         String name = objRelated.getString(Constant.name);
@@ -361,7 +376,7 @@ public class ActDetailContentDefault extends ActionBarActivity
                     tvReporterDetail.setText(reporter_name);
                     Picasso.with(this).load(image_url).transform(new CropSquareTransformation()).into(ivThumbDetail);
 
-                    if(sliderContentImages.size() > 0) {
+                    if (sliderContentImages.size() > 0) {
                         imageSliderAdapter = new ImageSliderAdapter(getSupportFragmentManager(), sliderContentImages);
                         viewPager.setAdapter(imageSliderAdapter);
                         viewPager.setCurrentItem(0);
@@ -371,16 +386,16 @@ public class ActDetailContentDefault extends ActionBarActivity
                         linePageIndicator.setVisibility(View.VISIBLE);
                     }
 
-                    if(relatedArticleArrayList.size() > 0 || !relatedArticleArrayList.isEmpty()) {
+                    if (relatedArticleArrayList.size() > 0 || !relatedArticleArrayList.isEmpty()) {
                         adapter = new RelatedAdapter(this, relatedArticleArrayList);
                         listView.setAdapter(adapter);
                         Constant.setListViewHeightBasedOnChildren(listView);
                         adapter.notifyDataSetChanged();
                         headerRelated.setVisibility(View.VISIBLE);
-                        if(fromkanal != null) {
-                            if(fromkanal.equalsIgnoreCase("bola")) {
+                        if (fromkanal != null) {
+                            if (fromkanal.equalsIgnoreCase("bola")) {
                                 headerRelated.setBackgroundResource(R.color.color_bola);
-                            } else if(fromkanal.equalsIgnoreCase("vivalife")) {
+                            } else if (fromkanal.equalsIgnoreCase("vivalife")) {
                                 headerRelated.setBackgroundResource(R.color.color_life);
                             } else {
                                 headerRelated.setBackgroundResource(R.color.color_news);
@@ -390,7 +405,7 @@ public class ActDetailContentDefault extends ActionBarActivity
                         }
                     }
 
-                    if(commentArrayList.size() > 0) {
+                    if (commentArrayList.size() > 0) {
                         layoutCommentPreview.setVisibility(View.VISIBLE);
                         Thread thread = new Thread() {
                             @Override
@@ -419,6 +434,19 @@ public class ActDetailContentDefault extends ActionBarActivity
                             }
                         };
                         thread.start();
+                    } else {
+                        btnComment.setVisibility(View.VISIBLE);
+                        if (fromkanal != null) {
+                            if (fromkanal.equalsIgnoreCase("bola")) {
+                                btnComment.setBackgroundColor(getResources().getColor(R.color.color_bola));
+                            } else if(fromkanal.equalsIgnoreCase("vivalife")) {
+                                btnComment.setBackgroundColor(getResources().getColor(R.color.color_life));
+                            } else {
+                                btnComment.setBackgroundColor(getResources().getColor(R.color.color_news));
+                            }
+                        } else {
+                            btnComment.setBackgroundColor(getResources().getColor(R.color.new_base_color));
+                        }
                     }
 
                     progressWheel.setVisibility(View.GONE);
@@ -448,6 +476,10 @@ public class ActDetailContentDefault extends ActionBarActivity
 
         listView = (ListView) findViewById(R.id.list_related_article_default);
         listView.setOnItemClickListener(this);
+
+        btnComment = (Button) findViewById(R.id.btn_comment);
+        btnComment.setOnClickListener(this);
+        btnComment.setTransformationMethod(null);
 
         layoutCommentPreview = (LinearLayout) findViewById(R.id.layout_preview_comment_list);
         layoutCommentPreview.setOnClickListener(this);
@@ -591,7 +623,7 @@ public class ActDetailContentDefault extends ActionBarActivity
     private void doFavorites() {
         favoriteList = Global.getInstance(this).getSharedPreferences(this)
                 .getString(Constant.FAVORITES_LIST, "");
-        if(favoriteList == null || favoriteList.length() <= 0) {
+        if (favoriteList == null || favoriteList.length() <= 0) {
             favoritesArrayList = Global.getInstance(this).getFavoritesList();
         } else {
             favoritesArrayList = Global.getInstance(this).getInstanceGson().
@@ -658,7 +690,7 @@ public class ActDetailContentDefault extends ActionBarActivity
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
         ListView listview = (ListView) adapterView;
         if (listview.getId() == R.id.list_related_article_default) {
-            if(relatedArticleArrayList.size() > 0) {
+            if (relatedArticleArrayList.size() > 0) {
                 RelatedArticle relatedArticles = relatedArticleArrayList.get(position);
                 Bundle bundle = new Bundle();
                 bundle.putString("id", relatedArticles.getRelated_article_id());
@@ -699,6 +731,8 @@ public class ActDetailContentDefault extends ActionBarActivity
             moveCommentPage();
         } else if (view.getId() == R.id.text_move_video) {
             moveVideoPage(urlVideo);
+        } else if (view.getId() == R.id.btn_comment) {
+            moveCommentPage();
         }
     }
 

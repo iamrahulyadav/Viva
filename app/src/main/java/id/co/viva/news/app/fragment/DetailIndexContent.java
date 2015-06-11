@@ -79,6 +79,7 @@ public class DetailIndexContent extends Fragment implements
     private boolean isInternetPresent = false;
     private ProgressWheel progressWheel;
     private TextView tvNoResult;
+    private Button btnComment;
     private RelatedAdapter adapter;
     private ImageSliderAdapter imageSliderAdapter;
     private ListView listView;
@@ -167,12 +168,17 @@ public class DetailIndexContent extends Fragment implements
         linePageIndicator = (LinePageIndicator) view.findViewById(R.id.indicator);
         linePageIndicator.setVisibility(View.GONE);
 
+        //Button comment
+        btnComment = (Button) view.findViewById(R.id.btn_comment);
+        btnComment.setOnClickListener(this);
+        btnComment.setTransformationMethod(null);
+
         //Loading Progress
         progressWheel = (ProgressWheel) view.findViewById(R.id.progress_wheel);
-        if(kanals != null) {
-            if(kanals.equalsIgnoreCase("bola")) {
+        if (kanals != null) {
+            if (kanals.equalsIgnoreCase("bola")) {
                 progressWheel.setBarColor(getResources().getColor(R.color.color_bola));
-            } else if(kanals.equalsIgnoreCase("vivalife")) {
+            } else if (kanals.equalsIgnoreCase("vivalife")) {
                 progressWheel.setBarColor(getResources().getColor(R.color.color_life));
             } else {
                 progressWheel.setBarColor(getResources().getColor(R.color.color_news));
@@ -264,8 +270,8 @@ public class DetailIndexContent extends Fragment implements
                                 image_caption = detail.getString(Constant.image_caption);
                                 //Get list image content
                                 JSONArray sliderImageArray = detail.getJSONArray(Constant.content_images);
-                                if(sliderImageArray != null) {
-                                    for(int i=0; i<sliderImageArray.length(); i++) {
+                                if (sliderImageArray != null) {
+                                    for (int i=0; i<sliderImageArray.length(); i++) {
                                         JSONObject objSlider = sliderImageArray.getJSONObject(i);
                                         sliderPhotoUrl = objSlider.getString("src");
                                         sliderTitle = objSlider.getString("title");
@@ -274,8 +280,8 @@ public class DetailIndexContent extends Fragment implements
                                 }
                                 //Get list video content
                                 JSONArray content_video = detail.getJSONArray(Constant.content_video);
-                                if(content_video != null && content_video.length() > 0) {
-                                    for(int i=0; i<content_video.length(); i++) {
+                                if (content_video != null && content_video.length() > 0) {
+                                    for (int i=0; i<content_video.length(); i++) {
                                         JSONObject objVideo = content_video.getJSONObject(i);
                                         urlVideo = objVideo.getString("src_1");
                                         widthVideo = objVideo.getString("src_2");
@@ -285,7 +291,7 @@ public class DetailIndexContent extends Fragment implements
                                 }
                                 //Get related article
                                 JSONArray related_article = response.getJSONArray(Constant.related_article);
-                                for(int i=0; i<related_article.length(); i++) {
+                                for (int i=0; i<related_article.length(); i++) {
                                     JSONObject objRelated = related_article.getJSONObject(i);
                                     String id = objRelated.getString(Constant.id);
                                     String article_id = objRelated.getString(Constant.article_id);
@@ -302,7 +308,7 @@ public class DetailIndexContent extends Fragment implements
                                 }
                                 //Get comment list
                                 JSONArray comment_list = response.getJSONArray(Constant.comment_list);
-                                for(int i=0; i<comment_list.length(); i++) {
+                                for (int i=0; i<comment_list.length(); i++) {
                                     JSONObject objRelated = comment_list.getJSONObject(i);
                                     String id = objRelated.getString(Constant.id);
                                     String name = objRelated.getString(Constant.name);
@@ -347,8 +353,8 @@ public class DetailIndexContent extends Fragment implements
                                     Constant.setListViewHeightBasedOnChildren(listView);
                                     adapter.notifyDataSetChanged();
                                     headerRelated.setVisibility(View.VISIBLE);
-                                    if(kanals != null) {
-                                        if(kanals.equalsIgnoreCase("bola")) {
+                                    if (kanals != null) {
+                                        if (kanals.equalsIgnoreCase("bola")) {
                                             headerRelated.setBackgroundResource(R.color.color_bola);
                                         } else if(kanals.equalsIgnoreCase("vivalife")) {
                                             headerRelated.setBackgroundResource(R.color.color_life);
@@ -388,6 +394,17 @@ public class DetailIndexContent extends Fragment implements
                                         }
                                     };
                                     thread.start();
+                                } else {
+                                    btnComment.setVisibility(View.VISIBLE);
+                                    if (kanals != null) {
+                                        if (kanals.equalsIgnoreCase("bola")) {
+                                            btnComment.setBackgroundColor(getResources().getColor(R.color.color_bola));
+                                        } else if(kanals.equalsIgnoreCase("vivalife")) {
+                                            btnComment.setBackgroundColor(getResources().getColor(R.color.color_life));
+                                        } else {
+                                            btnComment.setBackgroundColor(getResources().getColor(R.color.color_news));
+                                        }
+                                    }
                                 }
                                 //Update content
                                 getActivity().invalidateOptionsMenu();
@@ -396,7 +413,7 @@ public class DetailIndexContent extends Fragment implements
                                 //Show Ads
                                 showAds();
                                 //Show url video
-                                if(urlVideo.length() > 0) {
+                                if (urlVideo.length() > 0) {
                                     textLinkVideo.setVisibility(View.VISIBLE);
                                 }
                             } catch (Exception e) {
@@ -525,6 +542,17 @@ public class DetailIndexContent extends Fragment implements
                                             }
                                         };
                                         thread.start();
+                                    } else {
+                                        btnComment.setVisibility(View.VISIBLE);
+                                        if (kanals != null) {
+                                            if (kanals.equalsIgnoreCase("bola")) {
+                                                btnComment.setBackgroundColor(getResources().getColor(R.color.color_bola));
+                                            } else if(kanals.equalsIgnoreCase("vivalife")) {
+                                                btnComment.setBackgroundColor(getResources().getColor(R.color.color_life));
+                                            } else {
+                                                btnComment.setBackgroundColor(getResources().getColor(R.color.color_news));
+                                            }
+                                        }
                                     }
 
                                     progressWheel.setVisibility(View.GONE);
@@ -617,7 +645,7 @@ public class DetailIndexContent extends Fragment implements
                     tvReporterDetail.setText(reporter_name);
                     Picasso.with(getActivity()).load(image_url).transform(new CropSquareTransformation()).into(ivThumbDetail);
 
-                    if(sliderContentImages.size() > 0) {
+                    if (sliderContentImages.size() > 0) {
                         imageSliderAdapter = new ImageSliderAdapter(getFragmentManager(), sliderContentImages);
                         viewPager.setAdapter(imageSliderAdapter);
                         viewPager.setCurrentItem(0);
@@ -627,16 +655,16 @@ public class DetailIndexContent extends Fragment implements
                         linePageIndicator.setVisibility(View.VISIBLE);
                     }
 
-                    if(relatedArticleArrayList.size() > 0 || !relatedArticleArrayList.isEmpty()) {
+                    if (relatedArticleArrayList.size() > 0 || !relatedArticleArrayList.isEmpty()) {
                         adapter = new RelatedAdapter(getActivity(), relatedArticleArrayList);
                         listView.setAdapter(adapter);
                         Constant.setListViewHeightBasedOnChildren(listView);
                         adapter.notifyDataSetChanged();
                         headerRelated.setVisibility(View.VISIBLE);
-                        if(kanals != null) {
-                            if(kanals.equalsIgnoreCase("bola")) {
+                        if (kanals != null) {
+                            if (kanals.equalsIgnoreCase("bola")) {
                                 headerRelated.setBackgroundResource(R.color.color_bola);
-                            } else if(kanals.equalsIgnoreCase("vivalife")) {
+                            } else if (kanals.equalsIgnoreCase("vivalife")) {
                                 headerRelated.setBackgroundResource(R.color.color_life);
                             } else {
                                 headerRelated.setBackgroundResource(R.color.color_news);
@@ -644,7 +672,7 @@ public class DetailIndexContent extends Fragment implements
                         }
                     }
 
-                    if(commentArrayList.size() > 0) {
+                    if (commentArrayList.size() > 0) {
                         layoutCommentPreview.setVisibility(View.VISIBLE);
 
                         Thread thread = new Thread() {
@@ -674,6 +702,17 @@ public class DetailIndexContent extends Fragment implements
                             }
                         };
                         thread.start();
+                    } else {
+                        btnComment.setVisibility(View.VISIBLE);
+                        if (kanals != null) {
+                            if (kanals.equalsIgnoreCase("bola")) {
+                                btnComment.setBackgroundColor(getResources().getColor(R.color.color_bola));
+                            } else if(kanals.equalsIgnoreCase("vivalife")) {
+                                btnComment.setBackgroundColor(getResources().getColor(R.color.color_life));
+                            } else {
+                                btnComment.setBackgroundColor(getResources().getColor(R.color.color_news));
+                            }
+                        }
                     }
 
                     progressWheel.setVisibility(View.GONE);
@@ -834,7 +873,7 @@ public class DetailIndexContent extends Fragment implements
 
     @Override
     public void onClick(View view) {
-        if(view.getId() == R.id.layout_ripple_view_detail_subkanal) {
+        if (view.getId() == R.id.layout_ripple_view_detail_subkanal) {
             if (isInternetPresent) {
                 rippleView.setVisibility(View.GONE);
                 progressWheel.setVisibility(View.VISIBLE);
@@ -861,8 +900,8 @@ public class DetailIndexContent extends Fragment implements
                                     image_caption = detail.getString(Constant.image_caption);
                                     //Get image content
                                     JSONArray sliderImageArray = detail.getJSONArray(Constant.content_images);
-                                    if(sliderImageArray != null) {
-                                        for(int i=0; i<sliderImageArray.length(); i++) {
+                                    if (sliderImageArray != null) {
+                                        for (int i=0; i<sliderImageArray.length(); i++) {
                                             JSONObject objSlider = sliderImageArray.getJSONObject(i);
                                             sliderPhotoUrl = objSlider.getString("src");
                                             sliderTitle = objSlider.getString("title");
@@ -871,8 +910,8 @@ public class DetailIndexContent extends Fragment implements
                                     }
                                     //Get video content
                                     JSONArray content_video = detail.getJSONArray(Constant.content_video);
-                                    if(content_video != null && content_video.length() > 0) {
-                                        for(int i=0; i<content_video.length(); i++) {
+                                    if (content_video != null && content_video.length() > 0) {
+                                        for (int i=0; i<content_video.length(); i++) {
                                             JSONObject objVideo = content_video.getJSONObject(i);
                                             urlVideo = objVideo.getString("src_1");
                                             widthVideo = objVideo.getString("src_2");
@@ -882,7 +921,7 @@ public class DetailIndexContent extends Fragment implements
                                     }
                                     //Get related article
                                     JSONArray related_article = response.getJSONArray(Constant.related_article);
-                                    for(int i=0; i<related_article.length(); i++) {
+                                    for (int i=0; i<related_article.length(); i++) {
                                         JSONObject objRelated = related_article.getJSONObject(i);
                                         String id = objRelated.getString(Constant.id);
                                         String article_id = objRelated.getString(Constant.article_id);
@@ -899,7 +938,7 @@ public class DetailIndexContent extends Fragment implements
                                     }
                                     //Get comment list
                                     JSONArray comment_list = response.getJSONArray(Constant.comment_list);
-                                    for(int i=0; i<comment_list.length(); i++) {
+                                    for (int i=0; i<comment_list.length(); i++) {
                                         JSONObject objRelated = comment_list.getJSONObject(i);
                                         String id = objRelated.getString(Constant.id);
                                         String name = objRelated.getString(Constant.name);
@@ -985,6 +1024,17 @@ public class DetailIndexContent extends Fragment implements
                                             }
                                         };
                                         thread.start();
+                                    } else {
+                                        btnComment.setVisibility(View.VISIBLE);
+                                        if (kanals != null) {
+                                            if (kanals.equalsIgnoreCase("bola")) {
+                                                btnComment.setBackgroundColor(getResources().getColor(R.color.color_bola));
+                                            } else if(kanals.equalsIgnoreCase("vivalife")) {
+                                                btnComment.setBackgroundColor(getResources().getColor(R.color.color_life));
+                                            } else {
+                                                btnComment.setBackgroundColor(getResources().getColor(R.color.color_news));
+                                            }
+                                        }
                                     }
                                     //Update by calling invalidateOptionsMenu()
                                     getActivity().invalidateOptionsMenu();
@@ -1006,10 +1056,10 @@ public class DetailIndexContent extends Fragment implements
                             public void onErrorResponse(VolleyError volleyError) {
                                 progressWheel.setVisibility(View.GONE);
                                 rippleView.setVisibility(View.VISIBLE);
-                                if(kanals != null) {
-                                    if(kanals.equalsIgnoreCase("bola")) {
+                                if (kanals != null) {
+                                    if (kanals.equalsIgnoreCase("bola")) {
                                         btnRetry.setBackgroundResource(R.drawable.shadow_button_bola);
-                                    } else if(kanals.equalsIgnoreCase("vivalife")) {
+                                    } else if (kanals.equalsIgnoreCase("vivalife")) {
                                         btnRetry.setBackgroundResource(R.drawable.shadow_button_life);
                                     } else {
                                         btnRetry.setBackgroundResource(R.drawable.shadow_button_news);
@@ -1044,10 +1094,12 @@ public class DetailIndexContent extends Fragment implements
                     getActivity().overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
                 }
             }
-        } else if(view.getId() == R.id.layout_preview_comment_list) {
+        } else if (view.getId() == R.id.layout_preview_comment_list) {
             moveCommentPage();
-        } else if(view.getId() == R.id.text_move_video) {
+        } else if (view.getId() == R.id.text_move_video) {
             moveVideoPage(urlVideo);
+        } else if (view.getId() == R.id.btn_comment) {
+            moveCommentPage();
         }
     }
 

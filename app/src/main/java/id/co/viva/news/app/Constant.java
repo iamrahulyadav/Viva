@@ -40,6 +40,11 @@ public class Constant {
     public static final String CODE_PATH = "12";
     public static final String CODE_GPLUS = "13";
 
+    //Search result label
+    public static final String SEARCH_RESULT_LABEL = "Hasil Pencarian : ";
+    public static final String SEARCH_RESULT_NUMBER_LABEL = "Total Berita ";
+    public static final String numFound = "numFound";
+
     //Minimal time location update
     public static final int MIN_TIME_BW_UPDATES = 20000;
 

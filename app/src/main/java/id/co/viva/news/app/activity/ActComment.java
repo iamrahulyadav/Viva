@@ -150,10 +150,10 @@ public class ActComment extends ActionBarActivity implements View.OnClickListene
                 btnSubmit.setBackgroundResource(R.color.color_news);
             }
         } else {
-            colorDrawable.setColor(getResources().getColor(R.color.header_headline_terbaru_new));
+            colorDrawable.setColor(getResources().getColor(R.color.new_base_color));
             getSupportActionBar().setBackgroundDrawable(colorDrawable);
-            mLayout.setBackgroundResource(R.color.header_headline_terbaru_new);
-            btnSubmit.setBackgroundResource(R.color.header_headline_terbaru_new);
+            mLayout.setBackgroundResource(R.color.new_base_color);
+            btnSubmit.setBackgroundResource(R.color.new_base_color);
         }
         getHeaderActionBar();
     }

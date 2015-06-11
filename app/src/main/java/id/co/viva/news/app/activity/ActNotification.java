@@ -84,6 +84,7 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
     private RelatedAdapter adapter;
     private TextView textLinkVideo;
     private ListView listView;
+    private Button btnComment;
     private ImageSliderAdapter imageSliderAdapter;
     private ViewPager viewPager;
     private LinePageIndicator linePageIndicator;
@@ -151,6 +152,10 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
 
         progressWheel = (ProgressWheel) findViewById(R.id.progress_wheel);
         btnRetry = (Button) findViewById(R.id.btn_retry);
+
+        btnComment = (Button) findViewById(R.id.btn_comment);
+        btnComment.setOnClickListener(this);
+        btnComment.setTransformationMethod(null);
 
         rippleView = (RippleView) findViewById(R.id.layout_ripple_view_detail_subkanal);
         rippleView.setVisibility(View.GONE);
@@ -264,6 +269,8 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
             goDetailPhoto();
         } else if(view.getId() == R.id.text_move_video) {
             moveVideoPage(urlVideo);
+        } else if (view.getId() == R.id.btn_comment) {
+            moveCommentPage();
         }
     }
 
@@ -289,8 +296,8 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
                                 channel_id = detail.getString((Constant.channel_id));
                                 //Get image content
                                 JSONArray sliderImageArray = detail.getJSONArray(Constant.content_images);
-                                if(sliderImageArray != null) {
-                                    for(int i=0; i<sliderImageArray.length(); i++) {
+                                if (sliderImageArray != null) {
+                                    for (int i=0; i<sliderImageArray.length(); i++) {
                                         JSONObject objSlider = sliderImageArray.getJSONObject(i);
                                         sliderPhotoUrl = objSlider.getString("src");
                                         sliderTitle = objSlider.getString("title");
@@ -299,8 +306,8 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
                                 }
                                 //Get video content
                                 JSONArray content_video = detail.getJSONArray(Constant.content_video);
-                                if(content_video != null && content_video.length() > 0) {
-                                    for(int i=0; i<content_video.length(); i++) {
+                                if (content_video != null && content_video.length() > 0) {
+                                    for (int i=0; i<content_video.length(); i++) {
                                         JSONObject objVideo = content_video.getJSONObject(i);
                                         urlVideo = objVideo.getString("src_1");
                                         videoArrayList.add(new Video(urlVideo, null, null));
@@ -354,6 +361,19 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
                                     viewPager.setVisibility(View.VISIBLE);
                                     linePageIndicator.setVisibility(View.VISIBLE);
                                 }
+                                //Show comment button
+                                btnComment.setVisibility(View.VISIBLE);
+                                if (kanalFromNotification != null) {
+                                    if (kanalFromNotification.equalsIgnoreCase("bola")) {
+                                        btnComment.setBackgroundColor(getResources().getColor(R.color.color_bola));
+                                    } else if (kanalFromNotification.equalsIgnoreCase("vivalife")) {
+                                        btnComment.setBackgroundColor(getResources().getColor(R.color.color_life));
+                                    } else {
+                                        btnComment.setBackgroundColor(getResources().getColor(R.color.color_news));
+                                    }
+                                } else {
+                                    btnComment.setBackgroundColor(getResources().getColor(R.color.new_base_color));
+                                }
                                 //Checking for related article
                                 if (relatedArticleArrayList.size() > 0 || !relatedArticleArrayList.isEmpty()) {
                                     adapter = new RelatedAdapter(ActNotification.this, relatedArticleArrayList);
@@ -381,12 +401,12 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
                                 progressWheel.setVisibility(View.GONE);
                                 //For updating content
                                 invalidateOptionsMenu();
+                                //Show Ads
+                                showAds();
                                 //Show url video if it exist
                                 if (urlVideo.length() > 0) {
                                     textLinkVideo.setVisibility(View.VISIBLE);
                                 }
-                                //Show Ads
-                                showAds();
                             } catch (Exception e) {
                                 e.getMessage();
                             }
@@ -426,13 +446,13 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
         ColorDrawable colorDrawable = new ColorDrawable();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
-        if(fromkanal != null) {
-            if(fromkanal.equalsIgnoreCase("bola")) {
+        if (fromkanal != null) {
+            if (fromkanal.equalsIgnoreCase("bola")) {
                 colorDrawable.setColor(getResources().getColor(R.color.color_bola));
                 getSupportActionBar().setBackgroundDrawable(colorDrawable);
                 getSupportActionBar().setTitle(R.string.label_item_navigation_bola);
                 progressWheel.setBarColor(getResources().getColor(R.color.color_bola));
-            } else if(fromkanal.equalsIgnoreCase("vivalife")) {
+            } else if (fromkanal.equalsIgnoreCase("vivalife")) {
                 colorDrawable.setColor(getResources().getColor(R.color.color_life));
                 getSupportActionBar().setBackgroundDrawable(colorDrawable);
                 getSupportActionBar().setTitle(R.string.label_item_navigation_life);
@@ -451,10 +471,10 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
     }
 
     private void setButtonRetry(String kanals) {
-        if(kanals != null) {
-            if(kanals.equalsIgnoreCase("bola")) {
+        if (kanals != null) {
+            if (kanals.equalsIgnoreCase("bola")) {
                 btnRetry.setBackgroundResource(R.drawable.shadow_button_bola);
-            } else if(kanals.equalsIgnoreCase("vivalife")) {
+            } else if (kanals.equalsIgnoreCase("vivalife")) {
                 btnRetry.setBackgroundResource(R.drawable.shadow_button_life);
             } else {
                 btnRetry.setBackgroundResource(R.drawable.shadow_button_news);
@@ -496,7 +516,7 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
     private void doFavorites() {
         String favoriteList = Global.getInstance(this).getSharedPreferences(this)
                 .getString(Constant.FAVORITES_LIST, "");
-        if(favoriteList == null || favoriteList.length() <= 0) {
+        if (favoriteList == null || favoriteList.length() <= 0) {
             favoritesArrayList = Global.getInstance(this).getFavoritesList();
         } else {
             favoritesArrayList = Global.getInstance(this).getInstanceGson().
@@ -547,7 +567,7 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        if(shared_url == null || shared_url.length() < 1) {
+        if (shared_url == null || shared_url.length() < 1) {
             try {
                 if (Global.getInstance(this).getRequestQueue().getCache().get(Constant.NEW_DETAIL + "id/" + idFromNotification) != null) {
                     String cachedResponse = new String(Global.getInstance(this).
@@ -613,7 +633,7 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
         CharSequence sequence = Html.fromHtml(html);
         SpannableStringBuilder strBuilder = new SpannableStringBuilder(sequence);
         URLSpan[] urls = strBuilder.getSpans(0, sequence.length(), URLSpan.class);
-        for(URLSpan span : urls) {
+        for (URLSpan span : urls) {
             makeLinkClickable(strBuilder, span);
         }
         text.setText(strBuilder);

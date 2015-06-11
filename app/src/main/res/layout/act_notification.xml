@@ -88,9 +88,18 @@
                     android:textSize="16sp"
                     android:textColor="@color/black"
                     android:layout_height="wrap_content" />
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/btn_comment"
+                    android:textColor="@color/white"
+                    android:visibility="gone"
+                    android:layout_centerHorizontal="true"
+                    android:layout_below="@id/content_detail_content"
+                    android:text="@string/label_comments_from_detail"/>
                 <id.co.viva.news.app.component.RobotoTextView
                     android:id="@+id/text_move_video"
-                    android:layout_below="@id/content_detail_content"
+                    android:layout_below="@id/btn_comment"
                     android:textSize="14sp"
                     android:textStyle="bold"
                     android:layout_centerHorizontal="true"
