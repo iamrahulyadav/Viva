@@ -15,6 +15,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.WebChromeClient;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -88,6 +91,7 @@ public class ActDetailContentDefault extends ActionBarActivity
     private TextView tvContentDetail;
     private ImageView ivThumbDetail;
     private Button btnComment;
+//    private WebView webView;
     private TextView tvPreviewCommentUser;
     private TextView tvPreviewCommentContent;
     private LinearLayout layoutCommentPreview;
@@ -240,6 +244,8 @@ public class ActDetailContentDefault extends ActionBarActivity
                                         headerRelated.setBackgroundResource(R.color.new_base_color);
                                     }
                                 }
+
+                                startLoadWeb(url_shared);
 
                                 if (commentArrayList.size() > 0) {
                                     layoutCommentPreview.setVisibility(View.VISIBLE);
@@ -465,8 +471,10 @@ public class ActDetailContentDefault extends ActionBarActivity
         viewPager = (ViewPager) findViewById(R.id.horizontal_list);
         viewPager.setVisibility(View.GONE);
 
-        linePageIndicator = (LinePageIndicator)findViewById(R.id.indicator);
+        linePageIndicator = (LinePageIndicator) findViewById(R.id.indicator);
         linePageIndicator.setVisibility(View.GONE);
+
+//        webView = (WebView) findViewById(R.id.web_view_detail_article);
 
         progressWheel = (ProgressWheel) findViewById(R.id.progress_wheel);
         headerRelated = (RelativeLayout) findViewById(R.id.header_related_article);
@@ -510,6 +518,18 @@ public class ActDetailContentDefault extends ActionBarActivity
                     Constant.getDynamicImageSize(this, Constant.DYNAMIC_SIZE_GRID_TYPE);
             viewPager.getLayoutParams().height =
                     Constant.getDynamicImageSize(this, Constant.DYNAMIC_SIZE_SLIDER_TYPE);
+        }
+    }
+
+    private void startLoadWeb(String url) {
+        if (url != null) {
+            if (url.length() > 0) {
+//                webView.setWebChromeClient(new WebChromeClient());
+//                webView.getSettings().setBuiltInZoomControls(true);
+//                webView.getSettings().setDisplayZoomControls(false);
+//                webView.getSettings().setJavaScriptEnabled(true);
+//                webView.loadUrl(url);
+            }
         }
     }
 
@@ -666,6 +686,20 @@ public class ActDetailContentDefault extends ActionBarActivity
                 return true;
             case R.id.subaction_favorites:
                 doFavorites();
+                return true;
+            case R.id.subaction_browser:
+//                if (webView.getVisibility() == View.GONE) {
+//                    if (isInternetPresent) {
+//                        webView.setVisibility(View.VISIBLE);
+//                        item.setIcon(R.drawable.ic_action_comment);
+//
+//                    } else {
+//                        Toast.makeText(this, R.string.title_no_connection, Toast.LENGTH_SHORT).show();
+//                    }
+//                } else {
+//                    webView.setVisibility(View.GONE);
+//                    item.setIcon(R.drawable.ic_action_rate);
+//                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

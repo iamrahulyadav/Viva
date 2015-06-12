@@ -60,6 +60,7 @@ public class ActFromUrl extends ActionBarActivity implements View.OnClickListene
     private TextView tvContentDetail;
     private ImageView ivThumbDetail;
     private TextView textLinkVideo;
+    private Button btnComment;
     private String title;
     private String kanal;
     private String image_url;
@@ -87,6 +88,10 @@ public class ActFromUrl extends ActionBarActivity implements View.OnClickListene
     private void defineViews() {
         viewPager = (ViewPager) findViewById(R.id.horizontal_list);
         viewPager.setVisibility(View.GONE);
+
+        btnComment = (Button) findViewById(R.id.btn_comment);
+        btnComment.setOnClickListener(this);
+        btnComment.setTransformationMethod(null);
 
         linePageIndicator = (LinePageIndicator) findViewById(R.id.indicator);
         linePageIndicator.setVisibility(View.GONE);
@@ -126,7 +131,7 @@ public class ActFromUrl extends ActionBarActivity implements View.OnClickListene
     }
 
     private void goDetailPhoto() {
-        if(image_url.length() > 0) {
+        if (image_url.length() > 0) {
             Bundle bundle = new Bundle();
             bundle.putString("photoUrl", image_url);
             bundle.putString("image_caption", image_caption);
@@ -146,19 +151,33 @@ public class ActFromUrl extends ActionBarActivity implements View.OnClickListene
         overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
     }
 
+    private void moveCommentPage() {
+        Bundle bundle = new Bundle();
+        bundle.putString("imageurl", image_url);
+        bundle.putString("title", title);
+        bundle.putString("article_id", getIdFromUrl());
+        bundle.putString("type_kanal", kanal);
+        Intent intent = new Intent(this, ActComment.class);
+        intent.putExtras(bundle);
+        startActivity(intent);
+        overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+    }
+
     @Override
     public void onClick(View view) {
-        if(view.getId() == R.id.layout_ripple_view_detail_subkanal) {
+        if (view.getId() == R.id.layout_ripple_view_detail_subkanal) {
             getContent();
-        } else if(view.getId() == R.id.thumb_detail_content) {
+        } else if (view.getId() == R.id.thumb_detail_content) {
             goDetailPhoto();
-        } else if(view.getId() == R.id.text_move_video) {
+        } else if (view.getId() == R.id.text_move_video) {
             moveVideoPage();
+        } else if (view.getId() == R.id.btn_comment) {
+            moveCommentPage();
         }
     }
 
     private void getContent() {
-        if(isInternetPresent) {
+        if (isInternetPresent) {
             StringRequest request = new StringRequest(Request.Method.GET, Constant.NEW_DETAIL + "/id/" + getIdFromUrl(),
                     new Response.Listener<String>() {
                         @Override
@@ -179,8 +198,8 @@ public class ActFromUrl extends ActionBarActivity implements View.OnClickListene
                                 setThemes(kanal);
 
                                 JSONArray sliderImageArray = detail.getJSONArray(Constant.content_images);
-                                if(sliderImageArray != null) {
-                                    for(int i=0; i<sliderImageArray.length(); i++) {
+                                if (sliderImageArray != null) {
+                                    for (int i=0; i<sliderImageArray.length(); i++) {
                                         JSONObject objSlider = sliderImageArray.getJSONObject(i);
                                         sliderPhotoUrl = objSlider.getString("src");
                                         sliderTitle = objSlider.getString("title");
@@ -189,8 +208,8 @@ public class ActFromUrl extends ActionBarActivity implements View.OnClickListene
                                 }
 
                                 JSONArray content_video = detail.getJSONArray(Constant.content_video);
-                                if(content_video != null && content_video.length() > 0) {
-                                    for(int i=0; i<content_video.length(); i++) {
+                                if (content_video != null && content_video.length() > 0) {
+                                    for (int i=0; i<content_video.length(); i++) {
                                         JSONObject objVideo = content_video.getJSONObject(i);
                                         urlVideo = objVideo.getString("src_1");
                                         videoArrayList.add(new Video(urlVideo, null, null));
@@ -204,7 +223,7 @@ public class ActFromUrl extends ActionBarActivity implements View.OnClickListene
                                 tvReporterDetail.setText(reporter_name);
                                 Picasso.with(ActFromUrl.this).load(image_url).transform(new CropSquareTransformation()).into(ivThumbDetail);
 
-                                if(sliderContentImages.size() > 0) {
+                                if (sliderContentImages.size() > 0) {
                                     imageSliderAdapter = new ImageSliderAdapter(getSupportFragmentManager(), sliderContentImages);
                                     viewPager.setAdapter(imageSliderAdapter);
                                     viewPager.setCurrentItem(0);
@@ -214,12 +233,14 @@ public class ActFromUrl extends ActionBarActivity implements View.OnClickListene
                                     linePageIndicator.setVisibility(View.VISIBLE);
                                 }
 
-                                if(rippleView.getVisibility() == View.VISIBLE) {
+                                btnComment.setVisibility(View.VISIBLE);
+
+                                if (rippleView.getVisibility() == View.VISIBLE) {
                                     rippleView.setVisibility(View.GONE);
                                 }
                                 progressWheel.setVisibility(View.GONE);
 
-                                if(urlVideo.length() > 0) {
+                                if (urlVideo.length() > 0) {
                                     textLinkVideo.setVisibility(View.VISIBLE);
                                 }
                             } catch (Exception e) {
@@ -230,7 +251,6 @@ public class ActFromUrl extends ActionBarActivity implements View.OnClickListene
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError volleyError) {
-                            volleyError.getMessage();
                             progressWheel.setVisibility(View.GONE);
                             rippleView.setVisibility(View.VISIBLE);
                             setButtonRetry(kanal);
@@ -247,7 +267,7 @@ public class ActFromUrl extends ActionBarActivity implements View.OnClickListene
                     .getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + getIdFromUrl());
             Global.getInstance(ActFromUrl.this).addToRequestQueue(request, Constant.JSON_REQUEST);
         } else {
-            if(tvNoResult.getVisibility() == View.VISIBLE) {
+            if (tvNoResult.getVisibility() == View.VISIBLE) {
                 tvNoResult.setVisibility(View.GONE);
             } else {
                 tvNoResult.setVisibility(View.VISIBLE);
@@ -265,27 +285,31 @@ public class ActFromUrl extends ActionBarActivity implements View.OnClickListene
                 colorDrawable.setColor(getResources().getColor(R.color.color_bola));
                 getSupportActionBar().setBackgroundDrawable(colorDrawable);
                 getSupportActionBar().setTitle(R.string.label_item_navigation_bola);
+                btnComment.setBackgroundColor(getResources().getColor(R.color.color_bola));
                 progressWheel.setBarColor(getResources().getColor(R.color.color_bola));
             } else if (mChannel.equalsIgnoreCase("vivalife")) {
                 colorDrawable.setColor(getResources().getColor(R.color.color_life));
                 getSupportActionBar().setBackgroundDrawable(colorDrawable);
                 getSupportActionBar().setTitle(R.string.label_item_navigation_life);
+                btnComment.setBackgroundColor(getResources().getColor(R.color.color_life));
                 progressWheel.setBarColor(getResources().getColor(R.color.color_life));
             } else {
                 colorDrawable.setColor(getResources().getColor(R.color.color_news));
                 getSupportActionBar().setBackgroundDrawable(colorDrawable);
                 getSupportActionBar().setTitle(R.string.label_item_navigation_news);
+                btnComment.setBackgroundColor(getResources().getColor(R.color.color_news));
                 progressWheel.setBarColor(getResources().getColor(R.color.color_news));
             }
         } else {
-            colorDrawable.setColor(getResources().getColor(R.color.header_headline_terbaru_new));
+            colorDrawable.setColor(getResources().getColor(R.color.new_base_color));
             getSupportActionBar().setBackgroundDrawable(colorDrawable);
-            progressWheel.setBarColor(getResources().getColor(R.color.blue));
+            btnComment.setBackgroundColor(getResources().getColor(R.color.new_base_color));
+            progressWheel.setBarColor(getResources().getColor(R.color.new_base_color));
         }
     }
 
     private void setButtonRetry(String kanals) {
-        if(kanals != null) {
+        if (kanals != null) {
             if (kanals.equalsIgnoreCase("bola")) {
                 btnRetry.setBackgroundResource(R.drawable.shadow_button_bola);
             } else if (kanals.equalsIgnoreCase("vivalife")) {
@@ -322,7 +346,7 @@ public class ActFromUrl extends ActionBarActivity implements View.OnClickListene
     private String getIdFromUrl() {
         String idFromUrl = null;
         Uri data = getIntent().getData();
-        if(data != null) {
+        if (data != null) {
             List params = data.getPathSegments();
             idFromUrl = params.get(2).toString();
         }
