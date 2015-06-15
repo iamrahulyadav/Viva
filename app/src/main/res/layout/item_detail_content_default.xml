@@ -15,21 +15,11 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-            <WebView
-                android:id="@+id/web_view_detail_article"
-                android:visibility="gone"
+            <ImageView
+                android:id="@+id/thumb_detail_content_default"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/thumb_detail_content_layout_default">
-                <ImageView
-                    android:id="@+id/thumb_detail_content_default"
-                    android:layout_width="match_parent"
-                    android:layout_height="220dp"
-                    android:scaleType="centerCrop"/>
-            </RelativeLayout>
+                android:layout_height="220dp"
+                android:scaleType="centerCrop"/>
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -38,28 +28,21 @@
                 android:paddingRight="10dp"
                 android:paddingBottom="10dp"
                 android:background="@color/white"
-                android:layout_below="@id/thumb_detail_content_layout_default">
-                <LinearLayout
-                    android:layout_width="fill_parent"
+                android:layout_below="@id/thumb_detail_content_default">
+                <id.co.viva.news.app.component.RobotoBoldTextView
+                    android:id="@+id/title_detail_content_default"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
-                    android:id="@+id/title_and_kanal_detail_content_layout_default"
-                    android:orientation="horizontal">
-                    <id.co.viva.news.app.component.RobotoBoldTextView
-                        android:id="@+id/title_detail_content_default"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/black"
-                        android:textStyle="bold"
-                        android:textSize="22sp"/>
-                </LinearLayout>
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
+                    android:textSize="22sp"/>
                 <id.co.viva.news.app.component.RobotoTextView
                     android:id="@+id/date_detail_content_default"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="5dp"
                     android:textColor="@color/date_color"
-                    android:layout_below="@id/title_and_kanal_detail_content_layout_default"
+                    android:layout_below="@id/title_detail_content_default"
                     android:textSize="12sp"/>
                 <id.co.viva.news.app.component.RobotoTextView
                     android:id="@+id/reporter_detail_content_default"

@@ -15,9 +15,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.webkit.WebChromeClient;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -77,7 +74,7 @@ public class ActDetailContentDefault extends ActionBarActivity
     private String heightVideo;
     private String id;
     private String typeFrom;
-    private String fromkanal;
+    private String fromKanal;
     private String shared_url;
     private String sliderPhotoUrl;
     private String sliderTitle;
@@ -91,7 +88,6 @@ public class ActDetailContentDefault extends ActionBarActivity
     private TextView tvContentDetail;
     private ImageView ivThumbDetail;
     private Button btnComment;
-//    private WebView webView;
     private TextView tvPreviewCommentUser;
     private TextView tvPreviewCommentContent;
     private LinearLayout layoutCommentPreview;
@@ -232,10 +228,10 @@ public class ActDetailContentDefault extends ActionBarActivity
                                     Constant.setListViewHeightBasedOnChildren(listView);
                                     adapter.notifyDataSetChanged();
                                     headerRelated.setVisibility(View.VISIBLE);
-                                    if (fromkanal != null) {
-                                        if (fromkanal.equalsIgnoreCase("bola")) {
+                                    if (fromKanal != null) {
+                                        if (fromKanal.equalsIgnoreCase("bola")) {
                                             headerRelated.setBackgroundResource(R.color.color_bola);
-                                        } else if (fromkanal.equalsIgnoreCase("vivalife")) {
+                                        } else if (fromKanal.equalsIgnoreCase("vivalife")) {
                                             headerRelated.setBackgroundResource(R.color.color_life);
                                         } else {
                                             headerRelated.setBackgroundResource(R.color.color_news);
@@ -244,8 +240,6 @@ public class ActDetailContentDefault extends ActionBarActivity
                                         headerRelated.setBackgroundResource(R.color.new_base_color);
                                     }
                                 }
-
-                                startLoadWeb(url_shared);
 
                                 if (commentArrayList.size() > 0) {
                                     layoutCommentPreview.setVisibility(View.VISIBLE);
@@ -279,10 +273,10 @@ public class ActDetailContentDefault extends ActionBarActivity
                                     thread.start();
                                 } else {
                                     btnComment.setVisibility(View.VISIBLE);
-                                    if (fromkanal != null) {
-                                        if (fromkanal.equalsIgnoreCase("bola")) {
+                                    if (fromKanal != null) {
+                                        if (fromKanal.equalsIgnoreCase("bola")) {
                                             btnComment.setBackgroundColor(getResources().getColor(R.color.color_bola));
-                                        } else if(fromkanal.equalsIgnoreCase("vivalife")) {
+                                        } else if(fromKanal.equalsIgnoreCase("vivalife")) {
                                             btnComment.setBackgroundColor(getResources().getColor(R.color.color_life));
                                         } else {
                                             btnComment.setBackgroundColor(getResources().getColor(R.color.color_news));
@@ -398,10 +392,10 @@ public class ActDetailContentDefault extends ActionBarActivity
                         Constant.setListViewHeightBasedOnChildren(listView);
                         adapter.notifyDataSetChanged();
                         headerRelated.setVisibility(View.VISIBLE);
-                        if (fromkanal != null) {
-                            if (fromkanal.equalsIgnoreCase("bola")) {
+                        if (fromKanal != null) {
+                            if (fromKanal.equalsIgnoreCase("bola")) {
                                 headerRelated.setBackgroundResource(R.color.color_bola);
-                            } else if (fromkanal.equalsIgnoreCase("vivalife")) {
+                            } else if (fromKanal.equalsIgnoreCase("vivalife")) {
                                 headerRelated.setBackgroundResource(R.color.color_life);
                             } else {
                                 headerRelated.setBackgroundResource(R.color.color_news);
@@ -442,10 +436,10 @@ public class ActDetailContentDefault extends ActionBarActivity
                         thread.start();
                     } else {
                         btnComment.setVisibility(View.VISIBLE);
-                        if (fromkanal != null) {
-                            if (fromkanal.equalsIgnoreCase("bola")) {
+                        if (fromKanal != null) {
+                            if (fromKanal.equalsIgnoreCase("bola")) {
                                 btnComment.setBackgroundColor(getResources().getColor(R.color.color_bola));
-                            } else if(fromkanal.equalsIgnoreCase("vivalife")) {
+                            } else if(fromKanal.equalsIgnoreCase("vivalife")) {
                                 btnComment.setBackgroundColor(getResources().getColor(R.color.color_life));
                             } else {
                                 btnComment.setBackgroundColor(getResources().getColor(R.color.color_news));
@@ -473,8 +467,6 @@ public class ActDetailContentDefault extends ActionBarActivity
 
         linePageIndicator = (LinePageIndicator) findViewById(R.id.indicator);
         linePageIndicator.setVisibility(View.GONE);
-
-//        webView = (WebView) findViewById(R.id.web_view_detail_article);
 
         progressWheel = (ProgressWheel) findViewById(R.id.progress_wheel);
         headerRelated = (RelativeLayout) findViewById(R.id.header_related_article);
@@ -521,18 +513,6 @@ public class ActDetailContentDefault extends ActionBarActivity
         }
     }
 
-    private void startLoadWeb(String url) {
-        if (url != null) {
-            if (url.length() > 0) {
-//                webView.setWebChromeClient(new WebChromeClient());
-//                webView.getSettings().setBuiltInZoomControls(true);
-//                webView.getSettings().setDisplayZoomControls(false);
-//                webView.getSettings().setJavaScriptEnabled(true);
-//                webView.loadUrl(url);
-            }
-        }
-    }
-
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         if (shared_url == null) {
@@ -557,7 +537,7 @@ public class ActDetailContentDefault extends ActionBarActivity
         Intent intent = getIntent();
         id = intent.getStringExtra("id");
         typeFrom = intent.getStringExtra("type");
-        fromkanal = intent.getStringExtra("kanal");
+        fromKanal = intent.getStringExtra("kanal");
         shared_url = intent.getStringExtra("shared_url");
     }
 
@@ -566,13 +546,13 @@ public class ActDetailContentDefault extends ActionBarActivity
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         //Set Background
-        if (fromkanal != null) {
-            if (fromkanal.equalsIgnoreCase("bola")) {
+        if (fromKanal != null) {
+            if (fromKanal.equalsIgnoreCase("bola")) {
                 colorDrawable.setColor(getResources().getColor(R.color.color_bola));
                 getSupportActionBar().setBackgroundDrawable(colorDrawable);
                 getSupportActionBar().setTitle(R.string.label_item_navigation_bola);
                 progressWheel.setBarColor(getResources().getColor(R.color.color_bola));
-            } else if (fromkanal.equalsIgnoreCase("vivalife")) {
+            } else if (fromKanal.equalsIgnoreCase("vivalife")) {
                 colorDrawable.setColor(getResources().getColor(R.color.color_life));
                 getSupportActionBar().setBackgroundDrawable(colorDrawable);
                 if (typeFrom != null) {
@@ -598,9 +578,10 @@ public class ActDetailContentDefault extends ActionBarActivity
         }
     }
 
-    private void moveBrowserPage(String url) {
+    private void moveBrowserPage(String url, String channel) {
         Bundle bundle = new Bundle();
         bundle.putString("url", url);
+        bundle.putString("channel", channel);
         Intent intent = new Intent(this, ActBrowser.class);
         intent.putExtras(bundle);
         startActivity(intent);
@@ -688,18 +669,11 @@ public class ActDetailContentDefault extends ActionBarActivity
                 doFavorites();
                 return true;
             case R.id.subaction_browser:
-//                if (webView.getVisibility() == View.GONE) {
-//                    if (isInternetPresent) {
-//                        webView.setVisibility(View.VISIBLE);
-//                        item.setIcon(R.drawable.ic_action_comment);
-//
-//                    } else {
-//                        Toast.makeText(this, R.string.title_no_connection, Toast.LENGTH_SHORT).show();
-//                    }
-//                } else {
-//                    webView.setVisibility(View.GONE);
-//                    item.setIcon(R.drawable.ic_action_rate);
-//                }
+                if (shared_url != null && kanal != null) {
+                    if (shared_url.length() > 0 && kanal.length() > 0)  {
+                        moveBrowserPage(shared_url, kanal);
+                    }
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -774,8 +748,8 @@ public class ActDetailContentDefault extends ActionBarActivity
         analytics = new Analytics(this);
         if (typeFrom != null) {
             if (typeFrom.equalsIgnoreCase("search")) {
-                analytics.getAnalyticByATInternet(Constant.FROM_SEARCH_RESULT_DETAIL_CONTENT + fromkanal.toUpperCase() + "_" + id + "_" + title);
-                analytics.getAnalyticByGoogleAnalytic(Constant.FROM_SEARCH_RESULT_DETAIL_CONTENT + fromkanal.toUpperCase() + "_" + id + "_" + title);
+                analytics.getAnalyticByATInternet(Constant.FROM_SEARCH_RESULT_DETAIL_CONTENT + fromKanal.toUpperCase() + "_" + id + "_" + title);
+                analytics.getAnalyticByGoogleAnalytic(Constant.FROM_SEARCH_RESULT_DETAIL_CONTENT + fromKanal.toUpperCase() + "_" + id + "_" + title);
             } else if (typeFrom.equalsIgnoreCase("editor_choice")) {
                 analytics.getAnalyticByATInternet(Constant.FROM_EDITOR_CHOICE + id + "_" + title);
                 analytics.getAnalyticByGoogleAnalytic(Constant.FROM_EDITOR_CHOICE + id + "_" + title);
@@ -830,9 +804,9 @@ public class ActDetailContentDefault extends ActionBarActivity
                     }
                 }
             } else if (url.contains(Constant.LINK_VIDEO_VIVA)) {
-                moveBrowserPage(url);
+                moveBrowserPage(url, kanal);
             } else {
-                moveBrowserPage(url);
+                moveBrowserPage(url, kanal);
             }
         } else {
             Toast.makeText(this, R.string.title_no_connection, Toast.LENGTH_SHORT).show();

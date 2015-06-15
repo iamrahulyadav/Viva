@@ -1,6 +1,7 @@
 package id.co.viva.news.app.activity;
 
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
@@ -26,6 +27,7 @@ public class ActBrowser extends ActionBarActivity {
 
     private WebView webView;
     private String mUrl;
+    private String mChannel;
     private ProgressWheel progressWheel;
     private boolean isInternetPresent = false;
     private boolean isFirstShow = false;
@@ -35,18 +37,18 @@ public class ActBrowser extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //Get URL
-        getParameterUrl();
+        getParameterIntent();
 
         setContentView(R.layout.act_browser);
 
         isInternetPresent = Global.getInstance(this)
                 .getConnectionStatus().isConnectingToInternet();
 
-        //Set Header
-        setActionBarTheme();
-
         //Define Views
         defineViews();
+
+        //Set Header
+        setActionBarTheme(mChannel);
 
         //Show Web Page
         if (isInternetPresent) {
@@ -70,9 +72,10 @@ public class ActBrowser extends ActionBarActivity {
         progressWheel = (ProgressWheel) findViewById(R.id.progress_wheel);
     }
 
-    private void getParameterUrl() {
+    private void getParameterIntent() {
         Intent intent = getIntent();
         mUrl = intent.getStringExtra("url");
+        mChannel = intent.getStringExtra("channel");
     }
 
     private void startLoadWeb(String url) {
@@ -97,11 +100,32 @@ public class ActBrowser extends ActionBarActivity {
         webView.loadUrl(url);
     }
 
-    private void setActionBarTheme() {
+    private void setActionBarTheme(String channel) {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
-        getSupportActionBar().setTitle(getResources().getString(R.string.label_reference_article));
+        if (channel != null) {
+            if (channel.length() > 0) {
+                ColorDrawable colorDrawable = new ColorDrawable();
+                if (channel.equalsIgnoreCase("bola")) {
+                    colorDrawable.setColor(getResources().getColor(R.color.color_bola));
+                    getSupportActionBar().setBackgroundDrawable(colorDrawable);
+                    progressWheel.setBarColor(getResources().getColor(R.color.color_bola));
+                } else if (channel.equalsIgnoreCase("vivalife")) {
+                    colorDrawable.setColor(getResources().getColor(R.color.color_life));
+                    getSupportActionBar().setBackgroundDrawable(colorDrawable);
+                    progressWheel.setBarColor(getResources().getColor(R.color.color_life));
+                } else {
+                    colorDrawable.setColor(getResources().getColor(R.color.color_news));
+                    getSupportActionBar().setBackgroundDrawable(colorDrawable);
+                    progressWheel.setBarColor(getResources().getColor(R.color.color_news));
+                }
+                getSupportActionBar().setTitle(channel);
+            }
+        } else {
+            progressWheel.setBarColor(getResources().getColor(R.color.new_base_color));
+            getSupportActionBar().setTitle(getResources().getString(R.string.label_reference_article));
+        }
     }
 
     @Override
