@@ -6,8 +6,7 @@
     <WebView
         android:id="@+id/web_view_from_link"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    </WebView>
+        android:layout_height="match_parent"/>
     <id.co.viva.news.app.component.ProgressWheel
         android:layout_width="90dp"
         android:layout_height="90dp"
