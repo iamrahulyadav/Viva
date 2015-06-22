@@ -169,9 +169,9 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
                                 //Get News Index
                                 int lastIndex = response.length() - 1;
                                 JSONObject objs = response.getJSONObject(lastIndex);
-                                if(objs != null) {
+                                if (objs != null) {
                                     JSONArray objKanal = objs.getJSONArray("all");
-                                    for(int j=0; j<objKanal.length(); j++) {
+                                    for (int j=0; j<objKanal.length(); j++) {
                                         JSONObject field = objKanal.getJSONObject(j);
                                         id_header_grid = field.getString("channel_id");
                                         channel_title_header_grid = field.getString("channel_title");
@@ -183,11 +183,11 @@ public class LifeFragment extends Fragment implements View.OnClickListener {
                                             .transform(new CropSquareTransformation()).into(imageHeader);
                                 }
                                 //Get each channel
-                                for(int i=0; i<response.length()-1; i++) {
+                                for (int i=0; i<response.length()-1; i++) {
                                     JSONObject obj = response.getJSONObject(i);
-                                    if(obj != null) {
+                                    if (obj != null) {
                                         JSONArray objKanal = obj.getJSONArray("news");
-                                        for(int j=0; j<objKanal.length(); j++) {
+                                        for (int j=0; j<objKanal.length(); j++) {
                                             JSONObject field = objKanal.getJSONObject(j);
                                             String channel_title = field.getString("channel_title");
                                             String id = field.getString("id");

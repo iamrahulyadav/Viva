@@ -29,6 +29,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.google.android.gms.ads.doubleclick.PublisherAdView;
 import com.squareup.picasso.Picasso;
 import com.viewpagerindicator.LinePageIndicator;
 
@@ -43,8 +44,10 @@ import id.co.viva.news.app.Global;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.adapter.ImageSliderAdapter;
 import id.co.viva.news.app.adapter.RelatedAdapter;
+import id.co.viva.news.app.ads.AdsConfig;
 import id.co.viva.news.app.component.CropSquareTransformation;
 import id.co.viva.news.app.component.ProgressWheel;
+import id.co.viva.news.app.model.Ads;
 import id.co.viva.news.app.model.Comment;
 import id.co.viva.news.app.model.Favorites;
 import id.co.viva.news.app.model.RelatedArticle;
@@ -91,6 +94,7 @@ public class ActDetailContentDefault extends ActionBarActivity
     private TextView tvPreviewCommentUser;
     private TextView tvPreviewCommentContent;
     private LinearLayout layoutCommentPreview;
+    private LinearLayout mParentLayout;
     private RelativeLayout headerRelated;
     private TextView tvNoResult;
     private ProgressWheel progressWheel;
@@ -106,6 +110,10 @@ public class ActDetailContentDefault extends ActionBarActivity
     private ViewPager viewPager;
     private LinePageIndicator linePageIndicator;
 
+    //Ads
+    private PublisherAdView publisherAdViewBottom;
+    private PublisherAdView publisherAdViewTop;
+
     //Analytic
     private Analytics analytics;
 
@@ -113,6 +121,7 @@ public class ActDetailContentDefault extends ActionBarActivity
     private ArrayList<Favorites> favoritesArrayList;
     private ArrayList<RelatedArticle> relatedArticleArrayList;
     private ArrayList<Comment> commentArrayList;
+    private ArrayList<Ads> adsArrayList;
     private ArrayList<SliderContentImage> sliderContentImages;
     private ArrayList<Video> videoArrayList;
 
@@ -136,7 +145,7 @@ public class ActDetailContentDefault extends ActionBarActivity
 
         //Get data
         if (isInternetPresent) {
-            StringRequest request = new StringRequest(Request.Method.GET, Constant.NEW_DETAIL + "/id/" + id,
+            StringRequest request = new StringRequest(Request.Method.GET, Constant.NEW_DETAIL + "id/" + id + "/screen/" + "search_detail_screen",
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String volleyResponse) {
@@ -203,6 +212,20 @@ public class ActDetailContentDefault extends ActionBarActivity
                                     commentArrayList.add(new Comment(id, null, name, null, comment_text, null, null, null));
                                 }
 
+                                //Check Ads if exists
+                                JSONArray adsList = response.getJSONArray(Constant.adses);
+                                if (adsList.length() > 0) {
+                                    for (int j=0; j<adsList.length(); j++) {
+                                        JSONObject jsonAds = adsList.getJSONObject(j);
+                                        String name = jsonAds.getString(Constant.name);
+                                        int position = jsonAds.getInt(Constant.position);
+                                        int type = jsonAds.getInt(Constant.type);
+                                        String unit_id = jsonAds.getString(Constant.unit_id);
+                                        adsArrayList.add(new Ads(name, type, position, unit_id));
+                                        Log.i(Constant.TAG, "ADS : " + adsArrayList.get(j).getmUnitId());
+                                    }
+                                }
+
                                 setAnalytics(title, ids);
 
                                 setTextViewHTML(tvContentDetail, content);
@@ -250,7 +273,7 @@ public class ActDetailContentDefault extends ActionBarActivity
                                             try {
                                                 while (true) {
                                                     Thread.sleep(3000);
-                                                    if(ActDetailContentDefault.this == null) {
+                                                    if (ActDetailContentDefault.this == null) {
                                                         return;
                                                     }
                                                     runOnUiThread(new Runnable() {
@@ -289,6 +312,12 @@ public class ActDetailContentDefault extends ActionBarActivity
                                 invalidateOptionsMenu();
 
                                 progressWheel.setVisibility(View.GONE);
+
+                                Log.i(Constant.TAG, "Sebelum");
+
+                                showAds();
+
+                                Log.i(Constant.TAG, "Sesudah");
 
                                 if (urlVideo.length() > 0) {
                                     textLinkVideo.setVisibility(View.VISIBLE);
@@ -462,6 +491,8 @@ public class ActDetailContentDefault extends ActionBarActivity
     }
 
     private void defineViews() {
+        mParentLayout = (LinearLayout) findViewById(R.id.parent_layout);
+
         viewPager = (ViewPager) findViewById(R.id.horizontal_list);
         viewPager.setVisibility(View.GONE);
 
@@ -491,6 +522,7 @@ public class ActDetailContentDefault extends ActionBarActivity
         commentArrayList = new ArrayList<>();
         sliderContentImages = new ArrayList<>();
         videoArrayList = new ArrayList<>();
+        adsArrayList = new ArrayList<>();
 
         tvTitleDetail = (TextView) findViewById(R.id.title_detail_content_default);
         tvDateDetail = (TextView) findViewById(R.id.date_detail_content_default);
@@ -767,7 +799,7 @@ public class ActDetailContentDefault extends ActionBarActivity
         CharSequence sequence = Html.fromHtml(html);
         SpannableStringBuilder strBuilder = new SpannableStringBuilder(sequence);
         URLSpan[] urls = strBuilder.getSpans(0, sequence.length(), URLSpan.class);
-        for(URLSpan span : urls) {
+        for (URLSpan span : urls) {
             makeLinkClickable(strBuilder, span);
         }
         text.setText(strBuilder);
@@ -810,6 +842,31 @@ public class ActDetailContentDefault extends ActionBarActivity
             }
         } else {
             Toast.makeText(this, R.string.title_no_connection, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void showAds() {
+        if (this != null) {
+            if (adsArrayList != null) {
+                if (adsArrayList.size() > 0) {
+                    AdsConfig adsConfig = new AdsConfig();
+                    for (int i=0; i<adsArrayList.size(); i++) {
+                        if (adsArrayList.get(i).getmPosition() == Constant.POSITION_BANNER_TOP) {
+                            if (publisherAdViewTop == null) {
+                                publisherAdViewTop = new PublisherAdView(this);
+                                adsConfig.setAdsBanner(publisherAdViewTop,
+                                        adsArrayList.get(i).getmUnitId(), Constant.POSITION_BANNER_TOP, mParentLayout);
+                            }
+                        } else if (adsArrayList.get(i).getmPosition() == Constant.POSITION_BANNER_BOTTOM) {
+                            if (publisherAdViewBottom == null) {
+                                publisherAdViewBottom = new PublisherAdView(this);
+                                adsConfig.setAdsBanner(publisherAdViewBottom,
+                                        adsArrayList.get(i).getmUnitId(), Constant.POSITION_BANNER_BOTTOM, mParentLayout);
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 

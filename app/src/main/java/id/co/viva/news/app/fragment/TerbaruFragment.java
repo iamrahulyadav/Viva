@@ -649,17 +649,17 @@ public class TerbaruFragment extends Fragment implements AdapterView.OnItemClick
                     @Override
                     public void onErrorResponse(VolleyError volleyError) {
                         try {
-                            if(Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_TERBARU) != null) {
+                            if (Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_TERBARU) != null) {
                                 String cachedResponse = new String(Global.getInstance(getActivity()).getRequestQueue()
                                         .getCache().get(Constant.NEW_TERBARU).data);
                                 Log.i(Constant.TAG, "From Cached : " + cachedResponse);
                                 JSONObject jsonObject = new JSONObject(cachedResponse);
                                 jsonArrayResponses = jsonObject.getJSONArray(Constant.response);
-                                if(jsonArrayResponses != null) {
+                                if (jsonArrayResponses != null) {
                                     JSONObject objTerbaru = jsonArrayResponses.getJSONObject(0);
-                                    if(objTerbaru !=  null) {
+                                    if (objTerbaru !=  null) {
                                         jsonArraySegmentNews = objTerbaru.getJSONArray(Constant.NEWS);
-                                        for(int i=0; i<jsonArraySegmentNews.length(); i++) {
+                                        for (int i=0; i<jsonArraySegmentNews.length(); i++) {
                                             JSONObject jsonTerbaru = jsonArraySegmentNews.getJSONObject(i);
                                             String id = jsonTerbaru.getString(Constant.id);
                                             String title = jsonTerbaru.getString(Constant.title);
