@@ -26,8 +26,17 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -36,6 +45,7 @@ import id.co.viva.news.app.Global;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.adapter.NavigationAdapter;
 import id.co.viva.news.app.component.CropSquareTransformation;
+import id.co.viva.news.app.component.ProgressWheel;
 import id.co.viva.news.app.fragment.AboutFragment;
 import id.co.viva.news.app.fragment.BeritaSekitarFragment;
 import id.co.viva.news.app.fragment.BolaFragment;
@@ -44,16 +54,15 @@ import id.co.viva.news.app.fragment.HeadlineFragment;
 import id.co.viva.news.app.fragment.LifeFragment;
 import id.co.viva.news.app.fragment.NewsFragment;
 import id.co.viva.news.app.fragment.TerbaruFragment;
-import id.co.viva.news.app.interfaces.Item;
 import id.co.viva.news.app.model.NavigationItem;
-import id.co.viva.news.app.model.NavigationSectionItem;
+import info.hoang8f.widget.FButton;
 
 public class ActLanding extends ActionBarActivity implements View.OnClickListener {
 
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
     private android.support.v7.app.ActionBarDrawerToggle mDrawerToggle;
-    private ArrayList<Item> navDrawerItems;
+    private ArrayList<NavigationItem> navDrawerItems;
     private NavigationAdapter adapter;
     private android.support.v4.app.Fragment fragment = null;
     private android.support.v4.app.FragmentManager fragmentManager;
@@ -66,6 +75,8 @@ public class ActLanding extends ActionBarActivity implements View.OnClickListene
     private TextView mNameProfile;
     private TextView mEmailProfile;
     private boolean isInternetPresent = false;
+    private FButton btnRetryList;
+    private ProgressWheel progressWheel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,32 +93,74 @@ public class ActLanding extends ActionBarActivity implements View.OnClickListene
         //Define All Views
         defineViews();
 
-        //Define Item Navigation List
-        defineItemList();
-
-        //All About List
-        mDrawerList.setOnItemClickListener(new SlideMenuClickListener());
-        adapter = new NavigationAdapter(getApplicationContext(), navDrawerItems);
-        mDrawerList.setAdapter(adapter);
-
         //Set Header
         showHeaderActionBar();
 
-        mDrawerToggle = new android.support.v7.app.ActionBarDrawerToggle(this,
-                mDrawerLayout,
-                R.string.app_title_empty,
-                R.string.app_title_empty) {
-            public void onDrawerClosed(View view) {}
-            public void onDrawerOpened(View drawerView) {}
-            @Override
-            public void setDrawerIndicatorEnabled(boolean enable) {
-                super.setDrawerIndicatorEnabled(enable);
-            }
-        };
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
+        //Define Item Navigation List
+        populateList();
 
+        //Set default view
         if (savedInstanceState == null) {
             displayView(0);
+        }
+    }
+
+    private void populateList() {
+        StringRequest request = new StringRequest(Request.Method.GET, Constant.MAIN_CONFIG,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String s) {
+                        getResponse(s);
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                if (Global.getInstance(ActLanding.this)
+                        .getRequestQueue().getCache().get(Constant.MAIN_CONFIG) != null) {
+                    String cachedResponse = new String(Global.getInstance(ActLanding.this).
+                            getRequestQueue().getCache().get(Constant.MAIN_CONFIG).data);
+                    getResponse(cachedResponse);
+                } else {
+                    progressWheel.setVisibility(View.GONE);
+                    btnRetryList.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+        request.setShouldCache(true);
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                Constant.TIME_OUT,
+                0,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        Global.getInstance(this).getRequestQueue().getCache().invalidate(Constant.MAIN_CONFIG, true);
+        Global.getInstance(this).getRequestQueue().getCache().get(Constant.MAIN_CONFIG);
+        Global.getInstance(this).addToRequestQueue(request, Constant.JSON_REQUEST);
+    }
+
+    private void getResponse(String response) {
+        try {
+            JSONObject jsonObject = new JSONObject(response);
+            //Get menu list
+            JSONArray listMenus = jsonObject.getJSONArray(Constant.menus);
+            if (listMenus.length() > 0) {
+                for (int i=0; i<listMenus.length(); i++) {
+                    JSONObject data = listMenus.getJSONObject(i);
+                    String name = data.getString(Constant.name);
+                    int type = data.getInt(Constant.type);
+                    String screen = data.getString(Constant.screen);
+                    String hit_url = data.getString(Constant.hit_url);
+                    String asset_url = data.getString(Constant.asset_url);
+                    navDrawerItems.add(new NavigationItem(name, type, screen, hit_url, asset_url));
+                }
+                if (navDrawerItems.size() > 0) {
+                    adapter = new NavigationAdapter(ActLanding.this, navDrawerItems);
+                    mDrawerList.setAdapter(adapter);
+                    adapter.notifyDataSetChanged();
+                    progressWheel.setVisibility(View.GONE);
+                    mDrawerList.setVisibility(View.VISIBLE);
+                }
+            }
+        } catch (JSONException je) {
+            je.printStackTrace();
         }
     }
 
@@ -177,13 +230,19 @@ public class ActLanding extends ActionBarActivity implements View.OnClickListene
                 overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
                 mDrawerLayout.closeDrawer(mNavLayout);
             }
+        } else if (view.getId() == R.id.btn_retry_list_menu) {
+            if (btnRetryList.getVisibility() == View.VISIBLE) {
+                btnRetryList.setVisibility(View.GONE);
+            }
+            progressWheel.setVisibility(View.VISIBLE);
+            populateList();
         }
     }
 
     private class SlideMenuClickListener implements ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-            displayView(position);
+//            displayView(position);
         }
     }
 
@@ -216,26 +275,33 @@ public class ActLanding extends ActionBarActivity implements View.OnClickListene
         }
     }
 
-    private void defineItemList() {
-        navDrawerItems = new ArrayList<>();
-        navDrawerItems.add(new NavigationItem(getResources().getString(R.string.label_item_navigation_terbaru), R.drawable.icon_headline));
-        navDrawerItems.add(new NavigationItem(getResources().getString(R.string.label_item_navigation_headline), R.drawable.icon_terbaru));
-        navDrawerItems.add(new NavigationItem(getResources().getString(R.string.label_item_navigation_search_by_location), R.drawable.icon_search_location));
-        navDrawerItems.add(new NavigationItem(getResources().getString(R.string.label_item_navigation_favorites), R.drawable.icon_favorites));
-        navDrawerItems.add(new NavigationItem(getResources().getString(R.string.label_item_navigation_scan_berita), R.drawable.icon_qrcode));
-        navDrawerItems.add(new NavigationSectionItem(getResources().getString(R.string.label_section_navigation_channel)));
-        navDrawerItems.add(new NavigationItem(getResources().getString(R.string.label_item_navigation_news), R.drawable.icon_viva_news));
-        navDrawerItems.add(new NavigationItem(getResources().getString(R.string.label_item_navigation_bola), R.drawable.icon_viva_bola));
-        navDrawerItems.add(new NavigationItem(getResources().getString(R.string.label_item_navigation_life), R.drawable.icon_viva_life));
-        navDrawerItems.add(new NavigationSectionItem(getResources().getString(R.string.label_section_navigation_preferences)));
-        navDrawerItems.add(new NavigationItem(getResources().getString(R.string.label_item_navigation_about), R.drawable.icon_about));
-        navDrawerItems.add(new NavigationItem(getResources().getString(R.string.label_item_navigation_rateapp), R.drawable.icon_rateapp));
-        navDrawerItems.add(new NavigationItem(getResources().getString(R.string.label_item_navigation_email), R.drawable.icon_mail));
-    }
-
     private void defineViews() {
+        //Menu collection
+        navDrawerItems = new ArrayList<>();
+        //Slider menu
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerList = (ListView) findViewById(R.id.list_slidermenu);
+        //Menu list
+        mDrawerList = (ListView) findViewById(R.id.list_slider_menu);
+        mDrawerList.setOnItemClickListener(new SlideMenuClickListener());
+        //Toggle for slider list menu
+        mDrawerToggle = new android.support.v7.app.ActionBarDrawerToggle(this,
+                mDrawerLayout,
+                R.string.app_title_empty,
+                R.string.app_title_empty) {
+            public void onDrawerClosed(View view) {}
+            public void onDrawerOpened(View drawerView) {}
+            @Override
+            public void setDrawerIndicatorEnabled(boolean enable) {
+                super.setDrawerIndicatorEnabled(enable);
+            }
+        };
+        mDrawerLayout.setDrawerListener(mDrawerToggle);
+        //Progress view
+        progressWheel = (ProgressWheel) findViewById(R.id.progress_wheel);
+        //Button for retry getting data
+        btnRetryList = (FButton) findViewById(R.id.btn_retry_list_menu);
+        btnRetryList.setOnClickListener(this);
+        //Profile background
         mBackground = (ImageView) findViewById(R.id.profile_bg);
         mNavLayout = (RelativeLayout) findViewById(R.id.nav_layout);
         mImgProfile = (ImageView) findViewById(R.id.img_profile);

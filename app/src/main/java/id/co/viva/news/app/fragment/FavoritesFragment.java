@@ -58,6 +58,7 @@ public class FavoritesFragment extends Fragment implements AdapterView.OnItemCli
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.frag_favorites, container, false);
 
+        //Set analytic
         getAnalytics();
 
         textNoResult = (TextView) rootView.findViewById(R.id.text_no_result_detail_content_favorite);
@@ -75,11 +76,11 @@ public class FavoritesFragment extends Fragment implements AdapterView.OnItemCli
                 .getInt(Constant.FAVORITES_LIST_SIZE, 0);
 
         favoritesArrayList = Global.getInstance(getActivity()).getInstanceGson().
-                fromJson(favoriteList, Global.getInstance(getActivity()).getType());
+                fromJson(favoriteList, Global.getInstance(getActivity()).getTypeFavorites());
         favoriteAdapter = new FavoriteAdapter(getActivity(), favoritesArrayList);
 
-        if(favoriteListSize > 0) {
-            for(int i=0; i<favoriteListSize; i++) {
+        if (favoriteListSize > 0) {
+            for (int i=0; i<favoriteListSize; i++) {
                 Log.i(Constant.TAG, "TITLE FAVORITES : " + favoritesArrayList.get(i).getTitle());
             }
         } else {
@@ -98,14 +99,14 @@ public class FavoritesFragment extends Fragment implements AdapterView.OnItemCli
                             Global.getInstance(getActivity()).getDefaultEditor().putString(Constant.FAVORITES_LIST, favorite);
                             Global.getInstance(getActivity()).getDefaultEditor().putInt(Constant.FAVORITES_LIST_SIZE, favoritesArrayList.size());
                             Global.getInstance(getActivity()).getDefaultEditor().commit();
-                            if(favoritesArrayList.size() <= 0) {
+                            if (favoritesArrayList.size() <= 0) {
                                 textNoResult.setVisibility(View.VISIBLE);
                             }
                         }
                     }
                 });
 
-        if(favoriteListSize > 0 || favoritesArrayList != null) {
+        if (favoriteListSize > 0 || favoritesArrayList != null) {
             listFavorite.setAdapter(favoriteAdapter);
             favoriteAdapter.notifyDataSetChanged();
             //Undo Adapter
@@ -125,7 +126,7 @@ public class FavoritesFragment extends Fragment implements AdapterView.OnItemCli
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-        if(favoriteListSize > 0) {
+        if (favoriteListSize > 0) {
             Favorites favorites = favoritesArrayList.get(position);
             sliderContentImages = favorites.getSliderContentImages();
             String listThumbSlider = Global.getInstance(getActivity()).getInstanceGson().toJson(sliderContentImages);

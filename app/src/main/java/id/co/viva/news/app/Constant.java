@@ -116,9 +116,10 @@ public class Constant {
     public static final String TAG = VivaApp.class.getSimpleName();
     public static final String TAG_GCM = "VIVA-GCM";
 
-    //Base URL
-    private static String BASE_URL_NEW = "http://api.viva.co.id/v/209/";
-//    private static String BASE_URL_NEW_STAGGING = "http://api.viva.co.id/v/2081/";
+    //Base URL Production
+//    private static String BASE_URL_NEW = "http://api.viva.co.id/v/209/";
+    //Base URL Stagging
+    private static String BASE_URL_NEW = "http://api.viva.co.id/v/2091/";
 
     //Main Content URL
     public static String MAIN_CONFIG = BASE_URL_NEW + "mainconf/app/android";
@@ -173,10 +174,14 @@ public class Constant {
 
     //JSON Tag Ads
     public static final String adses = "adses";
+    public static final String menus = "menus";
     public static final String screen_name = "screen_name";
+    public static final String screen = "screen";
     public static final String unit_id = "unit_id";
     public static final String type = "type";
     public static final String position = "position";
+    public static final String hit_url = "hit_url";
+    public static final String asset_url = "asset_url";
 
     //Another from JSON
     public static final String name = "name";

@@ -697,7 +697,7 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
             favoritesArrayList = Global.getInstance(getActivity()).getFavoritesList();
         } else {
             favoritesArrayList = Global.getInstance(getActivity()).getInstanceGson().
-                    fromJson(favoriteList, Global.getInstance(getActivity()).getType());
+                    fromJson(favoriteList, Global.getInstance(getActivity()).getTypeFavorites());
         }
         new SweetAlertDialog(getActivity(), SweetAlertDialog.WARNING_TYPE)
                 .setTitleText(getResources().getString(R.string.label_favorite_navigation_title))

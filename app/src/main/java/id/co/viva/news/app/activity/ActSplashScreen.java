@@ -35,6 +35,7 @@ import id.co.viva.news.app.services.GCM;
  */
 public class ActSplashScreen extends Activity {
 
+    private static final int TIME_OUT_DELAY = 1000;
     private ImageView imageSplash;
     private boolean isInternet = false;
     private ArrayList<Ads> adsList;
@@ -70,7 +71,7 @@ public class ActSplashScreen extends Activity {
                 public void run() {
                     checkFirstTime(Constant.MOVE_APPLICATION);
                 }
-            }, 1000);
+            }, TIME_OUT_DELAY);
         }
     }
 
@@ -130,7 +131,7 @@ public class ActSplashScreen extends Activity {
                 public void run() {
                     loadMainConfig();
                 }
-            }, 1000);
+            }, TIME_OUT_DELAY);
         }
     }
 
@@ -141,6 +142,7 @@ public class ActSplashScreen extends Activity {
                 public void onResponse(String s) {
                     try {
                         JSONObject jsonObject = new JSONObject(s);
+                        //Get Ads
                         JSONArray listAds = jsonObject.getJSONArray(Constant.adses);
                         if (listAds.length() > 0) {
                             for (int i=0; i<listAds.length(); i++) {
@@ -152,6 +154,7 @@ public class ActSplashScreen extends Activity {
                                 mConfigList.addAds(ActSplashScreen.this, new Ads(screen_name, type, position, unit_id));
                             }
                         }
+                        //Check first install process
                         checkPreferences();
                     } catch (JSONException je) {
                         je.printStackTrace();
@@ -165,7 +168,7 @@ public class ActSplashScreen extends Activity {
         });
         request.setShouldCache(true);
         request.setRetryPolicy(new DefaultRetryPolicy(
-                Constant.TIME_OUT_LONG,
+                Constant.TIME_OUT,
                 0,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         Global.getInstance(this).getRequestQueue().getCache().invalidate(Constant.MAIN_CONFIG, true);

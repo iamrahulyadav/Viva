@@ -31,7 +31,7 @@ public class Global {
     private ATTag atTag;
     private ATParams atParams;
     private ArrayList<Favorites> favoritesList;
-    private Type type;
+    private Type typeFavorites;
     private Type typeSlider;
     private Gson gson;
     private SharedPreferences.Editor editor;
@@ -43,26 +43,26 @@ public class Global {
     }
 
     public static synchronized Global getInstance(Context context) {
-        if(mInstance == null) {
+        if (mInstance == null) {
             mInstance = new Global(context);
         }
         return mInstance;
     }
 
     public EasyTracker getEasyTracker() {
-        if(easyTracker == null) {
+        if (easyTracker == null) {
             easyTracker = EasyTracker.getInstance(mContext);
         }
         return easyTracker;
     }
 
     public ATParams getAtParams() {
-        if(atTag == null) {
+        if (atTag == null) {
             atTag = ATTag.init(mContext, Constant.AT_SUB_DOMAIN,
                     Constant.AT_SITE_ID, Constant.AT_SUB_SITE);
             atTag.setLogDomain(Constant.AT_LOG_DOMAIN);
         }
-        if(atParams == null) {
+        if (atParams == null) {
             atParams = new ATParams();
         }
         return atParams;
@@ -76,7 +76,7 @@ public class Global {
     }
 
     public ConnectionDetector getConnectionStatus() {
-        if(mConnectionDetector == null) {
+        if (mConnectionDetector == null) {
             mConnectionDetector = new ConnectionDetector(mContext);
         }
         return mConnectionDetector;
@@ -88,28 +88,28 @@ public class Global {
     }
 
     public ArrayList<Favorites> getFavoritesList() {
-        if(favoritesList == null) {
+        if (favoritesList == null) {
             favoritesList = new ArrayList<>();
         }
         return favoritesList;
     }
 
-    public Type getType() {
-        if(type == null) {
-            type = new TypeToken<ArrayList<Favorites>>(){}.getType();
+    public Type getTypeFavorites() {
+        if (typeFavorites == null) {
+            typeFavorites = new TypeToken<ArrayList<Favorites>>(){}.getType();
         }
-        return type;
+        return typeFavorites;
     }
 
     public Type getTypeSlider() {
-        if(typeSlider == null) {
+        if (typeSlider == null) {
             typeSlider = new TypeToken<ArrayList<SliderContentImage>>(){}.getType();
         }
         return typeSlider;
     }
 
     public Gson getInstanceGson() {
-        if(gson == null) {
+        if (gson == null) {
             gson = new Gson();
         }
         return gson;
@@ -120,7 +120,7 @@ public class Global {
     }
 
     public SharedPreferences.Editor getDefaultEditor() {
-        if(editor == null) {
+        if (editor == null) {
             editor = getSharedPreferences(mContext).edit();
         }
         return editor;

@@ -51,7 +51,7 @@ public class ChannelNewsAdapter extends BaseAdapter {
     public View getView(int position, View view, ViewGroup viewGroup) {
         ViewHolder holder;
 
-        if(view == null) {
+        if (view == null) {
             LayoutInflater inflater = LayoutInflater.from(context);
             view = inflater.inflate(R.layout.item_channel_list, null);
             holder = new ViewHolder();
@@ -74,7 +74,7 @@ public class ChannelNewsAdapter extends BaseAdapter {
             e.getMessage();
         }
 
-        if(channelNews.getImage_url().length() > 0) {
+        if (channelNews.getImage_url().length() > 0) {
             Picasso.with(context).load(channelNews.getImage_url())
                     .transform(new CropSquareTransformation()).into(holder.image_item_channel_news);
         }

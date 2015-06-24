@@ -520,7 +520,7 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
             favoritesArrayList = Global.getInstance(this).getFavoritesList();
         } else {
             favoritesArrayList = Global.getInstance(this).getInstanceGson().
-                    fromJson(favoriteList, Global.getInstance(this).getType());
+                    fromJson(favoriteList, Global.getInstance(this).getTypeFavorites());
         }
         new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE)
                 .setTitleText(getResources().getString(R.string.label_favorite_navigation_title))

@@ -78,7 +78,7 @@ public class ActTutorial extends FragmentActivity implements View.OnClickListene
                     JSONArray jsonarray = jsonObject.getJSONArray(Constant.data);
                     if (jsonarray != null) {
                         if (jsonarray.length() > 0) {
-                            for(int i=0; i<jsonarray.length(); i++) {
+                            for (int i=0; i<jsonarray.length(); i++) {
                                 String value = (String) jsonarray.get(i);
                                 imageTutorials.add(value);
                             }

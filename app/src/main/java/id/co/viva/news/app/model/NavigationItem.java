@@ -1,36 +1,40 @@
 package id.co.viva.news.app.model;
 
-import id.co.viva.news.app.interfaces.Item;
+public class NavigationItem {
 
-public class NavigationItem implements Item {
+    private String name;
+    private int type;
+    private String screen;
+    private String hit_url;
+    private String asset_url;
 
-    private String title;
-    private int icon;
-
-    public NavigationItem(String title, int icon) {
-        this.title = title;
-        this.icon = icon;
+    public String getScreen() {
+        return screen;
     }
 
-    public String getTitle() {
-        return this.title;
+    public String getName() {
+        return name;
     }
 
-    public int getIcon(){
-        return this.icon;
+    public int getType() {
+        return type;
     }
 
-    public void setTitle(String title){
-        this.title = title;
+    public String getHit_url() {
+        return hit_url;
     }
 
-    public void setIcon(int icon){
-        this.icon = icon;
+    public String getAsset_url() {
+        return asset_url;
     }
 
-    @Override
-    public boolean isSection() {
-        return false;
+    public NavigationItem(String name, int type,
+                          String screen, String hit_url, String asset_url) {
+        this.name = name;
+        this.type = type;
+        this.screen = screen;
+        this.hit_url = hit_url;
+        this.asset_url = asset_url;
     }
 
 }

@@ -756,11 +756,11 @@ public class DetailIndexContent extends Fragment implements
     private void doFavorites() {
         favoriteList = Global.getInstance(getActivity()).getSharedPreferences(getActivity())
                 .getString(Constant.FAVORITES_LIST, "");
-        if(favoriteList == null || favoriteList.length() <= 0) {
+        if (favoriteList == null || favoriteList.length() <= 0) {
             favoritesArrayList = Global.getInstance(getActivity()).getFavoritesList();
         } else {
             favoritesArrayList = Global.getInstance(getActivity()).getInstanceGson().
-                    fromJson(favoriteList, Global.getInstance(getActivity()).getType());
+                    fromJson(favoriteList, Global.getInstance(getActivity()).getTypeFavorites());
         }
         new SweetAlertDialog(getActivity(), SweetAlertDialog.WARNING_TYPE)
                 .setTitleText(getResources().getString(R.string.label_favorite_navigation_title))
