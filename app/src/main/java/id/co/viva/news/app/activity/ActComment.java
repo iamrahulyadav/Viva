@@ -92,19 +92,19 @@ public class ActComment extends ActionBarActivity implements View.OnClickListene
         btnSubmit.setOnClickListener(this);
 
         if (mTitle != null) {
-            if(mTitle.length() > 0) {
+            if (mTitle.length() > 0) {
                 text_title.setText(mTitle);
             }
         }
 
         if (mImageUrl != null) {
-            if(mImageUrl.length() > 0) {
+            if (mImageUrl.length() > 0) {
                 Picasso.with(this).load(mImageUrl)
                         .transform(new CropSquareTransformation()).into(image_content);
             }
         }
 
-        if(isInternetPresent) {
+        if (isInternetPresent) {
             getCommentList();
         }
     }
@@ -132,8 +132,8 @@ public class ActComment extends ActionBarActivity implements View.OnClickListene
 
     private void setThemes(String kanal) {
         ColorDrawable colorDrawable = new ColorDrawable();
-        if(kanal != null) {
-            if(kanal.equalsIgnoreCase("bola")) {
+        if (kanal != null) {
+            if (kanal.equalsIgnoreCase("bola")) {
                 colorDrawable.setColor(getResources().getColor(R.color.color_bola));
                 getSupportActionBar().setBackgroundDrawable(colorDrawable);
                 mLayout.setBackgroundResource(R.color.color_bola);
@@ -179,14 +179,14 @@ public class ActComment extends ActionBarActivity implements View.OnClickListene
 
     @Override
     public void onClick(View view) {
-        if(view.getId() == R.id.btn_send_comment) {
+        if (view.getId() == R.id.btn_send_comment) {
             String comments = etComment.getText().toString();
-            if((fullName.length() == 0 && email.length() == 0) || (fullName.length() == 0) || (email.length() == 0)) {
+            if ((fullName.length() == 0 && email.length() == 0) || (fullName.length() == 0) || (email.length() == 0)) {
                 doLoginFirst();
-            } else if(comments.length() < 1) {
+            } else if (comments.length() < 1) {
                 Toast.makeText(this, R.string.label_validation_for_comment_length, Toast.LENGTH_SHORT).show();
             } else {
-                if(isInternetPresent) {
+                if (isInternetPresent) {
                     userAccount = new UserAccount(userSocialId, app_id, mIds, email, fullName, comments, this, ActComment.this);
                     disableView();
                     btnSubmit.setProgress(1);
@@ -195,8 +195,8 @@ public class ActComment extends ActionBarActivity implements View.OnClickListene
                     Toast.makeText(this, R.string.title_no_connection, Toast.LENGTH_SHORT).show();
                 }
             }
-        } else if(view.getId() == R.id.et_comment_user) {
-            if(fullName.length() == 0 && email.length() == 0) {
+        } else if (view.getId() == R.id.et_comment_user) {
+            if (fullName.length() == 0 && email.length() == 0) {
                 doLoginFirst();
             }
         }
@@ -260,7 +260,7 @@ public class ActComment extends ActionBarActivity implements View.OnClickListene
         try {
             JSONArray jsonArrayResponses = jsonObject.getJSONArray(Constant.response);
             if (jsonArrayResponses != null) {
-                for(int i=0; i<jsonArrayResponses.length(); i++) {
+                for (int i=0; i<jsonArrayResponses.length(); i++) {
                     JSONObject response = jsonArrayResponses.getJSONObject(i);
                     String id = response.getString(Constant.id);
                     String article_id = response.getString(Constant.article_id);

@@ -127,6 +127,7 @@
     <string name="label_logout_complete">Berhasil Logout!</string>
     <string name="label_amount_comments">KOMENTAR</string>
     <string name="label_comments_from_detail">Komentar</string>
+    <string name="label_please_wait">Harap tunggu...</string>
     <string name="label_hint_comment">Komentar Anda</string>
     <string name="label_validation_for_comment">Anda harus login terlebih dahulu!</string>
     <string name="label_validation_for_comment_length">Komentar anda kosong!</string>

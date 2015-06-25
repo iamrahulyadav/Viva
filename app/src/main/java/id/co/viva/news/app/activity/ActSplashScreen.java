@@ -5,9 +5,12 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
+import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -15,6 +18,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.google.android.gms.ads.InterstitialAd;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -36,7 +41,10 @@ import id.co.viva.news.app.services.GCM;
 public class ActSplashScreen extends Activity {
 
     private static final int TIME_OUT_DELAY = 1000;
+    private static final int TIME_OUT_DELAY_DYNAMIC = 3000;
     private ImageView imageSplash;
+    private ImageView backgroundLayout;
+    private LinearLayout layoutProgress;
     private boolean isInternet = false;
     private ArrayList<Ads> adsList;
     private AdsConfigList mConfigList;
@@ -46,33 +54,37 @@ public class ActSplashScreen extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act_splash_screen);
-
         //Check connection
         isInternet = Global.getInstance(this)
                 .getConnectionStatus().isConnectingToInternet();
-
         //Initiate GCM Service
         gcm = GCM.getInstance(this);
-
         //Initiate Ad list
         mConfigList = new AdsConfigList();
-
-        //Set Animation Image
-        imageSplash = (ImageView)findViewById(R.id.image_splash);
-        imageSplash.setImageResource(R.drawable.icon_launcher);
-        Animation fadeInAnimation = AnimationUtils.loadAnimation(this, R.anim.fade);
-        imageSplash.startAnimation(fadeInAnimation);
-
+        //Initiate Animation Image
+        imageSplash = (ImageView)findViewById(R.id.splash_offline_layout);
+        //Background layout
+        backgroundLayout = (ImageView)findViewById(R.id.splash_dynamic_layout);
+        //Progress layout
+        layoutProgress = (LinearLayout)findViewById(R.id.progress_layout_splash);
         //Check existing connection
         if (isInternet) {
             new GetRegistrationID().execute();
         } else {
+            layoutProgress.setVisibility(View.GONE);
             new Handler().postDelayed(new Runnable() {
                 public void run() {
                     checkFirstTime(Constant.MOVE_APPLICATION);
                 }
             }, TIME_OUT_DELAY);
         }
+    }
+
+    private void showDefaultSplash() {
+        imageSplash.setVisibility(View.VISIBLE);
+        imageSplash.setImageResource(R.drawable.icon_launcher);
+        Animation fadeInAnimation = AnimationUtils.loadAnimation(this, R.anim.fade);
+        imageSplash.startAnimation(fadeInAnimation);
     }
 
     private void checkFirstTime(String intentType) {
@@ -154,8 +166,33 @@ public class ActSplashScreen extends Activity {
                                 mConfigList.addAds(ActSplashScreen.this, new Ads(screen_name, type, position, unit_id));
                             }
                         }
-                        //Check first install process
-                        checkPreferences();
+                        //Get dynamic splash screen
+                        JSONObject response = jsonObject.getJSONObject(Constant.response);
+                        JSONArray splashScreen = response.getJSONArray("splash_screen");
+                        if (splashScreen.length() > 0) {
+                            String backgroundUrl = splashScreen.get(0).toString();
+                            //Set dynamic background
+                            Picasso.with(ActSplashScreen.this).load(backgroundUrl)
+                                    .into(backgroundLayout, new Callback() {
+                                        @Override
+                                        public void onSuccess() {
+                                            Log.i(Constant.TAG, "Picasso onSuccess");
+                                            layoutProgress.setVisibility(View.GONE);
+                                            new Handler().postDelayed(new Runnable() {
+                                                public void run() {
+                                                    checkPreferences();
+                                                }
+                                            }, TIME_OUT_DELAY_DYNAMIC);
+                                        }
+                                        @Override
+                                        public void onError() {
+                                            Log.i(Constant.TAG, "Picasso onError");
+                                            checkPreferences();
+                                        }
+                                    });
+                        } else {
+                            showDefaultSplash();
+                        }
                     } catch (JSONException je) {
                         je.printStackTrace();
                     }

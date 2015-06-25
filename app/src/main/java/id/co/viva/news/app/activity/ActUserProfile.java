@@ -76,12 +76,12 @@ public class ActUserProfile extends ActionBarActivity implements View.OnClickLis
     private String citySelected;
     private String fullname;
     private String email;
-    private String photourl;
+    private String photo;
     private String gender;
     private String country;
     private String province;
     private String city;
-    private String birthdate;
+    private String birthdays;
 
     private ArrayList<Province> provinceArrayList;
     private ArrayList<City> cityArrayList;
@@ -113,30 +113,30 @@ public class ActUserProfile extends ActionBarActivity implements View.OnClickLis
         getProfile();
         defineView();
 
-        if(fullname.length() > 0) {
+        if (fullname.length() > 0) {
             mProfileName.setText(fullname);
         }
-        if(email.length() > 0) {
+        if (email.length() > 0) {
             mProfileEmail.setText(email);
         }
-        if(photourl.length() > 0) {
+        if (photo.length() > 0) {
             Picasso.with(ActUserProfile.this)
-                    .load(photourl)
+                    .load(photo)
                     .transform(new CropSquareTransformation())
                     .into(mprofileThumb);
         } else {
             mprofileThumb.setImageResource(R.drawable.ic_profile);
         }
-        if(birthdate.length() > 0) {
-            etBirth.setText(birthdate);
+        if(birthdays.length() > 0) {
+            etBirth.setText(birthdays);
         }
-        if(country.length() > 0) {
+        if (country.length() > 0) {
             etState.setText(country);
         }
 
         populateDataGender();
 
-        if(isInternetPresent) {
+        if (isInternetPresent) {
             getDataUtils = new GetDataUtils(this, ActUserProfile.this);
             getDataUtils.getDataProvince();
         } else {
@@ -154,24 +154,24 @@ public class ActUserProfile extends ActionBarActivity implements View.OnClickLis
 
     @Override
     public void onClick(View view) {
-        if(view.getId() == R.id.btn_logout) {
+        if (view.getId() == R.id.btn_logout) {
             progressGenerator = new ProgressGenerator(this);
             progressGenerator.start(btnLogout);
             userAccount = new UserAccount(this);
             userAccount.deleteLoginStates();
-        } else if(view.getId() == R.id.btn_change_data_user) {
+        } else if (view.getId() == R.id.btn_change_data_user) {
             String birth = etBirth.getText().toString();
             btnSave.setProgress(1);
             userAccount = new UserAccount(this);
             userAccount.saveAttributesUserProfile(genderSelected, birth, country, province, city);
             userAccount.editProfile(fullname, genderSelected, citySelected, birth, this);
-        } else if(view.getId() == R.id.form_regist_birthdate) {
+        } else if (view.getId() == R.id.form_regist_birthdate) {
             DatePickerBuilder dpb = new DatePickerBuilder()
                     .setFragmentManager(getSupportFragmentManager())
                     .setStyleResId(R.style.BetterPickersDialogFragment);
             dpb.show();
-        } else if(view.getId() == R.id.img_thumb_profile) {
-            if(photourl.length() > 0) {
+        } else if (view.getId() == R.id.img_thumb_profile) {
+            if (photo.length() > 0) {
                 flip();
                 zoomFlip.zoomImageFromThumb(mprofileThumb);
             }
@@ -234,11 +234,11 @@ public class ActUserProfile extends ActionBarActivity implements View.OnClickLis
                 .getString(Constant.LOGIN_STATES_FULLNAME, "");
         email = Global.getInstance(this).getSharedPreferences(this)
                 .getString(Constant.LOGIN_STATES_EMAIL, "");
-        photourl = Global.getInstance(this).getSharedPreferences(this)
+        photo = Global.getInstance(this).getSharedPreferences(this)
                 .getString(Constant.LOGIN_STATES_URL_PHOTO, "");
         gender = Global.getInstance(this).getSharedPreferences(this)
                 .getString(Constant.LOGIN_STATES_GENDER, "");
-        birthdate = Global.getInstance(this).getSharedPreferences(this)
+        birthdays = Global.getInstance(this).getSharedPreferences(this)
                 .getString(Constant.LOGIN_STATES_BIRTHDATE, "");
         country = Global.getInstance(this).getSharedPreferences(this)
                 .getString(Constant.LOGIN_STATES_COUNTRY, "");
@@ -265,8 +265,8 @@ public class ActUserProfile extends ActionBarActivity implements View.OnClickLis
         btnLogout = (CircularProgressButton) findViewById(R.id.btn_logout);
         btnSave = (ActionProcessButton) findViewById(R.id.btn_change_data_user);
         btnSave.setMode(ActionProcessButton.Mode.ENDLESS);
-        mBackFragment = new CardBackFragment(fullname, photourl, this);
-        mFrontFragment = new CardFrontFragment(photourl, this);
+        mBackFragment = new CardBackFragment(fullname, photo, this);
+        mFrontFragment = new CardFrontFragment(photo, this);
         getFragmentManager().beginTransaction()
                 .add(R.id.main, mFrontFragment).commit();
         mParentLayout = (FrameLayout) findViewById(R.id.container);
@@ -313,7 +313,7 @@ public class ActUserProfile extends ActionBarActivity implements View.OnClickLis
         @Override
         public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
             String text = charSequence.toString();
-            if(!text.equalsIgnoreCase(getResources().getString(R.string.label_registrasi_default_country))) {
+            if (!text.equalsIgnoreCase(getResources().getString(R.string.label_registrasi_default_country))) {
                 spinProvince.setEnabled(false);
                 spinCity.setEnabled(false);
             } else {
@@ -340,8 +340,8 @@ public class ActUserProfile extends ActionBarActivity implements View.OnClickLis
                 this, android.R.layout.simple_spinner_item, genderList);
         genderAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerGender.setAdapter(genderAdapter);
-        if(gender.length() > 0) {
-            if(gender.equalsIgnoreCase(getResources().getString(R.string.label_gender_male))) {
+        if (gender.length() > 0) {
+            if (gender.equalsIgnoreCase(getResources().getString(R.string.label_gender_male))) {
                 spinnerGender.setSelection(0);
             } else {
                 spinnerGender.setSelection(1);
@@ -357,18 +357,18 @@ public class ActUserProfile extends ActionBarActivity implements View.OnClickLis
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
         Spinner spinner = (Spinner) adapterView;
-        if(spinner.getId() == R.id.spin_regist_gender) {
+        if (spinner.getId() == R.id.spin_regist_gender) {
             genderSelected = adapterView.getItemAtPosition(position).toString();
-        } else if(spinner.getId() == R.id.spin_regist_province) {
+        } else if (spinner.getId() == R.id.spin_regist_province) {
             Province mProvince = provinceArrayList.get(position);
             provinceIdSelected = mProvince.getId_propinsi();
-            if(isInternetPresent) {
+            if (isInternetPresent) {
                 getDataUtils = new GetDataUtils(this, ActUserProfile.this);
                 getDataUtils.getDataCity(provinceIdSelected);
             } else {
                 Toast.makeText(this, R.string.title_no_connection, Toast.LENGTH_SHORT).show();
             }
-        } else if(spinner.getId() == R.id.spin_regist_city) {
+        } else if (spinner.getId() == R.id.spin_regist_city) {
             City mCity = cityArrayList.get(position);
             citySelected = mCity.getNama();
         }
@@ -423,7 +423,7 @@ public class ActUserProfile extends ActionBarActivity implements View.OnClickLis
         try {
             JSONObject jsonObject = new JSONObject(response);
             JSONArray jsonArrayResponses = jsonObject.getJSONArray(Constant.response);
-            if(cityArrayList.size() > 0) {
+            if (cityArrayList.size() > 0) {
                 cityArrayList.clear();
             }
             if (jsonArrayResponses != null) {
@@ -432,21 +432,21 @@ public class ActUserProfile extends ActionBarActivity implements View.OnClickLis
                     String nama = jsonHeadline.getString(Constant.TAG_LOCATION_NAME);
                     String id_propinsi = jsonHeadline.getString(Constant.TAG_LOCATION_PROVINCE_ID);
                     String id_kabupaten = jsonHeadline.getString(Constant.TAG_LOCATION_KABUPATEN_ID);
-                    if(type.equals(Constant.ADAPTER_PROVINCE)) {
+                    if (type.equals(Constant.ADAPTER_PROVINCE)) {
                         provinceArrayList.add(new Province(nama,id_propinsi, id_kabupaten));
                     } else {
                         cityArrayList.add(new City(nama, id_propinsi, id_kabupaten));
                     }
                 }
             }
-            if(type.equals(Constant.ADAPTER_PROVINCE)) {
-                if(provinceArrayList.size() > 0) {
+            if (type.equals(Constant.ADAPTER_PROVINCE)) {
+                if (provinceArrayList.size() > 0) {
                     proCityAdapter = new ProCityAdapter(provinceArrayList, null,
                             this, Constant.ADAPTER_PROVINCE);
                     spinProvince.setAdapter(proCityAdapter);
                 }
-            } else if(type.equals(Constant.ADAPTER_CITY)) {
-                if(cityArrayList.size() > 0) {
+            } else if (type.equals(Constant.ADAPTER_CITY)) {
+                if (cityArrayList.size() > 0) {
                     proCityAdapter = new ProCityAdapter(null, cityArrayList,
                             this, Constant.ADAPTER_CITY);
                     spinCity.setAdapter(proCityAdapter);

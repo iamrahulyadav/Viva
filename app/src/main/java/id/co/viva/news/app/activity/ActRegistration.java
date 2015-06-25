@@ -26,7 +26,7 @@ public class ActRegistration extends ActionBarActivity
     private EditText etEmail;
     private EditText etPassword;
     private EditText etRetypePassword;
-    private ActionProcessButton btnRegist;
+    private ActionProcessButton btnRegistration;
     private String genderSelected;
     private Validation validation;
     private UserAccount userAccount;
@@ -45,9 +45,9 @@ public class ActRegistration extends ActionBarActivity
         etEmail = (EditText) findViewById(R.id.form_regist_email);
         etPassword = (EditText) findViewById(R.id.form_regist_password);
         etRetypePassword = (EditText) findViewById(R.id.form_regist_password_retype);
-        btnRegist = (ActionProcessButton) findViewById(R.id.btn_daftar);
-        btnRegist.setOnClickListener(this);
-        btnRegist.setMode(ActionProcessButton.Mode.ENDLESS);
+        btnRegistration = (ActionProcessButton) findViewById(R.id.btn_daftar);
+        btnRegistration.setOnClickListener(this);
+        btnRegistration.setMode(ActionProcessButton.Mode.ENDLESS);
     }
 
     @Override
@@ -69,24 +69,24 @@ public class ActRegistration extends ActionBarActivity
 
     @Override
     public void onClick(View view) {
-        if(view.getId() == R.id.btn_daftar) {
+        if (view.getId() == R.id.btn_daftar) {
             String username = etUsername.getText().toString();
             String email = etEmail.getText().toString();
             String password = etPassword.getText().toString();
             String retype_password = etRetypePassword.getText().toString();
             //Some Validation
-            if(!validation.isLengthValid(username)) {
+            if (!validation.isLengthValid(username)) {
                 etUsername.setError(getResources().getString(R.string.label_registrasi_username_character_length));
-            } else if(!validation.isEmailValid(email)) {
+            } else if (!validation.isEmailValid(email)) {
                 etEmail.setError(getResources().getString(R.string.label_validation_email));
-            } else if(!validation.isLengthValid(password)) {
+            } else if (!validation.isLengthValid(password)) {
                 etPassword.setError(getResources().getString(R.string.label_validation_password_length));
-            } else if(!retype_password.equals(password)) {
+            } else if (!retype_password.equals(password)) {
                 etRetypePassword.setError(getResources().getString(R.string.label_validation_password_length_retype));
             } else {
                 userAccount = new UserAccount(username, email, password, this, ActRegistration.this);
                 disableView();
-                btnRegist.setProgress(1);
+                btnRegistration.setProgress(1);
                 userAccount.signUp();
             }
         }
@@ -104,7 +104,7 @@ public class ActRegistration extends ActionBarActivity
 
     @Override
     public void onComplete(String message) {
-        btnRegist.setProgress(100);
+        btnRegistration.setProgress(100);
         Toast.makeText(this,
                 message, Toast.LENGTH_SHORT).show();
         Runnable r = new Runnable() {
@@ -124,7 +124,7 @@ public class ActRegistration extends ActionBarActivity
 
     @Override
     public void onFailed(String message) {
-        btnRegist.setProgress(0);
+        btnRegistration.setProgress(0);
         enableView();
         Toast.makeText(this,
                 message, Toast.LENGTH_SHORT).show();
@@ -132,7 +132,7 @@ public class ActRegistration extends ActionBarActivity
 
     @Override
     public void onError(String message) {
-        btnRegist.setProgress(0);
+        btnRegistration.setProgress(0);
         enableView();
         Toast.makeText(this,
                 message, Toast.LENGTH_SHORT).show();
@@ -142,14 +142,14 @@ public class ActRegistration extends ActionBarActivity
         etUsername.setEnabled(false);
         etEmail.setEnabled(false);
         etPassword.setEnabled(false);
-        btnRegist.setEnabled(false);
+        btnRegistration.setEnabled(false);
     }
 
     private void enableView() {
         etUsername.setEnabled(true);
         etEmail.setEnabled(true);
         etPassword.setEnabled(true);
-        btnRegist.setEnabled(true);
+        btnRegistration.setEnabled(true);
     }
 
 }
