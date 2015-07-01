@@ -52,7 +52,7 @@ import id.co.viva.news.app.Global;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.activity.ActDetailBeritaSekitar;
 import id.co.viva.news.app.adapter.BeritaSekitarAdapter;
-import id.co.viva.news.app.adapter.MainListAdapter;
+import id.co.viva.news.app.adapter.ListMainSmallAdapter;
 import id.co.viva.news.app.ads.AdsConfig;
 import id.co.viva.news.app.component.GoogleMusicDicesDrawable;
 import id.co.viva.news.app.component.LoadMoreListView;
@@ -94,7 +94,7 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
     private LocationFinder locationFinder;
     private JSONArray jsonArrayResponses, jsonArrayResponsesAds;
     private BeritaSekitarAdapter adapter;
-    private MainListAdapter smallAdapter;
+    private ListMainSmallAdapter smallAdapter;
     private ActionBarActivity mActivity;
     private int page = 1;
     //Type Number
@@ -220,11 +220,11 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
                 adapter = new BeritaSekitarAdapter(getActivity(), beritaSekitarArrayList);
             }
             if (smallAdapter == null) {
-                smallAdapter = new MainListAdapter(getActivity(), Constant.BERITA_SEKITAR_LIST, null, null, beritaSekitarArrayList);
+                smallAdapter = new ListMainSmallAdapter(getActivity(), Constant.BERITA_SEKITAR_LIST, beritaSekitarArrayList, null);
             }
         } else {
             adapter = new BeritaSekitarAdapter(mActivity, beritaSekitarArrayList);
-            smallAdapter = new MainListAdapter(getActivity(), Constant.BERITA_SEKITAR_LIST, null, null, beritaSekitarArrayList);
+            smallAdapter = new ListMainSmallAdapter(getActivity(), Constant.BERITA_SEKITAR_LIST, beritaSekitarArrayList, null);
         }
 
         //Checking process when find some locations
@@ -371,7 +371,7 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
                             .addToRequestQueue(request, Constant.JSON_REQUEST);
                 }
             }
-        } else if(view.getId() == R.id.fab) {
+        } else if (view.getId() == R.id.fab) {
             if (listView.getVisibility() == View.VISIBLE) {
                 listView.setSelection(0);
             } else if (listViewSmallCard.getVisibility() == View.VISIBLE) {

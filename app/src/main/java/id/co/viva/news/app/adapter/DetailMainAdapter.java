@@ -6,43 +6,42 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
 
-import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.fragment.DetailMainIndexFragment;
-import id.co.viva.news.app.model.Headline;
+import id.co.viva.news.app.model.EntityMain;
 
 /**
- * Created by root on 07/10/14.
+ * Created by reza on 15/10/14.
  */
-public class DetailHeadlineAdapter extends FragmentStatePagerAdapter {
+public class DetailMainAdapter extends FragmentStatePagerAdapter {
 
-    private ArrayList<Headline> headlineList;
-    private ArrayList<Fragment> mFragments = new ArrayList<Fragment>();
+    private ArrayList<EntityMain> entityMains;
+    private ArrayList<Fragment> mFragments = new ArrayList<>();
     private FragmentTransaction mCurTransaction = null;
-    private ArrayList<Fragment.SavedState> mSavedState = new ArrayList<Fragment.SavedState>();
     private final FragmentManager mFragmentManager;
     private int mPosition;
-    private String mDetailParam;
+    private ArrayList<Fragment.SavedState> mSavedState = new ArrayList<>();
+    private String mDetailParameter;
+    private String name;
 
-    public DetailHeadlineAdapter(FragmentManager fragmentManager, ArrayList<Headline> headlineList, String detailParam) {
+    public DetailMainAdapter(FragmentManager fragmentManager, ArrayList<EntityMain> entityMains, String dataParameter, String name) {
         super(fragmentManager);
-        mDetailParam = detailParam;
         mFragmentManager = fragmentManager;
-        this.headlineList = headlineList;
+        mDetailParameter = dataParameter;
+        this.name = name;
+        this.entityMains = entityMains;
     }
 
     @Override
     public Fragment getItem(int position) {
         mPosition = position;
         return DetailMainIndexFragment
-                .newInstance(headlineList.get(position).getId(),
-                        Constant.HEADLINE_DETAIL_PAGE,
-                        mDetailParam);
+                .newInstance(entityMains.get(position).getId(),
+                        name.replace(" ", "_").toUpperCase() + "_DETAIL_SCREEN", mDetailParameter);
     }
 
     @Override
@@ -56,26 +55,26 @@ public class DetailHeadlineAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public int getCount() {
-        return headlineList.size();
+        return entityMains.size();
     }
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
-        if(mFragments.size() > position) {
+        if (mFragments.size() > position) {
             Fragment f = mFragments.get(position);
-            if(f != null) {
+            if (f != null) {
                 return f;
             }
         }
 
-        if(mCurTransaction == null) {
+        if (mCurTransaction == null) {
             mCurTransaction = mFragmentManager.beginTransaction();
         }
 
         Fragment fragment = getItem(position);
-        if(mSavedState.size() > position) {
+        if (mSavedState.size() > position) {
             Fragment.SavedState fss = mSavedState.get(position);
-            if(fss != null) {
+            if (fss != null) {
                 fragment.setInitialSavedState(fss);
             }
         }
@@ -121,7 +120,7 @@ public class DetailHeadlineAdapter extends FragmentStatePagerAdapter {
     @Override
     public Parcelable saveState() {
         Bundle state = null;
-        if(mSavedState.size() > 0) {
+        if (mSavedState.size() > 0) {
             state = new Bundle();
             Fragment.SavedState[] fss = new Fragment.SavedState[mSavedState.size()];
             mSavedState.toArray(fss);
@@ -129,8 +128,8 @@ public class DetailHeadlineAdapter extends FragmentStatePagerAdapter {
         }
         for (int i=0; i<mFragments.size(); i++) {
             Fragment f = mFragments.get(i);
-            if(f != null) {
-                if(state == null) {
+            if (f != null) {
+                if (state == null) {
                     state = new Bundle();
                 }
                 String key = "f" + i;
@@ -142,30 +141,28 @@ public class DetailHeadlineAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public void restoreState(Parcelable state, ClassLoader loader) {
-        if(state != null) {
+        if (state != null) {
             Bundle bundle = (Bundle)state;
             bundle.setClassLoader(loader);
             Parcelable[] fss = bundle.getParcelableArray("states");
             mSavedState.clear();
             mFragments.clear();
-            if(fss != null) {
+            if (fss != null) {
                 for(int i=0; i<fss.length; i++) {
                     mSavedState.add((Fragment.SavedState)fss[i]);
                 }
             }
             Iterable<String> keys = bundle.keySet();
             for (String key : keys) {
-                if(key.startsWith("f")) {
+                if (key.startsWith("f")) {
                     int index = Integer.parseInt(key.substring(1));
                     Fragment f = mFragmentManager.getFragment(bundle, key);
-                    if(f != null) {
+                    if (f != null) {
                         while (mFragments.size() <= index) {
                             mFragments.add(null);
                         }
                         f.setMenuVisibility(false);
                         mFragments.set(index, f);
-                    } else {
-                        Log.e(Constant.TAG, "Bad fragment at key " + key);
                     }
                 }
             }

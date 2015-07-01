@@ -6,30 +6,28 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.R;
-import id.co.viva.news.app.adapter.DetailTerbaruAdapter;
+import id.co.viva.news.app.adapter.DetailMainAdapter;
 import id.co.viva.news.app.component.ZoomOutPageTransformer;
-import id.co.viva.news.app.fragment.TerbaruFragment;
-import id.co.viva.news.app.model.News;
+import id.co.viva.news.app.fragment.ListMainFragment;
+import id.co.viva.news.app.model.EntityMain;
 
 /**
  * Created by reza on 14/10/14.
  */
-public class ActDetailTerbaru extends ActionBarActivity {
+public class ActDetailMain extends ActionBarActivity {
 
     private String id;
     private ViewPager viewPager;
-    private DetailTerbaruAdapter adapter;
+    private DetailMainAdapter adapter;
     private String detailParam;
+    private String name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //Get parameter
-        Bundle bundle = getIntent().getExtras();
-        id = bundle.getString("id");
-        detailParam = bundle.getString(Constant.terbaru_detail_screen);
+        getParameters();
 
         setContentView(R.layout.act_detail_main_article);
 
@@ -38,14 +36,14 @@ public class ActDetailTerbaru extends ActionBarActivity {
 
         //Set Detail Pager
         int position = 0;
-        if (TerbaruFragment.newsArrayList != null) {
-            if (TerbaruFragment.newsArrayList.size() > 0) {
-                for (News news : TerbaruFragment.newsArrayList) {
-                    if (news.getId().equals(id)) break;
+        if (ListMainFragment.entityList != null) {
+            if (ListMainFragment.entityList.size() > 0) {
+                for (EntityMain main : ListMainFragment.entityList) {
+                    if (main.getId().equals(id)) break;
                     position++;
                 }
             }
-            adapter = new DetailTerbaruAdapter(getSupportFragmentManager(), TerbaruFragment.newsArrayList, detailParam);
+            adapter = new DetailMainAdapter(getSupportFragmentManager(), ListMainFragment.entityList, detailParam, name);
             viewPager = (ViewPager)findViewById(R.id.vp_detail_main_article);
             viewPager.setAdapter(adapter);
             viewPager.setPageTransformer(true, new ZoomOutPageTransformer());
@@ -55,6 +53,13 @@ public class ActDetailTerbaru extends ActionBarActivity {
             Toast.makeText(this, R.string.label_error, Toast.LENGTH_SHORT).show();
             onBackPressed();
         }
+    }
+
+    private void getParameters() {
+        Bundle bundle = getIntent().getExtras();
+        id = bundle.getString("id");
+        detailParam = bundle.getString("screen");
+        name = bundle.getString("name");
     }
 
     private void setActionBar() {

@@ -19,59 +19,43 @@ import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.component.CropSquareTransformation;
 import id.co.viva.news.app.model.BeritaSekitar;
-import id.co.viva.news.app.model.Headline;
-import id.co.viva.news.app.model.News;
+import id.co.viva.news.app.model.EntityMain;
 
 /**
  * Created by rezarachman on 01/10/14.
  */
-public class MainListAdapter extends BaseAdapter {
+public class ListMainSmallAdapter extends BaseAdapter {
 
     private Context context;
-    private ArrayList<Headline> headlineArrayList;
-    private ArrayList<News> newsArrayList;
+    private int type;
     private ArrayList<BeritaSekitar> beritaSekitarArrayList;
-    private int typeList;
+    private ArrayList<EntityMain> entityMains;
 
-    public MainListAdapter(Context context, int typeList,
-                           ArrayList<Headline> headlineArrayList,
-                           ArrayList<News> newsArrayList,
-                           ArrayList<BeritaSekitar> beritaSekitarArrayList) {
+    public ListMainSmallAdapter(Context context, int type,
+                                ArrayList<BeritaSekitar> beritaSekitarArrayList,
+                                ArrayList<EntityMain> entityMains) {
         this.context = context;
-        this.typeList = typeList;
-        this.headlineArrayList = headlineArrayList;
-        this.newsArrayList = newsArrayList;
+        this.type = type;
         this.beritaSekitarArrayList = beritaSekitarArrayList;
+        this.entityMains = entityMains;
     }
 
     @Override
     public int getCount() {
-        switch (typeList) {
-            case Constant.HEADLINES_LIST:
-                return headlineArrayList.size();
-            case Constant.NEWS_LIST:
-                return newsArrayList.size();
-            case Constant.BERITA_SEKITAR_LIST:
-                return beritaSekitarArrayList.size();
-            default:
-                break;
+        if (type == Constant.BERITA_SEKITAR_LIST) {
+            return beritaSekitarArrayList.size();
+        } else {
+            return entityMains.size();
         }
-        return 0;
     }
 
     @Override
     public Object getItem(int position) {
-        switch (typeList) {
-            case Constant.HEADLINES_LIST:
-                return headlineArrayList.get(position);
-            case Constant.NEWS_LIST:
-                return newsArrayList.get(position);
-            case Constant.BERITA_SEKITAR_LIST:
-                return beritaSekitarArrayList.get(position);
-            default:
-                break;
+        if (type == Constant.BERITA_SEKITAR_LIST) {
+            return beritaSekitarArrayList.get(position);
+        } else {
+            return entityMains.get(position);
         }
-        return null;
     }
 
     @Override
@@ -95,58 +79,8 @@ public class MainListAdapter extends BaseAdapter {
         } else {
             holderSmall = (ViewHolderSmallCard) view.getTag();
         }
-        //Checking type of list
-        switch (typeList) {
-            case Constant.HEADLINES_LIST:
-                //Get position each item
-                Headline headline = headlineArrayList.get(position);
-                //Set image
-                if (headline.getImage_url().length() > 0) {
-                    Picasso.with(context).load(headline.getImage_url())
-                            .transform(new CropSquareTransformation()).into(holderSmall.icon_item_news);
-                    //Check is tablet or not
-                    if (Constant.isTablet(context)) {
-                        holderSmall.icon_item_news.getLayoutParams().height =
-                                Constant.getDynamicImageSize(context, Constant.DYNAMIC_SIZE_LIST_TYPE);
-                        holderSmall.icon_item_news.requestLayout();
-                    }
-                }
-                //Set title
-                holderSmall.title_item_news.setText(headline.getTitle());
-                //Set time
-                try {
-                    DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    Date date = formatter.parse(headline.getDate_publish());
-                    holderSmall.date_item_news.setText(Constant.getTimeAgo(date.getTime()));
-                } catch (Exception e) {
-                    e.getMessage();
-                }
-                break;
-            case Constant.NEWS_LIST:
-                //Get position each item
-                News news = newsArrayList.get(position);
-                //Set image
-                if (news.getImage_url().length() > 0) {
-                    Picasso.with(context).load(news.getImage_url())
-                            .transform(new CropSquareTransformation()).into(holderSmall.icon_item_news);
-                    //Check is tablet or not
-                    if (Constant.isTablet(context)) {
-                        holderSmall.icon_item_news.getLayoutParams().height =
-                                Constant.getDynamicImageSize(context, Constant.DYNAMIC_SIZE_LIST_TYPE);
-                        holderSmall.icon_item_news.requestLayout();
-                    }
-                }
-                //Set title
-                holderSmall.title_item_news.setText(news.getTitle());
-                //Set time
-                try {
-                    DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    Date date = formatter.parse(news.getDate_publish());
-                    holderSmall.date_item_news.setText(Constant.getTimeAgo(date.getTime()));
-                } catch (Exception e) {
-                    e.getMessage();
-                }
-                break;
+        //Choose type
+        switch (type) {
             case Constant.BERITA_SEKITAR_LIST:
                 //Get position each item
                 BeritaSekitar beritaSekitar = beritaSekitarArrayList.get(position);
@@ -167,6 +101,29 @@ public class MainListAdapter extends BaseAdapter {
                 holderSmall.date_item_news.setText(beritaSekitar.getDate_publish());
                 break;
             default:
+                //Get position each item
+                EntityMain entity = entityMains.get(position);
+                //Set image
+                if (entity.getImage_url().length() > 0) {
+                    Picasso.with(context).load(entity.getImage_url())
+                            .transform(new CropSquareTransformation()).into(holderSmall.icon_item_news);
+                    //Check is tablet or not
+                    if (Constant.isTablet(context)) {
+                        holderSmall.icon_item_news.getLayoutParams().height =
+                                Constant.getDynamicImageSize(context, Constant.DYNAMIC_SIZE_LIST_TYPE);
+                        holderSmall.icon_item_news.requestLayout();
+                    }
+                }
+                //Set title
+                holderSmall.title_item_news.setText(entity.getTitle());
+                //Set time
+                try {
+                    DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    Date date = formatter.parse(entity.getDate_publish());
+                    holderSmall.date_item_news.setText(Constant.getTimeAgo(date.getTime()));
+                } catch (Exception e) {
+                    e.getMessage();
+                }
                 break;
         }
         return view;

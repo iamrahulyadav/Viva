@@ -71,20 +71,21 @@ public class Constant {
     public static final String ADAPTER_PROVINCE = "adapter_province";
     public static final String ADAPTER_CITY = "adapter_city";
 
-    //Class fragment
-    public static final String fragment_terbaru = "class id.co.viva.news.app.fragment.TerbaruFragment";
-
     //Tag for tutorial and coach-mark
     public static final String FIRST_INSTALL_PROFILE = "first_install_profile";
     public static final String FIRST_INSTALL_TUTORIAL = "first_install_tutorial";
 
-    //Terbaru and Headline
-    public static String NEWS = "terbaru";
-    public static String HEADLINES = "headlines";
-
     //Tag checking first installation
     public static final String MOVE_TUTORIAL = "move_tutorial";
     public static final String MOVE_APPLICATION = "move_application";
+
+    //Menu list
+    public static final String BERITA_SEKITAR_MENU = "Berita Sekitar";
+    public static final String BERITA_FAVORIT_MENU = "Berita Favorit";
+    public static final String PINDAI_KODE_QR_MENU = "Pindai Kode QR";
+    public static final String INFO_MENU_SECTION = "INFO";
+    public static final String INFO_MENU = "Info";
+    public static final String ABOUT_US_MENU = "Tentang Kami";
 
     //Preference States
     public static final String FAVORITES_LIST = "favorites_list";
@@ -125,8 +126,6 @@ public class Constant {
     public static String MAIN_CONFIG = BASE_URL_NEW + "mainconf/app/android";
     public static String TUTORIAL_IMAGES_URL = BASE_URL_NEW + "coach";
     public static String BERITA_SEKITAR_URL = BASE_URL_NEW + "find/";
-    public static String NEW_HEADLINE = BASE_URL_NEW + "headlinelist/";
-    public static String NEW_TERBARU = BASE_URL_NEW + "terbarulist/";
     public static String NEW_NEWS = BASE_URL_NEW + "knews";
     public static String NEW_LIFE = BASE_URL_NEW + "klife";
     public static String NEW_BOLA = BASE_URL_NEW + "kbola";
@@ -182,6 +181,10 @@ public class Constant {
     public static final String position = "position";
     public static final String hit_url = "hit_url";
     public static final String asset_url = "asset_url";
+    public static final String color = "color";
+    public static final String parent = "parent";
+    public static final String afterzeroindex = "afterzeroindex";
+    public static final String layout_list  = "layout-list";
 
     //Another from JSON
     public static final String name = "name";
@@ -231,9 +234,7 @@ public class Constant {
     //Analytic Tagging
     public static final String BERITA_SEKITAR_PAGE = "BERITA_SEKITAR_HAL_";
     public static final String BERITA_SEKITAR_DETAIL_PAGE = "BERITA_SEKITAR_DETAIL_";
-    public static final String HEADLINE_PAGE = "HEADLINE_HAL_";
     public static final String HEADLINE_DETAIL_PAGE = "HEADLINE_DETAIL_";
-    public static final String TERBARU_PAGE = "TERBARU_HAL_";
     public static final String TERBARU_DETAIL_PAGE = "TERBARU_DETAIL_";
     public static final String KANAL_NEWS_PAGE = "KANAL_NEWS_PAGE";
     public static final String SUBKANAL_NEWS_PAGE = "SUBKANAL_NEWS_";
@@ -325,8 +326,6 @@ public class Constant {
     public static final int POSITION_BANNER_BOTTOM = 2;
 
     //Additional Parameter in Detail Articles
-    public static final String terbaru_detail_screen = "terbaru_detail_screen";
-    public static final String headline_detail_screen = "headline_detail_screen";
     public static final String berita_sekitar_detail_screen = "berita_sekitar_detail_screen";
     public static final String berita_semua_detail_screen = "berita_semua_detail_screen";
     public static final String politik_detail_screen = "politik_detail_screen";
@@ -355,8 +354,7 @@ public class Constant {
     public static final String search_screen = "search_screen";
 
     //Type list
-    public static final int HEADLINES_LIST = 1;
-    public static final int NEWS_LIST = 2;
+    public static final int SMALL_LIST_DEFAULT = 2;
     public static final int BERITA_SEKITAR_LIST = 3;
     public static final int BIG_CARD_CHANNEL_BOLA_LIST = 4;
     public static final int BIG_CARD_CHANNEL_NEWS_LIST = 5;

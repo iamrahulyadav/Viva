@@ -14,7 +14,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -48,16 +47,12 @@ import id.co.viva.news.app.component.CropSquareTransformation;
 import id.co.viva.news.app.component.ProgressWheel;
 import id.co.viva.news.app.fragment.AboutFragment;
 import id.co.viva.news.app.fragment.BeritaSekitarFragment;
-import id.co.viva.news.app.fragment.BolaFragment;
 import id.co.viva.news.app.fragment.FavoritesFragment;
-import id.co.viva.news.app.fragment.HeadlineFragment;
-import id.co.viva.news.app.fragment.LifeFragment;
-import id.co.viva.news.app.fragment.NewsFragment;
-import id.co.viva.news.app.fragment.TerbaruFragment;
+import id.co.viva.news.app.fragment.ListMainFragment;
 import id.co.viva.news.app.model.NavigationItem;
 import info.hoang8f.widget.FButton;
 
-public class ActLanding extends ActionBarActivity implements View.OnClickListener {
+public class ActLanding extends ActionBarActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
 
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
@@ -98,11 +93,6 @@ public class ActLanding extends ActionBarActivity implements View.OnClickListene
 
         //Define Item Navigation List
         populateList();
-
-        //Set default view
-        if (savedInstanceState == null) {
-            displayView(0);
-        }
     }
 
     private void populateList() {
@@ -146,10 +136,15 @@ public class ActLanding extends ActionBarActivity implements View.OnClickListene
                     JSONObject data = listMenus.getJSONObject(i);
                     String name = data.getString(Constant.name);
                     int type = data.getInt(Constant.type);
+                    String parent = data.getString(Constant.parent);
                     String screen = data.getString(Constant.screen);
                     String hit_url = data.getString(Constant.hit_url);
                     String asset_url = data.getString(Constant.asset_url);
-                    navDrawerItems.add(new NavigationItem(name, type, screen, hit_url, asset_url));
+                    String color = data.getString(Constant.color);
+                    String index = data.getString(Constant.afterzeroindex);
+                    String layout = data.getString(Constant.layout_list);
+                    navDrawerItems.add(new NavigationItem(name, type, parent, screen,
+                            hit_url, asset_url, color, index, layout));
                 }
                 if (navDrawerItems.size() > 0) {
                     adapter = new NavigationAdapter(ActLanding.this, navDrawerItems);
@@ -157,6 +152,7 @@ public class ActLanding extends ActionBarActivity implements View.OnClickListene
                     adapter.notifyDataSetChanged();
                     progressWheel.setVisibility(View.GONE);
                     mDrawerList.setVisibility(View.VISIBLE);
+                    getDefaultPage(navDrawerItems);
                 }
             }
         } catch (JSONException je) {
@@ -165,42 +161,44 @@ public class ActLanding extends ActionBarActivity implements View.OnClickListene
     }
 
     private void displayView(int position) {
-        switch (position) {
-            case 0:
-                fragment = new TerbaruFragment();
-                break;
-            case 1:
-                fragment = new HeadlineFragment();
-                break;
-            case 2:
-                fragment = new BeritaSekitarFragment();
-                break;
-            case 3:
-                fragment = new FavoritesFragment();
-                break;
-            case 4:
-                scanNews();
-                break;
-            case 6:
-                fragment =  new NewsFragment();
-                break;
-            case 7:
-                fragment =  new BolaFragment();
-                break;
-            case 8:
-                fragment =  new LifeFragment();
-                break;
-            case 10:
-                fragment =  new AboutFragment();
-                break;
-            case 11:
-                rateApp();
-                break;
-            case 12:
-                sendEmail();
-                break;
-            default:
-                break;
+        NavigationItem items = navDrawerItems.get(position);
+        if (items.getParent() != null) {
+            if (items.getParent().length() > 0) {
+                if (items.getParent().equalsIgnoreCase(Constant.INFO_MENU_SECTION)) {
+                    //Preference menu list
+                    switch (items.getName()) {
+                        case Constant.INFO_MENU:
+                            sendEmail();
+                            break;
+                        case Constant.ABOUT_US_MENU:
+                            fragment = new AboutFragment();
+                            break;
+                        case "Rate App":
+                            rateApp();
+                            break;
+                    }
+                } else {
+                    //Channel menu list
+                }
+            } else {
+                //Main menu list
+                switch (items.getName()) {
+                    case Constant.BERITA_SEKITAR_MENU:
+                        fragment = new BeritaSekitarFragment();
+                        break;
+                    case Constant.BERITA_FAVORIT_MENU:
+                        fragment = new FavoritesFragment();
+                        break;
+                    case Constant.PINDAI_KODE_QR_MENU:
+                        scanNews();
+                        break;
+                    default:
+                        fragment = ListMainFragment.newInstance(items.getName(),
+                            items.getParent(), items.getColor(), items.getScreen(),
+                            items.getHit_url(), items.getIndex(), items.getLayoutType());
+                        break;
+                }
+            }
         }
         if (fragment != null) {
             fragmentManager = getSupportFragmentManager();
@@ -211,8 +209,6 @@ public class ActLanding extends ActionBarActivity implements View.OnClickListene
             mDrawerList.setItemChecked(position, true);
             mDrawerList.setSelection(position);
             mDrawerLayout.closeDrawer(mNavLayout);
-        } else {
-            Log.e(Constant.TAG, "Error creating fragment..");
         }
     }
 
@@ -236,13 +232,6 @@ public class ActLanding extends ActionBarActivity implements View.OnClickListene
             }
             progressWheel.setVisibility(View.VISIBLE);
             populateList();
-        }
-    }
-
-    private class SlideMenuClickListener implements ListView.OnItemClickListener {
-        @Override
-        public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-//            displayView(position);
         }
     }
 
@@ -282,7 +271,7 @@ public class ActLanding extends ActionBarActivity implements View.OnClickListene
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         //Menu list
         mDrawerList = (ListView) findViewById(R.id.list_slider_menu);
-        mDrawerList.setOnItemClickListener(new SlideMenuClickListener());
+        mDrawerList.setOnItemClickListener(this);
         //Toggle for slider list menu
         mDrawerToggle = new android.support.v7.app.ActionBarDrawerToggle(this,
                 mDrawerLayout,
@@ -399,31 +388,20 @@ public class ActLanding extends ActionBarActivity implements View.OnClickListene
             mDrawerLayout.closeDrawer(mNavLayout);
         } else {
             if (fragment != null) {
-                if (fragment.getClass().toString().equals(Constant.fragment_terbaru)) {
-                    //Load ads
-//                    if (isInternetPresent) {
-//                        InterstitialAd interstitialAd = new InterstitialAd(this);
-//                        AdsConfig adsConfig = new AdsConfig();
-//                        adsConfig.setAdsInterstitial(this, interstitialAd,
-//                                Constant.unitIdInterstitialClose, null, Constant.ADS_TYPE_CLOSING,
-//                                fragment, ActLanding.this);
-//                    } else {
-                        getSupportFragmentManager()
-                                .beginTransaction()
-                                .remove(fragment).commit();
-                        finish();
-//                    }
-                } else {
-                    backToFirst();
-                }
+                getSupportFragmentManager()
+                        .beginTransaction().remove(fragment).commit();
+                finish();
             } else {
                 finish();
             }
         }
     }
 
-    private void backToFirst() {
-        fragment = new TerbaruFragment();
+    private void getDefaultPage(ArrayList<NavigationItem> items) {
+        NavigationItem item = items.get(0);
+        fragment = ListMainFragment.newInstance(item.getName(),
+                item.getParent(), item.getColor(), item.getScreen(),
+                item.getHit_url(), item.getIndex(), item.getLayoutType());
         fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
@@ -431,6 +409,11 @@ public class ActLanding extends ActionBarActivity implements View.OnClickListene
                 .commit();
         mDrawerList.setItemChecked(0, true);
         mDrawerList.setSelection(0);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        displayView(position);
     }
 
 }

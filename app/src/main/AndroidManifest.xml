@@ -88,11 +88,6 @@
                 android:value=".activity.ActSearchResult" />
 
         <activity
-            android:name=".activity.ActDetailHeadline"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme"/>
-
-        <activity
             android:name=".activity.ActTutorial"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar"/>
@@ -186,7 +181,7 @@
                 android:value=".activity.ActSearchResult" />
 
         <activity
-            android:name=".activity.ActDetailTerbaru"
+            android:name=".activity.ActDetailMain"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"/>
 

@@ -18,29 +18,29 @@ import java.util.Date;
 import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.component.CropSquareTransformation;
-import id.co.viva.news.app.model.News;
+import id.co.viva.news.app.model.EntityMain;
 
 /**
  * Created by rezarachman on 01/10/14.
  */
-public class TerbaruAdapter extends BaseAdapter {
+public class ListMainAdapter extends BaseAdapter {
 
     private Context context;
-    private ArrayList<News> newsArrayList;
+    private ArrayList<EntityMain> entityMains;
 
-    public TerbaruAdapter(Context context, ArrayList<News> newsArrayList) {
+    public ListMainAdapter(Context context, ArrayList<EntityMain> entityMains) {
         this.context = context;
-        this.newsArrayList = newsArrayList;
+        this.entityMains = entityMains;
     }
 
     @Override
     public int getCount() {
-        return newsArrayList.size();
+        return entityMains.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return newsArrayList.get(position);
+        return entityMains.get(position);
     }
 
     @Override
@@ -65,10 +65,10 @@ public class TerbaruAdapter extends BaseAdapter {
             holder = (ViewHolder) view.getTag();
         }
 
-        News news = newsArrayList.get(position);
+        EntityMain entity = entityMains.get(position);
 
-        if (news.getImage_url().length() > 0) {
-            Picasso.with(context).load(news.getImage_url())
+        if (entity.getImage_url().length() > 0) {
+            Picasso.with(context).load(entity.getImage_url())
                     .transform(new CropSquareTransformation()).into(holder.icon_item_news);
             if (Constant.isTablet(context)) {
                 holder.icon_item_news.getLayoutParams().height = Constant.getDynamicImageSize(context, Constant.DYNAMIC_SIZE_LIST_TYPE);
@@ -76,11 +76,11 @@ public class TerbaruAdapter extends BaseAdapter {
             }
         }
 
-        holder.title_item_news.setText(news.getTitle());
+        holder.title_item_news.setText(entity.getTitle());
 
-        if (news.getKanal().equalsIgnoreCase("bola")) {
+        if (entity.getKanal().equalsIgnoreCase("bola")) {
             holder.icon_item_viva_news.setImageResource(R.drawable.icon_viva_bola);
-        } else if(news.getKanal().equalsIgnoreCase("vivalife")) {
+        } else if (entity.getKanal().equalsIgnoreCase("vivalife")) {
             holder.icon_item_viva_news.setImageResource(R.drawable.icon_viva_life);
         } else {
             holder.icon_item_viva_news.setImageResource(R.drawable.icon_viva_news);
@@ -88,7 +88,7 @@ public class TerbaruAdapter extends BaseAdapter {
 
         try {
             DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            Date date = formatter.parse(news.getDate_publish());
+            Date date = formatter.parse(entity.getDate_publish());
             holder.date_item_news.setText(Constant.getTimeAgo(date.getTime()));
         } catch (Exception e) {
             e.getMessage();

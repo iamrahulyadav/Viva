@@ -49,7 +49,7 @@ public class BeritaSekitarAdapter extends BaseAdapter {
     public View getView(int position, View view, ViewGroup viewGroup) {
         ViewHolder holder;
 
-        if(view == null) {
+        if (view == null) {
             LayoutInflater inflater = LayoutInflater.from(context);
             view = inflater.inflate(R.layout.item_big_card, null);
             holder = new ViewHolder();
@@ -64,7 +64,7 @@ public class BeritaSekitarAdapter extends BaseAdapter {
 
         BeritaSekitar beritaSekitar = beritaSekitarArrayList.get(position);
 
-        if(beritaSekitar.getImage_url().length() > 0) {
+        if (beritaSekitar.getImage_url().length() > 0) {
             Picasso.with(context).load(beritaSekitar.getImage_url())
                     .transform(new CropSquareTransformation()).into(holder.icon_item_news);
             if (Constant.isTablet(context)) {
@@ -76,9 +76,9 @@ public class BeritaSekitarAdapter extends BaseAdapter {
         holder.title_item_news.setText(beritaSekitar.getTitle());
         holder.date_item_news.setText(beritaSekitar.getDate_publish());
 
-        if(beritaSekitar.getKanal().equalsIgnoreCase("bola")) {
+        if (beritaSekitar.getKanal().equalsIgnoreCase("bola")) {
             holder.icon_item_viva_news.setImageResource(R.drawable.icon_viva_bola);
-        } else if(beritaSekitar.getKanal().equalsIgnoreCase("vivalife")) {
+        } else if (beritaSekitar.getKanal().equalsIgnoreCase("vivalife")) {
             holder.icon_item_viva_news.setImageResource(R.drawable.icon_viva_life);
         } else {
             holder.icon_item_viva_news.setImageResource(R.drawable.icon_viva_news);

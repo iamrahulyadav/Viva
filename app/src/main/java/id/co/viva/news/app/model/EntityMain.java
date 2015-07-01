@@ -1,29 +1,27 @@
 package id.co.viva.news.app.model;
 
 /**
- * Created by rezarachman on 01/10/14.
+ * Created by reza on 30/06/15.
  */
-public class News {
+public class EntityMain {
 
     private String id;
     private String title;
-    private String slug;
     private String kanal;
     private String url;
     private String image_url;
     private String date_publish;
     private String timeStamp;
 
-    public String getTimeStamp() {
-        return timeStamp;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
+    public EntityMain(String id, String title, String kanal,
+                      String url, String image_url, String date_publish, String timeStamp) {
+        this.id = id;
+        this.title = title;
+        this.kanal = kanal;
         this.url = url;
+        this.image_url = image_url;
+        this.date_publish = date_publish;
+        this.timeStamp = timeStamp;
     }
 
     public String getImage_url() {
@@ -58,6 +56,14 @@ public class News {
         this.kanal = kanal;
     }
 
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
     public String getDate_publish() {
         return date_publish;
     }
@@ -66,16 +72,8 @@ public class News {
         this.date_publish = date_publish;
     }
 
-    public News(String id, String title, String slug,
-                String kanal, String url, String image_url, String date_publish, String timeStamp) {
-        this.id = id;
-        this.title = title;
-        this.slug = slug;
-        this.kanal = kanal;
-        this.url = url;
-        this.image_url = image_url;
-        this.date_publish = date_publish;
-        this.timeStamp = timeStamp;
+    public String getTimeStamp() {
+        return timeStamp;
     }
 
 }
