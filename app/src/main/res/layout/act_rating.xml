@@ -21,7 +21,7 @@
             android:layout_gravity="center_vertical"
             android:textStyle="bold"
             android:textSize="18sp"
-            android:textColor="@color/header_headline_terbaru_new"
+            android:textColor="@color/grey_new"
             android:maxLines="3"
             android:text="@string/abc_activity_chooser_view_see_all"
             android:id="@+id/text_title_content_rate"/>

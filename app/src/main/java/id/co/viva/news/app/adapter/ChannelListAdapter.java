@@ -18,29 +18,29 @@ import java.util.Date;
 import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.component.CropSquareTransformation;
-import id.co.viva.news.app.model.ChannelBola;
+import id.co.viva.news.app.model.ChannelList;
 
 /**
  * Created by reza on 23/10/14.
  */
-public class ChannelBolaAdapter extends BaseAdapter {
+public class ChannelListAdapter extends BaseAdapter {
 
     private Context context;
-    private ArrayList<ChannelBola> channelBolaArrayList;
+    private ArrayList<ChannelList> channelListArrayList;
 
-    public ChannelBolaAdapter(Context context, ArrayList<ChannelBola> channelBolaArrayList) {
-        this.channelBolaArrayList = channelBolaArrayList;
+    public ChannelListAdapter(Context context, ArrayList<ChannelList> channelListArrayList) {
+        this.channelListArrayList = channelListArrayList;
         this.context = context;
     }
 
     @Override
     public int getCount() {
-        return channelBolaArrayList.size();
+        return channelListArrayList.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return channelBolaArrayList.get(position);
+        return channelListArrayList.get(position);
     }
 
     @Override
@@ -52,7 +52,7 @@ public class ChannelBolaAdapter extends BaseAdapter {
     public View getView(int position, View view, ViewGroup viewGroup) {
         ViewHolder holder;
 
-        if(view == null) {
+        if (view == null) {
             LayoutInflater inflater = LayoutInflater.from(context);
             view = inflater.inflate(R.layout.item_channel_list, null);
             holder = new ViewHolder();
@@ -64,19 +64,19 @@ public class ChannelBolaAdapter extends BaseAdapter {
             holder = (ViewHolder) view.getTag();
         }
 
-        ChannelBola channelBola = channelBolaArrayList.get(position);
-        holder.title_item_channel_bola.setText(channelBola.getTitle());
+        ChannelList channelList = channelListArrayList.get(position);
 
+        holder.title_item_channel_bola.setText(channelList.getTitle());
         try {
             DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            Date date = formatter.parse(channelBola.getDate_publish());
+            Date date = formatter.parse(channelList.getDate_publish());
             holder.date_item_channel_bola.setText(Constant.getTimeAgo(date.getTime()));
         } catch (Exception e) {
             e.getMessage();
         }
 
-        if(channelBola.getImage_url().length() > 0) {
-            Picasso.with(context).load(channelBola.getImage_url())
+        if (channelList.getImage_url().length() > 0) {
+            Picasso.with(context).load(channelList.getImage_url())
                     .transform(new CropSquareTransformation()).into(holder.image_item_channel_bola);
         }
 

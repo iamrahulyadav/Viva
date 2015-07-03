@@ -37,7 +37,7 @@
     <string name="label_action_menu_desc">Simpan artikel favoritmu. Berikan komentar unikmu.</string>
     <string name="label_share_button">Share Button</string>
     <string name="label_share_button_desc">Bagikan artikel-artikel hebat dengan ini.</string>
-    <string name="label_favorites">FAVORIT</string>
+    <string name="label_favorites">BERITA FAVORIT</string>
     <string name="label_login_with">LOGIN WITH</string>
     <string name="label_user_profile">USER PROFILE</string>
     <string name="label_swipe_undo">Batal Menghapus</string>

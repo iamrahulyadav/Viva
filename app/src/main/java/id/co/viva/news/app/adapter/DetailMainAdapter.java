@@ -41,7 +41,7 @@ public class DetailMainAdapter extends FragmentStatePagerAdapter {
         mPosition = position;
         return DetailMainIndexFragment
                 .newInstance(entityMains.get(position).getId(),
-                        name.replace(" ", "_").toUpperCase() + "_DETAIL_SCREEN", mDetailParameter);
+                        name.replace(" ", "_").toUpperCase() + "_DETAIL_SCREEN", mDetailParameter + "_detail_screen");
     }
 
     @Override

@@ -92,11 +92,11 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
     private Analytics analytics;
     private RippleView rippleView;
 
-    private TextView tvTitleHeadlineDetail;
-    private TextView tvDateHeadlineDetail;
-    private TextView tvReporterHeadlineDetail;
-    private TextView tvContentHeadlineDetail;
-    private ImageView ivThumbDetailHeadline;
+    private TextView tvTitleMainDetail;
+    private TextView tvDateMainDetail;
+    private TextView tvReporterMainDetail;
+    private TextView tvContentMainDetail;
+    private ImageView ivThumbDetailMain;
     private TextView tvPreviewCommentUser;
     private TextView tvPreviewCommentContent;
     private LinearLayout layoutCommentPreview;
@@ -203,21 +203,21 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
         listView = (ListView) view.findViewById(R.id.list_related_article);
         listView.setOnItemClickListener(this);
 
-        tvTitleHeadlineDetail = (TextView) view.findViewById(R.id.title_detail);
-        tvDateHeadlineDetail = (TextView) view.findViewById(R.id.date_detail);
-        tvReporterHeadlineDetail = (TextView) view.findViewById(R.id.reporter_detail);
-        tvContentHeadlineDetail = (TextView) view.findViewById(R.id.content_detail);
+        tvTitleMainDetail = (TextView) view.findViewById(R.id.title_detail);
+        tvDateMainDetail = (TextView) view.findViewById(R.id.date_detail);
+        tvReporterMainDetail = (TextView) view.findViewById(R.id.reporter_detail);
+        tvContentMainDetail = (TextView) view.findViewById(R.id.content_detail);
 
-        ivThumbDetailHeadline = (ImageView) view.findViewById(R.id.thumb_detail);
-        ivThumbDetailHeadline.setOnClickListener(this);
-        ivThumbDetailHeadline.setFocusableInTouchMode(true);
+        ivThumbDetailMain = (ImageView) view.findViewById(R.id.thumb_detail);
+        ivThumbDetailMain.setOnClickListener(this);
+        ivThumbDetailMain.setFocusableInTouchMode(true);
 
         textLinkVideo = (TextView) view.findViewById(R.id.text_move_video);
         textLinkVideo.setOnClickListener(this);
         textLinkVideo.setVisibility(View.GONE);
 
         if (Constant.isTablet(mActivity)) {
-            ivThumbDetailHeadline.getLayoutParams().height =
+            ivThumbDetailMain.getLayoutParams().height =
                     Constant.getDynamicImageSize(mActivity, Constant.DYNAMIC_SIZE_GRID_TYPE);
             viewPager.getLayoutParams().height =
                     Constant.getDynamicImageSize(mActivity, Constant.DYNAMIC_SIZE_SLIDER_TYPE);
@@ -314,11 +314,11 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
                                 //Send analytic
                                 setAnalytics(ids, title, analyticType);
                                 //Set view
-                                tvTitleHeadlineDetail.setText(title);
-                                tvDateHeadlineDetail.setText(date_publish);
-                                setTextViewHTML(tvContentHeadlineDetail, content);
-                                tvReporterHeadlineDetail.setText(reporter_name);
-                                Picasso.with(getActivity()).load(image_url).transform(new CropSquareTransformation()).into(ivThumbDetailHeadline);
+                                tvTitleMainDetail.setText(title);
+                                tvDateMainDetail.setText(date_publish);
+                                setTextViewHTML(tvContentMainDetail, content);
+                                tvReporterMainDetail.setText(reporter_name);
+                                Picasso.with(getActivity()).load(image_url).transform(new CropSquareTransformation()).into(ivThumbDetailMain);
                                 //Checking for image content
                                 if (sliderContentImages.size() > 0) {
                                     imageSliderAdapter = new ImageSliderAdapter(getFragmentManager(), sliderContentImages);
@@ -388,9 +388,10 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError volleyError) {
-                            if (Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + id) != null) {
+                            if (Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_DETAIL
+                                    + "id/" + id + "/screen/" + detailParam) != null) {
                                 String cachedResponse = new String(Global.getInstance(getActivity()).
-                                        getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + id).data);
+                                        getRequestQueue().getCache().get(Constant.NEW_DETAIL + "id/" + id + "/screen/" + detailParam).data);
                                 try {
                                     JSONObject jsonObject = new JSONObject(cachedResponse);
                                     JSONObject response = jsonObject.getJSONObject(Constant.response);
@@ -431,7 +432,7 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
                                         String shared_url = objRelated.getString(Constant.url);
                                         relatedArticleArrayList.add(new RelatedArticle(id, article_id, related_article_id, related_title,
                                                 related_channel_level_1_id, channel_id, related_date_publish, image, kanal, shared_url));
-                                        Log.i(Constant.TAG, "RELATED ARTICLE HEADLINE CACHED : " + relatedArticleArrayList.get(i).getRelated_title());
+                                        Log.i(Constant.TAG, "RELATED ARTICLE MAIN CACHED : " + relatedArticleArrayList.get(i).getRelated_title());
                                     }
 
                                     JSONArray comment_list = response.getJSONArray(Constant.comment_list);
@@ -444,11 +445,11 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
                                         Log.i(Constant.TAG, "COMMENTS PREVIEW : " + commentArrayList.get(i).getComment_text());
                                     }
 
-                                    tvTitleHeadlineDetail.setText(title);
-                                    tvDateHeadlineDetail.setText(date_publish);
-                                    setTextViewHTML(tvContentHeadlineDetail, content);
-                                    tvReporterHeadlineDetail.setText(reporter_name);
-                                    Picasso.with(getActivity()).load(image_url).transform(new CropSquareTransformation()).into(ivThumbDetailHeadline);
+                                    tvTitleMainDetail.setText(title);
+                                    tvDateMainDetail.setText(date_publish);
+                                    setTextViewHTML(tvContentMainDetail, content);
+                                    tvReporterMainDetail.setText(reporter_name);
+                                    Picasso.with(getActivity()).load(image_url).transform(new CropSquareTransformation()).into(ivThumbDetailMain);
 
                                     if (sliderContentImages.size() > 0) {
                                         imageSliderAdapter = new ImageSliderAdapter(getFragmentManager(), sliderContentImages);
@@ -522,9 +523,10 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
                     + "/screen/" + detailParam);
             Global.getInstance(getActivity()).addToRequestQueue(request, Constant.JSON_REQUEST);
         } else {
-            if (Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + id) != null) {
+            if (Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_DETAIL
+                    + "id/" + id + "/screen/" + detailParam) != null) {
                 String cachedResponse = new String(Global.getInstance(getActivity()).
-                        getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + id).data);
+                        getRequestQueue().getCache().get(Constant.NEW_DETAIL + "id/" + id + "/screen/" + detailParam).data);
                 try {
                     JSONObject jsonObject = new JSONObject(cachedResponse);
                     JSONObject response = jsonObject.getJSONObject(Constant.response);
@@ -565,7 +567,7 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
                         String shared_url = objRelated.getString(Constant.url);
                         relatedArticleArrayList.add(new RelatedArticle(id, article_id, related_article_id, related_title,
                                 related_channel_level_1_id, channel_id, related_date_publish, image, kanal, shared_url));
-                        Log.i(Constant.TAG, "RELATED ARTICLE HEADLINE CACHED : " + relatedArticleArrayList.get(i).getRelated_title());
+                        Log.i(Constant.TAG, "RELATED ARTICLE MAIN CACHED : " + relatedArticleArrayList.get(i).getRelated_title());
                     }
 
                     JSONArray comment_list = response.getJSONArray(Constant.comment_list);
@@ -578,11 +580,11 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
                         Log.i(Constant.TAG, "COMMENTS PREVIEW : " + commentArrayList.get(i).getComment_text());
                     }
 
-                    tvTitleHeadlineDetail.setText(title);
-                    tvDateHeadlineDetail.setText(date_publish);
-                    setTextViewHTML(tvContentHeadlineDetail, content);
-                    tvReporterHeadlineDetail.setText(reporter_name);
-                    Picasso.with(getActivity()).load(image_url).transform(new CropSquareTransformation()).into(ivThumbDetailHeadline);
+                    tvTitleMainDetail.setText(title);
+                    tvDateMainDetail.setText(date_publish);
+                    setTextViewHTML(tvContentMainDetail, content);
+                    tvReporterMainDetail.setText(reporter_name);
+                    Picasso.with(getActivity()).load(image_url).transform(new CropSquareTransformation()).into(ivThumbDetailMain);
 
                     if (sliderContentImages.size() > 0) {
                         imageSliderAdapter = new ImageSliderAdapter(getFragmentManager(), sliderContentImages);
@@ -693,7 +695,7 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
     private void doFavorite() {
         String favoriteList = Global.getInstance(getActivity()).getSharedPreferences(getActivity())
                 .getString(Constant.FAVORITES_LIST, "");
-        if(favoriteList == null || favoriteList.length() <= 0) {
+        if (favoriteList == null || favoriteList.length() <= 0) {
             favoritesArrayList = Global.getInstance(getActivity()).getFavoritesList();
         } else {
             favoritesArrayList = Global.getInstance(getActivity()).getInstanceGson().
@@ -725,9 +727,10 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        if(url_shared == null || url_shared.length() < 1) {
+        if (url_shared == null || url_shared.length() < 1) {
             try {
-                if(Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + id) != null) {
+                if (Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_DETAIL
+                        + "id/" + id + "/screen/" + detailParam) != null) {
                     String cachedResponse = new String(Global.getInstance(getActivity()).
                             getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + id).data);
                     JSONObject jsonObject = new JSONObject(cachedResponse);
@@ -862,12 +865,12 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
                                     //Send analytic
                                     setAnalytics(ids, title, analyticType);
                                     //Set data to view
-                                    tvTitleHeadlineDetail.setText(title);
-                                    tvDateHeadlineDetail.setText(date_publish);
-                                    setTextViewHTML(tvContentHeadlineDetail, content);
-                                    tvReporterHeadlineDetail.setText(reporter_name);
+                                    tvTitleMainDetail.setText(title);
+                                    tvDateMainDetail.setText(date_publish);
+                                    setTextViewHTML(tvContentMainDetail, content);
+                                    tvReporterMainDetail.setText(reporter_name);
                                     Picasso.with(getActivity()).load(image_url)
-                                            .transform(new CropSquareTransformation()).into(ivThumbDetailHeadline);
+                                            .transform(new CropSquareTransformation()).into(ivThumbDetailMain);
                                     //Checking for content image
                                     if (sliderContentImages.size() > 0) {
                                         imageSliderAdapter = new ImageSliderAdapter(getFragmentManager(), sliderContentImages);
@@ -981,7 +984,7 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
         ListView listview = (ListView) adapterView;
         if (listview.getId() == R.id.list_related_article) {
-            if(relatedArticleArrayList.size() > 0) {
+            if (relatedArticleArrayList.size() > 0) {
                 RelatedArticle relatedArticles = relatedArticleArrayList.get(position);
                 Bundle bundle = new Bundle();
                 bundle.putString("id", relatedArticles.getRelated_article_id());
@@ -999,16 +1002,8 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
         if (analytics == null) {
             analytics = new Analytics(getActivity());
         }
-        if (analytic.equalsIgnoreCase(Constant.HEADLINE_DETAIL_PAGE)) {
-            analytics.getAnalyticByATInternet(Constant.HEADLINE_DETAIL_PAGE + id + "_" + title.toUpperCase());
-            analytics.getAnalyticByGoogleAnalytic(Constant.HEADLINE_DETAIL_PAGE + id + "_" + title.toUpperCase());
-        } else if (analytic.equalsIgnoreCase(Constant.TERBARU_DETAIL_PAGE)) {
-            analytics.getAnalyticByATInternet(Constant.TERBARU_DETAIL_PAGE + id + "_" + title.toUpperCase());
-            analytics.getAnalyticByGoogleAnalytic(Constant.TERBARU_DETAIL_PAGE + id + "_" + title.toUpperCase());
-        } else if (analytic.equalsIgnoreCase(Constant.BERITA_SEKITAR_DETAIL_PAGE)) {
-            analytics.getAnalyticByATInternet(Constant.BERITA_SEKITAR_DETAIL_PAGE + id + "_" + title.toUpperCase());
-            analytics.getAnalyticByGoogleAnalytic(Constant.BERITA_SEKITAR_DETAIL_PAGE + id + "_" + title.toUpperCase());
-        }
+        analytics.getAnalyticByATInternet(analytic + "_" + id + "_" + title);
+        analytics.getAnalyticByGoogleAnalytic(analytic + "_" + id + "_" + title);
     }
 
     private void setTextViewHTML(TextView text, String html) {

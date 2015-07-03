@@ -48,6 +48,7 @@ import id.co.viva.news.app.component.ProgressWheel;
 import id.co.viva.news.app.fragment.AboutFragment;
 import id.co.viva.news.app.fragment.BeritaSekitarFragment;
 import id.co.viva.news.app.fragment.FavoritesFragment;
+import id.co.viva.news.app.fragment.GridChannelFragment;
 import id.co.viva.news.app.fragment.ListMainFragment;
 import id.co.viva.news.app.model.NavigationItem;
 import info.hoang8f.widget.FButton;
@@ -167,18 +168,19 @@ public class ActLanding extends ActionBarActivity implements View.OnClickListene
                 if (items.getParent().equalsIgnoreCase(Constant.INFO_MENU_SECTION)) {
                     //Preference menu list
                     switch (items.getName()) {
-                        case Constant.INFO_MENU:
+                        case Constant.CONTACT_MENU:
                             sendEmail();
                             break;
                         case Constant.ABOUT_US_MENU:
                             fragment = new AboutFragment();
                             break;
-                        case "Rate App":
+                        case Constant.RATE_MENU:
                             rateApp();
                             break;
                     }
                 } else {
-                    //Channel menu list
+                    fragment = GridChannelFragment.newInstance(items.getName(),
+                            items.getColor(), items.getScreen(), items.getHit_url(), items.getIndex());
                 }
             } else {
                 //Main menu list
@@ -191,6 +193,9 @@ public class ActLanding extends ActionBarActivity implements View.OnClickListene
                         break;
                     case Constant.PINDAI_KODE_QR_MENU:
                         scanNews();
+                        break;
+                    case Constant.TAG_POPULAR:
+
                         break;
                     default:
                         fragment = ListMainFragment.newInstance(items.getName(),

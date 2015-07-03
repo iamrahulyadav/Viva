@@ -27,7 +27,11 @@ public class Constant {
     public static final int TIME_OUT = 6000;
     public static final int TIME_OUT_LONG = 15000;
     public static final int TIME_OUT_REGISTRATION = 15000;
+
+    //G+ Picture Size
     public static final int PROFILE_PIC_SIZE = 400;
+
+    //Amount Visible List Items
     public final static int NUMBER_OF_TOP_LIST_ITEMS_BIG_CARD = 4;
     public final static int NUMBER_OF_TOP_LIST_ITEMS_SMALL_CARD = 3;
 
@@ -83,8 +87,10 @@ public class Constant {
     public static final String BERITA_SEKITAR_MENU = "Berita Sekitar";
     public static final String BERITA_FAVORIT_MENU = "Berita Favorit";
     public static final String PINDAI_KODE_QR_MENU = "Pindai Kode QR";
+    public static final String TAG_POPULAR = "Tag Terpopuler";
     public static final String INFO_MENU_SECTION = "INFO";
-    public static final String INFO_MENU = "Info";
+    public static final String CONTACT_MENU = "Kontak Kami";
+    public static final String RATE_MENU = "Beri Peringkat";
     public static final String ABOUT_US_MENU = "Tentang Kami";
 
     //Preference States
@@ -126,9 +132,6 @@ public class Constant {
     public static String MAIN_CONFIG = BASE_URL_NEW + "mainconf/app/android";
     public static String TUTORIAL_IMAGES_URL = BASE_URL_NEW + "coach";
     public static String BERITA_SEKITAR_URL = BASE_URL_NEW + "find/";
-    public static String NEW_NEWS = BASE_URL_NEW + "knews";
-    public static String NEW_LIFE = BASE_URL_NEW + "klife";
-    public static String NEW_BOLA = BASE_URL_NEW + "kbola";
     public static String NEW_KANAL = BASE_URL_NEW + "kanal/";
     public static String NEW_DETAIL = BASE_URL_NEW + "detail/";
     public static String NEW_SEARCH = BASE_URL_NEW + "search/";
@@ -154,7 +157,8 @@ public class Constant {
     public static final String AllNews = "Semua Berita";
     public static final String response = "response";
     public static final String timestamp = "timestamp";
-    public static final String headlines = "headlines";
+//    public static final String headlines = "headlines";
+    public static final String news = "news";
     public static final String comment_list = "comment_list";
     public static final String related_article = "related_article";
     public static final String detail = "detail";
@@ -234,16 +238,8 @@ public class Constant {
     //Analytic Tagging
     public static final String BERITA_SEKITAR_PAGE = "BERITA_SEKITAR_HAL_";
     public static final String BERITA_SEKITAR_DETAIL_PAGE = "BERITA_SEKITAR_DETAIL_";
-    public static final String HEADLINE_DETAIL_PAGE = "HEADLINE_DETAIL_";
-    public static final String TERBARU_DETAIL_PAGE = "TERBARU_DETAIL_";
-    public static final String KANAL_NEWS_PAGE = "KANAL_NEWS_PAGE";
-    public static final String SUBKANAL_NEWS_PAGE = "SUBKANAL_NEWS_";
     public static final String DETAIL_CONTENT_NEWS_PAGE = "DetailArticle_NEWS_";
-    public static final String KANAL_BOLA_PAGE = "KANAL_BOLA_PAGE";
-    public static final String SUBKANAL_BOLA_PAGE = "SUBKANAL_BOLA_";
     public static final String DETAIL_CONTENT_BOLA_PAGE = "DetailArticle_BOLA_";
-    public static final String KANAL_LIFE_PAGE = "KANAL_LIFE_PAGE";
-    public static final String SUBKANAL_LIFE_PAGE = "SUBKANAL_LIFE_";
     public static final String DETAIL_CONTENT_LIFE_PAGE = "DetailArticle_LIFE_";
     public static final String SEARCH_RESULT_PAGE = "SEARCH_RESULT_PAGE_";
     public static final String FROM_SEARCH_RESULT_DETAIL_CONTENT = "FROM_SEARCH_RESULT_DETAIL_CONTENT_";
@@ -356,9 +352,7 @@ public class Constant {
     //Type list
     public static final int SMALL_LIST_DEFAULT = 2;
     public static final int BERITA_SEKITAR_LIST = 3;
-    public static final int BIG_CARD_CHANNEL_BOLA_LIST = 4;
-    public static final int BIG_CARD_CHANNEL_NEWS_LIST = 5;
-    public static final int BIG_CARD_CHANNEL_LIFE_LIST = 6;
+    public static final int BIG_CARD_CHANNEL_LIST = 4;
     public static final int BIG_CARD_SEARCH_RESULT = 7;
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)

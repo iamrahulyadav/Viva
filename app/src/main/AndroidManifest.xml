@@ -173,7 +173,7 @@
                 android:value=".activity.ActSearchResult" />/>
 
         <activity
-            android:name=".activity.ActDetailContentBola"
+            android:name=".activity.ActDetailContent"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"/>
             <meta-data
@@ -186,25 +186,7 @@
             android:theme="@style/AppTheme"/>
 
         <activity
-            android:name=".activity.ActDetailChannelBola"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme">
-            <meta-data
-                android:name="android.app.default_searchable"
-                android:value=".activity.ActSearchResult" />
-        </activity>
-
-        <activity
-            android:name=".activity.ActDetailChannelLife"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme">
-            <meta-data
-                android:name="android.app.default_searchable"
-                android:value=".activity.ActSearchResult" />
-        </activity>
-
-        <activity
-            android:name=".activity.ActDetailChannelNews"
+            android:name=".activity.ActDetailChannel"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme">
             <meta-data

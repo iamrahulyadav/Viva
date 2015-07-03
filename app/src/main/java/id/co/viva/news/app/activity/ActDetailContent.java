@@ -10,12 +10,12 @@ import android.widget.Toast;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.adapter.DetailContentAdapterBola;
 import id.co.viva.news.app.component.ZoomOutPageTransformer;
-import id.co.viva.news.app.model.ChannelBola;
+import id.co.viva.news.app.model.ChannelList;
 
 /**
  * Created by reza on 24/10/14.
  */
-public class ActDetailContentBola extends ActionBarActivity {
+public class ActDetailContent extends ActionBarActivity {
 
     private String id;
     private String channel_title;
@@ -37,14 +37,14 @@ public class ActDetailContentBola extends ActionBarActivity {
 
         //Set Detail Pager
         int position = 0;
-        if(ActDetailChannelBola.channelBolaArrayList != null) {
-            if(ActDetailChannelBola.channelBolaArrayList.size() > 0) {
-                for(ChannelBola channelBola : ActDetailChannelBola.channelBolaArrayList) {
-                    if(channelBola.getId().equals(id)) break;
+        if(ActDetailChannel.channelListArrayList != null) {
+            if(ActDetailChannel.channelListArrayList.size() > 0) {
+                for(ChannelList channelList : ActDetailChannel.channelListArrayList) {
+                    if(channelList.getId().equals(id)) break;
                     position++;
                 }
             }
-            adapter = new DetailContentAdapterBola(getSupportFragmentManager(), ActDetailChannelBola.channelBolaArrayList, channel_title);
+            adapter = new DetailContentAdapterBola(getSupportFragmentManager(), ActDetailChannel.channelListArrayList, channel_title);
             viewPager = (ViewPager)findViewById(R.id.vp_detail_content);
             viewPager.setAdapter(adapter);
             viewPager.setPageTransformer(true, new ZoomOutPageTransformer());

@@ -3,7 +3,7 @@ package id.co.viva.news.app.model;
 /**
  * Created by reza on 23/10/14.
  */
-public class ChannelNews {
+public class ChannelList {
 
     private String id;
     private String title;
@@ -65,8 +65,9 @@ public class ChannelNews {
         this.url = url;
     }
 
-    public ChannelNews(String id, String title, String kanal,
-                       String image_url, String date_publish, String url, String timestamp) {
+    public ChannelList(String id, String title, String kanal,
+                       String image_url, String date_publish,
+                       String url, String timestamp) {
         this.id = id;
         this.title = title;
         this.kanal = kanal;

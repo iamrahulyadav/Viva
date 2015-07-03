@@ -15,7 +15,7 @@
             android:textStyle="bold"
             android:textSize="18sp"
             android:text="@string/label_registration"
-            android:textColor="@color/header_headline_terbaru_new"
+            android:textColor="@color/grey_new"
             android:layout_marginTop="10dp"
             android:layout_gravity="center_horizontal"/>
         <id.co.viva.news.app.component.RobotoTextView
@@ -95,7 +95,7 @@
             android:textSize="16sp"
             custom:pb_colorComplete="@color/green"
             custom:pb_colorNormal="@color/green"
-            custom:pb_colorPressed="@color/header_headline_terbaru_new"
+            custom:pb_colorPressed="@color/grey_new"
             custom:pb_colorProgress="@color/purple_plum"
             custom:pb_textComplete="@string/label_favorite_navigation_title_confirm"
             custom:pb_textProgress="@string/label_loading"/>

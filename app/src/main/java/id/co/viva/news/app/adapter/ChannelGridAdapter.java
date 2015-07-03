@@ -14,29 +14,29 @@ import java.util.ArrayList;
 
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.component.CropSquareTransformation;
-import id.co.viva.news.app.model.FeaturedBola;
+import id.co.viva.news.app.model.Channel;
 
 /**
  * Created by reza on 22/10/14.
  */
-public class FeaturedBolaAdapter extends BaseAdapter {
+public class ChannelGridAdapter extends BaseAdapter {
 
-    private ArrayList<FeaturedBola> subNewsArrayList;
+    private ArrayList<Channel> channelArrayList;
     private Context context;
 
-    public FeaturedBolaAdapter(Context context, ArrayList<FeaturedBola> subNewsArrayList) {
+    public ChannelGridAdapter(Context context, ArrayList<Channel> channelArrayList) {
         this.context = context;
-        this.subNewsArrayList = subNewsArrayList;
+        this.channelArrayList = channelArrayList;
     }
 
     @Override
     public int getCount() {
-        return subNewsArrayList.size();
+        return channelArrayList.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return subNewsArrayList.get(position);
+        return channelArrayList.get(position);
     }
 
     @Override
@@ -48,21 +48,22 @@ public class FeaturedBolaAdapter extends BaseAdapter {
     public View getView(int position, View view, ViewGroup viewGroup) {
         ViewHolder holder;
 
-        if(view == null) {
+        if (view == null) {
             LayoutInflater inflater = LayoutInflater.from(context);
             view = inflater.inflate(R.layout.item_grid, null);
             holder = new ViewHolder();
             holder.thumb_featured = (ImageView) view.findViewById(R.id.item_thumb);
-            holder.title_kanal = (TextView) view.findViewById(R.id.item_title_kanal);
+            holder.title_channel = (TextView) view.findViewById(R.id.item_title_kanal);
             view.setTag(holder);
         } else {
             holder = (ViewHolder) view.getTag();
         }
 
-        FeaturedBola featuredBola = subNewsArrayList.get(position);
-        holder.title_kanal.setText(featuredBola.getChannel_title().toUpperCase());
-        if(featuredBola.getImage_url().length() > 0) {
-            Picasso.with(context).load(featuredBola.getImage_url())
+        Channel channel = channelArrayList.get(position);
+
+        holder.title_channel.setText(channel.getChannel_title().toUpperCase());
+        if (channel.getImage_url().length() > 0) {
+            Picasso.with(context).load(channel.getImage_url())
                     .transform(new CropSquareTransformation()).into(holder.thumb_featured);
         } else {
             holder.thumb_featured.setImageResource(R.drawable.default_image);
@@ -72,7 +73,7 @@ public class FeaturedBolaAdapter extends BaseAdapter {
     }
 
     private static class ViewHolder {
-        public TextView title_kanal;
+        public TextView title_channel;
         public ImageView thumb_featured;
     }
 

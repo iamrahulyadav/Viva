@@ -18,9 +18,7 @@ import java.util.Date;
 import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.component.CropSquareTransformation;
-import id.co.viva.news.app.model.ChannelBola;
-import id.co.viva.news.app.model.ChannelLife;
-import id.co.viva.news.app.model.ChannelNews;
+import id.co.viva.news.app.model.ChannelList;
 import id.co.viva.news.app.model.SearchResult;
 
 /**
@@ -30,33 +28,27 @@ public class ChannelBigAdapter extends BaseAdapter {
 
     private Context context;
     private int typeList;
-    private ArrayList<ChannelBola> channelBolaArrayList;
-    private ArrayList<ChannelNews> channelNewsArrayList;
-    private ArrayList<ChannelLife> channelLifeArrayList;
+    private ArrayList<ChannelList> channelListArrayList;
     private ArrayList<SearchResult> searchResults;
 
+    public final static String CHANNEL_BOLA = "bola";
+    public final static String CHANNEL_LIFE = "vivalife";
+    public final static String CHANNEL_AUTO = "otomotif";
+
     public ChannelBigAdapter(Context context, int typeList,
-                             ArrayList<ChannelBola> channelBolaArrayList,
-                             ArrayList<ChannelNews> channelNewsArrayList,
-                             ArrayList<ChannelLife> channelLifeArrayList,
+                             ArrayList<ChannelList> channelListArrayList,
                              ArrayList<SearchResult> searchResults) {
         this.context = context;
         this.typeList = typeList;
-        this.channelBolaArrayList = channelBolaArrayList;
-        this.channelNewsArrayList = channelNewsArrayList;
-        this.channelLifeArrayList = channelLifeArrayList;
+        this.channelListArrayList = channelListArrayList;
         this.searchResults = searchResults;
     }
 
     @Override
     public int getCount() {
         switch (typeList) {
-            case Constant.BIG_CARD_CHANNEL_BOLA_LIST:
-                return channelBolaArrayList.size();
-            case Constant.BIG_CARD_CHANNEL_NEWS_LIST:
-                return channelNewsArrayList.size();
-            case Constant.BIG_CARD_CHANNEL_LIFE_LIST:
-                return channelLifeArrayList.size();
+            case Constant.BIG_CARD_CHANNEL_LIST:
+                return channelListArrayList.size();
             case Constant.BIG_CARD_SEARCH_RESULT:
                 return searchResults.size();
             default:
@@ -68,12 +60,8 @@ public class ChannelBigAdapter extends BaseAdapter {
     @Override
     public Object getItem(int position) {
         switch (typeList) {
-            case Constant.BIG_CARD_CHANNEL_BOLA_LIST:
-                return channelBolaArrayList.get(position);
-            case Constant.BIG_CARD_CHANNEL_NEWS_LIST:
-                return channelNewsArrayList.get(position);
-            case Constant.BIG_CARD_CHANNEL_LIFE_LIST:
-                return channelLifeArrayList.get(position);
+            case Constant.BIG_CARD_CHANNEL_LIST:
+                return channelListArrayList.get(position);
             case Constant.BIG_CARD_SEARCH_RESULT:
                 return  searchResults.get(position);
             default:
@@ -106,12 +94,12 @@ public class ChannelBigAdapter extends BaseAdapter {
         }
         //Checking type of list
         switch (typeList) {
-            case Constant.BIG_CARD_CHANNEL_BOLA_LIST:
+            case Constant.BIG_CARD_CHANNEL_LIST:
                 //Get position each item
-                ChannelBola channelBola = channelBolaArrayList.get(position);
+                ChannelList channelList = channelListArrayList.get(position);
                 //Set image
-                if (channelBola.getImage_url().length() > 0) {
-                    Picasso.with(context).load(channelBola.getImage_url())
+                if (channelList.getImage_url().length() > 0) {
+                    Picasso.with(context).load(channelList.getImage_url())
                             .transform(new CropSquareTransformation()).into(holder.icon_item_channel);
                     //Check is tablet or not
                     if (Constant.isTablet(context)) {
@@ -121,67 +109,26 @@ public class ChannelBigAdapter extends BaseAdapter {
                     }
                 }
                 //Set title
-                holder.title_item_channel.setText(channelBola.getTitle());
+                holder.title_item_channel.setText(channelList.getTitle());
                 //Set icon
-                holder.icon_item_viva_channel.setImageResource(R.drawable.icon_viva_bola);
+                switch (channelList.getKanal()) {
+                    case CHANNEL_BOLA:
+                        holder.icon_item_viva_channel.setImageResource(R.drawable.icon_viva_bola);
+                        break;
+                    case CHANNEL_LIFE:
+                        holder.icon_item_viva_channel.setImageResource(R.drawable.icon_viva_life);
+                        break;
+                    case CHANNEL_AUTO:
+                        holder.icon_item_viva_channel.setImageResource(R.drawable.icon_viva_otomotif);
+                        break;
+                    default:
+                        holder.icon_item_viva_channel.setImageResource(R.drawable.icon_viva_news);
+                        break;
+                }
                 //Set time
                 try {
                     DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    Date date = formatter.parse(channelBola.getDate_publish());
-                    holder.date_item_channel.setText(Constant.getTimeAgo(date.getTime()));
-                } catch (Exception e) {
-                    e.getMessage();
-                }
-                break;
-            case Constant.BIG_CARD_CHANNEL_NEWS_LIST:
-                //Get position each item
-                ChannelNews channelNews = channelNewsArrayList.get(position);
-                //Set image
-                if (channelNews.getImage_url().length() > 0) {
-                    Picasso.with(context).load(channelNews.getImage_url())
-                            .transform(new CropSquareTransformation()).into(holder.icon_item_channel);
-                    //Check is tablet or not
-                    if (Constant.isTablet(context)) {
-                        holder.icon_item_channel.getLayoutParams().height =
-                                Constant.getDynamicImageSize(context, Constant.DYNAMIC_SIZE_LIST_TYPE);
-                        holder.icon_item_channel.requestLayout();
-                    }
-                }
-                //Set title
-                holder.title_item_channel.setText(channelNews.getTitle());
-                //Set icon
-                holder.icon_item_viva_channel.setImageResource(R.drawable.icon_viva_news);
-                //Set time
-                try {
-                    DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    Date date = formatter.parse(channelNews.getDate_publish());
-                    holder.date_item_channel.setText(Constant.getTimeAgo(date.getTime()));
-                } catch (Exception e) {
-                    e.getMessage();
-                }
-                break;
-            case Constant.BIG_CARD_CHANNEL_LIFE_LIST:
-                //Get position each item
-                ChannelLife channelLife = channelLifeArrayList.get(position);
-                //Set image
-                if (channelLife.getImage_url().length() > 0) {
-                    Picasso.with(context).load(channelLife.getImage_url())
-                            .transform(new CropSquareTransformation()).into(holder.icon_item_channel);
-                    //Check is tablet or not
-                    if (Constant.isTablet(context)) {
-                        holder.icon_item_channel.getLayoutParams().height =
-                                Constant.getDynamicImageSize(context, Constant.DYNAMIC_SIZE_LIST_TYPE);
-                        holder.icon_item_channel.requestLayout();
-                    }
-                }
-                //Set title
-                holder.title_item_channel.setText(channelLife.getTitle());
-                //Set icon
-                holder.icon_item_viva_channel.setImageResource(R.drawable.icon_viva_life);
-                //Set time
-                try {
-                    DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    Date date = formatter.parse(channelLife.getDate_publish());
+                    Date date = formatter.parse(channelList.getDate_publish());
                     holder.date_item_channel.setText(Constant.getTimeAgo(date.getTime()));
                 } catch (Exception e) {
                     e.getMessage();
@@ -199,12 +146,19 @@ public class ChannelBigAdapter extends BaseAdapter {
                 //Set date result
                 holder.date_item_channel.setText(result.getDate_publish());
                 //Check channel result
-                if (result.getKanal().equalsIgnoreCase("bola")) {
-                    holder.icon_item_viva_channel.setImageResource(R.drawable.icon_viva_bola);
-                } else if (result.getKanal().equalsIgnoreCase("vivalife")) {
-                    holder.icon_item_viva_channel.setImageResource(R.drawable.icon_viva_life);
-                } else {
-                    holder.icon_item_viva_channel.setImageResource(R.drawable.icon_viva_news);
+                switch (result.getKanal()) {
+                    case CHANNEL_BOLA:
+                        holder.icon_item_viva_channel.setImageResource(R.drawable.icon_viva_bola);
+                        break;
+                    case CHANNEL_LIFE:
+                        holder.icon_item_viva_channel.setImageResource(R.drawable.icon_viva_life);
+                        break;
+                    case CHANNEL_AUTO:
+                        holder.icon_item_viva_channel.setImageResource(R.drawable.icon_viva_otomotif);
+                        break;
+                    default:
+                        holder.icon_item_viva_channel.setImageResource(R.drawable.icon_viva_news);
+                        break;
                 }
                 break;
             default:

@@ -7,7 +7,7 @@ import android.util.Log;
 import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.activity.ActBrowser;
-import id.co.viva.news.app.activity.ActDetailChannelBola;
+import id.co.viva.news.app.activity.ActDetailChannel;
 import id.co.viva.news.app.activity.ActDetailChannelLife;
 import id.co.viva.news.app.activity.ActDetailChannelNews;
 import id.co.viva.news.app.activity.ActDetailContentDefault;
@@ -88,32 +88,32 @@ public class ChannelMapper {
             mIntent.putExtra("id", "30");
             mIntent.putExtra("channel_title", Constant.LABEL_CHANNEL_FOKUS);
         } else if (url.equalsIgnoreCase(Constant.CHANNEL_INDEX_BOLA)) {
-            mIntent = new Intent(mActivity, ActDetailChannelBola.class);
+            mIntent = new Intent(mActivity, ActDetailChannel.class);
             mIntent.putExtra("id", "9");
             mIntent.putExtra("channel_title", Constant.AllNews);
         } else if (url.equalsIgnoreCase(Constant.CHANNEL_LIGA_INDONESIA)) {
-            mIntent = new Intent(mActivity, ActDetailChannelBola.class);
+            mIntent = new Intent(mActivity, ActDetailChannel.class);
             mIntent.putExtra("id", "901");
             mIntent.putExtra("channel_title", Constant.LABEL_CHANNEL_LIGA_INDONESIA);
         } else if (url.equalsIgnoreCase(Constant.CHANNEL_LIGA_INGGRIS)) {
-            mIntent = new Intent(mActivity, ActDetailChannelBola.class);
+            mIntent = new Intent(mActivity, ActDetailChannel.class);
             mIntent.putExtra("id", "902");
             mIntent.putExtra("channel_title", Constant.LABEL_CHANNEL_LIGA_INGGRIS);
         } else if (url.equalsIgnoreCase(Constant.CHANNEL_LIGA_ITALIA)) {
-            mIntent = new Intent(mActivity, ActDetailChannelBola.class);
+            mIntent = new Intent(mActivity, ActDetailChannel.class);
             mIntent.putExtra("id", "903");
             mIntent.putExtra("channel_title", Constant.LABEL_CHANNEL_LIGA_ITALIA);
             Log.i(Constant.TAG, "Liga Italia");
         } else if (url.equalsIgnoreCase(Constant.CHANNEL_LIGA_SPANYOL)) {
-            mIntent = new Intent(mActivity, ActDetailChannelBola.class);
+            mIntent = new Intent(mActivity, ActDetailChannel.class);
             mIntent.putExtra("id", "904");
             mIntent.putExtra("channel_title", Constant.LABEL_CHANNEL_LIGA_SPANYOL);
         } else if (url.equalsIgnoreCase(Constant.CHANNEL_BOLA_NASIONAL)) {
-            mIntent = new Intent(mActivity, ActDetailChannelBola.class);
+            mIntent = new Intent(mActivity, ActDetailChannel.class);
             mIntent.putExtra("id", "908");
             mIntent.putExtra("channel_title", Constant.LABEL_CHANNEL_BOLA_NASIONAL);
         } else if (url.equalsIgnoreCase(Constant.CHANNEL_BOLA_SEJAGAT)) {
-            mIntent = new Intent(mActivity, ActDetailChannelBola.class);
+            mIntent = new Intent(mActivity, ActDetailChannel.class);
             mIntent.putExtra("id", "906");
             mIntent.putExtra("channel_title", Constant.LABEL_CHANNEL_BOLA_SEJAGAT);
         } else if (url.equalsIgnoreCase(Constant.CHANNEL_INDEX_LIFE)) {

@@ -100,6 +100,7 @@
             android:src="@drawable/cm_arrow_up"
             android:layout_margin="16dp"
             fab:fab_colorNormal="@color/new_base_color"
-            fab:fab_colorPressed="@color/header_headline_terbaru"/>
+            fab:fab_colorPressed="@color/header_headline_terbaru"
+            ripple:fab_colorPressed="@color/grey" />
     </RelativeLayout>
 </LinearLayout>

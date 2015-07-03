@@ -130,10 +130,10 @@ public class ActRating extends ActionBarActivity implements OnCompleteListener,
                 btnRate.setBackgroundResource(R.color.color_news);
             }
         } else {
-            colorDrawable.setColor(getResources().getColor(R.color.header_headline_terbaru_new));
+            colorDrawable.setColor(getResources().getColor(R.color.grey_new));
             getSupportActionBar().setBackgroundDrawable(colorDrawable);
-            mLayout.setBackgroundResource(R.color.header_headline_terbaru_new);
-            btnRate.setBackgroundResource(R.color.header_headline_terbaru_new);
+            mLayout.setBackgroundResource(R.color.grey_new);
+            btnRate.setBackgroundResource(R.color.grey_new);
         }
         getHeaderActionBar();
     }

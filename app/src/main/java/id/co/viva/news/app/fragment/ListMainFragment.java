@@ -21,6 +21,7 @@ import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.andexert.library.RippleView;
 import com.android.volley.DefaultRetryPolicy;
@@ -95,11 +96,13 @@ public class ListMainFragment extends Fragment implements View.OnClickListener, 
 
     //Adapter
     private ListMainAdapter adapter;
-    private ListMainSmallAdapter newsSmallAdapter;
+    private ListMainSmallAdapter smallAdapter;
     private ScaleInAnimationAdapter mAnimAdapter;
     private SwingBottomInAnimationAdapter swingBottomInAnimationAdapter;
 
+    //Load more stuff
     private String lastPublished;
+    private boolean isLoadMoreContent = false;
 
     public static ListMainFragment newInstance(String name, String parent, String color,
                                                String screen, String url, String index, String layout) {
@@ -152,14 +155,26 @@ public class ListMainFragment extends Fragment implements View.OnClickListener, 
         return progressDrawable;
     }
 
+    private void checkCache() {
+        if (Global.getInstance(getActivity()).getRequestQueue().getCache().get(url + "/screen/" + screen + "_screen") != null) {
+            String cachedResponse = new String(Global.getInstance(getActivity())
+                    .getRequestQueue().getCache().get(url + "/screen/" + screen + "_screen").data);
+            parseJson(cachedResponse, index, isLoadMoreContent);
+        } else {
+            loading_layout.setVisibility(View.GONE);
+            labelLoadData.setVisibility(View.GONE);
+            rippleView.setVisibility(View.VISIBLE);
+        }
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.frag_terbaru_headline, container, false);
+        View rootView = inflater.inflate(R.layout.frag_main_list, container, false);
         defineViews(rootView);
         if (isInternetPresent) {
             retrieveData(url, index, screen);
         } else {
-
+            checkCache();
         }
         return rootView;
     }
@@ -187,18 +202,18 @@ public class ListMainFragment extends Fragment implements View.OnClickListener, 
         analytics.getAnalyticByGoogleAnalytic(name.replace(" ", "_") + "_Screen_" + String.valueOf(page));
 
         //Set some text on top of view
-        labelText = (TextView) rootView.findViewById(R.id.text_terbaru_headline);
+        labelText = (TextView) rootView.findViewById(R.id.text_main_list);
         labelText.setText(name.toUpperCase());
-        lastUpdate = (TextView) rootView.findViewById(R.id.date_terbaru_headline);
+        lastUpdate = (TextView) rootView.findViewById(R.id.date_main_list);
 
         //Big Card List Content
-        listView = (LoadMoreListView) rootView.findViewById(R.id.list_terbaru_headline);
+        listView = (LoadMoreListView) rootView.findViewById(R.id.list_main_list);
         listView.setVisibility(View.GONE);
         listView.setOnItemClickListener(this);
         listView.setOnLoadMoreListener(this);
 
         //Small Card List Content
-        listViewSmallCard = (LoadMoreListView) rootView.findViewById(R.id.list_terbaru_headline_small_card);
+        listViewSmallCard = (LoadMoreListView) rootView.findViewById(R.id.list_main_list_small_card);
         listViewSmallCard.setOnItemClickListener(this);
         listViewSmallCard.setOnLoadMoreListener(this);
 
@@ -244,19 +259,44 @@ public class ListMainFragment extends Fragment implements View.OnClickListener, 
                 url + "/screen/" + screenType + "_screen", new Response.Listener<String>() {
             @Override
             public void onResponse(String s) {
-                parseJson(s, arrayType);
+                parseJson(s, arrayType, isLoadMoreContent);
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
-                if (Global.getInstance(getActivity()).getRequestQueue().getCache().get(url) != null) {
-                    String cachedResponse = new String(Global.getInstance(getActivity())
-                            .getRequestQueue().getCache().get(url).data);
-                    parseJson(cachedResponse, arrayType);
-                } else {
-                    loading_layout.setVisibility(View.GONE);
-                    labelLoadData.setVisibility(View.GONE);
-                    rippleView.setVisibility(View.VISIBLE);
+                checkCache();
+            }
+        });
+        request.setShouldCache(true);
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                Constant.TIME_OUT,
+                0,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        Global.getInstance(getActivity()).getRequestQueue().getCache().invalidate(url + "/screen/" + screenType + "_screen", true);
+        Global.getInstance(getActivity()).getRequestQueue().getCache().get(url + "/screen/" + screenType + "_screen");
+        Global.getInstance(getActivity()).addToRequestQueue(request, Constant.JSON_REQUEST);
+    }
+
+    private void loadMore(final String url, final String arrayType, String screenType, String lastPublished) {
+        StringRequest request = new StringRequest(Request.Method.GET,
+                url + "/screen/" + screenType + "_screen" + "/published/" + lastPublished, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String s) {
+                isLoadMoreContent = true;
+                parseJson(s, arrayType, isLoadMoreContent);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                if (listView.getVisibility() == View.VISIBLE) {
+                    listView.onLoadMoreComplete();
+                    listView.setSelection(0);
+                } else if (listViewSmallCard.getVisibility() == View.VISIBLE) {
+                    listViewSmallCard.onLoadMoreComplete();
+                    listViewSmallCard.setSelection(0);
+                }
+                if (getActivity() != null) {
+                    Toast.makeText(getActivity(), R.string.label_error, Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -265,12 +305,14 @@ public class ListMainFragment extends Fragment implements View.OnClickListener, 
                 Constant.TIME_OUT,
                 0,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        Global.getInstance(getActivity()).getRequestQueue().getCache().invalidate(url, true);
-        Global.getInstance(getActivity()).getRequestQueue().getCache().get(url);
+        Global.getInstance(getActivity()).getRequestQueue().getCache()
+                .invalidate(url + "/screen/" + screenType + "_screen" + "/published/" + lastPublished, true);
+        Global.getInstance(getActivity()).getRequestQueue().getCache()
+                .get(url + "/screen/" + screenType + "_screen" + "/published/" + lastPublished);
         Global.getInstance(getActivity()).addToRequestQueue(request, Constant.JSON_REQUEST);
     }
 
-    private void parseJson(String response, String arrayType) {
+    private void parseJson(String response, String arrayType, boolean isLoadMore) {
         try {
             JSONObject jsonObject = new JSONObject(response);
             JSONArray jsonArrayResponses = jsonObject.getJSONArray(Constant.response);
@@ -293,18 +335,21 @@ public class ListMainFragment extends Fragment implements View.OnClickListener, 
                     }
                 }
                 //Check Ads if exists
-                if (isInternetPresent) {
-                    JSONObject objAds = jsonArrayResponses.getJSONObject(jsonArrayResponses.length() - 1);
-                    JSONArray jsonArraySegmentAds = objAds.getJSONArray(Constant.adses);
-                    if (jsonArraySegmentAds.length() > 0) {
-                        for (int j=0; j<jsonArraySegmentAds.length(); j++) {
-                            JSONObject jsonAds = jsonArraySegmentAds.getJSONObject(j);
-                            String name = jsonAds.getString(Constant.name);
-                            int position = jsonAds.getInt(Constant.position);
-                            int type = jsonAds.getInt(Constant.type);
-                            String unit_id = jsonAds.getString(Constant.unit_id);
-                            adsArrayList.add(new Ads(name, type, position, unit_id));
-                            Log.i(Constant.TAG, "ADS : " + adsArrayList.get(j).getmUnitId());
+                if (isInternetPresent && !isLoadMore) {
+                    if (jsonArrayResponses.length() > 1) {
+                        Log.i(Constant.TAG, "Loading Ads...");
+                        JSONObject objAds = jsonArrayResponses.getJSONObject(jsonArrayResponses.length() - 1);
+                        JSONArray jsonArraySegmentAds = objAds.getJSONArray(Constant.adses);
+                        if (jsonArraySegmentAds.length() > 0) {
+                            for (int j=0; j<jsonArraySegmentAds.length(); j++) {
+                                JSONObject jsonAds = jsonArraySegmentAds.getJSONObject(j);
+                                String name = jsonAds.getString(Constant.name);
+                                int position = jsonAds.getInt(Constant.position);
+                                int type = jsonAds.getInt(Constant.type);
+                                String unit_id = jsonAds.getString(Constant.unit_id);
+                                adsArrayList.add(new Ads(name, type, position, unit_id));
+                                Log.i(Constant.TAG, "ADS : " + adsArrayList.get(j).getmUnitId());
+                            }
                         }
                     }
                 }
@@ -314,27 +359,43 @@ public class ListMainFragment extends Fragment implements View.OnClickListener, 
             //Fill data from API
             if (entityList.size() > 0 || !entityList.isEmpty()) {
                 //Big Card List Style
-                if (adapter == null) {
-                    adapter = new ListMainAdapter(getActivity(), entityList);
-                }
-                if (swingBottomInAnimationAdapter == null) {
+                if (!isLoadMore) {
+                    if (adapter == null) {
+                        adapter = new ListMainAdapter(getActivity(), entityList);
+                    }
+                    if (swingBottomInAnimationAdapter == null) {
+                        swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(adapter);
+                    }
+                    swingBottomInAnimationAdapter.setAbsListView(listView);
+                    assert swingBottomInAnimationAdapter.getViewAnimator() != null;
+                    swingBottomInAnimationAdapter.getViewAnimator().setInitialDelayMillis(1000);
+                    listView.setAdapter(swingBottomInAnimationAdapter);
+                    adapter.notifyDataSetChanged();
+                } else {
                     swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(adapter);
+                    swingBottomInAnimationAdapter.setAbsListView(listView);
+                    assert swingBottomInAnimationAdapter.getViewAnimator() != null;
+                    swingBottomInAnimationAdapter.getViewAnimator().setInitialDelayMillis(1000);
+                    adapter.notifyDataSetChanged();
+                    listView.onLoadMoreComplete();
                 }
-                swingBottomInAnimationAdapter.setAbsListView(listView);
-                assert swingBottomInAnimationAdapter.getViewAnimator() != null;
-                swingBottomInAnimationAdapter.getViewAnimator().setInitialDelayMillis(1000);
-                listView.setAdapter(swingBottomInAnimationAdapter);
-                adapter.notifyDataSetChanged();
                 //Small Card List Style
-                if (newsSmallAdapter == null) {
-                    newsSmallAdapter = new ListMainSmallAdapter(getActivity(), Constant.SMALL_LIST_DEFAULT, null, entityList);
+                if (!isLoadMore) {
+                    if (smallAdapter == null) {
+                        smallAdapter = new ListMainSmallAdapter(getActivity(), Constant.SMALL_LIST_DEFAULT, null, entityList);
+                    }
+                    if (mAnimAdapter == null) {
+                        mAnimAdapter = new ScaleInAnimationAdapter(smallAdapter);
+                    }
+                    mAnimAdapter.setAbsListView(listViewSmallCard);
+                    listViewSmallCard.setAdapter(mAnimAdapter);
+                    mAnimAdapter.notifyDataSetChanged();
+                } else {
+                    mAnimAdapter = new ScaleInAnimationAdapter(smallAdapter);
+                    mAnimAdapter.setAbsListView(listViewSmallCard);
+                    mAnimAdapter.notifyDataSetChanged();
+                    listViewSmallCard.onLoadMoreComplete();
                 }
-                if (mAnimAdapter == null) {
-                    mAnimAdapter = new ScaleInAnimationAdapter(newsSmallAdapter);
-                }
-                mAnimAdapter.setAbsListView(listViewSmallCard);
-                listViewSmallCard.setAdapter(mAnimAdapter);
-                mAnimAdapter.notifyDataSetChanged();
                 //Hide progress
                 if (rippleView.getVisibility() == View.VISIBLE) {
                     rippleView.setVisibility(View.GONE);
@@ -400,7 +461,11 @@ public class ListMainFragment extends Fragment implements View.OnClickListener, 
                 loading_layout.setVisibility(View.VISIBLE);
                 labelLoadData.setVisibility(View.VISIBLE);
                 rippleView.setVisibility(View.GONE);
-                retrieveData(url, index, screen);
+                if (isInternetPresent) {
+                    retrieveData(url, index, screen);
+                } else {
+                    Toast.makeText(getActivity(), R.string.title_no_connection, Toast.LENGTH_SHORT).show();
+                }
                 break;
         }
     }
@@ -428,7 +493,32 @@ public class ListMainFragment extends Fragment implements View.OnClickListener, 
 
     @Override
     public void onLoadMore() {
-
+        if (screen.equalsIgnoreCase("headline") || screen.equalsIgnoreCase("populer")) {
+            if (listView.getVisibility() == View.VISIBLE) {
+                listView.onLoadMoreComplete();
+            } else if (listViewSmallCard.getVisibility() == View.VISIBLE) {
+                listViewSmallCard.onLoadMoreComplete();
+            }
+        } else {
+            if (isInternetPresent) {
+                page += 1;
+                analytics.getAnalyticByATInternet(
+                        name.replace(" ", "_") + "_Screen_" + String.valueOf(page));
+                analytics.getAnalyticByGoogleAnalytic(
+                        name.replace(" ", "_") + "_Screen_" + String.valueOf(page));
+                Log.i(Constant.TAG, "Last Published : " + lastPublished);
+                loadMore(url, index, screen, lastPublished);
+            } else {
+                if (listView.getVisibility() == View.VISIBLE) {
+                    listView.onLoadMoreComplete();
+                } else if (listViewSmallCard.getVisibility() == View.VISIBLE) {
+                    listViewSmallCard.onLoadMoreComplete();
+                }
+                if (getActivity() != null) {
+                    Toast.makeText(getActivity(), R.string.title_no_connection, Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
     }
 
     @Override

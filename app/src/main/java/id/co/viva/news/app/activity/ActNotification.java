@@ -464,7 +464,7 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
                 progressWheel.setBarColor(getResources().getColor(R.color.color_news));
             }
         } else {
-            colorDrawable.setColor(getResources().getColor(R.color.header_headline_terbaru_new));
+            colorDrawable.setColor(getResources().getColor(R.color.grey_new));
             getSupportActionBar().setBackgroundDrawable(colorDrawable);
             progressWheel.setBarColor(getResources().getColor(R.color.blue));
         }

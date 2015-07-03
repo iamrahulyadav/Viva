@@ -14,14 +14,14 @@ import java.util.ArrayList;
 
 import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.fragment.DetailIndexContent;
-import id.co.viva.news.app.model.ChannelBola;
+import id.co.viva.news.app.model.ChannelList;
 
 /**
  * Created by reza on 24/10/14.
  */
 public class DetailContentAdapterBola extends FragmentStatePagerAdapter {
 
-    private ArrayList<ChannelBola> channelBolaArrayList;
+    private ArrayList<ChannelList> channelListArrayList;
     private ArrayList<Fragment> mFragments = new ArrayList<Fragment>();
     private FragmentTransaction mCurTransaction = null;
     private ArrayList<Fragment.SavedState> mSavedState = new ArrayList<Fragment.SavedState>();
@@ -29,17 +29,17 @@ public class DetailContentAdapterBola extends FragmentStatePagerAdapter {
     private int mPosition;
     private String mChannelTitle;
 
-    public DetailContentAdapterBola(FragmentManager fragmentManager, ArrayList<ChannelBola> channelBolaArrayList, String channelTitle) {
+    public DetailContentAdapterBola(FragmentManager fragmentManager, ArrayList<ChannelList> channelListArrayList, String channelTitle) {
         super(fragmentManager);
         mChannelTitle = channelTitle;
         mFragmentManager = fragmentManager;
-        this.channelBolaArrayList = channelBolaArrayList;
+        this.channelListArrayList = channelListArrayList;
     }
 
     @Override
     public Fragment getItem(int position) {
         mPosition = position;
-        return DetailIndexContent.newInstance(channelBolaArrayList
+        return DetailIndexContent.newInstance(channelListArrayList
                 .get(position).getId(), "bola", mChannelTitle);
     }
 
@@ -54,7 +54,7 @@ public class DetailContentAdapterBola extends FragmentStatePagerAdapter {
 
     @Override
     public int getCount() {
-        return channelBolaArrayList.size();
+        return channelListArrayList.size();
     }
 
     @Override
