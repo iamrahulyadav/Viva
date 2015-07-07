@@ -1010,7 +1010,7 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
         CharSequence sequence = Html.fromHtml(html);
         SpannableStringBuilder strBuilder = new SpannableStringBuilder(sequence);
         URLSpan[] urls = strBuilder.getSpans(0, sequence.length(), URLSpan.class);
-        for(URLSpan span : urls) {
+        for (URLSpan span : urls) {
             makeLinkClickable(strBuilder, span);
         }
         text.setText(strBuilder);

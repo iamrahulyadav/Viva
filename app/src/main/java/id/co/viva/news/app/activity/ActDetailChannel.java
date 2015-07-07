@@ -82,6 +82,7 @@ public class ActDetailChannel extends ActionBarActivity implements
     private RippleView rippleView;
     private FloatingActionButton floatingActionButton;
     private LinearLayout mParentLayout;
+    private boolean isLoadMoreContent = false;
 
     //Adapter
     private ChannelListAdapter adapter;
@@ -103,7 +104,15 @@ public class ActDetailChannel extends ActionBarActivity implements
         getIntentData();
 
         //Send Analytics
-        setAnalytics(String.valueOf(paging), name);
+        if (name != null) {
+            if (name.length() > 0) {
+                setAnalytics(String.valueOf(paging), name);
+            } else {
+                setAnalytics(String.valueOf(paging), channel_title);
+            }
+        } else {
+            setAnalytics(String.valueOf(paging), channel_title);
+        }
 
         //Define All Views
         defineViews();
@@ -124,7 +133,7 @@ public class ActDetailChannel extends ActionBarActivity implements
                 new Response.Listener<String>() {
             @Override
             public void onResponse(String s) {
-                parseData(s);
+                parseData(s, isLoadMoreContent);
             }
         }, new Response.ErrorListener() {
             @Override
@@ -151,13 +160,18 @@ public class ActDetailChannel extends ActionBarActivity implements
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String s) {
-                        parseData(s);
+                        isLoadMoreContent = true;
+                        parseData(s, isLoadMoreContent);
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
-                progressWheel.setVisibility(View.GONE);
-                rippleView.setVisibility(View.VISIBLE);
+                if (listView.getVisibility() == View.VISIBLE) {
+                    listView.onLoadMoreComplete();
+                } else if (listViewBigCard.getVisibility() == View.VISIBLE) {
+                    listViewBigCard.onLoadMoreComplete();
+                }
+                Toast.makeText(ActDetailChannel.this, R.string.label_error, Toast.LENGTH_SHORT).show();
             }
         });
         request.setShouldCache(true);
@@ -166,9 +180,9 @@ public class ActDetailChannel extends ActionBarActivity implements
                 0,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         Global.getInstance(this).getRequestQueue().getCache().invalidate(
-                getUrl(channelTitle, level) + "/screen/" + channel.replace(" ", "_") + "_" + channelTitle.replace(" ", "_") + "_screen", true);
+                getPagingUrl(channel_title, dataPage, timeStamp, level), true);
         Global.getInstance(this).getRequestQueue().getCache()
-                .get(getUrl(channelTitle, level) + "/screen/" + channel.replace(" ", "_") + "_" + channelTitle.replace(" ", "_") + "_screen");
+                .get(getPagingUrl(channel_title, dataPage, timeStamp, level));
         Global.getInstance(this).addToRequestQueue(request, Constant.JSON_REQUEST);
     }
 
@@ -180,38 +194,39 @@ public class ActDetailChannel extends ActionBarActivity implements
                     .getRequestQueue().getCache()
                     .get(getUrl(channelTitle, level) + "/screen/" +
                             channel.replace(" ", "_") + "_" + channelTitle.replace(" ", "_") + "_screen").data);
-            parseData(cachedResponse);
+            parseData(cachedResponse, isLoadMoreContent);
         } else {
             progressWheel.setVisibility(View.GONE);
             tvNoResult.setVisibility(View.VISIBLE);
         }
     }
 
-    private void parseData(String response) {
+    private void parseData(String response, boolean isLoadMore) {
         try {
             JSONObject jsonObject = new JSONObject(response);
             JSONArray jsonArrayResponses = jsonObject.getJSONArray(Constant.response);
             if (jsonArrayResponses.length() > 0) {
                 //Get content
                 JSONObject objNews = jsonArrayResponses.getJSONObject(0);
-                JSONArray jsonArraySegment = objNews.getJSONArray(Constant.news);
+                JSONArray jsonArraySegment = objNews.getJSONArray(Constant.headlines);
                 if (jsonArraySegment.length() > 0) {
                     for (int i = 0; i < jsonArraySegment.length(); i++) {
                         JSONObject jsonHeadline = jsonArraySegment.getJSONObject(i);
                         String id = jsonHeadline.getString(Constant.id);
                         String title = jsonHeadline.getString(Constant.title);
-                        String kanal = jsonHeadline.getString(Constant.kanal);
+                        String channel = jsonHeadline.getString(Constant.kanal);
                         String image_url = jsonHeadline.getString(Constant.image_url);
                         String date_publish = jsonHeadline.getString(Constant.date_publish);
                         String url = jsonHeadline.getString(Constant.url);
                         String timestamp = jsonHeadline.getString(Constant.timestamp);
-                        channelListArrayList.add(new ChannelList(id, title, kanal,
+                        channelListArrayList.add(new ChannelList(id, title, channel,
                                 image_url, date_publish, url, timestamp));
                         Log.i(Constant.TAG, "CHANNEL LIST : " + channelListArrayList.get(i).getTitle());
                     }
                 }
                 //Check Ads if exists
-                if (isInternetPresent) {
+                if (isInternetPresent && !isLoadMore) {
+                    Log.i(Constant.TAG, "Loading Ads...");
                     JSONObject objAds = jsonArrayResponses.getJSONObject(jsonArrayResponses.length() - 1);
                     JSONArray jsonArraySegmentAds = objAds.getJSONArray(Constant.adses);
                     if (jsonArraySegmentAds.length() > 0) {
@@ -234,20 +249,32 @@ public class ActDetailChannel extends ActionBarActivity implements
                 //Small Card List Style
                 mAnimAdapter = new ScaleInAnimationAdapter(adapter);
                 mAnimAdapter.setAbsListView(listView);
-                listView.setAdapter(mAnimAdapter);
-                mAnimAdapter.notifyDataSetChanged();
+                if (!isLoadMore) {
+                    listView.setAdapter(mAnimAdapter);
+                    mAnimAdapter.notifyDataSetChanged();
+                } else {
+                    mAnimAdapter.notifyDataSetChanged();
+                    listView.onLoadMoreComplete();
+                }
                 //Big Card List Style
                 swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(bigAdapter);
                 swingBottomInAnimationAdapter.setAbsListView(listViewBigCard);
                 assert swingBottomInAnimationAdapter.getViewAnimator() != null;
                 swingBottomInAnimationAdapter.getViewAnimator().setInitialDelayMillis(1000);
-                listViewBigCard.setAdapter(swingBottomInAnimationAdapter);
-                bigAdapter.notifyDataSetChanged();
+                if (!isLoadMore) {
+                    listViewBigCard.setAdapter(swingBottomInAnimationAdapter);
+                    bigAdapter.notifyDataSetChanged();
+                } else {
+                    bigAdapter.notifyDataSetChanged();
+                    listViewBigCard.onLoadMoreComplete();
+                }
                 //Hide progress
-                progressWheel.setVisibility(View.GONE);
+                if (progressWheel.getVisibility() == View.VISIBLE) {
+                    progressWheel.setVisibility(View.GONE);
+                }
             }
             //Show Ads
-            if (isInternetPresent) {
+            if (isInternetPresent && !isLoadMore) {
                 showAds();
             }
         } catch (Exception e) {
@@ -345,77 +372,26 @@ public class ActDetailChannel extends ActionBarActivity implements
 
     @Override
     public void onLoadMore() {
-        String data = String.valueOf(dataSize += 10);
-        paging += 1;
-        if(isInternetPresent) {
-            setAnalytics(String.valueOf(paging), name);
-            StringRequest stringRequest = new StringRequest(Request.Method.GET, getPagingUrl(channel_title, data, timeStamp, level),
-                    new Response.Listener<String>() {
-                        @Override
-                        public void onResponse(String volleyResponse) {
-                            Log.i(Constant.TAG, "CHANNEL BOLA RESPONSE : " + volleyResponse);
-                            try {
-                                JSONObject jsonObject = new JSONObject(volleyResponse);
-                                jsonArrayResponses = jsonObject.getJSONArray(Constant.response);
-                                if (jsonArrayResponses != null) {
-                                    JSONObject objHeadline = jsonArrayResponses.getJSONObject(0);
-                                    if (objHeadline != null) {
-                                        jsonArraySegmentHeadline = objHeadline.getJSONArray(Constant.headlines);
-                                        for (int i = 0; i < jsonArraySegmentHeadline.length(); i++) {
-                                            JSONObject jsonHeadline = jsonArraySegmentHeadline.getJSONObject(i);
-                                            String id = jsonHeadline.getString(Constant.id);
-                                            String title = jsonHeadline.getString(Constant.title);
-                                            String kanal = jsonHeadline.getString(Constant.kanal);
-                                            String image_url = jsonHeadline.getString(Constant.image_url);
-                                            String date_publish = jsonHeadline.getString(Constant.date_publish);
-                                            String url = jsonHeadline.getString(Constant.url);
-                                            String timestamp = jsonHeadline.getString(Constant.timestamp);
-                                            channelListArrayList.add(new ChannelList(id, title, kanal,
-                                                    image_url, date_publish, url, timestamp));
-                                        }
-                                    }
-                                }
-                                timeStamp = channelListArrayList.get(channelListArrayList.size()-1).getTimestamp();
-                                if (channelListArrayList.size() > 0 || !channelListArrayList.isEmpty()) {
-                                    //Small Card List Style
-                                    mAnimAdapter = new ScaleInAnimationAdapter(adapter);
-                                    mAnimAdapter.setAbsListView(listView);
-                                    mAnimAdapter.notifyDataSetChanged();
-                                    listView.onLoadMoreComplete();
-                                    //Big Card List Style
-                                    swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(bigAdapter);
-                                    swingBottomInAnimationAdapter.setAbsListView(listViewBigCard);
-                                    assert swingBottomInAnimationAdapter.getViewAnimator() != null;
-                                    swingBottomInAnimationAdapter.getViewAnimator().setInitialDelayMillis(1000);
-                                    bigAdapter.notifyDataSetChanged();
-                                    listViewBigCard.onLoadMoreComplete();
-                                }
-                            } catch (Exception e) {
-                                e.getMessage();
-                            }
-                        }
-                    },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError volleyError) {
-                            if (listView.getVisibility() == View.VISIBLE) {
-                                listView.onLoadMoreComplete();
-                                listView.setSelection(0);
-                            } else if (listViewBigCard.getVisibility() == View.VISIBLE) {
-                                listViewBigCard.onLoadMoreComplete();
-                                listViewBigCard.setSelection(0);
-                            }
-                            Toast.makeText(ActDetailChannel.this, R.string.label_error, Toast.LENGTH_SHORT).show();
-                        }
-                    });
-            stringRequest.setShouldCache(true);
-            stringRequest.setRetryPolicy(new DefaultRetryPolicy(
-                    Constant.TIME_OUT,
-                    0,
-                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-            Global.getInstance(this).getRequestQueue().getCache().invalidate(getPagingUrl(channel_title, data, timeStamp, level), true);
-            Global.getInstance(this).getRequestQueue().getCache().get(getPagingUrl(channel_title, data, timeStamp, level));
-            Global.getInstance(this).addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
+        if (isInternetPresent) {
+            String data = String.valueOf(dataSize += 10);
+            paging += 1;
+            if (name != null) {
+                if (name.length() > 0) {
+                    setAnalytics(String.valueOf(paging), name);
+                } else {
+                    setAnalytics(String.valueOf(paging), channel_title);
+                }
+            } else {
+                setAnalytics(String.valueOf(paging), channel_title);
+            }
+            loadMoreData(data);
+        } else {
+            if (listView.getVisibility() == View.VISIBLE) {
+                listView.onLoadMoreComplete();
+            } else if (listViewBigCard.getVisibility() == View.VISIBLE) {
+                listViewBigCard.onLoadMoreComplete();
+            }
+            Toast.makeText(ActDetailChannel.this, R.string.title_no_connection, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -426,6 +402,12 @@ public class ActDetailChannel extends ActionBarActivity implements
             Bundle bundle = new Bundle();
             bundle.putString("id", channelList.getId());
             bundle.putString("channel_title", channel_title);
+            bundle.putString("channel", channel);
+            if (color != null) {
+                if (color.length() > 0) {
+                    bundle.putString("color", color);
+                }
+            }
             Intent intent = new Intent(this, ActDetailContent.class);
             intent.putExtras(bundle);
             startActivity(intent);
@@ -435,96 +417,11 @@ public class ActDetailChannel extends ActionBarActivity implements
 
     @Override
     public void onClick(View view) {
-        if(view.getId() == R.id.layout_ripple_view) {
+        if (view.getId() == R.id.layout_ripple_view) {
             if (isInternetPresent) {
                 rippleView.setVisibility(View.GONE);
                 progressWheel.setVisibility(View.VISIBLE);
-                StringRequest stringRequest = new StringRequest(Request.Method.GET, getUrl(channel_title, level),
-                        new Response.Listener<String>() {
-                            @Override
-                            public void onResponse(String volleyResponse) {
-                                Log.i(Constant.TAG, "CHANNEL BOLA RESPONSE : " + volleyResponse);
-                                try {
-                                    JSONObject jsonObject = new JSONObject(volleyResponse);
-                                    jsonArrayResponses = jsonObject.getJSONArray(Constant.response);
-                                    if (jsonArrayResponses.length() > 0) {
-                                        //Get content
-                                        JSONObject objHeadline = jsonArrayResponses.getJSONObject(0);
-                                        jsonArraySegmentHeadline = objHeadline.getJSONArray(Constant.headlines);
-                                        if (jsonArraySegmentHeadline.length() > 0) {
-                                            for (int i = 0; i < jsonArraySegmentHeadline.length(); i++) {
-                                                JSONObject jsonHeadline = jsonArraySegmentHeadline.getJSONObject(i);
-                                                String id = jsonHeadline.getString(Constant.id);
-                                                String title = jsonHeadline.getString(Constant.title);
-                                                String kanal = jsonHeadline.getString(Constant.kanal);
-                                                String image_url = jsonHeadline.getString(Constant.image_url);
-                                                String date_publish = jsonHeadline.getString(Constant.date_publish);
-                                                String url = jsonHeadline.getString(Constant.url);
-                                                String timestamp = jsonHeadline.getString(Constant.timestamp);
-                                                channelListArrayList.add(new ChannelList(id, title, kanal,
-                                                        image_url, date_publish, url, timestamp));
-                                                Log.i(Constant.TAG, "CHANNEL BOLA : " + channelListArrayList.get(i).getTitle());
-                                            }
-                                        }
-                                        //Check Ads if exists
-                                        JSONObject objAds = jsonArrayResponses.getJSONObject(jsonArrayResponses.length() - 1);
-                                        JSONArray jsonArraySegmentAds = objAds.getJSONArray(Constant.adses);
-                                        if (jsonArraySegmentAds.length() > 0) {
-                                            for (int j=0; j<jsonArraySegmentAds.length(); j++) {
-                                                JSONObject jsonAds = jsonArraySegmentAds.getJSONObject(j);
-                                                String name = jsonAds.getString(Constant.name);
-                                                int position = jsonAds.getInt(Constant.position);
-                                                int type = jsonAds.getInt(Constant.type);
-                                                String unit_id = jsonAds.getString(Constant.unit_id);
-                                                adsArrayList.add(new Ads(name, type, position, unit_id));
-                                                Log.i(Constant.TAG, "ADS : " + adsArrayList.get(j).getmUnitId());
-                                            }
-                                        }
-                                    }
-                                    //Get last published
-                                    timeStamp = channelListArrayList.get(channelListArrayList.size()-1).getTimestamp();
-                                    //Populate content
-                                    if (channelListArrayList.size() > 0 || !channelListArrayList.isEmpty()) {
-                                        //Small Card List Style
-                                        mAnimAdapter = new ScaleInAnimationAdapter(adapter);
-                                        mAnimAdapter.setAbsListView(listView);
-                                        listView.setAdapter(mAnimAdapter);
-                                        mAnimAdapter.notifyDataSetChanged();
-                                        //Big Card List Style
-                                        swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(bigAdapter);
-                                        swingBottomInAnimationAdapter.setAbsListView(listViewBigCard);
-                                        assert swingBottomInAnimationAdapter.getViewAnimator() != null;
-                                        swingBottomInAnimationAdapter.getViewAnimator().setInitialDelayMillis(1000);
-                                        listViewBigCard.setAdapter(swingBottomInAnimationAdapter);
-                                        bigAdapter.notifyDataSetChanged();
-                                        //Hide progress
-                                        progressWheel.setVisibility(View.GONE);
-                                        if (rippleView.getVisibility() == View.VISIBLE) {
-                                            rippleView.setVisibility(View.GONE);
-                                        }
-                                    }
-                                    //Show Ads
-                                    showAds();
-                                } catch (Exception e) {
-                                    e.getMessage();
-                                }
-                            }
-                        },
-                        new Response.ErrorListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError volleyError) {
-                                progressWheel.setVisibility(View.GONE);
-                                rippleView.setVisibility(View.VISIBLE);
-                            }
-                        });
-                stringRequest.setShouldCache(true);
-                stringRequest.setRetryPolicy(new DefaultRetryPolicy(
-                        Constant.TIME_OUT,
-                        0,
-                        DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-                Global.getInstance(this).getRequestQueue().getCache().invalidate(getUrl(channel_title, level), true);
-                Global.getInstance(this).getRequestQueue().getCache().get(getUrl(channel_title, level));
-                Global.getInstance(this).addToRequestQueue(stringRequest, Constant.JSON_REQUEST);
+                retrieveData(channel, channel_title, level);
             }
         } else if (view.getId() == R.id.fab) {
             if (listView.getVisibility() == View.VISIBLE) {
@@ -594,8 +491,47 @@ public class ActDetailChannel extends ActionBarActivity implements
     private void setActionBarTheme(String channelColor, String text) {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor(channelColor)));
         getSupportActionBar().setTitle(text);
+        //Check color parameter
+        if (channelColor != null) {
+            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor(channelColor)));
+        } else {
+            if (text.equalsIgnoreCase(Constant.CHANNEL_BOLA)) {
+                getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.color_bola)));
+            } else if (text.toLowerCase().contains("life")) {
+                getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.color_life)));
+            } else if (text.equalsIgnoreCase(Constant.CHANNEL_AUTO)) {
+                getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.color_auto)));
+            } else {
+                getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.color_news)));
+            }
+        }
+        //Set all components theme
+        setComponentTheme(text);
+    }
+
+    private void setComponentTheme(String textChannel) {
+        if (textChannel != null) {
+            if (textChannel.length() > 0) {
+                if (textChannel.equalsIgnoreCase(Constant.CHANNEL_BOLA)) {
+                    progressWheel.setBarColor(getResources().getColor(R.color.color_bola));
+                    tvChannel.setTextColor(getResources().getColor(R.color.color_bola));
+                    floatingActionButton.setColorNormal(getResources().getColor(R.color.color_bola));
+                } else if (textChannel.toLowerCase().contains("life")) {
+                    progressWheel.setBarColor(getResources().getColor(R.color.color_life));
+                    tvChannel.setTextColor(getResources().getColor(R.color.color_life));
+                    floatingActionButton.setColorNormal(getResources().getColor(R.color.color_life));
+                } else if (textChannel.equalsIgnoreCase(Constant.CHANNEL_AUTO)) {
+                    progressWheel.setBarColor(getResources().getColor(R.color.color_auto));
+                    tvChannel.setTextColor(getResources().getColor(R.color.color_auto));
+                    floatingActionButton.setColorNormal(getResources().getColor(R.color.color_auto));
+                } else {
+                    progressWheel.setBarColor(getResources().getColor(R.color.color_news));
+                    tvChannel.setTextColor(getResources().getColor(R.color.color_news));
+                    floatingActionButton.setColorNormal(getResources().getColor(R.color.color_news));
+                }
+            }
+        }
     }
 
     private void defineViews() {

@@ -119,7 +119,7 @@ public class ActSearchResult extends ActionBarActivity implements
         resultArrayList = new ArrayList<>();
         //Adapter
         searchResultAdapter = new SearchResultAdapter(this, resultArrayList);
-        bigAdapter = new ChannelBigAdapter(this, Constant.BIG_CARD_SEARCH_RESULT, null, null, null, resultArrayList);
+        bigAdapter = new ChannelBigAdapter(this, Constant.BIG_CARD_SEARCH_RESULT, null, resultArrayList);
         //Result label
         tvSearchResult = (TextView)findViewById(R.id.text_search_result);
         tvSearchResultNumber = (TextView)findViewById(R.id.text_search_result_number);

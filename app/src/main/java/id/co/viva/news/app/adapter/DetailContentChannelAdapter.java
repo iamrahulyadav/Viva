@@ -14,14 +14,14 @@ import java.util.ArrayList;
 
 import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.fragment.DetailIndexContent;
-import id.co.viva.news.app.model.ChannelLife;
+import id.co.viva.news.app.model.ChannelList;
 
 /**
  * Created by reza on 24/10/14.
  */
-public class DetailContentAdapterLife extends FragmentStatePagerAdapter {
+public class DetailContentChannelAdapter extends FragmentStatePagerAdapter {
 
-    private ArrayList<ChannelLife> channelLifeArrayList;
+    private ArrayList<ChannelList> channelListArrayList;
     private ArrayList<Fragment> mFragments = new ArrayList<Fragment>();
     private FragmentTransaction mCurTransaction = null;
     private ArrayList<Fragment.SavedState> mSavedState = new ArrayList<Fragment.SavedState>();
@@ -29,22 +29,19 @@ public class DetailContentAdapterLife extends FragmentStatePagerAdapter {
     private int mPosition;
     private String mChannelTitle;
 
-    public DetailContentAdapterLife(FragmentManager fragmentManager, ArrayList<ChannelLife> channelLifeArrayList, String channelTitle) {
+    public DetailContentChannelAdapter(FragmentManager fragmentManager,
+                                       ArrayList<ChannelList> channelListArrayList, String channelTitle) {
         super(fragmentManager);
         mChannelTitle = channelTitle;
         mFragmentManager = fragmentManager;
-        this.channelLifeArrayList = channelLifeArrayList;
+        this.channelListArrayList = channelListArrayList;
     }
 
     @Override
     public Fragment getItem(int position) {
         mPosition = position;
-        return DetailIndexContent.newInstance(channelLifeArrayList.get(position).getId(), "vivalife", mChannelTitle);
-    }
-
-    @Override
-    public int getCount() {
-        return channelLifeArrayList.size();
+        return DetailIndexContent.newInstance(channelListArrayList
+                .get(position).getId(), "bola", mChannelTitle);
     }
 
     @Override
@@ -54,6 +51,11 @@ public class DetailContentAdapterLife extends FragmentStatePagerAdapter {
         } else {
             return POSITION_NONE;
         }
+    }
+
+    @Override
+    public int getCount() {
+        return channelListArrayList.size();
     }
 
     @Override
@@ -146,7 +148,7 @@ public class DetailContentAdapterLife extends FragmentStatePagerAdapter {
             mSavedState.clear();
             mFragments.clear();
             if (fss != null) {
-                for (int i=0; i<fss.length; i++) {
+                for(int i=0; i<fss.length; i++) {
                     mSavedState.add((Fragment.SavedState)fss[i]);
                 }
             }

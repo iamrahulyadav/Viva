@@ -161,7 +161,7 @@ public class ActComment extends ActionBarActivity implements View.OnClickListene
     private void getStateUser() {
         Global.getInstance(this).getDefaultEditor();
         fullName = Global.getInstance(this).getSharedPreferences(this)
-                .getString(Constant.LOGIN_STATES_FULLNAME, "");
+                .getString(Constant.LOGIN_STATES_FULL_NAME, "");
         email = Global.getInstance(this).getSharedPreferences(this)
                 .getString(Constant.LOGIN_STATES_EMAIL, "");
         userSocialId = Global.getInstance(this).getSharedPreferences(this)

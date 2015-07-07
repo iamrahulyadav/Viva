@@ -404,7 +404,7 @@ public class ListMainFragment extends Fragment implements View.OnClickListener, 
                 labelLoadData.setVisibility(View.GONE);
             }
             //Internet checking process
-            if (isInternetPresent) {
+            if (isInternetPresent && !isLoadMore) {
                 //Show Ads
                 showAds();
                 //Set local time

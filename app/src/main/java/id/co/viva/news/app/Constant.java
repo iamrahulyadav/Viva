@@ -97,14 +97,14 @@ public class Constant {
     public static final String FAVORITES_LIST = "favorites_list";
     public static final String FAVORITES_LIST_SIZE = "favorites_list_size";
     public static final String LOGIN_STATES_EMAIL = "login_states_email";
-    public static final String LOGIN_STATES_FULLNAME = "login_states_fullname";
+    public static final String LOGIN_STATES_FULL_NAME = "login_states_fullname";
     public static final String LOGIN_STATES_URL_PHOTO = "login_states_url_photo";
     public static final String LOGIN_STATES_USER_SOCIAL_ID = "login_states_user_social_id";
     public static final String LOGIN_STATES_APP_ID = "login_states_app_id";
-    public static final String LOGIN_STATES_ISLOGIN = "isLogin";
+    public static final String LOGIN_STATES_IS_LOGIN = "isLogin";
     public static final String LOGIN_STATES_GENDER = "login_states_gender";
     public static final String LOGIN_STATES_CITY = "login_states_city";
-    public static final String LOGIN_STATES_BIRTHDATE = "login_states_birthdate";
+    public static final String LOGIN_STATES_BIRTH_DATE = "login_states_birthdate";
     public static final String LOGIN_STATES_PROVINCE = "login_states_province";
     public static final String LOGIN_STATES_COUNTRY = "login_states_country";
     public static final String PREFS_ADS_NAME = "prefs_ads_name";
@@ -157,7 +157,7 @@ public class Constant {
     public static final String AllNews = "Semua Berita";
     public static final String response = "response";
     public static final String timestamp = "timestamp";
-//    public static final String headlines = "headlines";
+    public static final String headlines = "headlines";
     public static final String news = "news";
     public static final String comment_list = "comment_list";
     public static final String related_article = "related_article";
@@ -167,6 +167,7 @@ public class Constant {
     public static final String id = "id";
     public static final String title = "title";
     public static final String slug = "slug";
+    public static final String level = "level";
     public static final String kanal = "kanal";
     public static final String image_url = "image_url";
     public static final String date_publish = "date_publish";
@@ -178,6 +179,7 @@ public class Constant {
     //JSON Tag Ads
     public static final String adses = "adses";
     public static final String menus = "menus";
+    public static final String maps = "maps";
     public static final String screen_name = "screen_name";
     public static final String screen = "screen";
     public static final String unit_id = "unit_id";
@@ -251,6 +253,8 @@ public class Constant {
     public static final String RATING_ARTICLE = "RATING_ARTICLE";
     public static final String ARTICLE_FROM_NOTIFICATION = "DETAIL_ARTICLE";
 
+    public static final String CHANNEL_INDEX_LIFE = "http://life.viva.co.id/";
+
     //Label News
     public static String LABEL_CHANNEL_POLITIK = "Politik";
     public static String LABEL_CHANNEL_BISNIS = "Bisnis";
@@ -280,36 +284,6 @@ public class Constant {
 
     //Url search from mobile site
     public static String SEARCH_KEYWORD = "search.viva.co.id/search?q=";
-
-    //Viva Url News
-    public static final String CHANNEL_INDEX_NEWS = "http://news.viva.co.id/";
-    public static final String CHANNEL_POLITIK = "http://politik.news.viva.co.id/";
-    public static final String CHANNEL_BISNIS = "http://bisnis.news.viva.co.id/";
-    public static final String CHANNEL_NASIONAL = "http://nasional.news.viva.co.id/";
-    public static final String CHANNEL_METRO = "http://metro.news.viva.co.id/";
-    public static final String CHANNEL_DUNIA = "http://dunia.news.viva.co.id/";
-    public static final String CHANNEL_TEKNOLOGI = "http://teknologi.news.viva.co.id/";
-    public static final String CHANNEL_OTOMOTIF = "http://otomotif.news.viva.co.id/";
-    public static final String CHANNEL_SOROT = "http://sorot.news.viva.co.id/";
-    public static final String CHANNEL_WAWANCARA = "http://analisis.news.viva.co.id/";
-    public static final String CHANNEL_FOKUS = "http://fokus.news.viva.co.id/";
-
-    //Viva Url Bola
-    public static final String CHANNEL_INDEX_BOLA = "http://bola.viva.co.id/";
-    public static final String CHANNEL_LIGA_INGGRIS = "http://bola.viva.co.id/liga/inggris";
-    public static final String CHANNEL_LIGA_INDONESIA = "http://bola.viva.co.id/liga/indonesia";
-    public static final String CHANNEL_LIGA_ITALIA = "http://bola.viva.co.id/liga/italia";
-    public static final String CHANNEL_LIGA_SPANYOL = "http://bola.viva.co.id/liga/spanyol";
-    public static final String CHANNEL_BOLA_NASIONAL = "http://bola.viva.co.id/nasional";
-    public static final String CHANNEL_BOLA_SEJAGAT = "http://bola.viva.co.id/bolasejagad";
-
-    //Viva Url Life
-    public static final String CHANNEL_INDEX_LIFE = "http://life.viva.co.id/";
-    public static final String CHANNEL_STYLE = "http://life.viva.co.id/style";
-    public static final String CHANNEL_SHOWBIZ = "http://life.viva.co.id/showbiz";
-    public static final String CHANNEL_FOODLIVING = "http://life.viva.co.id/food_and_living";
-    public static final String CHANNEL_TRAVEL = "http://life.viva.co.id/travel";
-    public static final String CHANNEL_HEALTHSEX = "http://life.viva.co.id/health_and_sex";
 
     //Banner Interstitial Position
     public static final String ADS_TYPE_OPENING = "ads_opening";
@@ -354,6 +328,11 @@ public class Constant {
     public static final int BERITA_SEKITAR_LIST = 3;
     public static final int BIG_CARD_CHANNEL_LIST = 4;
     public static final int BIG_CARD_SEARCH_RESULT = 7;
+
+    public final static String CHANNEL_LIFE = "vivalife";
+    public final static String CHANNEL_BOLA = "bola";
+    public final static String CHANNEL_NEWS = "berita";
+    public final static String CHANNEL_AUTO = "otomotif";
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     public static Bitmap blur(Context ctx, Bitmap image) {

@@ -231,7 +231,7 @@ public class ActUserProfile extends ActionBarActivity implements View.OnClickLis
     private void getProfile() {
         Global.getInstance(this).getDefaultEditor();
         fullname = Global.getInstance(this).getSharedPreferences(this)
-                .getString(Constant.LOGIN_STATES_FULLNAME, "");
+                .getString(Constant.LOGIN_STATES_FULL_NAME, "");
         email = Global.getInstance(this).getSharedPreferences(this)
                 .getString(Constant.LOGIN_STATES_EMAIL, "");
         photo = Global.getInstance(this).getSharedPreferences(this)
@@ -239,7 +239,7 @@ public class ActUserProfile extends ActionBarActivity implements View.OnClickLis
         gender = Global.getInstance(this).getSharedPreferences(this)
                 .getString(Constant.LOGIN_STATES_GENDER, "");
         birthdays = Global.getInstance(this).getSharedPreferences(this)
-                .getString(Constant.LOGIN_STATES_BIRTHDATE, "");
+                .getString(Constant.LOGIN_STATES_BIRTH_DATE, "");
         country = Global.getInstance(this).getSharedPreferences(this)
                 .getString(Constant.LOGIN_STATES_COUNTRY, "");
         province = Global.getInstance(this).getSharedPreferences(this)

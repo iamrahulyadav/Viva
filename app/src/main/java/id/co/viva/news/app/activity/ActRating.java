@@ -105,7 +105,7 @@ public class ActRating extends ActionBarActivity implements OnCompleteListener,
     private void getStateUser() {
         Global.getInstance(this).getDefaultEditor();
         fullName = Global.getInstance(this).getSharedPreferences(this)
-                .getString(Constant.LOGIN_STATES_FULLNAME, "");
+                .getString(Constant.LOGIN_STATES_FULL_NAME, "");
         email = Global.getInstance(this).getSharedPreferences(this)
                 .getString(Constant.LOGIN_STATES_EMAIL, "");
     }

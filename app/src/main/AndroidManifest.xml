@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="id.co.viva.news.app"
-    android:versionCode="22"
-    android:versionName="2.3">
+    android:versionCode="23"
+    android:versionName="2.4">
 
     <!-- All Permissions -->
     <uses-permission android:name="android.permission.INTERNET"/>
@@ -156,19 +156,11 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"/>
 
-        <activity
-            android:name=".activity.ActDetailContentNews"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme"/>
-            <meta-data
+        <meta-data
                 android:name="android.app.default_searchable"
-                android:value=".activity.ActSearchResult" />/>
+                android:value=".activity.ActSearchResult" /><![CDATA[/>
 
-        <activity
-            android:name=".activity.ActDetailContentLife"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme"/>
-            <meta-data
+        ]]><meta-data
                 android:name="android.app.default_searchable"
                 android:value=".activity.ActSearchResult" />/>
 

@@ -50,6 +50,7 @@ import id.co.viva.news.app.fragment.BeritaSekitarFragment;
 import id.co.viva.news.app.fragment.FavoritesFragment;
 import id.co.viva.news.app.fragment.GridChannelFragment;
 import id.co.viva.news.app.fragment.ListMainFragment;
+import id.co.viva.news.app.model.ChannelURLMap;
 import id.co.viva.news.app.model.NavigationItem;
 import info.hoang8f.widget.FButton;
 
@@ -73,6 +74,11 @@ public class ActLanding extends ActionBarActivity implements View.OnClickListene
     private boolean isInternetPresent = false;
     private FButton btnRetryList;
     private ProgressWheel progressWheel;
+
+    /**
+     * Using by ChannelMapper
+     */
+    public static ArrayList<ChannelURLMap> channelURLMaps;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,6 +136,19 @@ public class ActLanding extends ActionBarActivity implements View.OnClickListene
     private void getResponse(String response) {
         try {
             JSONObject jsonObject = new JSONObject(response);
+            //Get URL mapping
+            JSONArray listUrls = jsonObject.getJSONArray(Constant.maps);
+            if (listUrls.length() > 0) {
+                for (int i=0; i<listUrls.length(); i++) {
+                    JSONObject objMap = listUrls.getJSONObject(i);
+                    String url = objMap.getString(Constant.url);
+                    String name = objMap.getString(Constant.name);
+                    int channel_id = objMap.getInt(Constant.channel_id);
+                    String channel = objMap.getString(Constant.kanal);
+                    String level = objMap.getString(Constant.level);
+                    channelURLMaps.add(new ChannelURLMap(url, name, channel_id, channel, level));
+                }
+            }
             //Get menu list
             JSONArray listMenus = jsonObject.getJSONArray(Constant.menus);
             if (listMenus.length() > 0) {
@@ -272,6 +291,8 @@ public class ActLanding extends ActionBarActivity implements View.OnClickListene
     private void defineViews() {
         //Menu collection
         navDrawerItems = new ArrayList<>();
+        //URL map collection
+        channelURLMaps = new ArrayList<>();
         //Slider menu
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         //Menu list
@@ -343,7 +364,7 @@ public class ActLanding extends ActionBarActivity implements View.OnClickListene
     private void getProfile() {
         Global.getInstance(this).getDefaultEditor();
         mFullName = Global.getInstance(this).getSharedPreferences(this)
-                .getString(Constant.LOGIN_STATES_FULLNAME, "");
+                .getString(Constant.LOGIN_STATES_FULL_NAME, "");
         mEmail = Global.getInstance(this).getSharedPreferences(this)
                 .getString(Constant.LOGIN_STATES_EMAIL, "");
         mPhotoUrl = Global.getInstance(this).getSharedPreferences(this)
@@ -395,8 +416,10 @@ public class ActLanding extends ActionBarActivity implements View.OnClickListene
             if (fragment != null) {
                 getSupportFragmentManager()
                         .beginTransaction().remove(fragment).commit();
+                checkListURL();
                 finish();
             } else {
+                checkListURL();
                 finish();
             }
         }
@@ -414,6 +437,14 @@ public class ActLanding extends ActionBarActivity implements View.OnClickListene
                 .commit();
         mDrawerList.setItemChecked(0, true);
         mDrawerList.setSelection(0);
+    }
+
+    private void checkListURL() {
+        if (channelURLMaps != null) {
+            if (channelURLMaps.size() > 0) {
+                channelURLMaps.clear();
+            }
+        }
     }
 
     @Override

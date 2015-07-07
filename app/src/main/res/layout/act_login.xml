@@ -70,12 +70,11 @@
             android:textColor="@android:color/white"
             android:textSize="16sp"
             custom:pb_colorComplete="@color/green"
-            custom:pb_colorNormal="@color/red_thunderbird"
+            custom:pb_colorNormal="@color/red_thunder"
             custom:pb_colorPressed="@color/red"
             custom:pb_colorProgress="@color/purple_plum"
             custom:pb_textComplete="@string/label_favorite_navigation_title_confirm"
-            custom:pb_textProgress="@string/label_loading"
-            floatview:pb_colorNormal="@color/red_thunder" />
+            custom:pb_textProgress="@string/label_loading" />
         <com.dd.processbutton.iml.ActionProcessButton
             android:id="@+id/btn_register"
             android:layout_width="0dp"

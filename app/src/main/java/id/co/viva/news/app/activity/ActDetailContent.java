@@ -1,5 +1,6 @@
 package id.co.viva.news.app.activity;
 
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
@@ -7,8 +8,9 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.R;
-import id.co.viva.news.app.adapter.DetailContentAdapterBola;
+import id.co.viva.news.app.adapter.DetailContentChannelAdapter;
 import id.co.viva.news.app.component.ZoomOutPageTransformer;
 import id.co.viva.news.app.model.ChannelList;
 
@@ -18,33 +20,33 @@ import id.co.viva.news.app.model.ChannelList;
 public class ActDetailContent extends ActionBarActivity {
 
     private String id;
+    private String color;
     private String channel_title;
+    private String channel;
     private ViewPager viewPager;
-    private DetailContentAdapterBola adapter;
+    private DetailContentChannelAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //Get parameter
-        Bundle bundle = getIntent().getExtras();
-        id = bundle.getString("id");
-        channel_title = bundle.getString("channel_title");
+        getParameters();
 
         setContentView(R.layout.act_detail_content);
 
         //Set Actionbar
-        setActionBar();
+        setActionBar(color, channel_title, channel);
 
         //Set Detail Pager
         int position = 0;
-        if(ActDetailChannel.channelListArrayList != null) {
-            if(ActDetailChannel.channelListArrayList.size() > 0) {
-                for(ChannelList channelList : ActDetailChannel.channelListArrayList) {
-                    if(channelList.getId().equals(id)) break;
+        if (ActDetailChannel.channelListArrayList != null) {
+            if (ActDetailChannel.channelListArrayList.size() > 0) {
+                for (ChannelList channelList : ActDetailChannel.channelListArrayList) {
+                    if (channelList.getId().equals(id)) break;
                     position++;
                 }
             }
-            adapter = new DetailContentAdapterBola(getSupportFragmentManager(), ActDetailChannel.channelListArrayList, channel_title);
+            adapter = new DetailContentChannelAdapter(getSupportFragmentManager(), ActDetailChannel.channelListArrayList, channel_title);
             viewPager = (ViewPager)findViewById(R.id.vp_detail_content);
             viewPager.setAdapter(adapter);
             viewPager.setPageTransformer(true, new ZoomOutPageTransformer());
@@ -56,14 +58,44 @@ public class ActDetailContent extends ActionBarActivity {
         }
     }
 
-    private void setActionBar() {
+    private void getParameters() {
+        Bundle bundle = getIntent().getExtras();
+        id = bundle.getString("id");
+        channel_title = bundle.getString("channel_title");
+        channel = bundle.getString("channel");
+        color = bundle.getString("color");
+    }
+
+    private void setActionBar(String mColor, String mChannelTitle, String mChannel) {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
-        ColorDrawable colorDrawable = new ColorDrawable();
-        colorDrawable.setColor(getResources().getColor(R.color.color_bola));
-        getSupportActionBar().setBackgroundDrawable(colorDrawable);
-        if (channel_title != null) {
-            getSupportActionBar().setTitle(channel_title);
+        if (mColor != null) {
+            if (mColor.length() > 0) {
+                getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor(mColor)));
+            } else {
+                setThemeColor(mChannel);
+            }
+        } else {
+            setThemeColor(mChannel);
+        }
+        if (mChannelTitle != null) {
+            getSupportActionBar().setTitle(mChannelTitle);
+        }
+    }
+
+    private void setThemeColor(String textChannel) {
+        if (textChannel != null) {
+            if (textChannel.length() > 0) {
+                if (textChannel.equalsIgnoreCase(Constant.CHANNEL_BOLA)) {
+                    getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.color_bola)));
+                } else if (textChannel.toLowerCase().contains("life")) {
+                    getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.color_life)));
+                } else if (textChannel.equalsIgnoreCase(Constant.CHANNEL_AUTO)) {
+                    getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.color_auto)));
+                } else {
+                    getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.new_base_color)));
+                }
+            }
         }
     }
 

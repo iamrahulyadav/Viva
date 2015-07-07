@@ -74,11 +74,6 @@ public class GridChannelFragment extends Fragment implements View.OnClickListene
     private RelativeLayout layoutTransparentHeader;
     private Button buttonRetry;
 
-    private final static String CHANNEL_LIFE = "vivalife";
-    private final static String CHANNEL_BOLA = "bola";
-    private final static String CHANNEL_NEWS = "berita";
-    private final static String CHANNEL_AUTO = "otomotif";
-
     //Parameters
     private String name;
     private String color;
@@ -166,7 +161,7 @@ public class GridChannelFragment extends Fragment implements View.OnClickListene
         adsArrayList = new ArrayList<>();
         channels = new ArrayList<>();
 
-        setThemeColor(color, screen);
+        setThemeColor(screen);
     }
 
     private void checkCache() {
@@ -181,22 +176,26 @@ public class GridChannelFragment extends Fragment implements View.OnClickListene
         }
     }
 
-    private void setThemeColor(String colorTheme, String screenChannel) {
-        progressWheel.setBarColor(Integer.parseInt(colorTheme));
+    private void setThemeColor(String screenChannel) {
         switch (screenChannel) {
-            case CHANNEL_NEWS:
+            case Constant.CHANNEL_NEWS:
+                progressWheel.setBarColor(getResources().getColor(R.color.color_news));
                 buttonRetry.setBackgroundResource(R.drawable.shadow_button_news);
                 break;
-            case CHANNEL_BOLA:
+            case Constant.CHANNEL_BOLA:
+                progressWheel.setBarColor(getResources().getColor(R.color.color_bola));
                 buttonRetry.setBackgroundResource(R.drawable.shadow_button_bola);
                 break;
-            case CHANNEL_LIFE:
+            case Constant.CHANNEL_LIFE:
+                progressWheel.setBarColor(getResources().getColor(R.color.color_life));
                 buttonRetry.setBackgroundResource(R.drawable.shadow_button_life);
                 break;
-            case CHANNEL_AUTO:
+            case Constant.CHANNEL_AUTO:
+                progressWheel.setBarColor(getResources().getColor(R.color.color_auto));
                 buttonRetry.setBackgroundResource(R.drawable.shadow_button_otomotif);
                 break;
             default:
+                progressWheel.setBarColor(getResources().getColor(R.color.new_base_color));
                 buttonRetry.setBackgroundResource(R.drawable.shadow_button);
         }
     }

@@ -483,9 +483,9 @@ public class UserAccount {
 
     public void saveLoginStates(String emailState, String fullnameState, String app_id) {
         Global.getInstance(mContext).getDefaultEditor().putString(Constant.LOGIN_STATES_EMAIL, emailState);
-        Global.getInstance(mContext).getDefaultEditor().putString(Constant.LOGIN_STATES_FULLNAME, fullnameState);
+        Global.getInstance(mContext).getDefaultEditor().putString(Constant.LOGIN_STATES_FULL_NAME, fullnameState);
         Global.getInstance(mContext).getDefaultEditor().putString(Constant.LOGIN_STATES_APP_ID, app_id);
-        Global.getInstance(mContext).getDefaultEditor().putBoolean(Constant.LOGIN_STATES_ISLOGIN, true);
+        Global.getInstance(mContext).getDefaultEditor().putBoolean(Constant.LOGIN_STATES_IS_LOGIN, true);
         Global.getInstance(mContext).getDefaultEditor().commit();
     }
 
@@ -493,9 +493,9 @@ public class UserAccount {
         Global.getInstance(mContext).getDefaultEditor().putString(Constant.LOGIN_STATES_USER_SOCIAL_ID, userSocialId);
         Global.getInstance(mContext).getDefaultEditor().putString(Constant.LOGIN_STATES_APP_ID, app_id);
         Global.getInstance(mContext).getDefaultEditor().putString(Constant.LOGIN_STATES_EMAIL, emailState);
-        Global.getInstance(mContext).getDefaultEditor().putString(Constant.LOGIN_STATES_FULLNAME, fullnameState);
+        Global.getInstance(mContext).getDefaultEditor().putString(Constant.LOGIN_STATES_FULL_NAME, fullnameState);
         Global.getInstance(mContext).getDefaultEditor().putString(Constant.LOGIN_STATES_URL_PHOTO, urlPhoto);
-        Global.getInstance(mContext).getDefaultEditor().putBoolean(Constant.LOGIN_STATES_ISLOGIN, true);
+        Global.getInstance(mContext).getDefaultEditor().putBoolean(Constant.LOGIN_STATES_IS_LOGIN, true);
         Global.getInstance(mContext).getDefaultEditor().commit();
     }
 
@@ -510,7 +510,7 @@ public class UserAccount {
             Global.getInstance(mContext).getDefaultEditor().putString(Constant.LOGIN_STATES_GENDER, gender);
         }
         if(birthdate.length() > 0) {
-            Global.getInstance(mContext).getDefaultEditor().putString(Constant.LOGIN_STATES_BIRTHDATE, birthdate);
+            Global.getInstance(mContext).getDefaultEditor().putString(Constant.LOGIN_STATES_BIRTH_DATE, birthdate);
         }
         if(state.length() > 0) {
             Global.getInstance(mContext).getDefaultEditor().putString(Constant.LOGIN_STATES_COUNTRY, state);
@@ -521,13 +521,13 @@ public class UserAccount {
         if(city.length() > 0) {
             Global.getInstance(mContext).getDefaultEditor().putString(Constant.LOGIN_STATES_CITY, city);
         }
-        Global.getInstance(mContext).getDefaultEditor().putBoolean(Constant.LOGIN_STATES_ISLOGIN, true);
+        Global.getInstance(mContext).getDefaultEditor().putBoolean(Constant.LOGIN_STATES_IS_LOGIN, true);
         Global.getInstance(mContext).getDefaultEditor().commit();
     }
 
     public void deleteLoginStates() {
         Global.getInstance(mContext).getDefaultEditor().remove(Constant.LOGIN_STATES_EMAIL);
-        Global.getInstance(mContext).getDefaultEditor().remove(Constant.LOGIN_STATES_FULLNAME);
+        Global.getInstance(mContext).getDefaultEditor().remove(Constant.LOGIN_STATES_FULL_NAME);
         if(Global.getInstance(mContext).getSharedPreferences(mContext)
                 .getString(Constant.LOGIN_STATES_USER_SOCIAL_ID, "").length() > 0) {
             Global.getInstance(mContext).getDefaultEditor().remove(Constant.LOGIN_STATES_USER_SOCIAL_ID);
@@ -557,10 +557,10 @@ public class UserAccount {
             Global.getInstance(mContext).getDefaultEditor().remove(Constant.LOGIN_STATES_CITY);
         }
         if(Global.getInstance(mContext).getSharedPreferences(mContext)
-                .getString(Constant.LOGIN_STATES_BIRTHDATE, "").length() > 0) {
-            Global.getInstance(mContext).getDefaultEditor().remove(Constant.LOGIN_STATES_BIRTHDATE);
+                .getString(Constant.LOGIN_STATES_BIRTH_DATE, "").length() > 0) {
+            Global.getInstance(mContext).getDefaultEditor().remove(Constant.LOGIN_STATES_BIRTH_DATE);
         }
-        Global.getInstance(mContext).getDefaultEditor().putBoolean(Constant.LOGIN_STATES_ISLOGIN, false);
+        Global.getInstance(mContext).getDefaultEditor().putBoolean(Constant.LOGIN_STATES_IS_LOGIN, false);
         Global.getInstance(mContext).getDefaultEditor().commit();
     }
 
