@@ -544,7 +544,7 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
 
                     JSONArray sliderImageArray = detail.getJSONArray(Constant.content_images);
                     if (sliderImageArray != null) {
-                        for(int i=0; i<sliderImageArray.length(); i++) {
+                        for (int i=0; i<sliderImageArray.length(); i++) {
                             JSONObject objSlider = sliderImageArray.getJSONObject(i);
                             String sliderPhotoUrl = objSlider.getString("src");
                             String sliderTitle = objSlider.getString("title");
@@ -675,6 +675,7 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
     private void moveBrowserPage(String url) {
         Bundle bundle = new Bundle();
         bundle.putString("url", url);
+        bundle.putString("channel", kanal);
         Intent intent = new Intent(mActivity, ActBrowser.class);
         intent.putExtras(bundle);
         startActivity(intent);
@@ -769,6 +770,9 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
                 return true;
             case R.id.subaction_favorites:
                 doFavorite();
+                return true;
+            case R.id.subaction_browser:
+                moveBrowserPage(url_shared);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

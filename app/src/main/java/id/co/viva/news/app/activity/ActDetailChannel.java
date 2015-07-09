@@ -513,7 +513,7 @@ public class ActDetailChannel extends ActionBarActivity implements
     private void setComponentTheme(String textChannel) {
         if (textChannel != null) {
             if (textChannel.length() > 0) {
-                if (textChannel.equalsIgnoreCase(Constant.CHANNEL_BOLA)) {
+                if (textChannel.equalsIgnoreCase(Constant.CHANNEL_BOLA) || textChannel.equalsIgnoreCase("sport")) {
                     progressWheel.setBarColor(getResources().getColor(R.color.color_bola));
                     tvChannel.setTextColor(getResources().getColor(R.color.color_bola));
                     floatingActionButton.setColorNormal(getResources().getColor(R.color.color_bola));

@@ -46,7 +46,7 @@ public class ActDetailContent extends ActionBarActivity {
                     position++;
                 }
             }
-            adapter = new DetailContentChannelAdapter(getSupportFragmentManager(), ActDetailChannel.channelListArrayList, channel_title);
+            adapter = new DetailContentChannelAdapter(getSupportFragmentManager(), ActDetailChannel.channelListArrayList, channel_title, channel);
             viewPager = (ViewPager)findViewById(R.id.vp_detail_content);
             viewPager.setAdapter(adapter);
             viewPager.setPageTransformer(true, new ZoomOutPageTransformer());

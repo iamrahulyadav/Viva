@@ -115,6 +115,10 @@ public class ActBrowser extends ActionBarActivity {
                     colorDrawable.setColor(getResources().getColor(R.color.color_life));
                     getSupportActionBar().setBackgroundDrawable(colorDrawable);
                     progressWheel.setBarColor(getResources().getColor(R.color.color_life));
+                } else if (channel.equalsIgnoreCase("otomotif")) {
+                    colorDrawable.setColor(getResources().getColor(R.color.color_auto));
+                    getSupportActionBar().setBackgroundDrawable(colorDrawable);
+                    progressWheel.setBarColor(getResources().getColor(R.color.color_auto));
                 } else {
                     colorDrawable.setColor(getResources().getColor(R.color.color_news));
                     getSupportActionBar().setBackgroundDrawable(colorDrawable);

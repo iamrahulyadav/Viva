@@ -368,6 +368,8 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
                                         btnComment.setBackgroundColor(getResources().getColor(R.color.color_bola));
                                     } else if (kanalFromNotification.equalsIgnoreCase("vivalife")) {
                                         btnComment.setBackgroundColor(getResources().getColor(R.color.color_life));
+                                    } else if (kanalFromNotification.equalsIgnoreCase("otomotif")) {
+                                        btnComment.setBackgroundColor(getResources().getColor(R.color.color_auto));
                                     } else {
                                         btnComment.setBackgroundColor(getResources().getColor(R.color.color_news));
                                     }
@@ -386,6 +388,8 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
                                             headerRelated.setBackgroundResource(R.color.color_bola);
                                         } else if (kanalFromNotification.equalsIgnoreCase("vivalife")) {
                                             headerRelated.setBackgroundResource(R.color.color_life);
+                                        } else if (kanalFromNotification.equalsIgnoreCase("otomotif")) {
+                                            headerRelated.setBackgroundResource(R.color.color_auto);
                                         } else {
                                             headerRelated.setBackgroundResource(R.color.color_news);
                                         }
@@ -457,6 +461,11 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
                 getSupportActionBar().setBackgroundDrawable(colorDrawable);
                 getSupportActionBar().setTitle(R.string.label_item_navigation_life);
                 progressWheel.setBarColor(getResources().getColor(R.color.color_life));
+            } else if (fromkanal.equalsIgnoreCase("otomotif")) {
+                colorDrawable.setColor(getResources().getColor(R.color.color_auto));
+                getSupportActionBar().setBackgroundDrawable(colorDrawable);
+                getSupportActionBar().setTitle(R.string.label_item_navigation_otomotif);
+                progressWheel.setBarColor(getResources().getColor(R.color.color_auto));
             } else {
                 colorDrawable.setColor(getResources().getColor(R.color.color_news));
                 getSupportActionBar().setBackgroundDrawable(colorDrawable);
@@ -464,9 +473,9 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
                 progressWheel.setBarColor(getResources().getColor(R.color.color_news));
             }
         } else {
-            colorDrawable.setColor(getResources().getColor(R.color.grey_new));
+            colorDrawable.setColor(getResources().getColor(R.color.new_base_color));
             getSupportActionBar().setBackgroundDrawable(colorDrawable);
-            progressWheel.setBarColor(getResources().getColor(R.color.blue));
+            progressWheel.setBarColor(getResources().getColor(R.color.new_base_color));
         }
     }
 
@@ -476,6 +485,8 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
                 btnRetry.setBackgroundResource(R.drawable.shadow_button_bola);
             } else if (kanals.equalsIgnoreCase("vivalife")) {
                 btnRetry.setBackgroundResource(R.drawable.shadow_button_life);
+            } else if (kanals.equalsIgnoreCase("otomotif")) {
+                btnRetry.setBackgroundResource(R.drawable.shadow_button_otomotif);
             } else {
                 btnRetry.setBackgroundResource(R.drawable.shadow_button_news);
             }

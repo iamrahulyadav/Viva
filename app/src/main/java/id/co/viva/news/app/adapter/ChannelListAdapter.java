@@ -56,9 +56,9 @@ public class ChannelListAdapter extends BaseAdapter {
             LayoutInflater inflater = LayoutInflater.from(context);
             view = inflater.inflate(R.layout.item_channel_list, null);
             holder = new ViewHolder();
-            holder.image_item_channel_bola = (ImageView) view.findViewById(R.id.image_item_channel);
-            holder.title_item_channel_bola = (TextView) view.findViewById(R.id.title_item_channel);
-            holder.date_item_channel_bola = (TextView) view.findViewById(R.id.date_item_channel);
+            holder.image_item_channel = (ImageView) view.findViewById(R.id.image_item_channel);
+            holder.title_item_channel = (TextView) view.findViewById(R.id.title_item_channel);
+            holder.date_item_channel = (TextView) view.findViewById(R.id.date_item_channel);
             view.setTag(holder);
         } else {
             holder = (ViewHolder) view.getTag();
@@ -66,27 +66,27 @@ public class ChannelListAdapter extends BaseAdapter {
 
         ChannelList channelList = channelListArrayList.get(position);
 
-        holder.title_item_channel_bola.setText(channelList.getTitle());
+        holder.title_item_channel.setText(channelList.getTitle());
         try {
             DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             Date date = formatter.parse(channelList.getDate_publish());
-            holder.date_item_channel_bola.setText(Constant.getTimeAgo(date.getTime()));
+            holder.date_item_channel.setText(Constant.getTimeAgo(date.getTime()));
         } catch (Exception e) {
             e.getMessage();
         }
 
         if (channelList.getImage_url().length() > 0) {
             Picasso.with(context).load(channelList.getImage_url())
-                    .transform(new CropSquareTransformation()).into(holder.image_item_channel_bola);
+                    .transform(new CropSquareTransformation()).into(holder.image_item_channel);
         }
 
         return view;
     }
 
     private static class ViewHolder {
-        public ImageView image_item_channel_bola;
-        public TextView title_item_channel_bola;
-        public TextView date_item_channel_bola;
+        public ImageView image_item_channel;
+        public TextView title_item_channel;
+        public TextView date_item_channel;
     }
 
 }

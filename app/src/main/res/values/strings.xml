@@ -100,6 +100,7 @@
     <string name="label_item_navigation_favorites">Favorit</string>
     <string name="label_item_navigation_scan_berita">Scan QR Code</string>
     <string name="label_item_navigation_news">Berita</string>
+    <string name="label_item_navigation_otomotif">Otomotif</string>
     <string name="label_item_navigation_bola">Bola</string>
     <string name="label_item_navigation_life">Life</string>
     <string name="label_item_navigation_about">About</string>

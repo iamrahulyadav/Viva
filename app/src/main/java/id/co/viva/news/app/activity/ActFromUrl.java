@@ -293,6 +293,12 @@ public class ActFromUrl extends ActionBarActivity implements View.OnClickListene
                 getSupportActionBar().setTitle(R.string.label_item_navigation_life);
                 btnComment.setBackgroundColor(getResources().getColor(R.color.color_life));
                 progressWheel.setBarColor(getResources().getColor(R.color.color_life));
+            } else if (mChannel.equalsIgnoreCase("otomotif")) {
+                colorDrawable.setColor(getResources().getColor(R.color.color_auto));
+                getSupportActionBar().setBackgroundDrawable(colorDrawable);
+                getSupportActionBar().setTitle(R.string.label_item_navigation_otomotif);
+                btnComment.setBackgroundColor(getResources().getColor(R.color.color_auto));
+                progressWheel.setBarColor(getResources().getColor(R.color.color_auto));
             } else {
                 colorDrawable.setColor(getResources().getColor(R.color.color_news));
                 getSupportActionBar().setBackgroundDrawable(colorDrawable);
@@ -314,6 +320,8 @@ public class ActFromUrl extends ActionBarActivity implements View.OnClickListene
                 btnRetry.setBackgroundResource(R.drawable.shadow_button_bola);
             } else if (kanals.equalsIgnoreCase("vivalife")) {
                 btnRetry.setBackgroundResource(R.drawable.shadow_button_life);
+            } else if (kanals.equalsIgnoreCase("otomotif")) {
+                btnRetry.setBackgroundResource(R.drawable.shadow_button_otomotif);
             } else {
                 btnRetry.setBackgroundResource(R.drawable.shadow_button_news);
             }

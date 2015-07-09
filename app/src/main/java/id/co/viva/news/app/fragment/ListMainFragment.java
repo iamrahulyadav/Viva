@@ -71,7 +71,6 @@ public class ListMainFragment extends Fragment implements View.OnClickListener, 
 
     //Parameters
     private String name;
-    private String parent;
     private String color;
     private String screen;
     private String url;
@@ -104,12 +103,11 @@ public class ListMainFragment extends Fragment implements View.OnClickListener, 
     private String lastPublished;
     private boolean isLoadMoreContent = false;
 
-    public static ListMainFragment newInstance(String name, String parent, String color,
+    public static ListMainFragment newInstance(String name, String color,
                                                String screen, String url, String index, String layout) {
         ListMainFragment listMainFragment = new ListMainFragment();
         Bundle bundle = new Bundle();
         bundle.putString("name", name);
-        bundle.putString("parent", parent);
         bundle.putString("color", color);
         bundle.putString("screen", screen);
         bundle.putString("url", url);
@@ -128,7 +126,6 @@ public class ListMainFragment extends Fragment implements View.OnClickListener, 
 
     private void getBundle() {
         name = getArguments().getString("name");
-        parent = getArguments().getString("parent");
         color = getArguments().getString("color");
         screen = getArguments().getString("screen");
         url = getArguments().getString("url");
@@ -473,21 +470,15 @@ public class ListMainFragment extends Fragment implements View.OnClickListener, 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
         if (entityList.size() > 0) {
-            if (parent != null) {
-                if (parent.length() > 0) {
-
-                } else {
-                    EntityMain entityMain = entityList.get(position);
-                    Bundle bundle = new Bundle();
-                    bundle.putString("id", entityMain.getId());
-                    bundle.putString("screen", screen);
-                    bundle.putString("name", name);
-                    Intent intent = new Intent(getActivity(), ActDetailMain.class);
-                    intent.putExtras(bundle);
-                    getActivity().startActivity(intent);
-                    getActivity().overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
-                }
-            }
+            EntityMain entityMain = entityList.get(position);
+            Bundle bundle = new Bundle();
+            bundle.putString("id", entityMain.getId());
+            bundle.putString("screen", screen);
+            bundle.putString("name", name);
+            Intent intent = new Intent(getActivity(), ActDetailMain.class);
+            intent.putExtras(bundle);
+            getActivity().startActivity(intent);
+            getActivity().overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
         }
     }
 

@@ -50,6 +50,7 @@ import id.co.viva.news.app.fragment.BeritaSekitarFragment;
 import id.co.viva.news.app.fragment.FavoritesFragment;
 import id.co.viva.news.app.fragment.GridChannelFragment;
 import id.co.viva.news.app.fragment.ListMainFragment;
+import id.co.viva.news.app.fragment.TagPopularFragment;
 import id.co.viva.news.app.model.ChannelURLMap;
 import id.co.viva.news.app.model.NavigationItem;
 import info.hoang8f.widget.FButton;
@@ -143,7 +144,7 @@ public class ActLanding extends ActionBarActivity implements View.OnClickListene
                     JSONObject objMap = listUrls.getJSONObject(i);
                     String url = objMap.getString(Constant.url);
                     String name = objMap.getString(Constant.name);
-                    int channel_id = objMap.getInt(Constant.channel_id);
+                    String channel_id = objMap.getString(Constant.channel_id);
                     String channel = objMap.getString(Constant.kanal);
                     String level = objMap.getString(Constant.level);
                     channelURLMaps.add(new ChannelURLMap(url, name, channel_id, channel, level));
@@ -214,11 +215,13 @@ public class ActLanding extends ActionBarActivity implements View.OnClickListene
                         scanNews();
                         break;
                     case Constant.TAG_POPULAR:
-
+                        fragment = TagPopularFragment.newInstance(items.getName(),
+                                items.getColor(), items.getScreen(),
+                                items.getHit_url(), items.getIndex(), items.getLayoutType());
                         break;
                     default:
                         fragment = ListMainFragment.newInstance(items.getName(),
-                            items.getParent(), items.getColor(), items.getScreen(),
+                            items.getColor(), items.getScreen(),
                             items.getHit_url(), items.getIndex(), items.getLayoutType());
                         break;
                 }
@@ -428,7 +431,7 @@ public class ActLanding extends ActionBarActivity implements View.OnClickListene
     private void getDefaultPage(ArrayList<NavigationItem> items) {
         NavigationItem item = items.get(0);
         fragment = ListMainFragment.newInstance(item.getName(),
-                item.getParent(), item.getColor(), item.getScreen(),
+                item.getColor(), item.getScreen(),
                 item.getHit_url(), item.getIndex(), item.getLayoutType());
         fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()

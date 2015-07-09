@@ -7,11 +7,11 @@ public class ChannelURLMap {
 
     private String url;
     private String name;
-    private int channel_id;
+    private String channel_id;
     private String kanal;
     private String level;
 
-    public ChannelURLMap(String url, String name, int channel_id, String kanal, String level) {
+    public ChannelURLMap(String url, String name, String channel_id, String kanal, String level) {
         this.url = url;
         this.name = name;
         this.channel_id = channel_id;
@@ -35,7 +35,7 @@ public class ChannelURLMap {
         return name;
     }
 
-    public int getChannel_id() {
+    public String getChannel_id() {
         return channel_id;
     }
 

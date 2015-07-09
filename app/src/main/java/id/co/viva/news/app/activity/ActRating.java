@@ -71,14 +71,14 @@ public class ActRating extends ActionBarActivity implements OnCompleteListener,
         btnRate.setOnClickListener(this);
         ratingBar.setOnRatingBarChangeListener(this);
 
-        if(mTitle != null) {
-            if(mTitle.length() > 0) {
+        if (mTitle != null) {
+            if (mTitle.length() > 0) {
                 text_title.setText(mTitle);
             }
         }
 
-        if(mImageUrl != null) {
-            if(mImageUrl.length() > 0) {
+        if (mImageUrl != null) {
+            if (mImageUrl.length() > 0) {
                 Picasso.with(this).load(mImageUrl).transform(new CropSquareTransformation()).into(image_content);
             }
         }
@@ -112,17 +112,22 @@ public class ActRating extends ActionBarActivity implements OnCompleteListener,
 
     private void setThemes(String kanal) {
         ColorDrawable colorDrawable = new ColorDrawable();
-        if(kanal != null) {
-            if(kanal.equalsIgnoreCase("bola")) {
+        if (kanal != null) {
+            if (kanal.equalsIgnoreCase("bola")) {
                 colorDrawable.setColor(getResources().getColor(R.color.color_bola));
                 getSupportActionBar().setBackgroundDrawable(colorDrawable);
                 mLayout.setBackgroundResource(R.color.color_bola);
                 btnRate.setBackgroundResource(R.color.color_bola);
-            } else if(kanal.equalsIgnoreCase("vivalife")) {
+            } else if (kanal.equalsIgnoreCase("vivalife")) {
                 colorDrawable.setColor(getResources().getColor(R.color.color_life));
                 getSupportActionBar().setBackgroundDrawable(colorDrawable);
                 mLayout.setBackgroundResource(R.color.color_life);
                 btnRate.setBackgroundResource(R.color.color_life);
+            } else if (kanal.equalsIgnoreCase("otomotif")) {
+                colorDrawable.setColor(getResources().getColor(R.color.color_auto));
+                getSupportActionBar().setBackgroundDrawable(colorDrawable);
+                mLayout.setBackgroundResource(R.color.color_auto);
+                btnRate.setBackgroundResource(R.color.color_auto);
             } else {
                 colorDrawable.setColor(getResources().getColor(R.color.color_news));
                 getSupportActionBar().setBackgroundDrawable(colorDrawable);
@@ -130,10 +135,10 @@ public class ActRating extends ActionBarActivity implements OnCompleteListener,
                 btnRate.setBackgroundResource(R.color.color_news);
             }
         } else {
-            colorDrawable.setColor(getResources().getColor(R.color.grey_new));
+            colorDrawable.setColor(getResources().getColor(R.color.new_base_color));
             getSupportActionBar().setBackgroundDrawable(colorDrawable);
-            mLayout.setBackgroundResource(R.color.grey_new);
-            btnRate.setBackgroundResource(R.color.grey_new);
+            mLayout.setBackgroundResource(R.color.new_base_color);
+            btnRate.setBackgroundResource(R.color.new_base_color);
         }
         getHeaderActionBar();
     }
@@ -190,10 +195,10 @@ public class ActRating extends ActionBarActivity implements OnCompleteListener,
 
     @Override
     public void onClick(View view) {
-        if(view.getId() == R.id.btn_send_rate) {
-            if(isInternetPresent) {
-                if(fullName.length() > 0 || email.length() > 0) {
-                    if(amountRate != null) {
+        if (view.getId() == R.id.btn_send_rate) {
+            if (isInternetPresent) {
+                if (fullName.length() > 0 || email.length() > 0) {
+                    if (amountRate != null) {
                         userAccount = new UserAccount(fullName, email, mIds, amountRate, this, ActRating.this);
                         disableView();
                         btnRate.setProgress(1);

@@ -374,7 +374,7 @@ public class ActLogin extends ActionBarActivity implements OnCompleteListener, O
                 personPhotoUrl = personPhotoUrl.substring(0,
                         personPhotoUrl.length() - 2)
                         + Constant.PROFILE_PIC_SIZE;
-                userAccount.saveLoginStatesSocmed(id, Constant.CODE_GPLUS, email, personName, personPhotoUrl);
+                userAccount.saveLoginStatesSocmed(id, Constant.CODE_G_PLUS, email, personName, personPhotoUrl);
             }
         } catch (Exception e) {
             e.getMessage();

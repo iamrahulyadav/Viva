@@ -256,6 +256,8 @@ public class ActDetailContentDefault extends ActionBarActivity
                                             headerRelated.setBackgroundResource(R.color.color_bola);
                                         } else if (fromKanal.equalsIgnoreCase("vivalife")) {
                                             headerRelated.setBackgroundResource(R.color.color_life);
+                                        } else if (fromKanal.equalsIgnoreCase("otomotif")) {
+                                            headerRelated.setBackgroundResource(R.color.color_auto);
                                         } else {
                                             headerRelated.setBackgroundResource(R.color.color_news);
                                         }
@@ -299,8 +301,10 @@ public class ActDetailContentDefault extends ActionBarActivity
                                     if (fromKanal != null) {
                                         if (fromKanal.equalsIgnoreCase("bola")) {
                                             btnComment.setBackgroundColor(getResources().getColor(R.color.color_bola));
-                                        } else if(fromKanal.equalsIgnoreCase("vivalife")) {
+                                        } else if (fromKanal.equalsIgnoreCase("vivalife")) {
                                             btnComment.setBackgroundColor(getResources().getColor(R.color.color_life));
+                                        } else if (fromKanal.equalsIgnoreCase("otomotif")) {
+                                            btnComment.setBackgroundColor(getResources().getColor(R.color.color_auto));
                                         } else {
                                             btnComment.setBackgroundColor(getResources().getColor(R.color.color_news));
                                         }
@@ -426,6 +430,8 @@ public class ActDetailContentDefault extends ActionBarActivity
                                 headerRelated.setBackgroundResource(R.color.color_bola);
                             } else if (fromKanal.equalsIgnoreCase("vivalife")) {
                                 headerRelated.setBackgroundResource(R.color.color_life);
+                            } else if (fromKanal.equalsIgnoreCase("otomotif")) {
+                                headerRelated.setBackgroundResource(R.color.color_auto);
                             } else {
                                 headerRelated.setBackgroundResource(R.color.color_news);
                             }
@@ -468,8 +474,10 @@ public class ActDetailContentDefault extends ActionBarActivity
                         if (fromKanal != null) {
                             if (fromKanal.equalsIgnoreCase("bola")) {
                                 btnComment.setBackgroundColor(getResources().getColor(R.color.color_bola));
-                            } else if(fromKanal.equalsIgnoreCase("vivalife")) {
+                            } else if (fromKanal.equalsIgnoreCase("vivalife")) {
                                 btnComment.setBackgroundColor(getResources().getColor(R.color.color_life));
+                            } else if (fromKanal.equalsIgnoreCase("otomotif")) {
+                                btnComment.setBackgroundColor(getResources().getColor(R.color.color_auto));
                             } else {
                                 btnComment.setBackgroundColor(getResources().getColor(R.color.color_news));
                             }
@@ -597,6 +605,11 @@ public class ActDetailContentDefault extends ActionBarActivity
                     getSupportActionBar().setTitle(R.string.label_item_navigation_life);
                 }
                 progressWheel.setBarColor(getResources().getColor(R.color.color_life));
+            } else if (fromKanal.equalsIgnoreCase("otomotif")) {
+                colorDrawable.setColor(getResources().getColor(R.color.color_auto));
+                getSupportActionBar().setBackgroundDrawable(colorDrawable);
+                getSupportActionBar().setTitle(R.string.label_item_navigation_otomotif);
+                progressWheel.setBarColor(getResources().getColor(R.color.color_auto));
             } else {
                 colorDrawable.setColor(getResources().getColor(R.color.color_news));
                 getSupportActionBar().setBackgroundDrawable(colorDrawable);

@@ -71,6 +71,8 @@ public class GridChannelFragment extends Fragment implements View.OnClickListene
     private String channel_title_header_grid;
     private String id_header_grid;
     private String image_url_header_grid;
+    private String level_header_grid;
+    private String channel_header_grid;
     private RelativeLayout layoutTransparentHeader;
     private Button buttonRetry;
 
@@ -238,6 +240,8 @@ public class GridChannelFragment extends Fragment implements View.OnClickListene
                     id_header_grid = field.getString("channel_id");
                     channel_title_header_grid = field.getString("channel_title");
                     image_url_header_grid = field.getString("image_url");
+                    level_header_grid = field.getString("level");
+                    channel_header_grid = field.getString("kanal");
                 }
                 textHeader.setText(channel_title_header_grid.toUpperCase());
                 layoutTransparentHeader.setVisibility(View.VISIBLE);
@@ -328,6 +332,10 @@ public class GridChannelFragment extends Fragment implements View.OnClickListene
                 Bundle bundle = new Bundle();
                 bundle.putString("id", id_header_grid);
                 bundle.putString("channel_title", channel_title_header_grid);
+                bundle.putString("color", color);
+                bundle.putString("name", name);
+                bundle.putString("level", level_header_grid);
+                bundle.putString("channel", channel_header_grid);
                 Intent intent = new Intent(getActivity(), ActDetailChannel.class);
                 intent.putExtras(bundle);
                 getActivity().startActivity(intent);

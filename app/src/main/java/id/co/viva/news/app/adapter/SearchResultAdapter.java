@@ -49,7 +49,7 @@ public class SearchResultAdapter extends BaseAdapter {
     public View getView(int position, View view, ViewGroup viewGroup) {
         ViewHolder holder;
 
-        if(view == null) {
+        if (view == null) {
             LayoutInflater inflater = LayoutInflater.from(context);
             view = inflater.inflate(R.layout.item_search_result, null);
             holder = new ViewHolder();
@@ -64,17 +64,19 @@ public class SearchResultAdapter extends BaseAdapter {
         }
 
         SearchResult result = searchResultArrayList.get(position);
-        if(result.getImage_url().length() > 0) {
+        if (result.getImage_url().length() > 0) {
             Picasso.with(context).load(result.getImage_url()).transform(new CropSquareTransformation()).into(holder.icon_item_search_result);
         }
         holder.title_item_search_result.setText(result.getTitle());
         holder.date_item_search_result.setText(result.getDate_publish());
         holder.subkanal_item_search_result.setText(result.getKanal());
 
-        if(result.getKanal().equalsIgnoreCase("bola")) {
+        if (result.getKanal().equalsIgnoreCase("bola")) {
             holder.subkanal_item_search_result_layout.setBackgroundResource(R.color.color_bola);
-        } else if(result.getKanal().equalsIgnoreCase("vivalife")) {
+        } else if (result.getKanal().equalsIgnoreCase("vivalife")) {
             holder.subkanal_item_search_result_layout.setBackgroundResource(R.color.color_life);
+        } else if (result.getKanal().equalsIgnoreCase("otomotif")) {
+            holder.subkanal_item_search_result_layout.setBackgroundResource(R.color.color_auto);
         } else  {
             holder.subkanal_item_search_result_layout.setBackgroundResource(R.color.color_news);
         }

@@ -143,6 +143,11 @@ public class ActComment extends ActionBarActivity implements View.OnClickListene
                 getSupportActionBar().setBackgroundDrawable(colorDrawable);
                 mLayout.setBackgroundResource(R.color.color_life);
                 btnSubmit.setBackgroundResource(R.color.color_life);
+            } else if(kanal.equalsIgnoreCase("otomotif")) {
+                colorDrawable.setColor(getResources().getColor(R.color.color_auto));
+                getSupportActionBar().setBackgroundDrawable(colorDrawable);
+                mLayout.setBackgroundResource(R.color.color_auto);
+                btnSubmit.setBackgroundResource(R.color.color_auto);
             } else {
                 colorDrawable.setColor(getResources().getColor(R.color.color_news));
                 getSupportActionBar().setBackgroundDrawable(colorDrawable);

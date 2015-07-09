@@ -28,11 +28,13 @@ public class DetailContentChannelAdapter extends FragmentStatePagerAdapter {
     private final FragmentManager mFragmentManager;
     private int mPosition;
     private String mChannelTitle;
+    private String mChannel;
 
     public DetailContentChannelAdapter(FragmentManager fragmentManager,
-                                       ArrayList<ChannelList> channelListArrayList, String channelTitle) {
+                                       ArrayList<ChannelList> channelListArrayList, String channelTitle, String channel) {
         super(fragmentManager);
         mChannelTitle = channelTitle;
+        mChannel = channel;
         mFragmentManager = fragmentManager;
         this.channelListArrayList = channelListArrayList;
     }
@@ -41,7 +43,7 @@ public class DetailContentChannelAdapter extends FragmentStatePagerAdapter {
     public Fragment getItem(int position) {
         mPosition = position;
         return DetailIndexContent.newInstance(channelListArrayList
-                .get(position).getId(), "bola", mChannelTitle);
+                .get(position).getId(), mChannel, mChannelTitle);
     }
 
     @Override

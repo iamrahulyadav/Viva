@@ -129,11 +129,11 @@ public class DetailIndexContent extends Fragment implements
     private String mChannelTitle;
     private TextView textLinkVideo;
 
-    public static DetailIndexContent newInstance(String id, String kanals, String channel_title) {
+    public static DetailIndexContent newInstance(String id, String channel, String channel_title) {
         DetailIndexContent detailIndexContent = new DetailIndexContent();
         Bundle bundle = new Bundle();
         bundle.putString("id", id);
-        bundle.putString("kanals", kanals);
+        bundle.putString("channel", channel);
         bundle.putString("channel_title", channel_title);
         detailIndexContent.setArguments(bundle);
         return detailIndexContent;
@@ -149,7 +149,7 @@ public class DetailIndexContent extends Fragment implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         id = getArguments().getString("id");
-        kanals = getArguments().getString("kanals");
+        kanals = getArguments().getString("channel");
         mChannelTitle = getArguments().getString("channel_title");
         analytics = new Analytics(getActivity());
         isInternetPresent = Global.getInstance(getActivity())
@@ -176,15 +176,17 @@ public class DetailIndexContent extends Fragment implements
         //Loading Progress
         progressWheel = (ProgressWheel) view.findViewById(R.id.progress_wheel);
         if (kanals != null) {
-            if (kanals.equalsIgnoreCase("bola")) {
+            if (kanals.equalsIgnoreCase("bola") || kanals.equalsIgnoreCase("sport")) {
                 progressWheel.setBarColor(getResources().getColor(R.color.color_bola));
             } else if (kanals.equalsIgnoreCase("vivalife")) {
                 progressWheel.setBarColor(getResources().getColor(R.color.color_life));
+            } else if (kanals.equalsIgnoreCase("otomotif")) {
+                progressWheel.setBarColor(getResources().getColor(R.color.color_auto));
             } else {
                 progressWheel.setBarColor(getResources().getColor(R.color.color_news));
             }
         } else {
-            progressWheel.setBarColor(getResources().getColor(R.color.blue));
+            progressWheel.setBarColor(getResources().getColor(R.color.new_base_color));
         }
 
         //Header Related Article
@@ -248,7 +250,7 @@ public class DetailIndexContent extends Fragment implements
 
         if (isInternetPresent) {
             StringRequest request = new StringRequest(Request.Method.GET, Constant.NEW_DETAIL + "id/" + id
-                    + "/screen/" + Constant.getScreenParameter(kanals, mChannelTitle),
+                    + "/screen/" + kanals + "_" + mChannelTitle.replace(" ", "_").toLowerCase() + "_detail_screen",
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String volleyResponse) {
@@ -328,7 +330,7 @@ public class DetailIndexContent extends Fragment implements
                                     }
                                 }
                                 //Send analytic
-                                setAnalytics(kanal, ids, title);
+                                setAnalytics(mChannelTitle, kanals, title, ids);
                                 //Set data to view
                                 tvTitleDetail.setText(title);
                                 tvDateDetail.setText(date_publish);
@@ -356,8 +358,10 @@ public class DetailIndexContent extends Fragment implements
                                     if (kanals != null) {
                                         if (kanals.equalsIgnoreCase("bola")) {
                                             headerRelated.setBackgroundResource(R.color.color_bola);
-                                        } else if(kanals.equalsIgnoreCase("vivalife")) {
+                                        } else if (kanals.equalsIgnoreCase("vivalife")) {
                                             headerRelated.setBackgroundResource(R.color.color_life);
+                                        } else if (kanals.equalsIgnoreCase("otomotif")) {
+                                            headerRelated.setBackgroundResource(R.color.color_auto);
                                         } else {
                                             headerRelated.setBackgroundResource(R.color.color_news);
                                         }
@@ -401,6 +405,8 @@ public class DetailIndexContent extends Fragment implements
                                             btnComment.setBackgroundColor(getResources().getColor(R.color.color_bola));
                                         } else if(kanals.equalsIgnoreCase("vivalife")) {
                                             btnComment.setBackgroundColor(getResources().getColor(R.color.color_life));
+                                        } else if(kanals.equalsIgnoreCase("otomotif")) {
+                                            btnComment.setBackgroundColor(getResources().getColor(R.color.color_auto));
                                         } else {
                                             btnComment.setBackgroundColor(getResources().getColor(R.color.color_news));
                                         }
@@ -424,9 +430,11 @@ public class DetailIndexContent extends Fragment implements
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError volleyError) {
-                            if (Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + id) != null) {
+                            if (Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_DETAIL + "id/" + id
+                                    + "/screen/" + kanals + "_" + mChannelTitle.replace(" ", "_").toLowerCase() + "_detail_screen") != null) {
                                 String cachedResponse = new String(Global.getInstance(getActivity()).
-                                        getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + id).data);
+                                        getRequestQueue().getCache().get(Constant.NEW_DETAIL + "id/" + id
+                                        + "/screen/" + kanals + "_" + mChannelTitle.replace(" ", "_").toLowerCase() + "_detail_screen").data);
                                 try {
                                     JSONObject jsonObject = new JSONObject(cachedResponse);
                                     JSONObject response = jsonObject.getJSONObject(Constant.response);
@@ -500,12 +508,13 @@ public class DetailIndexContent extends Fragment implements
                                         Constant.setListViewHeightBasedOnChildren(listView);
                                         adapter.notifyDataSetChanged();
                                         headerRelated.setVisibility(View.VISIBLE);
-                                        Log.i(Constant.TAG, "KANALS : " + kanals);
                                         if (kanals != null) {
                                             if (kanals.equalsIgnoreCase("bola")) {
                                                 headerRelated.setBackgroundResource(R.color.color_bola);
                                             } else if (kanals.equalsIgnoreCase("vivalife")) {
                                                 headerRelated.setBackgroundResource(R.color.color_life);
+                                            } else if (kanals.equalsIgnoreCase("otomotif")) {
+                                                headerRelated.setBackgroundResource(R.color.color_auto);
                                             } else {
                                                 headerRelated.setBackgroundResource(R.color.color_news);
                                             }
@@ -549,6 +558,8 @@ public class DetailIndexContent extends Fragment implements
                                                 btnComment.setBackgroundColor(getResources().getColor(R.color.color_bola));
                                             } else if(kanals.equalsIgnoreCase("vivalife")) {
                                                 btnComment.setBackgroundColor(getResources().getColor(R.color.color_life));
+                                            } else if(kanals.equalsIgnoreCase("otomotif")) {
+                                                btnComment.setBackgroundColor(getResources().getColor(R.color.color_auto));
                                             } else {
                                                 btnComment.setBackgroundColor(getResources().getColor(R.color.color_news));
                                             }
@@ -567,6 +578,8 @@ public class DetailIndexContent extends Fragment implements
                                         btnRetry.setBackgroundResource(R.drawable.shadow_button_bola);
                                     } else if (kanals.equalsIgnoreCase("vivalife")) {
                                         btnRetry.setBackgroundResource(R.drawable.shadow_button_life);
+                                    } else if (kanals.equalsIgnoreCase("otomotif")) {
+                                        btnRetry.setBackgroundResource(R.drawable.shadow_button_otomotif);
                                     } else {
                                         btnRetry.setBackgroundResource(R.drawable.shadow_button_news);
                                     }
@@ -579,15 +592,17 @@ public class DetailIndexContent extends Fragment implements
                     Constant.TIME_OUT,
                     0,
                     DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-            Global.getInstance(getActivity()).getRequestQueue().getCache().invalidate(Constant.NEW_DETAIL + "id/" + id + "/screen/"
-                    + Constant.getScreenParameter(kanals, mChannelTitle), true);
-            Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_DETAIL + "id/" + id + "/screen/"
-                    + Constant.getScreenParameter(kanals, mChannelTitle));
+            Global.getInstance(getActivity()).getRequestQueue().getCache().invalidate(Constant.NEW_DETAIL + "id/" + id
+                    + "/screen/" + kanals + "_" + mChannelTitle.replace(" ", "_").toLowerCase() + "_detail_screen", true);
+            Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_DETAIL + "id/" + id
+                    + "/screen/" + kanals + "_" + mChannelTitle.replace(" ", "_").toLowerCase() + "_detail_screen");
             Global.getInstance(getActivity()).addToRequestQueue(request, Constant.JSON_REQUEST);
         } else {
-            if (Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + id) != null) {
+            if (Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_DETAIL + "id/" + id
+                    + "/screen/" + kanals + "_" + mChannelTitle.replace(" ", "_").toLowerCase() + "_detail_screen") != null) {
                 String cachedResponse = new String(Global.getInstance(getActivity()).
-                        getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + id).data);
+                        getRequestQueue().getCache().get(Constant.NEW_DETAIL + "id/" + id
+                        + "/screen/" + kanals + "_" + mChannelTitle.replace(" ", "_").toLowerCase() + "_detail_screen").data);
                 try {
                     JSONObject jsonObject = new JSONObject(cachedResponse);
                     JSONObject response = jsonObject.getJSONObject(Constant.response);
@@ -666,6 +681,8 @@ public class DetailIndexContent extends Fragment implements
                                 headerRelated.setBackgroundResource(R.color.color_bola);
                             } else if (kanals.equalsIgnoreCase("vivalife")) {
                                 headerRelated.setBackgroundResource(R.color.color_life);
+                            } else if (kanals.equalsIgnoreCase("otomotif")) {
+                                headerRelated.setBackgroundResource(R.color.color_auto);
                             } else {
                                 headerRelated.setBackgroundResource(R.color.color_news);
                             }
@@ -709,6 +726,8 @@ public class DetailIndexContent extends Fragment implements
                                 btnComment.setBackgroundColor(getResources().getColor(R.color.color_bola));
                             } else if(kanals.equalsIgnoreCase("vivalife")) {
                                 btnComment.setBackgroundColor(getResources().getColor(R.color.color_life));
+                            } else if (kanals.equalsIgnoreCase("otomotif")) {
+                                btnComment.setBackgroundColor(getResources().getColor(R.color.color_auto));
                             } else {
                                 btnComment.setBackgroundColor(getResources().getColor(R.color.color_news));
                             }
@@ -788,6 +807,7 @@ public class DetailIndexContent extends Fragment implements
     private void moveBrowserPage(String url) {
         Bundle bundle = new Bundle();
         bundle.putString("url", url);
+        bundle.putString("channel", kanal);
         Intent intent = new Intent(mActivity, ActBrowser.class);
         intent.putExtras(bundle);
         startActivity(intent);
@@ -815,6 +835,9 @@ public class DetailIndexContent extends Fragment implements
             case R.id.subaction_favorites:
                 doFavorites();
                 return true;
+            case R.id.subaction_browser:
+                moveBrowserPage(url_shared);
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -841,9 +864,10 @@ public class DetailIndexContent extends Fragment implements
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        if(url_shared == null || url_shared.length() < 1) {
+        if (url_shared == null || url_shared.length() < 1) {
             try {
-                if(Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + id) != null) {
+                if (Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_DETAIL + "id/" + id
+                        + "/screen/" + kanals + "_" + mChannelTitle.replace(" ", "_").toLowerCase() + "_detail_screen") != null) {
                     String cachedResponse = new String(Global.getInstance(getActivity()).
                             getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + id).data);
                     JSONObject jsonObject = new JSONObject(cachedResponse);
@@ -877,8 +901,8 @@ public class DetailIndexContent extends Fragment implements
             if (isInternetPresent) {
                 rippleView.setVisibility(View.GONE);
                 progressWheel.setVisibility(View.VISIBLE);
-                StringRequest request = new StringRequest(Request.Method.GET, Constant.NEW_DETAIL + "id/" + id + "/screen/"
-                        + Constant.getScreenParameter(kanals, mChannelTitle),
+                StringRequest request = new StringRequest(Request.Method.GET, Constant.NEW_DETAIL + "id/" + id
+                        + "/screen/" + kanals + "_" + mChannelTitle.replace(" ", "_").toLowerCase() + "_detail_screen",
                         new Response.Listener<String>() {
                             @Override
                             public void onResponse(String volleyResponse) {
@@ -958,7 +982,7 @@ public class DetailIndexContent extends Fragment implements
                                         }
                                     }
                                     //Send analytic
-                                    setAnalytics(kanal, ids, title);
+                                    setAnalytics(mChannelTitle, kanals, title, ids);
                                     //Set view
                                     tvTitleDetail.setText(title);
                                     tvDateDetail.setText(date_publish);
@@ -983,11 +1007,13 @@ public class DetailIndexContent extends Fragment implements
                                         Constant.setListViewHeightBasedOnChildren(listView);
                                         adapter.notifyDataSetChanged();
                                         headerRelated.setVisibility(View.VISIBLE);
-                                        if(kanals != null) {
-                                            if(kanals.equalsIgnoreCase("bola")) {
+                                        if (kanals != null) {
+                                            if (kanals.equalsIgnoreCase("bola")) {
                                                 headerRelated.setBackgroundResource(R.color.color_bola);
-                                            } else if(kanals.equalsIgnoreCase("vivalife")) {
+                                            } else if (kanals.equalsIgnoreCase("vivalife")) {
                                                 headerRelated.setBackgroundResource(R.color.color_life);
+                                            } else if (kanals.equalsIgnoreCase("otomotif")) {
+                                                headerRelated.setBackgroundResource(R.color.color_auto);
                                             } else {
                                                 headerRelated.setBackgroundResource(R.color.color_news);
                                             }
@@ -1012,7 +1038,7 @@ public class DetailIndexContent extends Fragment implements
                                                                 tvPreviewCommentUser.setText(commentArrayList.get(count).getUsername());
                                                                 tvPreviewCommentContent.setText(commentArrayList.get(count).getComment_text());
                                                                 count++;
-                                                                if(count >= commentArrayList.size()) {
+                                                                if (count >= commentArrayList.size()) {
                                                                     count = 0;
                                                                 }
                                                             }
@@ -1031,6 +1057,8 @@ public class DetailIndexContent extends Fragment implements
                                                 btnComment.setBackgroundColor(getResources().getColor(R.color.color_bola));
                                             } else if(kanals.equalsIgnoreCase("vivalife")) {
                                                 btnComment.setBackgroundColor(getResources().getColor(R.color.color_life));
+                                            } else if (kanals.equalsIgnoreCase("otomotif")) {
+                                                btnComment.setBackgroundColor(getResources().getColor(R.color.color_auto));
                                             } else {
                                                 btnComment.setBackgroundColor(getResources().getColor(R.color.color_news));
                                             }
@@ -1061,6 +1089,8 @@ public class DetailIndexContent extends Fragment implements
                                         btnRetry.setBackgroundResource(R.drawable.shadow_button_bola);
                                     } else if (kanals.equalsIgnoreCase("vivalife")) {
                                         btnRetry.setBackgroundResource(R.drawable.shadow_button_life);
+                                    } else if (kanals.equalsIgnoreCase("otomotif")) {
+                                        btnRetry.setBackgroundResource(R.drawable.shadow_button_otomotif);
                                     } else {
                                         btnRetry.setBackgroundResource(R.drawable.shadow_button_news);
                                     }
@@ -1072,10 +1102,10 @@ public class DetailIndexContent extends Fragment implements
                         Constant.TIME_OUT,
                         0,
                         DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-                Global.getInstance(getActivity()).getRequestQueue().getCache().invalidate(Constant.NEW_DETAIL + "id/" + id + "/screen/"
-                        + Constant.getScreenParameter(kanals, mChannelTitle), true);
-                Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_DETAIL + "id/" + id + "/screen/"
-                        + Constant.getScreenParameter(kanals, mChannelTitle));
+                Global.getInstance(getActivity()).getRequestQueue().getCache().invalidate(Constant.NEW_DETAIL + "id/" + id
+                        + "/screen/" + kanals + "_" + mChannelTitle.replace(" ", "_").toLowerCase() + "_detail_screen", true);
+                Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_DETAIL + "id/" + id
+                        + "/screen/" + kanals + "_" + mChannelTitle.replace(" ", "_").toLowerCase() + "_detail_screen");
                 Global.getInstance(getActivity()).addToRequestQueue(request, Constant.JSON_REQUEST);
             } else {
                 Toast.makeText(getActivity(), R.string.title_no_connection, Toast.LENGTH_SHORT).show();
@@ -1103,49 +1133,15 @@ public class DetailIndexContent extends Fragment implements
         }
     }
 
-    private void setAnalytics(String channel_title, String id, String title) {
-        if(kanals != null) {
-            if(kanals.equalsIgnoreCase("bola")) {
-                analytics.getAnalyticByATInternet(Constant.DETAIL_CONTENT_BOLA_PAGE
-                        + channel_title.toUpperCase()
-                        + "_"
-                        + id
-                        + "_"
-                        + title.toUpperCase());
-                analytics.getAnalyticByGoogleAnalytic(Constant.DETAIL_CONTENT_BOLA_PAGE
-                        + channel_title.toUpperCase()
-                        + "_"
-                        + id
-                        + "_"
-                        + title.toUpperCase());
-            } else if(kanals.equalsIgnoreCase("vivalife")) {
-                analytics.getAnalyticByATInternet(Constant.DETAIL_CONTENT_LIFE_PAGE
-                        + channel_title.toUpperCase()
-                        + "_"
-                        + id
-                        + "_"
-                        + title.toUpperCase());
-                analytics.getAnalyticByGoogleAnalytic(Constant.DETAIL_CONTENT_LIFE_PAGE
-                        + channel_title.toUpperCase()
-                        + "_"
-                        + id
-                        + "_"
-                        + title.toUpperCase());
-            } else {
-                analytics.getAnalyticByATInternet(Constant.DETAIL_CONTENT_NEWS_PAGE
-                        + channel_title.toUpperCase()
-                        + "_"
-                        + id
-                        + "_"
-                        + title.toUpperCase());
-                analytics.getAnalyticByGoogleAnalytic(Constant.DETAIL_CONTENT_NEWS_PAGE
-                        + channel_title.toUpperCase()
-                        + "_"
-                        + id
-                        + "_"
-                        + title.toUpperCase());
-            }
-        }
+    private void setAnalytics(String mChannelTitle, String mChannel, String mTitle, String mId) {
+        analytics.getAnalyticByATInternet(mChannel.toLowerCase().replace(" ", "_")
+                + "_" + mChannelTitle.toLowerCase().replace(" ", "_")
+                + "_" + mId + "_" + mTitle
+                + "_detail_screen");
+        analytics.getAnalyticByGoogleAnalytic(mChannel.toLowerCase().replace(" ", "_")
+                + "_" + mChannelTitle.toLowerCase().replace(" ", "_")
+                + "_" + mId + "_" + mTitle
+                + "_detail_screen");
     }
 
     private void setTextViewHTML(TextView text, String html) {

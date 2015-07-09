@@ -73,6 +73,8 @@ public class FavoriteAdapter extends BaseAdapter implements UndoAdapter {
                 holder.image_item_favorite.setImageResource(R.drawable.icon_viva_bola);
             } else if(favorites.getKanal().equalsIgnoreCase("vivalife")) {
                 holder.image_item_favorite.setImageResource(R.drawable.icon_viva_life);
+            } else if(favorites.getKanal().equalsIgnoreCase("otomotif")) {
+                holder.image_item_favorite.setImageResource(R.drawable.icon_viva_otomotif);
             } else {
                 holder.image_item_favorite.setImageResource(R.drawable.icon_viva_news);
             }
