@@ -82,6 +82,8 @@ public class ListMainAdapter extends BaseAdapter {
             holder.icon_item_viva_news.setImageResource(R.drawable.icon_viva_bola);
         } else if (entity.getKanal().equalsIgnoreCase("vivalife")) {
             holder.icon_item_viva_news.setImageResource(R.drawable.icon_viva_life);
+        } else if (entity.getKanal().equalsIgnoreCase("otomotif")) {
+            holder.icon_item_viva_news.setImageResource(R.drawable.icon_viva_otomotif);
         } else {
             holder.icon_item_viva_news.setImageResource(R.drawable.icon_viva_news);
         }

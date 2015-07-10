@@ -156,21 +156,10 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"/>
 
-        <meta-data
-                android:name="android.app.default_searchable"
-                android:value=".activity.ActSearchResult" /><![CDATA[/>
-
-        ]]><meta-data
-                android:name="android.app.default_searchable"
-                android:value=".activity.ActSearchResult" />/>
-
         <activity
             android:name=".activity.ActDetailContent"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"/>
-            <meta-data
-                android:name="android.app.default_searchable"
-                android:value=".activity.ActSearchResult" />
 
         <activity
             android:name=".activity.ActDetailMain"
@@ -179,6 +168,15 @@
 
         <activity
             android:name=".activity.ActDetailChannel"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.app.default_searchable"
+                android:value=".activity.ActSearchResult" />
+        </activity>
+
+        <activity
+            android:name=".activity.ActTagPopularResult"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme">
             <meta-data

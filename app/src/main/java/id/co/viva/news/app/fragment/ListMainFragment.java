@@ -172,6 +172,7 @@ public class ListMainFragment extends Fragment implements View.OnClickListener, 
             retrieveData(url, index, screen);
         } else {
             checkCache();
+            Toast.makeText(getActivity(), R.string.title_no_connection, Toast.LENGTH_SHORT).show();
         }
         return rootView;
     }
@@ -455,10 +456,10 @@ public class ListMainFragment extends Fragment implements View.OnClickListener, 
                 }
                 break;
             case R.id.layout_ripple_view:
-                loading_layout.setVisibility(View.VISIBLE);
-                labelLoadData.setVisibility(View.VISIBLE);
-                rippleView.setVisibility(View.GONE);
                 if (isInternetPresent) {
+                    loading_layout.setVisibility(View.VISIBLE);
+                    labelLoadData.setVisibility(View.VISIBLE);
+                    rippleView.setVisibility(View.GONE);
                     retrieveData(url, index, screen);
                 } else {
                     Toast.makeText(getActivity(), R.string.title_no_connection, Toast.LENGTH_SHORT).show();

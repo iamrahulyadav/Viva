@@ -13,7 +13,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textStyle="bold"
-            android:textColor="@color/grey_new"
+            android:textColor="@color/black"
             android:textSize="18sp"
             android:layout_marginLeft="5dp"
             android:layout_marginTop="5dp"
@@ -29,9 +29,19 @@
             android:layout_height="match_parent"/>
         <ProgressBar
             android:id="@+id/progress_wheel_tag_popular_list"
-            android:layout_width="90dp"
-            android:layout_height="90dp"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:layout_centerInParent="true" />
+        <id.co.viva.news.app.component.RobotoTextView
+            android:layout_below="@id/progress_wheel_tag_popular_list"
+            android:id="@+id/text_loading_data"
+            android:layout_centerHorizontal="true"
+            android:textSize="12sp"
+            android:textColor="@color/black"
+            android:layout_marginTop="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_loading_data"/>
         <info.hoang8f.widget.FButton
             android:layout_width="100dp"
             android:layout_height="wrap_content"

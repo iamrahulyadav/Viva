@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.Global;
 import id.co.viva.news.app.R;
+import id.co.viva.news.app.activity.ActTagPopularResult;
 import id.co.viva.news.app.adapter.TagListAdapter;
 import id.co.viva.news.app.ads.AdsConfig;
 import id.co.viva.news.app.component.GoogleMusicDicesDrawable;
@@ -53,10 +54,8 @@ public class TagPopularFragment extends Fragment
     //Parameters
     private String name;
     private String color;
-    private String screen;
     private String url;
     private String index;
-    private String layout;
 
     private Activity mActivity;
     private boolean isInternetPresent = false;
@@ -64,12 +63,9 @@ public class TagPopularFragment extends Fragment
     private ProgressBar loading_layout;
     private FButton buttonRetry;
     private TextView labelTextNoResult;
-    private TextView labelText;
-    private Analytics analytics;
+    private TextView labelTextLoading;
     private ListView listView;
 
-    private ScaleInAnimationAdapter mAnimAdapter;
-    private TagListAdapter adapter;
     private ArrayList<Tag> tags;
     private ArrayList<Ads> adsArrayList;
 
@@ -78,15 +74,13 @@ public class TagPopularFragment extends Fragment
     private PublisherAdView publisherAdViewBottom;
 
     public static TagPopularFragment newInstance(String name, String color,
-                                               String screen, String url, String index, String layout) {
+                                               String url, String index) {
         TagPopularFragment tagPopularFragment = new TagPopularFragment();
         Bundle bundle = new Bundle();
         bundle.putString("name", name);
         bundle.putString("color", color);
-        bundle.putString("screen", screen);
         bundle.putString("url", url);
         bundle.putString("index", index);
-        bundle.putString("layout", layout);
         tagPopularFragment.setArguments(bundle);
         return tagPopularFragment;
     }
@@ -94,10 +88,8 @@ public class TagPopularFragment extends Fragment
     private void getBundle() {
         name = getArguments().getString("name");
         color = getArguments().getString("color");
-        screen = getArguments().getString("screen");
         url = getArguments().getString("url");
         index = getArguments().getString("index");
-        layout = getArguments().getString("layout");
     }
 
     private Drawable getProgressDrawable() {
@@ -113,12 +105,13 @@ public class TagPopularFragment extends Fragment
             parseJson(cachedResponse, mIndex);
         } else {
             loading_layout.setVisibility(View.GONE);
+            labelTextLoading.setVisibility(View.GONE);
             buttonRetry.setVisibility(View.VISIBLE);
         }
     }
 
     private void setAnalytic(String screenName) {
-        analytics = new Analytics(getActivity());
+        Analytics analytics = new Analytics(getActivity());
         analytics.getAnalyticByATInternet(screenName.replace(" ", "_") + "_Screen");
         analytics.getAnalyticByGoogleAnalytic(screenName.replace(" ", "_") + "_Screen");
     }
@@ -136,7 +129,8 @@ public class TagPopularFragment extends Fragment
         buttonRetry.setOnClickListener(this);
         //Label text
         labelTextNoResult = (TextView) rootView.findViewById(R.id.text_no_result_tag_popular_list);
-        labelText = (TextView) rootView.findViewById(R.id.text_label_tag_popular);
+        labelTextLoading = (TextView) rootView.findViewById(R.id.text_loading_data);
+        TextView labelText = (TextView) rootView.findViewById(R.id.text_label_tag_popular);
         labelText.setText(name.toUpperCase());
         //Tag list
         listView = (ListView) rootView.findViewById(R.id.list_tag_popular);
@@ -207,39 +201,42 @@ public class TagPopularFragment extends Fragment
                     }
                 }
                 //Check Ads if exists
-//                if (isInternetPresent) {
-//                    if (jsonArrayResponses.length() > 1) {
-//                        Log.i(Constant.TAG, "Loading Ads...");
-//                        JSONObject objAds = jsonArrayResponses.getJSONObject(jsonArrayResponses.length() - 1);
-//                        JSONArray jsonArraySegmentAds = objAds.getJSONArray(Constant.adses);
-//                        if (jsonArraySegmentAds.length() > 0) {
-//                            for (int j=0; j<jsonArraySegmentAds.length(); j++) {
-//                                JSONObject jsonAds = jsonArraySegmentAds.getJSONObject(j);
-//                                String name = jsonAds.getString(Constant.name);
-//                                int position = jsonAds.getInt(Constant.position);
-//                                int type = jsonAds.getInt(Constant.type);
-//                                String unit_id = jsonAds.getString(Constant.unit_id);
-//                                adsArrayList.add(new Ads(name, type, position, unit_id));
-//                                Log.i(Constant.TAG, "ADS : " + adsArrayList.get(j).getmUnitId());
-//                            }
-//                        }
-//                    }
-//                }
+                if (isInternetPresent) {
+                    if (jsonArrayResponses.length() > 1) {
+                        Log.i(Constant.TAG, "Loading Ads...");
+                        JSONObject objAds = jsonArrayResponses.getJSONObject(jsonArrayResponses.length() - 1);
+                        JSONArray jsonArraySegmentAds = objAds.getJSONArray(Constant.adses);
+                        if (jsonArraySegmentAds.length() > 0) {
+                            for (int j=0; j<jsonArraySegmentAds.length(); j++) {
+                                JSONObject jsonAds = jsonArraySegmentAds.getJSONObject(j);
+                                String name = jsonAds.getString(Constant.name);
+                                int position = jsonAds.getInt(Constant.position);
+                                int type = jsonAds.getInt(Constant.type);
+                                String unit_id = jsonAds.getString(Constant.unit_id);
+                                adsArrayList.add(new Ads(name, type, position, unit_id));
+                                Log.i(Constant.TAG, "ADS : " + adsArrayList.get(j).getmUnitId());
+                            }
+                        }
+                    }
+                }
             }
             //Fill data from API
             if (tags.size() > 0 || !tags.isEmpty()) {
-                adapter = new TagListAdapter(getActivity(), tags);
-                mAnimAdapter = new ScaleInAnimationAdapter(adapter);
+                TagListAdapter adapter = new TagListAdapter(getActivity(), tags);
+                ScaleInAnimationAdapter mAnimAdapter = new ScaleInAnimationAdapter(adapter);
                 mAnimAdapter.setAbsListView(listView);
                 listView.setAdapter(mAnimAdapter);
                 mAnimAdapter.notifyDataSetChanged();
                 loading_layout.setVisibility(View.GONE);
+                labelTextLoading.setVisibility(View.GONE);
             } else {
+                loading_layout.setVisibility(View.GONE);
+                labelTextLoading.setVisibility(View.GONE);
                 labelTextNoResult.setVisibility(View.VISIBLE);
             }
             //Show Ads
             if (isInternetPresent) {
-//                showAds();
+                showAds();
             }
         } catch (Exception e) {
             e.getMessage();
@@ -263,6 +260,7 @@ public class TagPopularFragment extends Fragment
     public void onClick(View v) {
         buttonRetry.setVisibility(View.GONE);
         loading_layout.setVisibility(View.VISIBLE);
+        labelTextLoading.setVisibility(View.VISIBLE);
         if (isInternetPresent) {
             retrieveData(url, index);
         } else {
@@ -273,16 +271,17 @@ public class TagPopularFragment extends Fragment
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//        if (tags.size() > 0) {
-//            Tag tag = tags.get(position);
-//            Bundle bundle = new Bundle();
-//            bundle.putString("key", tag.getKey());
-//            bundle.putString("url", tag.getUrl());
-//            Intent intent = new Intent(getActivity(), ActDetailMain.class);
-//            intent.putExtras(bundle);
-//            getActivity().startActivity(intent);
-//            getActivity().overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
-//        }
+        if (tags.size() > 0) {
+            Tag tag = tags.get(position);
+            Bundle bundle = new Bundle();
+            bundle.putString("name", name);
+            bundle.putString("key", tag.getKey());
+            bundle.putString("url", tag.getUrl());
+            Intent intent = new Intent(getActivity(), ActTagPopularResult.class);
+            intent.putExtras(bundle);
+            getActivity().startActivity(intent);
+            getActivity().overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+        }
     }
 
     private void showAds() {
@@ -310,37 +309,37 @@ public class TagPopularFragment extends Fragment
         }
     }
 
-//    @Override
-//    public void onResume() {
-//        super.onResume();
-//        if (publisherAdViewBottom != null) {
-//            publisherAdViewBottom.resume();
-//        }
-//        if (publisherAdViewTop != null) {
-//            publisherAdViewTop.resume();
-//        }
-//    }
-//
-//    @Override
-//    public void onPause() {
-//        super.onPause();
-//        if (publisherAdViewBottom != null) {
-//            publisherAdViewBottom.pause();
-//        }
-//        if (publisherAdViewTop != null) {
-//            publisherAdViewTop.pause();
-//        }
-//    }
-//
-//    @Override
-//    public void onDestroy() {
-//        super.onDestroy();
-//        if (publisherAdViewBottom != null) {
-//            publisherAdViewBottom.destroy();
-//        }
-//        if (publisherAdViewTop != null) {
-//            publisherAdViewTop.destroy();
-//        }
-//    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (publisherAdViewBottom != null) {
+            publisherAdViewBottom.resume();
+        }
+        if (publisherAdViewTop != null) {
+            publisherAdViewTop.resume();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (publisherAdViewBottom != null) {
+            publisherAdViewBottom.pause();
+        }
+        if (publisherAdViewTop != null) {
+            publisherAdViewTop.pause();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (publisherAdViewBottom != null) {
+            publisherAdViewBottom.destroy();
+        }
+        if (publisherAdViewTop != null) {
+            publisherAdViewTop.destroy();
+        }
+    }
 
 }

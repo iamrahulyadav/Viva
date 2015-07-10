@@ -216,8 +216,7 @@ public class ActLanding extends ActionBarActivity implements View.OnClickListene
                         break;
                     case Constant.TAG_POPULAR:
                         fragment = TagPopularFragment.newInstance(items.getName(),
-                                items.getColor(), items.getScreen(),
-                                items.getHit_url(), items.getIndex(), items.getLayoutType());
+                                items.getColor(), items.getHit_url(), items.getIndex());
                         break;
                     default:
                         fragment = ListMainFragment.newInstance(items.getName(),
