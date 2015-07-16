@@ -359,7 +359,7 @@ public class ListMainFragment extends Fragment implements View.OnClickListener, 
                 //Big Card List Style
                 if (!isLoadMore) {
                     if (adapter == null) {
-                        adapter = new ListMainAdapter(getActivity(), entityList);
+                        adapter = new ListMainAdapter(getActivity(), entityList, "main");
                     }
                     if (swingBottomInAnimationAdapter == null) {
                         swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(adapter);

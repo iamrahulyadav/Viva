@@ -42,7 +42,7 @@ public class ListMainSmallAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        if (type == Constant.BERITA_SEKITAR_LIST) {
+        if (type == Constant.NEWS_AROUND_LIST) {
             return beritaSekitarArrayList.size();
         } else {
             return entityMains.size();
@@ -51,7 +51,7 @@ public class ListMainSmallAdapter extends BaseAdapter {
 
     @Override
     public Object getItem(int position) {
-        if (type == Constant.BERITA_SEKITAR_LIST) {
+        if (type == Constant.NEWS_AROUND_LIST) {
             return beritaSekitarArrayList.get(position);
         } else {
             return entityMains.get(position);
@@ -81,7 +81,7 @@ public class ListMainSmallAdapter extends BaseAdapter {
         }
         //Choose type
         switch (type) {
-            case Constant.BERITA_SEKITAR_LIST:
+            case Constant.NEWS_AROUND_LIST:
                 //Get position each item
                 BeritaSekitar beritaSekitar = beritaSekitarArrayList.get(position);
                 //Set image

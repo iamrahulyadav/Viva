@@ -29,6 +29,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.flaviofaria.kenburnsview.KenBurnsView;
 import com.google.android.gms.ads.doubleclick.PublisherAdView;
 import com.squareup.picasso.Picasso;
 import com.viewpagerindicator.LinePageIndicator;
@@ -52,7 +53,6 @@ import id.co.viva.news.app.model.Comment;
 import id.co.viva.news.app.model.Favorites;
 import id.co.viva.news.app.model.RelatedArticle;
 import id.co.viva.news.app.model.SliderContentImage;
-import id.co.viva.news.app.model.Video;
 import id.co.viva.news.app.services.Analytics;
 
 /**
@@ -73,15 +73,12 @@ public class ActDetailContentDefault extends ActionBarActivity
     private String url_shared;
     private String image_caption;
     private String urlVideo;
-    private String widthVideo;
-    private String heightVideo;
     private String id;
     private String typeFrom;
     private String fromKanal;
     private String shared_url;
     private String sliderPhotoUrl;
     private String sliderTitle;
-    private String favoriteList;
     private int count = 0;
 
     //Define Views
@@ -89,7 +86,7 @@ public class ActDetailContentDefault extends ActionBarActivity
     private TextView tvDateDetail;
     private TextView tvReporterDetail;
     private TextView tvContentDetail;
-    private ImageView ivThumbDetail;
+    private KenBurnsView ivThumbDetail;
     private Button btnComment;
     private TextView tvPreviewCommentUser;
     private TextView tvPreviewCommentContent;
@@ -114,16 +111,12 @@ public class ActDetailContentDefault extends ActionBarActivity
     private PublisherAdView publisherAdViewBottom;
     private PublisherAdView publisherAdViewTop;
 
-    //Analytic
-    private Analytics analytics;
-
     //Data List
     private ArrayList<Favorites> favoritesArrayList;
     private ArrayList<RelatedArticle> relatedArticleArrayList;
     private ArrayList<Comment> commentArrayList;
     private ArrayList<Ads> adsArrayList;
     private ArrayList<SliderContentImage> sliderContentImages;
-    private ArrayList<Video> videoArrayList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -177,13 +170,8 @@ public class ActDetailContentDefault extends ActionBarActivity
 
                                 JSONArray content_video = detail.getJSONArray(Constant.content_video);
                                 if (content_video != null && content_video.length() > 0) {
-                                    for (int i=0; i<content_video.length(); i++) {
-                                        JSONObject objVideo = content_video.getJSONObject(i);
-                                        urlVideo = objVideo.getString("src_1");
-                                        widthVideo = objVideo.getString("src_2");
-                                        heightVideo = objVideo.getString("src_3");
-                                        videoArrayList.add(new Video(urlVideo, widthVideo, heightVideo));
-                                    }
+                                    JSONObject objVideo = content_video.getJSONObject(0);
+                                    urlVideo = objVideo.getString("src_1");
                                 }
 
                                 JSONArray related_article = response.getJSONArray(Constant.related_article);
@@ -197,10 +185,10 @@ public class ActDetailContentDefault extends ActionBarActivity
                                     String channel_id = objRelated.getString(Constant.channel_id);
                                     String related_date_publish = objRelated.getString(Constant.related_date_publish);
                                     String image = objRelated.getString(Constant.image);
-                                    String kanal = objRelated.getString(Constant.kanal);
+                                    String channel = objRelated.getString(Constant.kanal);
                                     String shared_url = objRelated.getString(Constant.url);
                                     relatedArticleArrayList.add(new RelatedArticle(id, article_id, related_article_id, related_title,
-                                            related_channel_level_1_id, channel_id, related_date_publish, image, kanal, shared_url));
+                                            related_channel_level_1_id, channel_id, related_date_publish, image, channel, shared_url));
                                 }
 
                                 JSONArray comment_list = response.getJSONArray(Constant.comment_list);
@@ -252,7 +240,7 @@ public class ActDetailContentDefault extends ActionBarActivity
                                     adapter.notifyDataSetChanged();
                                     headerRelated.setVisibility(View.VISIBLE);
                                     if (fromKanal != null) {
-                                        if (fromKanal.equalsIgnoreCase("bola")) {
+                                        if (fromKanal.equalsIgnoreCase("bola") || fromKanal.equalsIgnoreCase("sport")) {
                                             headerRelated.setBackgroundResource(R.color.color_bola);
                                         } else if (fromKanal.equalsIgnoreCase("vivalife")) {
                                             headerRelated.setBackgroundResource(R.color.color_life);
@@ -268,7 +256,6 @@ public class ActDetailContentDefault extends ActionBarActivity
 
                                 if (commentArrayList.size() > 0) {
                                     layoutCommentPreview.setVisibility(View.VISIBLE);
-
                                     Thread thread = new Thread() {
                                         @Override
                                         public void run() {
@@ -299,7 +286,7 @@ public class ActDetailContentDefault extends ActionBarActivity
                                 } else {
                                     btnComment.setVisibility(View.VISIBLE);
                                     if (fromKanal != null) {
-                                        if (fromKanal.equalsIgnoreCase("bola")) {
+                                        if (fromKanal.equalsIgnoreCase("bola") || fromKanal.equalsIgnoreCase("sport")) {
                                             btnComment.setBackgroundColor(getResources().getColor(R.color.color_bola));
                                         } else if (fromKanal.equalsIgnoreCase("vivalife")) {
                                             btnComment.setBackgroundColor(getResources().getColor(R.color.color_life));
@@ -317,11 +304,7 @@ public class ActDetailContentDefault extends ActionBarActivity
 
                                 progressWheel.setVisibility(View.GONE);
 
-                                Log.i(Constant.TAG, "Sebelum");
-
                                 showAds();
-
-                                Log.i(Constant.TAG, "Sesudah");
 
                                 if (urlVideo.length() > 0) {
                                     textLinkVideo.setVisibility(View.VISIBLE);
@@ -426,7 +409,7 @@ public class ActDetailContentDefault extends ActionBarActivity
                         adapter.notifyDataSetChanged();
                         headerRelated.setVisibility(View.VISIBLE);
                         if (fromKanal != null) {
-                            if (fromKanal.equalsIgnoreCase("bola")) {
+                            if (fromKanal.equalsIgnoreCase("bola") || fromKanal.equalsIgnoreCase("sport")) {
                                 headerRelated.setBackgroundResource(R.color.color_bola);
                             } else if (fromKanal.equalsIgnoreCase("vivalife")) {
                                 headerRelated.setBackgroundResource(R.color.color_life);
@@ -448,7 +431,7 @@ public class ActDetailContentDefault extends ActionBarActivity
                                 try {
                                     while (true) {
                                         Thread.sleep(3000);
-                                        if(ActDetailContentDefault.this == null) {
+                                        if (ActDetailContentDefault.this == null) {
                                             return;
                                         }
                                         runOnUiThread(new Runnable() {
@@ -472,7 +455,7 @@ public class ActDetailContentDefault extends ActionBarActivity
                     } else {
                         btnComment.setVisibility(View.VISIBLE);
                         if (fromKanal != null) {
-                            if (fromKanal.equalsIgnoreCase("bola")) {
+                            if (fromKanal.equalsIgnoreCase("bola") || fromKanal.equalsIgnoreCase("sport")) {
                                 btnComment.setBackgroundColor(getResources().getColor(R.color.color_bola));
                             } else if (fromKanal.equalsIgnoreCase("vivalife")) {
                                 btnComment.setBackgroundColor(getResources().getColor(R.color.color_life));
@@ -529,7 +512,6 @@ public class ActDetailContentDefault extends ActionBarActivity
         relatedArticleArrayList = new ArrayList<>();
         commentArrayList = new ArrayList<>();
         sliderContentImages = new ArrayList<>();
-        videoArrayList = new ArrayList<>();
         adsArrayList = new ArrayList<>();
 
         tvTitleDetail = (TextView) findViewById(R.id.title_detail_content_default);
@@ -537,7 +519,7 @@ public class ActDetailContentDefault extends ActionBarActivity
         tvReporterDetail = (TextView) findViewById(R.id.reporter_detail_content_default);
         tvContentDetail = (TextView) findViewById(R.id.content_detail_content_default);
 
-        ivThumbDetail = (ImageView) findViewById(R.id.thumb_detail_content_default);
+        ivThumbDetail = (KenBurnsView) findViewById(R.id.thumb_detail_content_default);
         ivThumbDetail.setOnClickListener(this);
         ivThumbDetail.setFocusableInTouchMode(true);
 
@@ -587,7 +569,7 @@ public class ActDetailContentDefault extends ActionBarActivity
         getSupportActionBar().setHomeButtonEnabled(true);
         //Set Background
         if (fromKanal != null) {
-            if (fromKanal.equalsIgnoreCase("bola")) {
+            if (fromKanal.equalsIgnoreCase("bola") || fromKanal.equalsIgnoreCase("sport")) {
                 colorDrawable.setColor(getResources().getColor(R.color.color_bola));
                 getSupportActionBar().setBackgroundDrawable(colorDrawable);
                 getSupportActionBar().setTitle(R.string.label_item_navigation_bola);
@@ -667,7 +649,7 @@ public class ActDetailContentDefault extends ActionBarActivity
     }
 
     private void doFavorites() {
-        favoriteList = Global.getInstance(this).getSharedPreferences(this)
+        String favoriteList = Global.getInstance(this).getSharedPreferences(this)
                 .getString(Constant.FAVORITES_LIST, "");
         if (favoriteList == null || favoriteList.length() <= 0) {
             favoritesArrayList = Global.getInstance(this).getFavoritesList();
@@ -790,7 +772,7 @@ public class ActDetailContentDefault extends ActionBarActivity
     }
 
     private void setAnalytics(String title, String id) {
-        analytics = new Analytics(this);
+        Analytics analytics = new Analytics(this);
         if (typeFrom != null) {
             if (typeFrom.equalsIgnoreCase("search")) {
                 analytics.getAnalyticByATInternet(Constant.FROM_SEARCH_RESULT_DETAIL_CONTENT + fromKanal.toUpperCase() + "_" + id + "_" + title);

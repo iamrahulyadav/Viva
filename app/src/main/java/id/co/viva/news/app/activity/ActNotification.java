@@ -30,6 +30,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.flaviofaria.kenburnsview.KenBurnsView;
 import com.google.android.gms.ads.doubleclick.PublisherAdView;
 import com.squareup.picasso.Picasso;
 import com.viewpagerindicator.LinePageIndicator;
@@ -52,7 +53,6 @@ import id.co.viva.news.app.model.Ads;
 import id.co.viva.news.app.model.Favorites;
 import id.co.viva.news.app.model.RelatedArticle;
 import id.co.viva.news.app.model.SliderContentImage;
-import id.co.viva.news.app.model.Video;
 import id.co.viva.news.app.services.Analytics;
 
 /**
@@ -71,7 +71,6 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
     private ArrayList<SliderContentImage> sliderContentImages;
     private ArrayList<Favorites> favoritesArrayList;
     private ArrayList<RelatedArticle> relatedArticleArrayList;
-    private ArrayList<Video> videoArrayList;
     private ArrayList<Ads> adsArrayList;
 
     //All Views
@@ -79,7 +78,7 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
     private TextView tvDateDetail;
     private TextView tvReporterDetail;
     private TextView tvContentDetail;
-    private ImageView ivThumbDetail;
+    private KenBurnsView ivThumbDetail;
     private RelativeLayout headerRelated;
     private RelatedAdapter adapter;
     private TextView textLinkVideo;
@@ -92,9 +91,6 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
     private RippleView rippleView;
     private Button btnRetry;
     private TextView tvNoResult;
-
-    //Analytic
-    private Analytics analytics;
 
     //Ads AdMob DFP
     private LinearLayout mParentLayout;
@@ -166,7 +162,6 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
 
         relatedArticleArrayList = new ArrayList<>();
         sliderContentImages = new ArrayList<>();
-        videoArrayList = new ArrayList<>();
         adsArrayList = new ArrayList<>();
 
         listView = (ListView) findViewById(R.id.list_related_article_notification);
@@ -180,7 +175,7 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
         tvReporterDetail = (TextView) findViewById(R.id.reporter_detail_content);
         tvContentDetail = (TextView) findViewById(R.id.content_detail_content);
 
-        ivThumbDetail = (ImageView) findViewById(R.id.thumb_detail_content);
+        ivThumbDetail = (KenBurnsView) findViewById(R.id.thumb_detail_content);
         ivThumbDetail.setOnClickListener(this);
         ivThumbDetail.setFocusableInTouchMode(true);
 
@@ -307,11 +302,8 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
                                 //Get video content
                                 JSONArray content_video = detail.getJSONArray(Constant.content_video);
                                 if (content_video != null && content_video.length() > 0) {
-                                    for (int i=0; i<content_video.length(); i++) {
-                                        JSONObject objVideo = content_video.getJSONObject(i);
-                                        urlVideo = objVideo.getString("src_1");
-                                        videoArrayList.add(new Video(urlVideo, null, null));
-                                    }
+                                    JSONObject objVideo = content_video.getJSONObject(0);
+                                    urlVideo = objVideo.getString("src_1");
                                 }
                                 //Get related article
                                 JSONArray related_article = response.getJSONArray(Constant.related_article);
@@ -481,7 +473,7 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
 
     private void setButtonRetry(String kanals) {
         if (kanals != null) {
-            if (kanals.equalsIgnoreCase("bola")) {
+            if (kanals.equalsIgnoreCase("bola") || kanals.equalsIgnoreCase("sport")) {
                 btnRetry.setBackgroundResource(R.drawable.shadow_button_bola);
             } else if (kanals.equalsIgnoreCase("vivalife")) {
                 btnRetry.setBackgroundResource(R.drawable.shadow_button_life);
@@ -616,10 +608,12 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
     }
 
     private void getAnalytics(String title) {
-        analytics = new Analytics(this);
-        analytics.getAnalyticByATInternetFromNotification(Constant.ARTICLE_FROM_NOTIFICATION + "_"
-                + title.toUpperCase(), "Push Notifications::" + Constant.ARTICLE_FROM_NOTIFICATION + "_" + title.toUpperCase());
-        analytics.getAnalyticByGoogleAnalytic(Constant.ARTICLE_FROM_NOTIFICATION + "_" + title.toUpperCase());
+        if (isInternetPresent) {
+            Analytics analytics = new Analytics(this);
+            analytics.getAnalyticByATInternetFromNotification(Constant.ARTICLE_FROM_NOTIFICATION + "_"
+                    + title.toUpperCase(), "Push Notifications::" + Constant.ARTICLE_FROM_NOTIFICATION + "_" + title.toUpperCase());
+            analytics.getAnalyticByGoogleAnalytic(Constant.ARTICLE_FROM_NOTIFICATION + "_" + title.toUpperCase());
+        }
     }
 
     @Override

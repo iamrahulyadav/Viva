@@ -46,7 +46,7 @@ public class ImageSliderFragment extends Fragment implements View.OnClickListene
         View rootView = inflater.inflate(R.layout.item_slider_detail_image, container, false);
         imageView = (ImageView) rootView.findViewById(R.id.image_item_slider_detail);
         imageView.setOnClickListener(this);
-        if(mPhotoUrl.length() > 0) {
+        if (mPhotoUrl.length() > 0) {
             if (getActivity() != null) {
                 if (Constant.isTablet(getActivity())) {
                     imageView.getLayoutParams().height =
@@ -71,7 +71,7 @@ public class ImageSliderFragment extends Fragment implements View.OnClickListene
 
     @Override
     public void onClick(View view) {
-        if(view.getId() == R.id.image_item_slider_detail) {
+        if (view.getId() == R.id.image_item_slider_detail) {
             toDetailThumbnail();
         }
     }

@@ -435,12 +435,12 @@ public class ActDetailChannel extends ActionBarActivity implements
     private String getUrl(String channelTitle, String level) {
         String url_channel;
         if (channelTitle.equalsIgnoreCase(Constant.AllNews)) {
-            url_channel = Constant.NEW_KANAL + "ch/" + id + Constant.ALL_NEWS_URL;
+            url_channel = Constant.NEW_CHANNEL + "ch/" + id + Constant.ALL_NEWS_URL;
         } else {
             if (level.equals("1")) {
-                url_channel = Constant.NEW_KANAL + "ch/" + id + Constant.SUB_CHANNEL_LV_1_URL;
+                url_channel = Constant.NEW_CHANNEL + "ch/" + id + Constant.SUB_CHANNEL_LV_1_URL;
             } else {
-                url_channel = Constant.NEW_KANAL + "ch/" + id + Constant.SUB_CHANNEL_LV_2_URL;
+                url_channel = Constant.NEW_CHANNEL + "ch/" + id + Constant.SUB_CHANNEL_LV_2_URL;
             }
         }
         return url_channel;
@@ -449,12 +449,12 @@ public class ActDetailChannel extends ActionBarActivity implements
     private String getPagingUrl(String channelTitle, String page, String timeStamp, String level) {
         String url_channel_paging;
         if (channelTitle.equalsIgnoreCase(Constant.AllNews)) {
-            url_channel_paging = Constant.NEW_KANAL + "ch/" + id + Constant.ALL_NEWS_URL_PAGING + timeStamp + "/type/terbaru";
+            url_channel_paging = Constant.NEW_CHANNEL + "ch/" + id + Constant.ALL_NEWS_URL_PAGING + timeStamp + "/type/terbaru";
         } else {
             if (level.equals("1")) {
-                url_channel_paging = Constant.NEW_KANAL + "ch/" + id + Constant.SUB_CHANNEL_LV_1_URL_PAGING + page;
+                url_channel_paging = Constant.NEW_CHANNEL + "ch/" + id + Constant.SUB_CHANNEL_LV_1_URL_PAGING + page;
             } else {
-                url_channel_paging = Constant.NEW_KANAL + "ch/" + id + Constant.SUB_CHANNEL_LV_2_URL_PAGING + page;
+                url_channel_paging = Constant.NEW_CHANNEL + "ch/" + id + Constant.SUB_CHANNEL_LV_2_URL_PAGING + page;
             }
         }
         return url_channel_paging;

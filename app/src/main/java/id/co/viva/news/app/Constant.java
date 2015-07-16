@@ -52,11 +52,6 @@ public class Constant {
     //Minimal time location update
     public static final int MIN_TIME_BW_UPDATES = 20000;
 
-    //Padding for some collections
-    private static int PADDING_DYNAMIC_SIZE_GRID = 500;
-    private static int PADDING_DYNAMIC_SIZE = 200;
-    private static int PADDING_DYNAMIC_SIZE_SLIDER = 800;
-
     //Separate list and grid
     public static String DYNAMIC_SIZE_GRID_TYPE = "grid_type";
     public static String DYNAMIC_SIZE_LIST_TYPE = "list_type";
@@ -84,9 +79,9 @@ public class Constant {
     public static final String MOVE_APPLICATION = "move_application";
 
     //Menu list
-    public static final String BERITA_SEKITAR_MENU = "Berita Sekitar";
-    public static final String BERITA_FAVORIT_MENU = "Berita Favorit";
-    public static final String PINDAI_KODE_QR_MENU = "Pindai Kode QR";
+    public static final String NEWS_AROUND_MENU = "Berita Sekitar";
+    public static final String NEWS_FAVORITE_MENU = "Berita Favorit";
+    public static final String SCAN_QR_CODE_MENU = "Pindai Kode QR";
     public static final String TAG_POPULAR = "Tag Terpopuler";
     public static final String INFO_MENU_SECTION = "INFO";
     public static final String CONTACT_MENU = "Kontak Kami";
@@ -131,8 +126,8 @@ public class Constant {
     //Main Content URL
     public static String MAIN_CONFIG = BASE_URL_NEW + "mainconf/app/android";
     public static String TUTORIAL_IMAGES_URL = BASE_URL_NEW + "coach";
-    public static String BERITA_SEKITAR_URL = BASE_URL_NEW + "find/";
-    public static String NEW_KANAL = BASE_URL_NEW + "kanal/";
+    public static String NEWS_AROUND_URL = BASE_URL_NEW + "find/";
+    public static String NEW_CHANNEL = BASE_URL_NEW + "kanal/";
     public static String NEW_DETAIL = BASE_URL_NEW + "detail/";
     public static String NEW_SEARCH = BASE_URL_NEW + "search/";
     public static String NEW_LOGIN = BASE_URL_NEW + "login";
@@ -259,7 +254,6 @@ public class Constant {
     public static final String ADS_TYPE_OPENING = "ads_opening";
     public static final String ADS_TYPE_CLOSING = "ads_closing";
     public static final int ADS_TYPE_OPENING_POSITION = 1;
-//    public static final int ADS_TYPE_CLOSING_POSITION = 2;
 
     //Banner Position
     public static final int POSITION_BANNER_TOP = 1;
@@ -271,7 +265,7 @@ public class Constant {
 
     //Type list
     public static final int SMALL_LIST_DEFAULT = 2;
-    public static final int BERITA_SEKITAR_LIST = 3;
+    public static final int NEWS_AROUND_LIST = 3;
     public static final int BIG_CARD_CHANNEL_LIST = 4;
     public static final int BIG_CARD_SEARCH_RESULT = 7;
 
@@ -350,10 +344,13 @@ public class Constant {
         display.getSize(size);
         int width = 0;
         if (mType.equals(Constant.DYNAMIC_SIZE_LIST_TYPE)) {
+            int PADDING_DYNAMIC_SIZE = 200;
             width = size.x - PADDING_DYNAMIC_SIZE;
         } else if (mType.equals(Constant.DYNAMIC_SIZE_GRID_TYPE)) {
+            int PADDING_DYNAMIC_SIZE_GRID = 500;
             width = size.x - PADDING_DYNAMIC_SIZE_GRID;
         } else if (mType.equals(DYNAMIC_SIZE_SLIDER_TYPE)) {
+            int PADDING_DYNAMIC_SIZE_SLIDER = 800;
             width = size.x - PADDING_DYNAMIC_SIZE_SLIDER;
         }
         return width;

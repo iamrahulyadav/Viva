@@ -27,10 +27,12 @@ public class ListMainAdapter extends BaseAdapter {
 
     private Context context;
     private ArrayList<EntityMain> entityMains;
+    private String typePopular;
 
-    public ListMainAdapter(Context context, ArrayList<EntityMain> entityMains) {
+    public ListMainAdapter(Context context, ArrayList<EntityMain> entityMains, String typePopular) {
         this.context = context;
         this.entityMains = entityMains;
+        this.typePopular = typePopular;
     }
 
     @Override
@@ -89,9 +91,13 @@ public class ListMainAdapter extends BaseAdapter {
         }
 
         try {
-            DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            Date date = formatter.parse(entity.getDate_publish());
-            holder.date_item_news.setText(Constant.getTimeAgo(date.getTime()));
+            if (typePopular.equals("popular")) {
+                holder.date_item_news.setText(entity.getDate_publish());
+            } else {
+                DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                Date date = formatter.parse(entity.getDate_publish());
+                holder.date_item_news.setText(Constant.getTimeAgo(date.getTime()));
+            }
         } catch (Exception e) {
             e.getMessage();
         }

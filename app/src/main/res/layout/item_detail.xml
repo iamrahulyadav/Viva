@@ -19,7 +19,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/thumb_detail_layout">
-                <ImageView
+                <com.flaviofaria.kenburnsview.KenBurnsView
                     android:id="@+id/thumb_detail"
                     android:layout_width="match_parent"
                     android:layout_height="220dp"
@@ -83,10 +83,15 @@
                     android:id="@+id/content_detail"
                     android:layout_below="@id/indicator"
                     android:layout_width="wrap_content"
-                    android:lineSpacingExtra="6px"
+                    android:lineSpacingExtra="6dp"
                     android:textSize="16sp"
                     android:textColor="@color/black"
                     android:layout_height="wrap_content"/>
+                <android.support.v4.view.ViewPager
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/indicator"
+                    android:id="@+id/content_detail_paging"/>
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

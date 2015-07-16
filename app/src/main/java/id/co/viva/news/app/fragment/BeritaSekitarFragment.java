@@ -220,11 +220,11 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
                 adapter = new BeritaSekitarAdapter(getActivity(), beritaSekitarArrayList);
             }
             if (smallAdapter == null) {
-                smallAdapter = new ListMainSmallAdapter(getActivity(), Constant.BERITA_SEKITAR_LIST, beritaSekitarArrayList, null);
+                smallAdapter = new ListMainSmallAdapter(getActivity(), Constant.NEWS_AROUND_LIST, beritaSekitarArrayList, null);
             }
         } else {
             adapter = new BeritaSekitarAdapter(mActivity, beritaSekitarArrayList);
-            smallAdapter = new ListMainSmallAdapter(getActivity(), Constant.BERITA_SEKITAR_LIST, beritaSekitarArrayList, null);
+            smallAdapter = new ListMainSmallAdapter(getActivity(), Constant.NEWS_AROUND_LIST, beritaSekitarArrayList, null);
         }
 
         //Checking process when find some locations
@@ -284,7 +284,7 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
                 labelLoadData.setVisibility(View.VISIBLE);
                 labelLoadData.setText(getResources().getString(R.string.label_get_location));
                 StringRequest request = new StringRequest(Request.Method.GET,
-                        Constant.BERITA_SEKITAR_URL + "p/" + getParamLocation(mCitySubLocality, LOCATION_LOCALITY).replace(" ", "%20")
+                        Constant.NEWS_AROUND_URL + "p/" + getParamLocation(mCitySubLocality, LOCATION_LOCALITY).replace(" ", "%20")
                                 + "/q/" + getParamLocation(mCitySubLocality, LOCATION_SUB_LOCALITY).replace(" ", "%20")
                                 + "/r/" + getParamLocation(mCitySubLocality, LOCATION_ADMIN_AREA).replace(" ", "%20") + "/s/0",
                         new Response.Listener<String>() {
@@ -387,7 +387,7 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
         if (isInternetPresent) {
             setAnalytics(String.valueOf(page));
             StringRequest request = new StringRequest(Request.Method.GET,
-                    Constant.BERITA_SEKITAR_URL + "p/" + getParamLocation(mCitySubLocality, LOCATION_LOCALITY).replace(" ", "%20")
+                    Constant.NEWS_AROUND_URL + "p/" + getParamLocation(mCitySubLocality, LOCATION_LOCALITY).replace(" ", "%20")
                             + "/q/" + getParamLocation(mCitySubLocality, LOCATION_SUB_LOCALITY).replace(" ", "%20")
                             + "/r/" + getParamLocation(mCitySubLocality, LOCATION_ADMIN_AREA).replace(" ", "%20") + "/s/" + lastPaging,
                     new Response.Listener<String>() {
@@ -547,7 +547,7 @@ public class BeritaSekitarFragment extends Fragment implements View.OnClickListe
                 if (mCitySubLocality != null) {
                     if (mCitySubLocality.length() > 0) {
                         StringRequest request = new StringRequest(Request.Method.GET,
-                                Constant.BERITA_SEKITAR_URL + "p/" + getParamLocation(mCitySubLocality, LOCATION_LOCALITY).replace(" ", "%20")
+                                Constant.NEWS_AROUND_URL + "p/" + getParamLocation(mCitySubLocality, LOCATION_LOCALITY).replace(" ", "%20")
                                 + "/q/" + getParamLocation(mCitySubLocality, LOCATION_SUB_LOCALITY).replace(" ", "%20")
                                 + "/r/" + getParamLocation(mCitySubLocality, LOCATION_ADMIN_AREA).replace(" ", "%20") + "/s/0",
                                 new Response.Listener<String>() {

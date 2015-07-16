@@ -7,9 +7,9 @@ import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.flaviofaria.kenburnsview.KenBurnsView;
 import com.squareup.picasso.Picasso;
 import com.viewpagerindicator.LinePageIndicator;
 
@@ -29,11 +29,11 @@ import id.co.viva.news.app.services.Analytics;
 public class ActDetailFavorite extends ActionBarActivity implements View.OnClickListener {
 
     private Intent intent;
-    private ImageView imageDetail;
+    private KenBurnsView imageDetail;
     private TextView tvTitle;
     private TextView tvDatePublish;
     private TextView tvContent;
-    private TextView tvReportername;
+    private TextView tvReporterName;
     private ImageSliderAdapter imageSliderAdapter;
     private ViewPager viewPager;
     private LinePageIndicator linePageIndicator;
@@ -80,7 +80,7 @@ public class ActDetailFavorite extends ActionBarActivity implements View.OnClick
         tvTitle.setText(title);
         tvDatePublish.setText(date_publish);
         tvContent.setText(Html.fromHtml(content).toString());
-        tvReportername.setText(reporter_name);
+        tvReporterName.setText(reporter_name);
 
         if(thumbSize > 0 && sliderContentImages != null) {
             imageSliderAdapter = new ImageSliderAdapter(getSupportFragmentManager(), sliderContentImages);
@@ -108,11 +108,11 @@ public class ActDetailFavorite extends ActionBarActivity implements View.OnClick
     private void defineViews() {
         sliderContentImages = Global.getInstance(this).getInstanceGson().
                 fromJson(sThumbList, Global.getInstance(this).getTypeSlider());
-        imageDetail = (ImageView)findViewById(R.id.thumb_detail_content_favorite);
+        imageDetail = (KenBurnsView)findViewById(R.id.thumb_detail_content_favorite);
         tvTitle = (TextView)findViewById(R.id.title_detail_content_favorite);
         tvDatePublish = (TextView)findViewById(R.id.date_detail_content_favorite);
         tvContent = (TextView)findViewById(R.id.content_detail_content_favorite);
-        tvReportername = (TextView)findViewById(R.id.reporter_detail_content_favorite);
+        tvReporterName = (TextView)findViewById(R.id.reporter_detail_content_favorite);
         viewPager = (ViewPager) findViewById(R.id.horizontal_list);
         linePageIndicator = (LinePageIndicator)findViewById(R.id.indicator);
         linePageIndicator.setVisibility(View.GONE);

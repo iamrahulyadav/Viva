@@ -19,7 +19,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/thumb_detail_content_layout">
-                <ImageView
+                <com.flaviofaria.kenburnsview.KenBurnsView
                     android:id="@+id/thumb_detail_content"
                     android:layout_width="match_parent"
                     android:layout_height="220dp"
@@ -81,12 +81,17 @@
                     app:selectedColor="@color/blue"/>
                 <id.co.viva.news.app.component.RobotoTextView
                     android:id="@+id/content_detail_content"
-                    android:lineSpacingExtra="6px"
+                    android:lineSpacingExtra="6dp"
                     android:layout_below="@id/indicator"
                     android:layout_width="wrap_content"
                     android:textSize="16sp"
                     android:textColor="@color/black"
                     android:layout_height="wrap_content" />
+                <android.support.v4.view.ViewPager
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/indicator"
+                    android:id="@+id/content_detail_paging"/>
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -94,7 +99,7 @@
                     android:textColor="@color/white"
                     android:visibility="gone"
                     android:layout_centerHorizontal="true"
-                    android:layout_below="@id/content_detail_content"
+                    android:layout_below="@id/content_detail_paging"
                     android:text="@string/label_comments_from_detail"/>
                 <id.co.viva.news.app.component.RobotoTextView
                     android:id="@+id/text_move_video"

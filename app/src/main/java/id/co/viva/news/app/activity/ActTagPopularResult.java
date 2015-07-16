@@ -287,7 +287,7 @@ public class ActTagPopularResult extends ActionBarActivity implements
                 //Big Card List Style
                 if (!isLoadMore) {
                     if (adapter == null) {
-                        adapter = new ListMainAdapter(this, entityList);
+                        adapter = new ListMainAdapter(this, entityList, "popular");
                     }
                     if (swingBottomInAnimationAdapter == null) {
                         swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(adapter);
@@ -398,7 +398,17 @@ public class ActTagPopularResult extends ActionBarActivity implements
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+        if (entityList.size() > 0) {
+            EntityMain entityMain = entityList.get(position);
+            Bundle bundle = new Bundle();
+            bundle.putString("id", entityMain.getId());
+            bundle.putString("screen", name);
+            bundle.putString("name", name);
+            Intent intent = new Intent(this, ActDetailMain.class);
+            intent.putExtras(bundle);
+            startActivity(intent);
+            overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+        }
     }
 
     @Override

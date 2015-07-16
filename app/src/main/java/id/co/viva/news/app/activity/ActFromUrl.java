@@ -22,6 +22,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.flaviofaria.kenburnsview.KenBurnsView;
 import com.squareup.picasso.Picasso;
 import com.viewpagerindicator.LinePageIndicator;
 
@@ -38,7 +39,6 @@ import id.co.viva.news.app.adapter.ImageSliderAdapter;
 import id.co.viva.news.app.component.CropSquareTransformation;
 import id.co.viva.news.app.component.ProgressWheel;
 import id.co.viva.news.app.model.SliderContentImage;
-import id.co.viva.news.app.model.Video;
 
 /**
  * Created by reza on 20/01/15.
@@ -53,12 +53,11 @@ public class ActFromUrl extends ActionBarActivity implements View.OnClickListene
     private Button btnRetry;
     private TextView tvNoResult;
     private ArrayList<SliderContentImage> sliderContentImages;
-    private ArrayList<Video> videoArrayList;
     private TextView tvTitleDetail;
     private TextView tvDateDetail;
     private TextView tvReporterDetail;
     private TextView tvContentDetail;
-    private ImageView ivThumbDetail;
+    private KenBurnsView ivThumbDetail;
     private TextView textLinkVideo;
     private Button btnComment;
     private String title;
@@ -107,14 +106,13 @@ public class ActFromUrl extends ActionBarActivity implements View.OnClickListene
         tvNoResult.setVisibility(View.GONE);
 
         sliderContentImages = new ArrayList<>();
-        videoArrayList = new ArrayList<>();
 
         tvTitleDetail = (TextView) findViewById(R.id.title_detail_content);
         tvDateDetail = (TextView) findViewById(R.id.date_detail_content);
         tvReporterDetail = (TextView) findViewById(R.id.reporter_detail_content);
         tvContentDetail = (TextView) findViewById(R.id.content_detail_content);
 
-        ivThumbDetail = (ImageView) findViewById(R.id.thumb_detail_content);
+        ivThumbDetail = (KenBurnsView) findViewById(R.id.thumb_detail_content);
         ivThumbDetail.setOnClickListener(this);
         ivThumbDetail.setFocusableInTouchMode(true);
 
@@ -208,13 +206,8 @@ public class ActFromUrl extends ActionBarActivity implements View.OnClickListene
                                 }
 
                                 JSONArray content_video = detail.getJSONArray(Constant.content_video);
-                                if (content_video != null && content_video.length() > 0) {
-                                    for (int i=0; i<content_video.length(); i++) {
-                                        JSONObject objVideo = content_video.getJSONObject(i);
-                                        urlVideo = objVideo.getString("src_1");
-                                        videoArrayList.add(new Video(urlVideo, null, null));
-                                    }
-                                }
+                                JSONObject objVideo = content_video.getJSONObject(0);
+                                urlVideo = objVideo.getString("src_1");
 
                                 tvTitleDetail.setText(title);
                                 tvDateDetail.setText(date_publish);
@@ -316,7 +309,7 @@ public class ActFromUrl extends ActionBarActivity implements View.OnClickListene
 
     private void setButtonRetry(String kanals) {
         if (kanals != null) {
-            if (kanals.equalsIgnoreCase("bola")) {
+            if (kanals.equalsIgnoreCase("bola") || kanals.equalsIgnoreCase("sport")) {
                 btnRetry.setBackgroundResource(R.drawable.shadow_button_bola);
             } else if (kanals.equalsIgnoreCase("vivalife")) {
                 btnRetry.setBackgroundResource(R.drawable.shadow_button_life);

@@ -205,13 +205,13 @@ public class ActLanding extends ActionBarActivity implements View.OnClickListene
             } else {
                 //Main menu list
                 switch (items.getName()) {
-                    case Constant.BERITA_SEKITAR_MENU:
+                    case Constant.NEWS_AROUND_MENU:
                         fragment = new BeritaSekitarFragment();
                         break;
-                    case Constant.BERITA_FAVORIT_MENU:
+                    case Constant.NEWS_FAVORITE_MENU:
                         fragment = new FavoritesFragment();
                         break;
-                    case Constant.PINDAI_KODE_QR_MENU:
+                    case Constant.SCAN_QR_CODE_MENU:
                         scanNews();
                         break;
                     case Constant.TAG_POPULAR:

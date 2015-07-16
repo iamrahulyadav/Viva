@@ -6,6 +6,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.adapter.DetailMainAdapter;
 import id.co.viva.news.app.component.ZoomOutPageTransformer;
@@ -32,27 +33,42 @@ public class ActDetailMain extends ActionBarActivity {
         setContentView(R.layout.act_detail_main_article);
 
         //Set ActionBar
-        setActionBar();
+        setActionBar(name);
 
         //Set Detail Pager
         int position = 0;
-        if (ListMainFragment.entityList != null) {
-            if (ListMainFragment.entityList.size() > 0) {
-                for (EntityMain main : ListMainFragment.entityList) {
-                    if (main.getId().equals(id)) break;
-                    position++;
+        if (name.equalsIgnoreCase(Constant.TAG_POPULAR)) {
+            if (ActTagPopularResult.entityList != null) {
+                if (ActTagPopularResult.entityList.size() > 0) {
+                    for (EntityMain main : ActTagPopularResult.entityList) {
+                        if (main.getId().equals(id)) break;
+                        position++;
+                    }
                 }
+                adapter = new DetailMainAdapter(getSupportFragmentManager(), ActTagPopularResult.entityList, detailParam, name);
+            } else {
+                Toast.makeText(this, R.string.label_error, Toast.LENGTH_SHORT).show();
+                onBackPressed();
             }
-            adapter = new DetailMainAdapter(getSupportFragmentManager(), ListMainFragment.entityList, detailParam, name);
-            viewPager = (ViewPager)findViewById(R.id.vp_detail_main_article);
-            viewPager.setAdapter(adapter);
-            viewPager.setPageTransformer(true, new ZoomOutPageTransformer());
-            viewPager.setCurrentItem(position);
-            adapter.notifyDataSetChanged();
         } else {
-            Toast.makeText(this, R.string.label_error, Toast.LENGTH_SHORT).show();
-            onBackPressed();
+            if (ListMainFragment.entityList != null) {
+                if (ListMainFragment.entityList.size() > 0) {
+                    for (EntityMain main : ListMainFragment.entityList) {
+                        if (main.getId().equals(id)) break;
+                        position++;
+                    }
+                }
+                adapter = new DetailMainAdapter(getSupportFragmentManager(), ListMainFragment.entityList, detailParam, name);
+            } else {
+                Toast.makeText(this, R.string.label_error, Toast.LENGTH_SHORT).show();
+                onBackPressed();
+            }
         }
+        viewPager = (ViewPager)findViewById(R.id.vp_detail_main_article);
+        viewPager.setAdapter(adapter);
+        viewPager.setPageTransformer(true, new ZoomOutPageTransformer());
+        viewPager.setCurrentItem(position);
+        adapter.notifyDataSetChanged();
     }
 
     private void getParameters() {
@@ -62,11 +78,11 @@ public class ActDetailMain extends ActionBarActivity {
         name = bundle.getString("name");
     }
 
-    private void setActionBar() {
+    private void setActionBar(String mName) {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
-        getSupportActionBar().setTitle(getResources().getString(R.string.label_terbaru_detail));
+        getSupportActionBar().setTitle(mName);
     }
 
     @Override
