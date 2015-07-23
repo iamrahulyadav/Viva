@@ -22,7 +22,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -56,7 +55,7 @@ import id.co.viva.news.app.activity.ActDetailPhotoThumb;
 import id.co.viva.news.app.activity.ActRating;
 import id.co.viva.news.app.activity.ActVideo;
 import id.co.viva.news.app.adapter.ImageSliderAdapter;
-import id.co.viva.news.app.adapter.PagingDetailArticleAdapter;
+
 import id.co.viva.news.app.adapter.RelatedAdapter;
 import id.co.viva.news.app.ads.AdsConfig;
 import id.co.viva.news.app.component.CropSquareTransformation;
@@ -75,15 +74,11 @@ public class DetailIndexContent extends Fragment implements
         AdapterView.OnItemClickListener, View.OnClickListener {
 
     private String id;
-    private String kanals;
-    private RelativeLayout headerRelated;
+    private String channels;
+
     private boolean isInternetPresent = false;
-    private ProgressWheel progressWheel;
-    private TextView tvNoResult;
-    private Button btnComment;
-    private ListView listView;
-    private Analytics analytics;
-    private RippleView rippleView;
+    private int count = 0;
+    private int pageCount = 0;
 
     private ArrayList<RelatedArticle> relatedArticleArrayList;
     private ArrayList<Favorites> favoritesArrayList;
@@ -92,6 +87,13 @@ public class DetailIndexContent extends Fragment implements
     private ArrayList<Ads> adsArrayList;
     private ArrayList<String> pagingContents;
 
+    private ProgressWheel progressWheel;
+    private TextView tvNoResult;
+    private Button btnComment;
+    private ListView listView;
+    private Analytics analytics;
+    private RippleView rippleView;
+    private RelativeLayout headerRelated;
     private TextView tvTitleDetail;
     private TextView tvDateDetail;
     private TextView tvReporterDetail;
@@ -99,30 +101,30 @@ public class DetailIndexContent extends Fragment implements
     private KenBurnsView ivThumbDetail;
     private Button btnRetry;
     private ViewPager viewPager;
-    private ViewPager viewPagerDetail;
     private LinePageIndicator linePageIndicator;
     private LinearLayout mParentLayout;
+    private LinearLayout mPagingButtonLayout;
     private PublisherAdView publisherAdViewBottom;
     private PublisherAdView publisherAdViewTop;
     private TextView tvPreviewCommentUser;
     private TextView tvPreviewCommentContent;
+    private TextView textLinkVideo;
+    private TextView textPageNext;
+    private TextView textPagePrevious;
     private LinearLayout layoutCommentPreview;
-    private int count = 0;
     private ActionBarActivity mActivity;
 
     private String ids;
     private String title;
     private String channel_id;
-    private String kanal;
+    private String channel;
     private String image_url;
     private String date_publish;
-    private String content;
     private String urlVideo;
     private String reporter_name;
     private String url_shared;
     private String image_caption;
     private String mChannelTitle;
-    private TextView textLinkVideo;
 
     public static DetailIndexContent newInstance(String id, String channel, String channel_title) {
         DetailIndexContent detailIndexContent = new DetailIndexContent();
@@ -144,7 +146,7 @@ public class DetailIndexContent extends Fragment implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         id = getArguments().getString("id");
-        kanals = getArguments().getString("channel");
+        channels = getArguments().getString("channel");
         mChannelTitle = getArguments().getString("channel_title");
         analytics = new Analytics(getActivity());
         isInternetPresent = Global.getInstance(getActivity())
@@ -155,11 +157,11 @@ public class DetailIndexContent extends Fragment implements
         //Root layout
         mParentLayout = (LinearLayout) view.findViewById(R.id.parent_layout);
 
+        mPagingButtonLayout = (LinearLayout) view.findViewById(R.id.layout_button_next_previous);
+
         //Pager
         viewPager = (ViewPager) view.findViewById(R.id.horizontal_list);
         viewPager.setVisibility(View.GONE);
-        viewPagerDetail = (ViewPager) view.findViewById(R.id.content_detail_paging);
-//        viewPagerDetail.setVisibility(View.GONE);
 
         //Indicator Pager
         linePageIndicator = (LinePageIndicator) view.findViewById(R.id.indicator);
@@ -172,12 +174,12 @@ public class DetailIndexContent extends Fragment implements
 
         //Loading Progress
         progressWheel = (ProgressWheel) view.findViewById(R.id.progress_wheel);
-        if (kanals != null) {
-            if (kanals.equalsIgnoreCase("bola") || kanals.equalsIgnoreCase("sport")) {
+        if (channels != null) {
+            if (channels.equalsIgnoreCase("bola") || channels.equalsIgnoreCase("sport")) {
                 progressWheel.setBarColor(getResources().getColor(R.color.color_bola));
-            } else if (kanals.equalsIgnoreCase("vivalife")) {
+            } else if (channels.equalsIgnoreCase("vivalife")) {
                 progressWheel.setBarColor(getResources().getColor(R.color.color_life));
-            } else if (kanals.equalsIgnoreCase("otomotif")) {
+            } else if (channels.equalsIgnoreCase("otomotif")) {
                 progressWheel.setBarColor(getResources().getColor(R.color.color_auto));
             } else {
                 progressWheel.setBarColor(getResources().getColor(R.color.color_news));
@@ -229,6 +231,12 @@ public class DetailIndexContent extends Fragment implements
         textLinkVideo.setOnClickListener(this);
         textLinkVideo.setVisibility(View.GONE);
 
+        textPageNext = (TextView) view.findViewById(R.id.text_page_next);
+        textPagePrevious = (TextView) view.findViewById(R.id.text_page_previous);
+        textPageNext.setOnClickListener(this);
+        textPagePrevious.setOnClickListener(this);
+        textPagePrevious.setEnabled(false);
+
         if (Constant.isTablet(mActivity)) {
             ivThumbDetail.getLayoutParams().height =
                     Constant.getDynamicImageSize(mActivity, Constant.DYNAMIC_SIZE_GRID_TYPE);
@@ -239,7 +247,7 @@ public class DetailIndexContent extends Fragment implements
 
     private void retrieveData() {
         StringRequest request = new StringRequest(Request.Method.GET, Constant.NEW_DETAIL + "id/" + id
-                + "/screen/" + kanals + "_" + mChannelTitle.replace(" ", "_").toLowerCase() + "_detail_screen",
+                + "/screen/" + channels + "_" + mChannelTitle.replace(" ", "_").toLowerCase() + "_detail_screen",
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String volleyResponse) {
@@ -258,28 +266,28 @@ public class DetailIndexContent extends Fragment implements
                 0,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         Global.getInstance(getActivity()).getRequestQueue().getCache().invalidate(Constant.NEW_DETAIL + "id/" + id
-                + "/screen/" + kanals + "_" + mChannelTitle.replace(" ", "_").toLowerCase() + "_detail_screen", true);
+                + "/screen/" + channels + "_" + mChannelTitle.replace(" ", "_").toLowerCase() + "_detail_screen", true);
         Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_DETAIL + "id/" + id
-                + "/screen/" + kanals + "_" + mChannelTitle.replace(" ", "_").toLowerCase() + "_detail_screen");
+                + "/screen/" + channels + "_" + mChannelTitle.replace(" ", "_").toLowerCase() + "_detail_screen");
         Global.getInstance(getActivity()).addToRequestQueue(request, Constant.JSON_REQUEST);
     }
 
     private void checkCache() {
         if (Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_DETAIL + "id/" + id
-                + "/screen/" + kanals + "_" + mChannelTitle.replace(" ", "_").toLowerCase() + "_detail_screen") != null) {
+                + "/screen/" + channels + "_" + mChannelTitle.replace(" ", "_").toLowerCase() + "_detail_screen") != null) {
             String cachedResponse = new String(Global.getInstance(getActivity()).
                     getRequestQueue().getCache().get(Constant.NEW_DETAIL + "id/" + id
-                    + "/screen/" + kanals + "_" + mChannelTitle.replace(" ", "_").toLowerCase() + "_detail_screen").data);
+                    + "/screen/" + channels + "_" + mChannelTitle.replace(" ", "_").toLowerCase() + "_detail_screen").data);
             parseData(cachedResponse);
         } else {
             progressWheel.setVisibility(View.GONE);
             rippleView.setVisibility(View.VISIBLE);
-            if (kanals != null) {
-                if (kanals.equalsIgnoreCase("bola") || kanals.equalsIgnoreCase("sport")) {
+            if (channels != null) {
+                if (channels.equalsIgnoreCase("bola") || channels.equalsIgnoreCase("sport")) {
                     btnRetry.setBackgroundResource(R.drawable.shadow_button_bola);
-                } else if (kanals.equalsIgnoreCase("vivalife")) {
+                } else if (channels.equalsIgnoreCase("vivalife")) {
                     btnRetry.setBackgroundResource(R.drawable.shadow_button_life);
-                } else if (kanals.equalsIgnoreCase("otomotif")) {
+                } else if (channels.equalsIgnoreCase("otomotif")) {
                     btnRetry.setBackgroundResource(R.drawable.shadow_button_otomotif);
                 } else {
                     btnRetry.setBackgroundResource(R.drawable.shadow_button_news);
@@ -296,14 +304,14 @@ public class DetailIndexContent extends Fragment implements
             JSONObject detail = response.getJSONObject(Constant.detail);
             ids = detail.getString(Constant.id);
             channel_id = detail.getString(Constant.channel_id);
-            kanal = detail.getString(Constant.kanal);
+            channel = detail.getString(Constant.kanal);
             title = detail.getString(Constant.title);
             image_url = detail.getString(Constant.image_url);
             date_publish = detail.getString(Constant.date_publish);
             reporter_name = detail.getString(Constant.reporter_name);
             url_shared = detail.getString(Constant.url);
             image_caption = detail.getString(Constant.image_caption);
-
+            //Get detail content(s)
             JSONArray content = detail.getJSONArray(Constant.content);
             if (content.length() > 0) {
                 for (int i=0; i<content.length(); i++) {
@@ -312,10 +320,9 @@ public class DetailIndexContent extends Fragment implements
                     Log.i(Constant.TAG, "Content Size : " + content.length());
                 }
             }
-
             //Get list image content
             JSONArray sliderImageArray = detail.getJSONArray(Constant.content_images);
-            if (sliderImageArray != null) {
+            if (sliderImageArray.length() > 0) {
                 for (int i=0; i<sliderImageArray.length(); i++) {
                     JSONObject objSlider = sliderImageArray.getJSONObject(i);
                     String sliderPhotoUrl = objSlider.getString("src");
@@ -370,20 +377,17 @@ public class DetailIndexContent extends Fragment implements
                 }
             }
             //Send analytic
-            setAnalytics(mChannelTitle, kanals, title, ids);
+            setAnalytics(mChannelTitle, channels, title, ids);
             //Set data to view
             tvTitleDetail.setText(title);
             tvDateDetail.setText(date_publish);
-
-//            setTextViewHTML(tvContentDetail, content);
+            //Paging check process
             if (pagingContents.size() > 0) {
-                PagingDetailArticleAdapter adapter = new PagingDetailArticleAdapter(getFragmentManager(), pagingContents);
-                viewPagerDetail.setAdapter(adapter);
-                viewPagerDetail.setCurrentItem(0);
-                adapter.notifyDataSetChanged();
-//                viewPagerDetail.setVisibility(View.VISIBLE);
+                setTextViewHTML(tvContentDetail, pagingContents.get(0));
+                if (pagingContents.size() > 1) {
+                    mPagingButtonLayout.setVisibility(View.VISIBLE);
+                }
             }
-
             tvReporterDetail.setText(reporter_name);
             Picasso.with(getActivity()).load(image_url)
                     .transform(new CropSquareTransformation()).into(ivThumbDetail);
@@ -404,12 +408,12 @@ public class DetailIndexContent extends Fragment implements
                 Constant.setListViewHeightBasedOnChildren(listView);
                 adapter.notifyDataSetChanged();
                 headerRelated.setVisibility(View.VISIBLE);
-                if (kanals != null) {
-                    if (kanals.equalsIgnoreCase("bola") || (kanals.equalsIgnoreCase("sport"))) {
+                if (channels != null) {
+                    if (channels.equalsIgnoreCase("bola") || (channels.equalsIgnoreCase("sport"))) {
                         headerRelated.setBackgroundResource(R.color.color_bola);
-                    } else if (kanals.equalsIgnoreCase("vivalife")) {
+                    } else if (channels.equalsIgnoreCase("vivalife")) {
                         headerRelated.setBackgroundResource(R.color.color_life);
-                    } else if (kanals.equalsIgnoreCase("otomotif")) {
+                    } else if (channels.equalsIgnoreCase("otomotif")) {
                         headerRelated.setBackgroundResource(R.color.color_auto);
                     } else {
                         headerRelated.setBackgroundResource(R.color.color_news);
@@ -448,12 +452,12 @@ public class DetailIndexContent extends Fragment implements
                 thread.start();
             } else {
                 btnComment.setVisibility(View.VISIBLE);
-                if (kanals != null) {
-                    if (kanals.equalsIgnoreCase("bola") || kanals.equalsIgnoreCase("sport")) {
+                if (channels != null) {
+                    if (channels.equalsIgnoreCase("bola") || channels.equalsIgnoreCase("sport")) {
                         btnComment.setBackgroundColor(getResources().getColor(R.color.color_bola));
-                    } else if(kanals.equalsIgnoreCase("vivalife")) {
+                    } else if(channels.equalsIgnoreCase("vivalife")) {
                         btnComment.setBackgroundColor(getResources().getColor(R.color.color_life));
-                    } else if(kanals.equalsIgnoreCase("otomotif")) {
+                    } else if(channels.equalsIgnoreCase("otomotif")) {
                         btnComment.setBackgroundColor(getResources().getColor(R.color.color_auto));
                     } else {
                         btnComment.setBackgroundColor(getResources().getColor(R.color.color_news));
@@ -497,7 +501,7 @@ public class DetailIndexContent extends Fragment implements
         bundle.putString("imageurl", image_url);
         bundle.putString("title", title);
         bundle.putString("article_id", ids);
-        bundle.putString("type_kanal", kanal);
+        bundle.putString("type_kanal", channel);
         Intent intent = new Intent(getActivity(), ActComment.class);
         intent.putExtras(bundle);
         startActivity(intent);
@@ -509,7 +513,7 @@ public class DetailIndexContent extends Fragment implements
         bundles.putString("imageurl", image_url);
         bundles.putString("title", title);
         bundles.putString("article_id", ids);
-        bundles.putString("type_kanal", kanal);
+        bundles.putString("type_kanal", channel);
         Intent intents = new Intent(getActivity(), ActRating.class);
         intents.putExtras(bundles);
         startActivity(intents);
@@ -532,8 +536,8 @@ public class DetailIndexContent extends Fragment implements
                 .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                     @Override
                     public void onClick(SweetAlertDialog sDialog) {
-                        favoritesArrayList.add(new Favorites(ids, title, channel_id, kanal,
-                                image_url, date_publish, reporter_name, url_shared, content, image_caption, sliderContentImages));
+                        favoritesArrayList.add(new Favorites(ids, title, channel_id, channel,
+                                image_url, date_publish, reporter_name, url_shared, pagingContents.get(0), image_caption, sliderContentImages)); //TODO Modify content
                         String favorite = Global.getInstance(getActivity()).getInstanceGson().toJson(favoritesArrayList);
                         Global.getInstance(getActivity()).getDefaultEditor().putString(Constant.FAVORITES_LIST, favorite);
                         Global.getInstance(getActivity()).getDefaultEditor().putInt(Constant.FAVORITES_LIST_SIZE, favoritesArrayList.size());
@@ -551,7 +555,7 @@ public class DetailIndexContent extends Fragment implements
     private void moveBrowserPage(String url) {
         Bundle bundle = new Bundle();
         bundle.putString("url", url);
-        bundle.putString("channel", kanal);
+        bundle.putString("channel", channel);
         Intent intent = new Intent(mActivity, ActBrowser.class);
         intent.putExtras(bundle);
         startActivity(intent);
@@ -565,6 +569,42 @@ public class DetailIndexContent extends Fragment implements
         intent.putExtras(bundle);
         startActivity(intent);
         getActivity().overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+    }
+
+    private void showPagingNext() {
+        pageCount += 1;
+        if (pageCount > 0) {
+            textPagePrevious.setEnabled(true);
+            textPagePrevious.setTextColor(getResources().getColor(R.color.new_base_color));
+        }
+        if (pageCount < pagingContents.size()) {
+            ivThumbDetail.requestFocus();
+            setTextViewHTML(tvContentDetail, pagingContents.get(pageCount));
+        }
+        if (pageCount == pagingContents.size() - 1) {
+            textPageNext.setEnabled(false);
+            textPageNext.setTextColor(getResources().getColor(R.color.switch_thumb_normal_material_dark));
+        }
+    }
+
+    private void showPagingPrevious() {
+        pageCount -= 1;
+        if (pageCount < pagingContents.size() - 1) {
+            textPageNext.setEnabled(true);
+            textPageNext.setTextColor(getResources().getColor(R.color.new_base_color));
+        }
+        if (pageCount == 0) {
+            ivThumbDetail.requestFocus();
+            setTextViewHTML(tvContentDetail, pagingContents.get(pageCount));
+            textPagePrevious.setEnabled(false);
+            textPagePrevious.setTextColor(getResources().getColor(R.color.switch_thumb_normal_material_dark));
+        } else {
+            textPagePrevious.setEnabled(true);
+            if (pageCount > -1 && pageCount < pagingContents.size()) {
+                ivThumbDetail.requestFocus();
+                setTextViewHTML(tvContentDetail, pagingContents.get(pageCount));
+            }
+        }
     }
 
     @Override
@@ -611,7 +651,7 @@ public class DetailIndexContent extends Fragment implements
         if (url_shared == null || url_shared.length() < 1) {
             try {
                 if (Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_DETAIL + "id/" + id
-                        + "/screen/" + kanals + "_" + mChannelTitle.replace(" ", "_").toLowerCase() + "_detail_screen") != null) {
+                        + "/screen/" + channels + "_" + mChannelTitle.replace(" ", "_").toLowerCase() + "_detail_screen") != null) {
                     String cachedResponse = new String(Global.getInstance(getActivity()).
                             getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + id).data);
                     JSONObject jsonObject = new JSONObject(cachedResponse);
@@ -669,6 +709,10 @@ public class DetailIndexContent extends Fragment implements
             moveVideoPage(urlVideo);
         } else if (view.getId() == R.id.btn_comment) {
             moveCommentPage();
+        } else if (view.getId() == R.id.text_page_next) {
+            showPagingNext();
+        } else if (view.getId() == R.id.text_page_previous) {
+            showPagingPrevious();
         }
     }
 

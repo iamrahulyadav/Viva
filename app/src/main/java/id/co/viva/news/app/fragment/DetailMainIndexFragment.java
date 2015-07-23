@@ -22,7 +22,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -99,7 +98,6 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
     private LinearLayout layoutCommentPreview;
     private Button btnComment;
     private ViewPager viewPager;
-    private ViewPager viewPagerDetail;
     private LinePageIndicator linePageIndicator;
     private int count = 0;
     private TextView textLinkVideo;
@@ -156,8 +154,6 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
         //Viewpager image & text
         viewPager = (ViewPager) view.findViewById(R.id.horizontal_list);
         viewPager.setVisibility(View.GONE);
-        viewPagerDetail = (ViewPager) view.findViewById(R.id.content_detail_paging);
-        viewPagerDetail.setVisibility(View.GONE);
 
         //Indicator Slider Image
         linePageIndicator = (LinePageIndicator) view.findViewById(R.id.indicator);
