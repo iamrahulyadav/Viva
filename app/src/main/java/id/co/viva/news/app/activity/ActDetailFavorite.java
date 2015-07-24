@@ -28,17 +28,14 @@ import id.co.viva.news.app.services.Analytics;
  */
 public class ActDetailFavorite extends ActionBarActivity implements View.OnClickListener {
 
-    private Intent intent;
     private KenBurnsView imageDetail;
     private TextView tvTitle;
     private TextView tvDatePublish;
     private TextView tvContent;
     private TextView tvReporterName;
-    private ImageSliderAdapter imageSliderAdapter;
     private ViewPager viewPager;
     private LinePageIndicator linePageIndicator;
 
-    private Analytics analytics;
     private boolean isInternetPresent = false;
     private ArrayList<SliderContentImage> sliderContentImages;
 
@@ -54,20 +51,23 @@ public class ActDetailFavorite extends ActionBarActivity implements View.OnClick
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //Current connection
         isInternetPresent = Global.getInstance(this)
                 .getConnectionStatus().isConnectingToInternet();
+        //Get parameters
         getParams();
-
-        if(isInternetPresent) {
-            getAnalytics(title);
-        }
+        //Check connection
+        getAnalytics(title);
 
         setContentView(R.layout.act_detail_favorite);
+
+        //Set header
         getHeaderActionBar();
+        //Define all views
         defineViews();
 
         try {
-            if(image_url != null) {
+            if (image_url != null) {
                 Picasso.with(this).load(image_url)
                         .transform(new CropSquareTransformation()).into(imageDetail);
             }
@@ -82,8 +82,8 @@ public class ActDetailFavorite extends ActionBarActivity implements View.OnClick
         tvContent.setText(Html.fromHtml(content).toString());
         tvReporterName.setText(reporter_name);
 
-        if(thumbSize > 0 && sliderContentImages != null) {
-            imageSliderAdapter = new ImageSliderAdapter(getSupportFragmentManager(), sliderContentImages);
+        if (thumbSize > 0 && sliderContentImages != null) {
+            ImageSliderAdapter imageSliderAdapter = new ImageSliderAdapter(getSupportFragmentManager(), sliderContentImages);
             viewPager.setAdapter(imageSliderAdapter);
             viewPager.setCurrentItem(0);
             imageSliderAdapter.notifyDataSetChanged();
@@ -94,7 +94,7 @@ public class ActDetailFavorite extends ActionBarActivity implements View.OnClick
     }
 
     private void getParams() {
-        intent = getIntent();
+        Intent intent = getIntent();
         title = intent.getStringExtra("title");
         image_url = intent.getStringExtra("image_url");
         date_publish = intent.getStringExtra("date_publish");
@@ -132,9 +132,11 @@ public class ActDetailFavorite extends ActionBarActivity implements View.OnClick
     }
 
     private void getAnalytics(String title) {
-        analytics = new Analytics(this);
-        analytics.getAnalyticByATInternet(Constant.FAVORITES_PAGE_DETAIL + title);
-        analytics.getAnalyticByGoogleAnalytic(Constant.FAVORITES_PAGE_DETAIL + title);
+        if (isInternetPresent) {
+            Analytics analytics = new Analytics(this);
+            analytics.getAnalyticByATInternet(Constant.FAVORITES_PAGE_DETAIL + title);
+            analytics.getAnalyticByGoogleAnalytic(Constant.FAVORITES_PAGE_DETAIL + title);
+        }
     }
 
     @Override
@@ -149,8 +151,8 @@ public class ActDetailFavorite extends ActionBarActivity implements View.OnClick
 
     @Override
     public void onClick(View view) {
-        if(view.getId() == R.id.thumb_detail_content_favorite) {
-            if(image_url.length() > 0) {
+        if (view.getId() == R.id.thumb_detail_content_favorite) {
+            if (image_url.length() > 0) {
                 Bundle bundle = new Bundle();
                 bundle.putString("photoUrl", image_url);
                 bundle.putString("image_caption", image_caption);

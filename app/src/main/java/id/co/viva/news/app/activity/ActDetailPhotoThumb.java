@@ -16,29 +16,26 @@ import id.co.viva.news.app.component.ZoomImageView;
  */
 public class ActDetailPhotoThumb extends ActionBarActivity {
 
-    private ZoomImageView imageView;
-    private TextView textView;
-    private String photoUrl;
-    private String image_caption;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         getHeaderActionBar();
 
         Bundle bundle = getIntent().getExtras();
-        photoUrl = bundle.getString("photoUrl");
-        image_caption = bundle.getString("image_caption");
+        String photoUrl = bundle.getString("photoUrl");
+        String image_caption = bundle.getString("image_caption");
         setContentView(R.layout.act_detail_photo_thumb);
 
-        imageView = (ZoomImageView)findViewById(R.id.img_thumb_content_dialog);
+        ZoomImageView imageView = (ZoomImageView) findViewById(R.id.img_thumb_content_dialog);
         imageView.setMaxZoom(4f);
-        textView = (TextView)findViewById(R.id.title_thumb_content_dialog);
+        TextView textView = (TextView) findViewById(R.id.title_thumb_content_dialog);
 
-        if(photoUrl.length() > 0) {
+        if (photoUrl.length() > 0) {
             Picasso.with(this).load(photoUrl).into(imageView);
         }
-        if(image_caption.length() > 0) {
+
+        if (image_caption.length() > 0) {
             textView.setText(image_caption);
         }
     }

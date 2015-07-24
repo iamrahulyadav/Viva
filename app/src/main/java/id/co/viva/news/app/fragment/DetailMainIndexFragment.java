@@ -13,7 +13,6 @@ import android.text.SpannableStringBuilder;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.text.style.URLSpan;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -72,22 +71,24 @@ import id.co.viva.news.app.services.Analytics;
 public class DetailMainIndexFragment extends Fragment implements View.OnClickListener,
         AdapterView.OnItemClickListener {
 
-    private RelativeLayout headerRelated;
     private boolean isInternetPresent = false;
-    private ProgressWheel progressWheel;
-    private TextView tvNoResult;
-    private ActionBarActivity mActivity;
+    private int pageCount = 0;
+    private int count = 0;
 
     private ArrayList<RelatedArticle> relatedArticleArrayList;
     private ArrayList<Comment> commentArrayList;
     private ArrayList<SliderContentImage> sliderContentImages;
     private ArrayList<Favorites> favoritesArrayList;
     private ArrayList<Ads> adsArrayList;
+    private ArrayList<String> pagingContents;
 
     private ListView listView;
     private Analytics analytics;
     private RippleView rippleView;
-
+    private ProgressWheel progressWheel;
+    private TextView tvNoResult;
+    private ActionBarActivity mActivity;
+    private RelativeLayout headerRelated;
     private TextView tvTitleMainDetail;
     private TextView tvDateMainDetail;
     private TextView tvReporterMainDetail;
@@ -95,16 +96,17 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
     private KenBurnsView ivThumbDetailMain;
     private TextView tvPreviewCommentUser;
     private TextView tvPreviewCommentContent;
+    private TextView textPageNext;
+    private TextView textPagePrevious;
     private LinearLayout layoutCommentPreview;
     private Button btnComment;
     private ViewPager viewPager;
     private LinePageIndicator linePageIndicator;
-    private int count = 0;
     private TextView textLinkVideo;
-
     private PublisherAdView publisherAdViewBottom;
     private PublisherAdView publisherAdViewTop;
     private LinearLayout mParentLayout;
+    private LinearLayout mPagingButtonLayout;
 
     private String ids;
     private String id;
@@ -112,10 +114,9 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
     private String title;
     private String channel_id;
     private String urlVideo;
-    private String kanal;
+    private String channel;
     private String image_url;
     private String date_publish;
-    private String content;
     private String reporter_name;
     private String url_shared;
     private String analyticType;
@@ -151,6 +152,9 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
         //Root layout
         mParentLayout = (LinearLayout) view.findViewById(R.id.parent_layout);
 
+        //Layout for article paging button
+        mPagingButtonLayout = (LinearLayout) view.findViewById(R.id.layout_button_next_previous);
+
         //Viewpager image & text
         viewPager = (ViewPager) view.findViewById(R.id.horizontal_list);
         viewPager.setVisibility(View.GONE);
@@ -180,6 +184,7 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
         commentArrayList = new ArrayList<>();
         sliderContentImages = new ArrayList<>();
         adsArrayList = new ArrayList<>();
+        pagingContents = new ArrayList<>();
 
         progressWheel = (ProgressWheel) view.findViewById(R.id.progress_wheel);
 
@@ -210,6 +215,12 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
         textLinkVideo = (TextView) view.findViewById(R.id.text_move_video);
         textLinkVideo.setOnClickListener(this);
         textLinkVideo.setVisibility(View.GONE);
+
+        textPageNext = (TextView) view.findViewById(R.id.text_page_next);
+        textPagePrevious = (TextView) view.findViewById(R.id.text_page_previous);
+        textPageNext.setOnClickListener(this);
+        textPagePrevious.setOnClickListener(this);
+        textPagePrevious.setEnabled(false);
 
         if (Constant.isTablet(mActivity)) {
             ivThumbDetailMain.getLayoutParams().height =
@@ -254,23 +265,21 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
             JSONObject detail = response.getJSONObject(Constant.detail);
             ids = detail.getString(Constant.id);
             channel_id = detail.getString(Constant.channel_id);
-            kanal = detail.getString(Constant.kanal);
+            channel = detail.getString(Constant.kanal);
             title = detail.getString(Constant.title);
             image_url = detail.getString(Constant.image_url);
             date_publish = detail.getString(Constant.date_publish);
             reporter_name = detail.getString(Constant.reporter_name);
             url_shared = detail.getString(Constant.url);
             image_caption = detail.getString(Constant.image_caption);
-
+            //Get detail content(s)
             JSONArray content = detail.getJSONArray(Constant.content);
-            Log.i(Constant.TAG, "Content Size : " + content.length());
             if (content.length() > 0) {
                 for (int i=0; i<content.length(); i++) {
                     String detailContent = content.getString(i);
-                    Log.i(Constant.TAG, "Content : " + detailContent);
+                    pagingContents.add(detailContent);
                 }
             }
-
             //Get image content
             JSONArray sliderImageArray = detail.getJSONArray(Constant.content_images);
             if (sliderImageArray.length() > 0) {
@@ -332,7 +341,13 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
             //Set view
             tvTitleMainDetail.setText(title);
             tvDateMainDetail.setText(date_publish);
-//            setTextViewHTML(tvContentMainDetail, content);
+            //Paging check process
+            if (pagingContents.size() > 0) {
+                setTextViewHTML(tvContentMainDetail, pagingContents.get(0));
+                if (pagingContents.size() > 1) {
+                    mPagingButtonLayout.setVisibility(View.VISIBLE);
+                }
+            }
             tvReporterMainDetail.setText(reporter_name);
             Picasso.with(getActivity()).load(image_url).transform(new CropSquareTransformation()).into(ivThumbDetailMain);
             //Checking for image content
@@ -390,11 +405,9 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
             getActivity().invalidateOptionsMenu();
             //Hide progress bar
             progressWheel.setVisibility(View.GONE);
-
+            //Show Ads & show video link
             if (isInternetPresent) {
-                //Show Ads
                 showAds();
-                //Show video link
                 if (urlVideo.length() > 0) {
                     textLinkVideo.setVisibility(View.VISIBLE);
                 }
@@ -457,7 +470,7 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
     private void moveBrowserPage(String url) {
         Bundle bundle = new Bundle();
         bundle.putString("url", url);
-        bundle.putString("channel", kanal);
+        bundle.putString("channel", channel);
         Intent intent = new Intent(mActivity, ActBrowser.class);
         intent.putExtras(bundle);
         startActivity(intent);
@@ -491,8 +504,8 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
                 .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                     @Override
                     public void onClick(SweetAlertDialog sDialog) {
-                        favoritesArrayList.add(new Favorites(ids, title, channel_id, kanal,
-                                image_url, date_publish, reporter_name, url_shared, content, image_caption, sliderContentImages));
+                        favoritesArrayList.add(new Favorites(ids, title, channel_id, channel,
+                                image_url, date_publish, reporter_name, url_shared, pagingContents.get(0), image_caption, sliderContentImages));
                         String favorite = Global.getInstance(getActivity()).getInstanceGson().toJson(favoritesArrayList);
                         Global.getInstance(getActivity()).getDefaultEditor().putString(Constant.FAVORITES_LIST, favorite);
                         Global.getInstance(getActivity()).getDefaultEditor().putInt(Constant.FAVORITES_LIST_SIZE, favoritesArrayList.size());
@@ -598,6 +611,12 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
             case R.id.btn_comment:
                 moveCommentPage();
                 break;
+            case R.id.text_page_previous:
+                showPagingPrevious();
+                break;
+            case R.id.text_page_next:
+                showPagingNext();
+                break;
         }
     }
 
@@ -659,23 +678,57 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
             if (url.contains(Constant.LINK_YOUTUBE)) {
                 moveVideoPage(url);
             } else if (url.contains(Constant.LINK_ARTICLE_VIVA)) {
-                if (url != null) {
-                    if (url.length() > 0) {
-                        Bundle bundle = new Bundle();
-                        bundle.putString("id", Constant.getArticleViva(url));
-                        Intent intent = new Intent(mActivity, ActDetailContentDefault.class);
-                        intent.putExtras(bundle);
-                        startActivity(intent);
-                        getActivity().overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
-                    }
+                if (url.length() > 0) {
+                    Bundle bundle = new Bundle();
+                    bundle.putString("id", Constant.getArticleViva(url));
+                    Intent intent = new Intent(mActivity, ActDetailContentDefault.class);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                    getActivity().overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
                 }
-            } else if (url.contains(Constant.LINK_VIDEO_VIVA)) {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+            } else if (url.contains(Constant.LINK_VIDEO_VIVA)) {
                 moveBrowserPage(url);
             } else {
                 moveBrowserPage(url);
             }
         } else {
             Toast.makeText(mActivity, R.string.title_no_connection, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void showPagingNext() {
+        pageCount += 1;
+        if (pageCount > 0) {
+            textPagePrevious.setEnabled(true);
+            textPagePrevious.setTextColor(getResources().getColor(R.color.new_base_color));
+        }
+        if (pageCount < pagingContents.size()) {
+            ivThumbDetailMain.requestFocus();
+            setTextViewHTML(tvContentMainDetail, pagingContents.get(pageCount));
+        }
+        if (pageCount == pagingContents.size() - 1) {
+            textPageNext.setEnabled(false);
+            textPageNext.setTextColor(getResources().getColor(R.color.switch_thumb_normal_material_dark));
+        }
+    }
+
+    private void showPagingPrevious() {
+        pageCount -= 1;
+        if (pageCount < pagingContents.size() - 1) {
+            textPageNext.setEnabled(true);
+            textPageNext.setTextColor(getResources().getColor(R.color.new_base_color));
+        }
+        if (pageCount == 0) {
+            ivThumbDetailMain.requestFocus();
+            setTextViewHTML(tvContentMainDetail, pagingContents.get(pageCount));
+            textPagePrevious.setEnabled(false);
+            textPagePrevious.setTextColor(getResources().getColor(R.color.switch_thumb_normal_material_dark));
+        } else {
+            textPagePrevious.setEnabled(true);
+            if (pageCount > -1 && pageCount < pagingContents.size()) {
+                ivThumbDetailMain.requestFocus();
+                setTextViewHTML(tvContentMainDetail, pagingContents.get(pageCount));
+            }
         }
     }
 

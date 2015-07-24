@@ -19,7 +19,6 @@ import id.co.viva.news.app.model.EntityMain;
 public class ActDetailMain extends ActionBarActivity {
 
     private String id;
-    private ViewPager viewPager;
     private DetailMainAdapter adapter;
     private String detailParam;
     private String name;
@@ -64,7 +63,7 @@ public class ActDetailMain extends ActionBarActivity {
                 onBackPressed();
             }
         }
-        viewPager = (ViewPager)findViewById(R.id.vp_detail_main_article);
+        ViewPager viewPager = (ViewPager) findViewById(R.id.vp_detail_main_article);
         viewPager.setAdapter(adapter);
         viewPager.setPageTransformer(true, new ZoomOutPageTransformer());
         viewPager.setCurrentItem(position);

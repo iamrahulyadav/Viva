@@ -71,11 +71,39 @@
                 <id.co.viva.news.app.component.RobotoTextView
                     android:id="@+id/content_detail_content_default"
                     android:layout_below="@id/indicator"
-                    android:lineSpacingExtra="6px"
+                    android:lineSpacingExtra="1dp"
                     android:layout_width="wrap_content"
                     android:textSize="16sp"
                     android:textColor="@color/black"
                     android:layout_height="wrap_content" />
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:visibility="gone"
+                    android:layout_below="@id/content_detail_content_default"
+                    android:layout_margin="5dp"
+                    android:layout_centerHorizontal="true"
+                    android:id="@+id/layout_button_next_previous">
+                    <id.co.viva.news.app.component.RobotoTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:text="@string/label_paging_previous"
+                        android:layout_marginRight="10dp"
+                        android:textColor="@color/switch_thumb_normal_material_dark"
+                        android:id="@+id/text_page_previous"/>
+                    <id.co.viva.news.app.component.RobotoTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/label_paging_next"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:layout_marginLeft="10dp"
+                        android:textColor="@color/new_base_color"
+                        android:id="@+id/text_page_next"/>
+                </LinearLayout>
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -83,7 +111,7 @@
                     android:textColor="@color/white"
                     android:visibility="gone"
                     android:layout_centerHorizontal="true"
-                    android:layout_below="@id/content_detail_content_default"
+                    android:layout_below="@id/layout_button_next_previous"
                     android:text="@string/label_comments_from_detail"/>
                 <id.co.viva.news.app.component.RobotoTextView
                     android:id="@+id/text_move_video"

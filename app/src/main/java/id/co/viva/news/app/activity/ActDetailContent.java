@@ -23,8 +23,6 @@ public class ActDetailContent extends ActionBarActivity {
     private String color;
     private String channel_title;
     private String channel;
-    private ViewPager viewPager;
-    private DetailContentChannelAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,8 +44,8 @@ public class ActDetailContent extends ActionBarActivity {
                     position++;
                 }
             }
-            adapter = new DetailContentChannelAdapter(getSupportFragmentManager(), ActDetailChannel.channelListArrayList, channel_title, channel);
-            viewPager = (ViewPager)findViewById(R.id.vp_detail_content);
+            DetailContentChannelAdapter adapter = new DetailContentChannelAdapter(getSupportFragmentManager(), ActDetailChannel.channelListArrayList, channel_title, channel);
+            ViewPager viewPager = (ViewPager) findViewById(R.id.vp_detail_content);
             viewPager.setAdapter(adapter);
             viewPager.setPageTransformer(true, new ZoomOutPageTransformer());
             viewPager.setCurrentItem(position);
@@ -86,7 +84,7 @@ public class ActDetailContent extends ActionBarActivity {
     private void setThemeColor(String textChannel) {
         if (textChannel != null) {
             if (textChannel.length() > 0) {
-                if (textChannel.equalsIgnoreCase(Constant.CHANNEL_BOLA)) {
+                if (textChannel.equalsIgnoreCase(Constant.CHANNEL_BOLA) || textChannel.equalsIgnoreCase("sport")) {
                     getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.color_bola)));
                 } else if (textChannel.toLowerCase().contains("life")) {
                     getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.color_life)));

@@ -81,7 +81,7 @@
                     app:selectedColor="@color/blue"/>
                 <id.co.viva.news.app.component.RobotoTextView
                     android:id="@+id/content_detail_content"
-                    android:lineSpacingExtra="6dp"
+                    android:lineSpacingExtra="1dp"
                     android:layout_below="@id/indicator"
                     android:layout_width="wrap_content"
                     android:textSize="16sp"

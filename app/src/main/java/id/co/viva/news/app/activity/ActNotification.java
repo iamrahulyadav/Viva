@@ -17,7 +17,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -61,23 +60,29 @@ import id.co.viva.news.app.services.Analytics;
 public class ActNotification extends ActionBarActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
 
     //Parameter from notification
-    private String kanalFromNotification;
+    private String channelFromNotification;
     private String idFromNotification;
 
     //Internet Flag
     private boolean isInternetPresent = false;
+
+    private int pageCount = 0;
 
     //Data List
     private ArrayList<SliderContentImage> sliderContentImages;
     private ArrayList<Favorites> favoritesArrayList;
     private ArrayList<RelatedArticle> relatedArticleArrayList;
     private ArrayList<Ads> adsArrayList;
+    private ArrayList<String> pagingContents;
 
     //All Views
     private TextView tvTitleDetail;
     private TextView tvDateDetail;
     private TextView tvReporterDetail;
     private TextView tvContentDetail;
+    private TextView textPageNext;
+    private TextView textPagePrevious;
+    private LinearLayout mPagingButtonLayout;
     private KenBurnsView ivThumbDetail;
     private RelativeLayout headerRelated;
     private RelatedAdapter adapter;
@@ -101,7 +106,6 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
     private String title;
     private String image_url;
     private String date_publish;
-    private String content;
     private String reporter_name;
     private String image_caption;
     private String sliderPhotoUrl;
@@ -117,7 +121,7 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             idFromNotification = extras.containsKey(Constant.id) ? extras.getString(Constant.id) : "";
-            kanalFromNotification = extras.containsKey(Constant.kanal) ? extras.getString(Constant.kanal) : "";
+            channelFromNotification = extras.containsKey(Constant.kanal) ? extras.getString(Constant.kanal) : "";
         }
 
         setContentView(R.layout.act_notification);
@@ -126,7 +130,7 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
         defineViews();
 
         //Set Color Theme
-        setHeaderActionbar(kanalFromNotification);
+        setHeaderActionbar(channelFromNotification);
 
         //Checking current internet connection
         isInternetPresent = Global.getInstance(this)
@@ -139,6 +143,8 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
     private void defineViews() {
         //Add ads if exists
         mParentLayout = (LinearLayout) findViewById(R.id.parent_layout);
+
+        mPagingButtonLayout = (LinearLayout) findViewById(R.id.layout_button_next_previous);
 
         viewPager = (ViewPager) findViewById(R.id.horizontal_list);
         viewPager.setVisibility(View.GONE);
@@ -163,6 +169,7 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
         relatedArticleArrayList = new ArrayList<>();
         sliderContentImages = new ArrayList<>();
         adsArrayList = new ArrayList<>();
+        pagingContents = new ArrayList<>();
 
         listView = (ListView) findViewById(R.id.list_related_article_notification);
         listView.setOnItemClickListener(this);
@@ -182,6 +189,12 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
         textLinkVideo = (TextView) findViewById(R.id.text_move_video);
         textLinkVideo.setOnClickListener(this);
         textLinkVideo.setVisibility(View.GONE);
+
+        textPageNext = (TextView) findViewById(R.id.text_page_next);
+        textPagePrevious = (TextView) findViewById(R.id.text_page_previous);
+        textPageNext.setOnClickListener(this);
+        textPagePrevious.setOnClickListener(this);
+        textPagePrevious.setEnabled(false);
 
         if (Constant.isTablet(this)) {
             ivThumbDetail.getLayoutParams().height =
@@ -221,6 +234,42 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
         }
         if (publisherAdViewTop != null) {
             publisherAdViewTop.destroy();
+        }
+    }
+
+    private void showPagingNext() {
+        pageCount += 1;
+        if (pageCount > 0) {
+            textPagePrevious.setEnabled(true);
+            textPagePrevious.setTextColor(getResources().getColor(R.color.new_base_color));
+        }
+        if (pageCount < pagingContents.size()) {
+            ivThumbDetail.requestFocus();
+            setTextViewHTML(tvContentDetail, pagingContents.get(pageCount));
+        }
+        if (pageCount == pagingContents.size() - 1) {
+            textPageNext.setEnabled(false);
+            textPageNext.setTextColor(getResources().getColor(R.color.switch_thumb_normal_material_dark));
+        }
+    }
+
+    private void showPagingPrevious() {
+        pageCount -= 1;
+        if (pageCount < pagingContents.size() - 1) {
+            textPageNext.setEnabled(true);
+            textPageNext.setTextColor(getResources().getColor(R.color.new_base_color));
+        }
+        if (pageCount == 0) {
+            ivThumbDetail.requestFocus();
+            setTextViewHTML(tvContentDetail, pagingContents.get(pageCount));
+            textPagePrevious.setEnabled(false);
+            textPagePrevious.setTextColor(getResources().getColor(R.color.switch_thumb_normal_material_dark));
+        } else {
+            textPagePrevious.setEnabled(true);
+            if (pageCount > -1 && pageCount < pagingContents.size()) {
+                ivThumbDetail.requestFocus();
+                setTextViewHTML(tvContentDetail, pagingContents.get(pageCount));
+            }
         }
     }
 
@@ -266,6 +315,10 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
             moveVideoPage(urlVideo);
         } else if (view.getId() == R.id.btn_comment) {
             moveCommentPage();
+        } else if (view.getId() == R.id.text_page_next) {
+            showPagingNext();
+        } else if (view.getId() == R.id.text_page_previous) {
+            showPagingPrevious();
         }
     }
 
@@ -284,11 +337,18 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
                                 title = detail.getString(Constant.title);
                                 image_url = detail.getString(Constant.image_url);
                                 date_publish = detail.getString(Constant.date_publish);
-                                content = detail.getString(Constant.content);
                                 reporter_name = detail.getString(Constant.reporter_name);
                                 image_caption = detail.getString(Constant.image_caption);
                                 shared_url = detail.getString(Constant.url);
                                 channel_id = detail.getString((Constant.channel_id));
+                                //Get detail content(s)
+                                JSONArray content = detail.getJSONArray(Constant.content);
+                                if (content.length() > 0) {
+                                    for (int i=0; i<content.length(); i++) {
+                                        String detailContent = content.getString(i);
+                                        pagingContents.add(detailContent);
+                                    }
+                                }
                                 //Get image content
                                 JSONArray sliderImageArray = detail.getJSONArray(Constant.content_images);
                                 if (sliderImageArray != null) {
@@ -317,10 +377,10 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
                                     String channel_id = objRelated.getString(Constant.channel_id);
                                     String related_date_publish = objRelated.getString(Constant.related_date_publish);
                                     String image = objRelated.getString(Constant.image);
-                                    String kanal = objRelated.getString(Constant.kanal);
+                                    String channel = objRelated.getString(Constant.kanal);
                                     String shared_url = objRelated.getString(Constant.url);
                                     relatedArticleArrayList.add(new RelatedArticle(id, article_id, related_article_id, related_title,
-                                            related_channel_level_1_id, channel_id, related_date_publish, image, kanal, shared_url));
+                                            related_channel_level_1_id, channel_id, related_date_publish, image, channel, shared_url));
                                 }
                                 //Get ads list
                                 JSONArray ad_list = response.getJSONArray(Constant.adses);
@@ -339,7 +399,13 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
                                 //Set data to view
                                 tvTitleDetail.setText(title);
                                 tvDateDetail.setText(date_publish);
-                                setTextViewHTML(tvContentDetail, content);
+                                //Paging check process
+                                if (pagingContents.size() > 0) {
+                                    setTextViewHTML(tvContentDetail, pagingContents.get(0));
+                                    if (pagingContents.size() > 1) {
+                                        mPagingButtonLayout.setVisibility(View.VISIBLE);
+                                    }
+                                }
                                 tvReporterDetail.setText(reporter_name);
                                 Picasso.with(ActNotification.this).load(image_url)
                                         .transform(new CropSquareTransformation()).into(ivThumbDetail);
@@ -355,12 +421,12 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
                                 }
                                 //Show comment button
                                 btnComment.setVisibility(View.VISIBLE);
-                                if (kanalFromNotification != null) {
-                                    if (kanalFromNotification.equalsIgnoreCase("bola")) {
+                                if (channelFromNotification != null) {
+                                    if (channelFromNotification.equalsIgnoreCase("bola") || channelFromNotification.equalsIgnoreCase("sport")) {
                                         btnComment.setBackgroundColor(getResources().getColor(R.color.color_bola));
-                                    } else if (kanalFromNotification.equalsIgnoreCase("vivalife")) {
+                                    } else if (channelFromNotification.equalsIgnoreCase("vivalife")) {
                                         btnComment.setBackgroundColor(getResources().getColor(R.color.color_life));
-                                    } else if (kanalFromNotification.equalsIgnoreCase("otomotif")) {
+                                    } else if (channelFromNotification.equalsIgnoreCase("otomotif")) {
                                         btnComment.setBackgroundColor(getResources().getColor(R.color.color_auto));
                                     } else {
                                         btnComment.setBackgroundColor(getResources().getColor(R.color.color_news));
@@ -375,12 +441,12 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
                                     Constant.setListViewHeightBasedOnChildren(listView);
                                     adapter.notifyDataSetChanged();
                                     headerRelated.setVisibility(View.VISIBLE);
-                                    if (kanalFromNotification != null) {
-                                        if (kanalFromNotification.equalsIgnoreCase("bola")) {
+                                    if (channelFromNotification != null) {
+                                        if (channelFromNotification.equalsIgnoreCase("bola") || channelFromNotification.equalsIgnoreCase("sport")) {
                                             headerRelated.setBackgroundResource(R.color.color_bola);
-                                        } else if (kanalFromNotification.equalsIgnoreCase("vivalife")) {
+                                        } else if (channelFromNotification.equalsIgnoreCase("vivalife")) {
                                             headerRelated.setBackgroundResource(R.color.color_life);
-                                        } else if (kanalFromNotification.equalsIgnoreCase("otomotif")) {
+                                        } else if (channelFromNotification.equalsIgnoreCase("otomotif")) {
                                             headerRelated.setBackgroundResource(R.color.color_auto);
                                         } else {
                                             headerRelated.setBackgroundResource(R.color.color_news);
@@ -413,7 +479,7 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
                         public void onErrorResponse(VolleyError volleyError) {
                             progressWheel.setVisibility(View.GONE);
                             rippleView.setVisibility(View.VISIBLE);
-                            setButtonRetry(kanalFromNotification);
+                            setButtonRetry(channelFromNotification);
 
                         }
                     });
@@ -438,22 +504,22 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
         }
     }
 
-    private void setHeaderActionbar(String fromkanal) {
+    private void setHeaderActionbar(String fromChannel) {
         ColorDrawable colorDrawable = new ColorDrawable();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
-        if (fromkanal != null) {
-            if (fromkanal.equalsIgnoreCase("bola")) {
+        if (fromChannel != null) {
+            if (fromChannel.equalsIgnoreCase("bola") || fromChannel.equalsIgnoreCase("sport")) {
                 colorDrawable.setColor(getResources().getColor(R.color.color_bola));
                 getSupportActionBar().setBackgroundDrawable(colorDrawable);
                 getSupportActionBar().setTitle(R.string.label_item_navigation_bola);
                 progressWheel.setBarColor(getResources().getColor(R.color.color_bola));
-            } else if (fromkanal.equalsIgnoreCase("vivalife")) {
+            } else if (fromChannel.equalsIgnoreCase("vivalife")) {
                 colorDrawable.setColor(getResources().getColor(R.color.color_life));
                 getSupportActionBar().setBackgroundDrawable(colorDrawable);
                 getSupportActionBar().setTitle(R.string.label_item_navigation_life);
                 progressWheel.setBarColor(getResources().getColor(R.color.color_life));
-            } else if (fromkanal.equalsIgnoreCase("otomotif")) {
+            } else if (fromChannel.equalsIgnoreCase("otomotif")) {
                 colorDrawable.setColor(getResources().getColor(R.color.color_auto));
                 getSupportActionBar().setBackgroundDrawable(colorDrawable);
                 getSupportActionBar().setTitle(R.string.label_item_navigation_otomotif);
@@ -471,13 +537,13 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
         }
     }
 
-    private void setButtonRetry(String kanals) {
-        if (kanals != null) {
-            if (kanals.equalsIgnoreCase("bola") || kanals.equalsIgnoreCase("sport")) {
+    private void setButtonRetry(String mChannel) {
+        if (mChannel != null) {
+            if (mChannel.equalsIgnoreCase("bola") || mChannel.equalsIgnoreCase("sport")) {
                 btnRetry.setBackgroundResource(R.drawable.shadow_button_bola);
-            } else if (kanals.equalsIgnoreCase("vivalife")) {
+            } else if (mChannel.equalsIgnoreCase("vivalife")) {
                 btnRetry.setBackgroundResource(R.drawable.shadow_button_life);
-            } else if (kanals.equalsIgnoreCase("otomotif")) {
+            } else if (mChannel.equalsIgnoreCase("otomotif")) {
                 btnRetry.setBackgroundResource(R.drawable.shadow_button_otomotif);
             } else {
                 btnRetry.setBackgroundResource(R.drawable.shadow_button_news);
@@ -497,7 +563,7 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
         bundle.putString("imageurl", image_url);
         bundle.putString("title", title);
         bundle.putString("article_id", idFromNotification);
-        bundle.putString("type_kanal", kanalFromNotification);
+        bundle.putString("type_kanal", channelFromNotification);
         Intent intent = new Intent(this, ActComment.class);
         intent.putExtras(bundle);
         startActivity(intent);
@@ -509,7 +575,7 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
         bundles.putString("imageurl", image_url);
         bundles.putString("title", title);
         bundles.putString("article_id", idFromNotification);
-        bundles.putString("type_kanal", kanalFromNotification);
+        bundles.putString("type_kanal", channelFromNotification);
         Intent intents = new Intent(this, ActRating.class);
         intents.putExtras(bundles);
         startActivity(intents);
@@ -532,8 +598,8 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
                 .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                     @Override
                     public void onClick(SweetAlertDialog sDialog) {
-                        favoritesArrayList.add(new Favorites(idFromNotification, title, channel_id, kanalFromNotification,
-                                image_url, date_publish, reporter_name, shared_url, content, image_caption, sliderContentImages));
+                        favoritesArrayList.add(new Favorites(idFromNotification, title, channel_id, channelFromNotification,
+                                image_url, date_publish, reporter_name, shared_url, pagingContents.get(0), image_caption, sliderContentImages));
                         String favorite = Global.getInstance(ActNotification.this).getInstanceGson().toJson(favoritesArrayList);
                         Global.getInstance(ActNotification.this).getDefaultEditor().putString(Constant.FAVORITES_LIST, favorite);
                         Global.getInstance(ActNotification.this).getDefaultEditor().putInt(Constant.FAVORITES_LIST_SIZE, favoritesArrayList.size());
@@ -664,15 +730,13 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
             if (url.contains(Constant.LINK_YOUTUBE)) {
                 moveVideoPage(url);
             } else if (url.contains(Constant.LINK_ARTICLE_VIVA)) {
-                if (url != null) {
-                    if (url.length() > 0) {
-                        Bundle bundle = new Bundle();
-                        bundle.putString("id", Constant.getArticleViva(url));
-                        Intent intent = new Intent(ActNotification.this, ActDetailContentDefault.class);
-                        intent.putExtras(bundle);
-                        startActivity(intent);
-                        overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
-                    }
+                if (url.length() > 0) {
+                    Bundle bundle = new Bundle();
+                    bundle.putString("id", Constant.getArticleViva(url));
+                    Intent intent = new Intent(ActNotification.this, ActDetailContentDefault.class);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
                 }
             } else if (url.contains(Constant.LINK_VIDEO_VIVA)) {
                 moveBrowserPage(url);
@@ -685,23 +749,21 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
     }
 
     private void showAds() {
-        if (this != null) {
-            if (adsArrayList != null) {
-                if (adsArrayList.size() > 0) {
-                    AdsConfig adsConfig = new AdsConfig();
-                    for (int i=0; i<adsArrayList.size(); i++) {
-                        if (adsArrayList.get(i).getmPosition() == Constant.POSITION_BANNER_TOP) {
-                            if (publisherAdViewTop == null) {
-                                publisherAdViewTop = new PublisherAdView(this);
-                                adsConfig.setAdsBanner(publisherAdViewTop,
-                                        adsArrayList.get(i).getmUnitId(), Constant.POSITION_BANNER_TOP, mParentLayout);
-                            }
-                        } else if (adsArrayList.get(i).getmPosition() == Constant.POSITION_BANNER_BOTTOM) {
-                            if (publisherAdViewBottom == null) {
-                                publisherAdViewBottom = new PublisherAdView(this);
-                                adsConfig.setAdsBanner(publisherAdViewBottom,
-                                        adsArrayList.get(i).getmUnitId(), Constant.POSITION_BANNER_BOTTOM, mParentLayout);
-                            }
+        if (adsArrayList != null) {
+            if (adsArrayList.size() > 0) {
+                AdsConfig adsConfig = new AdsConfig();
+                for (int i=0; i<adsArrayList.size(); i++) {
+                    if (adsArrayList.get(i).getmPosition() == Constant.POSITION_BANNER_TOP) {
+                        if (publisherAdViewTop == null) {
+                            publisherAdViewTop = new PublisherAdView(this);
+                            adsConfig.setAdsBanner(publisherAdViewTop,
+                                    adsArrayList.get(i).getmUnitId(), Constant.POSITION_BANNER_TOP, mParentLayout);
+                        }
+                    } else if (adsArrayList.get(i).getmPosition() == Constant.POSITION_BANNER_BOTTOM) {
+                        if (publisherAdViewBottom == null) {
+                            publisherAdViewBottom = new PublisherAdView(this);
+                            adsConfig.setAdsBanner(publisherAdViewBottom,
+                                    adsArrayList.get(i).getmUnitId(), Constant.POSITION_BANNER_BOTTOM, mParentLayout);
                         }
                     }
                 }

@@ -7,12 +7,15 @@ import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
+import android.text.SpannableStringBuilder;
 import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
+import android.text.style.URLSpan;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,45 +49,55 @@ import id.co.viva.news.app.model.SliderContentImage;
 public class ActFromUrl extends ActionBarActivity implements View.OnClickListener {
 
     private boolean isInternetPresent = false;
+    private int pageCount = 0;
+
     private ViewPager viewPager;
+    private LinearLayout mPagingButtonLayout;
     private LinePageIndicator linePageIndicator;
     private ProgressWheel progressWheel;
     private RippleView rippleView;
     private Button btnRetry;
     private TextView tvNoResult;
-    private ArrayList<SliderContentImage> sliderContentImages;
     private TextView tvTitleDetail;
     private TextView tvDateDetail;
     private TextView tvReporterDetail;
     private TextView tvContentDetail;
+    private TextView textPageNext;
+    private TextView textPagePrevious;
     private KenBurnsView ivThumbDetail;
     private TextView textLinkVideo;
     private Button btnComment;
+
+    private ArrayList<String> pagingContents;
+    private ArrayList<SliderContentImage> sliderContentImages;
+    private ImageSliderAdapter imageSliderAdapter;
+
     private String title;
-    private String kanal;
+    private String channel;
     private String image_url;
     private String date_publish;
-    private String content;
     private String reporter_name;
     private String image_caption;
     private String sliderPhotoUrl;
     private String sliderTitle;
     private String urlVideo;
-    private ImageSliderAdapter imageSliderAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act_notification);
+        //Define all views
         defineViews();
-
+        //Check current connection
         isInternetPresent = Global.getInstance(this)
                 .getConnectionStatus().isConnectingToInternet();
-
+        //Retrieve content
         getContent();
     }
 
     private void defineViews() {
+        mPagingButtonLayout = (LinearLayout) findViewById(R.id.layout_button_next_previous);
+
         viewPager = (ViewPager) findViewById(R.id.horizontal_list);
         viewPager.setVisibility(View.GONE);
 
@@ -106,6 +119,7 @@ public class ActFromUrl extends ActionBarActivity implements View.OnClickListene
         tvNoResult.setVisibility(View.GONE);
 
         sliderContentImages = new ArrayList<>();
+        pagingContents = new ArrayList<>();
 
         tvTitleDetail = (TextView) findViewById(R.id.title_detail_content);
         tvDateDetail = (TextView) findViewById(R.id.date_detail_content);
@@ -119,6 +133,12 @@ public class ActFromUrl extends ActionBarActivity implements View.OnClickListene
         textLinkVideo = (TextView) findViewById(R.id.text_move_video);
         textLinkVideo.setOnClickListener(this);
         textLinkVideo.setVisibility(View.GONE);
+
+        textPageNext = (TextView) findViewById(R.id.text_page_next);
+        textPagePrevious = (TextView) findViewById(R.id.text_page_previous);
+        textPageNext.setOnClickListener(this);
+        textPagePrevious.setOnClickListener(this);
+        textPagePrevious.setEnabled(false);
 
         if (Constant.isTablet(this)) {
             ivThumbDetail.getLayoutParams().height =
@@ -140,9 +160,9 @@ public class ActFromUrl extends ActionBarActivity implements View.OnClickListene
         }
     }
 
-    private void moveVideoPage() {
+    private void moveVideoPage(String video) {
         Bundle bundle = new Bundle();
-        bundle.putString("urlVideo", urlVideo);
+        bundle.putString("urlVideo", video);
         Intent intent = new Intent(this, ActVideo.class);
         intent.putExtras(bundle);
         startActivity(intent);
@@ -154,7 +174,7 @@ public class ActFromUrl extends ActionBarActivity implements View.OnClickListene
         bundle.putString("imageurl", image_url);
         bundle.putString("title", title);
         bundle.putString("article_id", getIdFromUrl());
-        bundle.putString("type_kanal", kanal);
+        bundle.putString("type_kanal", channel);
         Intent intent = new Intent(this, ActComment.class);
         intent.putExtras(bundle);
         startActivity(intent);
@@ -168,9 +188,13 @@ public class ActFromUrl extends ActionBarActivity implements View.OnClickListene
         } else if (view.getId() == R.id.thumb_detail_content) {
             goDetailPhoto();
         } else if (view.getId() == R.id.text_move_video) {
-            moveVideoPage();
+            moveVideoPage(urlVideo);
         } else if (view.getId() == R.id.btn_comment) {
             moveCommentPage();
+        } else if (view.getId() == R.id.text_page_next) {
+            showPagingNext();
+        } else if (view.getId() == R.id.text_page_previous) {
+            showPagingPrevious();
         }
     }
 
@@ -184,17 +208,25 @@ public class ActFromUrl extends ActionBarActivity implements View.OnClickListene
                             try {
                                 JSONObject jsonObject = new JSONObject(volleyResponse);
                                 JSONObject response = jsonObject.getJSONObject(Constant.response);
+                                //Get detail content
                                 JSONObject detail = response.getJSONObject(Constant.detail);
                                 title = detail.getString(Constant.title);
                                 image_url = detail.getString(Constant.image_url);
                                 date_publish = detail.getString(Constant.date_publish);
-                                content = detail.getString(Constant.content);
                                 reporter_name = detail.getString(Constant.reporter_name);
                                 image_caption = detail.getString(Constant.image_caption);
-                                kanal = detail.getString(Constant.kanal);
-
-                                setThemes(kanal);
-
+                                channel = detail.getString(Constant.kanal);
+                                //Get detail article(s)
+                                JSONArray content = detail.getJSONArray(Constant.content);
+                                if (content.length() > 0) {
+                                    for (int i=0; i<content.length(); i++) {
+                                        String detailContent = content.getString(i);
+                                        pagingContents.add(detailContent);
+                                    }
+                                }
+                                //Set color theme
+                                setThemes(channel);
+                                //Get list image content
                                 JSONArray sliderImageArray = detail.getJSONArray(Constant.content_images);
                                 if (sliderImageArray != null) {
                                     for (int i=0; i<sliderImageArray.length(); i++) {
@@ -204,18 +236,23 @@ public class ActFromUrl extends ActionBarActivity implements View.OnClickListene
                                         sliderContentImages.add(new SliderContentImage(sliderPhotoUrl, sliderTitle));
                                     }
                                 }
-
+                                //Get video content
                                 JSONArray content_video = detail.getJSONArray(Constant.content_video);
                                 JSONObject objVideo = content_video.getJSONObject(0);
                                 urlVideo = objVideo.getString("src_1");
-
+                                //Set data to views
                                 tvTitleDetail.setText(title);
                                 tvDateDetail.setText(date_publish);
-                                tvContentDetail.setText(Html.fromHtml(content).toString());
+                                if (pagingContents.size() > 0) {
+                                    setTextViewHTML(tvContentDetail, pagingContents.get(0));
+                                    if (pagingContents.size() > 1) {
+                                        mPagingButtonLayout.setVisibility(View.VISIBLE);
+                                    }
+                                }
                                 tvContentDetail.setMovementMethod(LinkMovementMethod.getInstance());
                                 tvReporterDetail.setText(reporter_name);
                                 Picasso.with(ActFromUrl.this).load(image_url).transform(new CropSquareTransformation()).into(ivThumbDetail);
-
+                                //Image content
                                 if (sliderContentImages.size() > 0) {
                                     imageSliderAdapter = new ImageSliderAdapter(getSupportFragmentManager(), sliderContentImages);
                                     viewPager.setAdapter(imageSliderAdapter);
@@ -231,6 +268,7 @@ public class ActFromUrl extends ActionBarActivity implements View.OnClickListene
                                 if (rippleView.getVisibility() == View.VISIBLE) {
                                     rippleView.setVisibility(View.GONE);
                                 }
+
                                 progressWheel.setVisibility(View.GONE);
 
                                 if (urlVideo.length() > 0) {
@@ -246,7 +284,7 @@ public class ActFromUrl extends ActionBarActivity implements View.OnClickListene
                         public void onErrorResponse(VolleyError volleyError) {
                             progressWheel.setVisibility(View.GONE);
                             rippleView.setVisibility(View.VISIBLE);
-                            setButtonRetry(kanal);
+                            setButtonRetry(channel);
                         }
                     });
             request.setShouldCache(true);
@@ -265,6 +303,50 @@ public class ActFromUrl extends ActionBarActivity implements View.OnClickListene
             } else {
                 tvNoResult.setVisibility(View.VISIBLE);
             }
+            Toast.makeText(this, R.string.title_no_connection, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void setTextViewHTML(TextView text, String html) {
+        CharSequence sequence = Html.fromHtml(html);
+        SpannableStringBuilder strBuilder = new SpannableStringBuilder(sequence);
+        URLSpan[] urls = strBuilder.getSpans(0, sequence.length(), URLSpan.class);
+        for (URLSpan span : urls) {
+            makeLinkClickable(strBuilder, span);
+        }
+        text.setText(strBuilder);
+        text.setMovementMethod(LinkMovementMethod.getInstance());
+    }
+
+    private void makeLinkClickable(SpannableStringBuilder strBuilder, final URLSpan span) {
+        int start = strBuilder.getSpanStart(span);
+        int end = strBuilder.getSpanEnd(span);
+        int flags = strBuilder.getSpanFlags(span);
+        ClickableSpan clickable = new ClickableSpan() {
+            public void onClick(View view) {
+                String url = span.getURL();
+                handleClickBodyText(url);
+            }
+        };
+        strBuilder.setSpan(clickable, start, end, flags);
+        strBuilder.removeSpan(span);
+    }
+
+    private void handleClickBodyText(String mUrl) {
+        if (isInternetPresent) {
+            if (mUrl.contains(Constant.LINK_YOUTUBE)) {
+                moveVideoPage(mUrl);
+            } else if (mUrl.contains(Constant.LINK_ARTICLE_VIVA)) {
+                if (mUrl.length() > 0) {
+                    Bundle bundle = new Bundle();
+                    bundle.putString("id", Constant.getArticleViva(mUrl));
+                    Intent intent = new Intent(ActFromUrl.this, ActDetailContentDefault.class);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+                }
+            }
+        } else {
             Toast.makeText(this, R.string.title_no_connection, Toast.LENGTH_SHORT).show();
         }
     }
@@ -307,16 +389,52 @@ public class ActFromUrl extends ActionBarActivity implements View.OnClickListene
         }
     }
 
-    private void setButtonRetry(String kanals) {
-        if (kanals != null) {
-            if (kanals.equalsIgnoreCase("bola") || kanals.equalsIgnoreCase("sport")) {
+    private void setButtonRetry(String mChannel) {
+        if (mChannel != null) {
+            if (mChannel.equalsIgnoreCase("bola") || mChannel.equalsIgnoreCase("sport")) {
                 btnRetry.setBackgroundResource(R.drawable.shadow_button_bola);
-            } else if (kanals.equalsIgnoreCase("vivalife")) {
+            } else if (mChannel.equalsIgnoreCase("vivalife")) {
                 btnRetry.setBackgroundResource(R.drawable.shadow_button_life);
-            } else if (kanals.equalsIgnoreCase("otomotif")) {
+            } else if (mChannel.equalsIgnoreCase("otomotif")) {
                 btnRetry.setBackgroundResource(R.drawable.shadow_button_otomotif);
             } else {
                 btnRetry.setBackgroundResource(R.drawable.shadow_button_news);
+            }
+        }
+    }
+
+    private void showPagingNext() {
+        pageCount += 1;
+        if (pageCount > 0) {
+            textPagePrevious.setEnabled(true);
+            textPagePrevious.setTextColor(getResources().getColor(R.color.new_base_color));
+        }
+        if (pageCount < pagingContents.size()) {
+            ivThumbDetail.requestFocus();
+            setTextViewHTML(tvContentDetail, pagingContents.get(pageCount));
+        }
+        if (pageCount == pagingContents.size() - 1) {
+            textPageNext.setEnabled(false);
+            textPageNext.setTextColor(getResources().getColor(R.color.switch_thumb_normal_material_dark));
+        }
+    }
+
+    private void showPagingPrevious() {
+        pageCount -= 1;
+        if (pageCount < pagingContents.size() - 1) {
+            textPageNext.setEnabled(true);
+            textPageNext.setTextColor(getResources().getColor(R.color.new_base_color));
+        }
+        if (pageCount == 0) {
+            ivThumbDetail.requestFocus();
+            setTextViewHTML(tvContentDetail, pagingContents.get(pageCount));
+            textPagePrevious.setEnabled(false);
+            textPagePrevious.setTextColor(getResources().getColor(R.color.switch_thumb_normal_material_dark));
+        } else {
+            textPagePrevious.setEnabled(true);
+            if (pageCount > -1 && pageCount < pagingContents.size()) {
+                ivThumbDetail.requestFocus();
+                setTextViewHTML(tvContentDetail, pagingContents.get(pageCount));
             }
         }
     }
@@ -356,8 +474,7 @@ public class ActFromUrl extends ActionBarActivity implements View.OnClickListene
 
     private String splitId(String id) {
         String[] separated = id.split("-");
-        String ids = separated[0];
-        return ids;
+        return separated[0];
     }
 
 }
