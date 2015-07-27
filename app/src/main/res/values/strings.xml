@@ -25,6 +25,7 @@
     <string name="label_reference_article">Referensi Artikel</string>
     <string name="label_image_profile_desc">Tap untuk melihat detail foto.</string>
     <string name="label_favorites">BERITA FAVORIT</string>
+    <string name="label_favorites_lowercase">Berita Favorit</string>
     <string name="label_login_with">LOGIN WITH</string>
     <string name="label_swipe_undo">Batal Menghapus</string>
     <string name="label_swipe_delete">Geser Untuk Menghapus</string>

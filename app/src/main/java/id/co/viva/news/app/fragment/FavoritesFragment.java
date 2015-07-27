@@ -36,14 +36,9 @@ import id.co.viva.news.app.services.Analytics;
 public class FavoritesFragment extends Fragment implements AdapterView.OnItemClickListener {
 
     private ArrayList<Favorites> favoritesArrayList;
-    private ArrayList<SliderContentImage> sliderContentImages;
-    private String favoriteList;
     private int favoriteListSize;
     private FavoriteAdapter favoriteAdapter;
-    private DynamicListView listFavorite;
     private TextView textNoResult;
-    private SimpleSwipeUndoAdapter simpleSwipeUndoAdapter;
-    private Analytics analytics;
 
     @Override
     public void onAttach(Activity activity) {
@@ -64,13 +59,13 @@ public class FavoritesFragment extends Fragment implements AdapterView.OnItemCli
         textNoResult = (TextView) rootView.findViewById(R.id.text_no_result_detail_content_favorite);
         textNoResult.setVisibility(View.GONE);
 
-        listFavorite = (DynamicListView) rootView.findViewById(R.id.list_favorites);
+        DynamicListView listFavorite = (DynamicListView) rootView.findViewById(R.id.list_favorites);
         listFavorite.setOnItemClickListener(this);
 
         Global.getInstance(getActivity()).getSharedPreferences(getActivity());
         Global.getInstance(getActivity()).getDefaultEditor();
 
-        favoriteList = Global.getInstance(getActivity()).getSharedPreferences(getActivity())
+        String favoriteList = Global.getInstance(getActivity()).getSharedPreferences(getActivity())
                 .getString(Constant.FAVORITES_LIST, "");
         favoriteListSize = Global.getInstance(getActivity()).getSharedPreferences(getActivity())
                 .getInt(Constant.FAVORITES_LIST_SIZE, 0);
@@ -88,7 +83,7 @@ public class FavoritesFragment extends Fragment implements AdapterView.OnItemCli
         }
         Global.getInstance(getActivity()).getDefaultEditor().commit();
 
-        simpleSwipeUndoAdapter = new SimpleSwipeUndoAdapter(favoriteAdapter, getActivity(),
+        SimpleSwipeUndoAdapter simpleSwipeUndoAdapter = new SimpleSwipeUndoAdapter(favoriteAdapter, getActivity(),
                 new OnDismissCallback() {
                     @Override
                     public void onDismiss(@NonNull ViewGroup viewGroup, @NonNull int[] reverseSortedPositions) {
@@ -119,7 +114,7 @@ public class FavoritesFragment extends Fragment implements AdapterView.OnItemCli
     }
 
     private void getAnalytics() {
-        analytics = new Analytics(getActivity());
+        Analytics analytics = new Analytics(getActivity());
         analytics.getAnalyticByATInternet(Constant.FAVORITES_PAGE);
         analytics.getAnalyticByGoogleAnalytic(Constant.FAVORITES_PAGE);
     }
@@ -128,7 +123,7 @@ public class FavoritesFragment extends Fragment implements AdapterView.OnItemCli
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
         if (favoriteListSize > 0) {
             Favorites favorites = favoritesArrayList.get(position);
-            sliderContentImages = favorites.getSliderContentImages();
+            ArrayList<SliderContentImage> sliderContentImages = favorites.getSliderContentImages();
             String listThumbSlider = Global.getInstance(getActivity()).getInstanceGson().toJson(sliderContentImages);
             Bundle bundle = new Bundle();
             bundle.putString("title", favorites.getTitle());

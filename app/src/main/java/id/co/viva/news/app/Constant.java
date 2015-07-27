@@ -92,14 +92,14 @@ public class Constant {
     public static final String FAVORITES_LIST = "favorites_list";
     public static final String FAVORITES_LIST_SIZE = "favorites_list_size";
     public static final String LOGIN_STATES_EMAIL = "login_states_email";
-    public static final String LOGIN_STATES_FULL_NAME = "login_states_fullname";
+    public static final String LOGIN_STATES_FULL_NAME = "login_states_full_name";
     public static final String LOGIN_STATES_URL_PHOTO = "login_states_url_photo";
     public static final String LOGIN_STATES_USER_SOCIAL_ID = "login_states_user_social_id";
     public static final String LOGIN_STATES_APP_ID = "login_states_app_id";
     public static final String LOGIN_STATES_IS_LOGIN = "isLogin";
     public static final String LOGIN_STATES_GENDER = "login_states_gender";
     public static final String LOGIN_STATES_CITY = "login_states_city";
-    public static final String LOGIN_STATES_BIRTH_DATE = "login_states_birthdate";
+    public static final String LOGIN_STATES_BIRTH_DATE = "login_states_birth_date";
     public static final String LOGIN_STATES_PROVINCE = "login_states_province";
     public static final String LOGIN_STATES_COUNTRY = "login_states_country";
     public static final String PREFS_ADS_NAME = "prefs_ads_name";
@@ -371,8 +371,7 @@ public class Constant {
             urlSplit = separated[5];
         }
         String[] splitter = urlSplit.split("-");
-        String article_id = splitter[0];
-        return  article_id;
+        return splitter[0];
     }
 
     public static String getSearchKeyword(String url) {
@@ -382,8 +381,7 @@ public class Constant {
                 String keyword;
                 keyword = separated[1];
                 if (keyword.contains("+")) {
-                    String keywordWithPlus = keyword.replaceAll("\\+", " ");
-                    return keywordWithPlus;
+                    return keyword.replaceAll("\\+", " ");
                 } else {
                     return keyword;
                 }

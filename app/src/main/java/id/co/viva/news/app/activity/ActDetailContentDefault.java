@@ -30,6 +30,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.flaviofaria.kenburnsview.KenBurnsView;
 import com.google.android.gms.ads.doubleclick.PublisherAdView;
+import com.nirhart.parallaxscroll.views.ParallaxScrollView;
 import com.squareup.picasso.Picasso;
 import com.viewpagerindicator.LinePageIndicator;
 
@@ -83,6 +84,7 @@ public class ActDetailContentDefault extends ActionBarActivity
     private TextView tvTitleDetail;
     private TextView tvDateDetail;
     private TextView tvReporterDetail;
+    private ParallaxScrollView scrollView;
     private TextView tvContentDetail;
     private KenBurnsView ivThumbDetail;
     private Button btnComment;
@@ -186,29 +188,33 @@ public class ActDetailContentDefault extends ActionBarActivity
                                 }
                                 //Get related article
                                 JSONArray related_article = response.getJSONArray(Constant.related_article);
-                                for (int i=0; i<related_article.length(); i++) {
-                                    JSONObject objRelated = related_article.getJSONObject(i);
-                                    String id = objRelated.getString(Constant.id);
-                                    String article_id = objRelated.getString(Constant.article_id);
-                                    String related_article_id = objRelated.getString(Constant.related_article_id);
-                                    String related_title = objRelated.getString(Constant.related_title);
-                                    String related_channel_level_1_id = objRelated.getString(Constant.related_channel_level_1_id);
-                                    String channel_id = objRelated.getString(Constant.channel_id);
-                                    String related_date_publish = objRelated.getString(Constant.related_date_publish);
-                                    String image = objRelated.getString(Constant.image);
-                                    String channel = objRelated.getString(Constant.kanal);
-                                    String shared_url = objRelated.getString(Constant.url);
-                                    relatedArticleArrayList.add(new RelatedArticle(id, article_id, related_article_id, related_title,
-                                            related_channel_level_1_id, channel_id, related_date_publish, image, channel, shared_url));
+                                if (related_article.length() > 0) {
+                                    for (int i=0; i<related_article.length(); i++) {
+                                        JSONObject objRelated = related_article.getJSONObject(i);
+                                        String id = objRelated.getString(Constant.id);
+                                        String article_id = objRelated.getString(Constant.article_id);
+                                        String related_article_id = objRelated.getString(Constant.related_article_id);
+                                        String related_title = objRelated.getString(Constant.related_title);
+                                        String related_channel_level_1_id = objRelated.getString(Constant.related_channel_level_1_id);
+                                        String channel_id = objRelated.getString(Constant.channel_id);
+                                        String related_date_publish = objRelated.getString(Constant.related_date_publish);
+                                        String image = objRelated.getString(Constant.image);
+                                        String channel = objRelated.getString(Constant.kanal);
+                                        String shared_url = objRelated.getString(Constant.url);
+                                        relatedArticleArrayList.add(new RelatedArticle(id, article_id, related_article_id, related_title,
+                                                related_channel_level_1_id, channel_id, related_date_publish, image, channel, shared_url));
+                                    }
                                 }
                                 //Get comment list
                                 JSONArray comment_list = response.getJSONArray(Constant.comment_list);
-                                for (int i=0; i<comment_list.length(); i++) {
-                                    JSONObject objRelated = comment_list.getJSONObject(i);
-                                    String id = objRelated.getString(Constant.id);
-                                    String name = objRelated.getString(Constant.name);
-                                    String comment_text = objRelated.getString(Constant.comment_text);
-                                    commentArrayList.add(new Comment(id, null, name, null, comment_text, null, null, null));
+                                if (comment_list.length() > 0) {
+                                    for (int i=0; i<comment_list.length(); i++) {
+                                        JSONObject objRelated = comment_list.getJSONObject(i);
+                                        String id = objRelated.getString(Constant.id);
+                                        String name = objRelated.getString(Constant.name);
+                                        String comment_text = objRelated.getString(Constant.comment_text);
+                                        commentArrayList.add(new Comment(id, null, name, null, comment_text, null, null, null));
+                                    }
                                 }
                                 //Check Ads if exists
                                 JSONArray adsList = response.getJSONArray(Constant.adses);
@@ -369,7 +375,7 @@ public class ActDetailContentDefault extends ActionBarActivity
                     }
 
                     JSONArray sliderImageArray = detail.getJSONArray(Constant.content_images);
-                    if (sliderImageArray != null) {
+                    if (sliderImageArray.length() > 0) {
                         for (int i=0; i<sliderImageArray.length(); i++) {
                             JSONObject objSlider = sliderImageArray.getJSONObject(i);
                             sliderPhotoUrl = objSlider.getString("src");
@@ -379,31 +385,35 @@ public class ActDetailContentDefault extends ActionBarActivity
                     }
 
                     JSONArray related_article = response.getJSONArray(Constant.related_article);
-                    for (int i=0; i<related_article.length(); i++) {
-                        JSONObject objRelated = related_article.getJSONObject(i);
-                        String id = objRelated.getString(Constant.id);
-                        String article_id = objRelated.getString(Constant.article_id);
-                        String related_article_id = objRelated.getString(Constant.related_article_id);
-                        String related_title = objRelated.getString(Constant.related_title);
-                        String related_channel_level_1_id = objRelated.getString(Constant.related_channel_level_1_id);
-                        String channel_id = objRelated.getString(Constant.channel_id);
-                        String related_date_publish = objRelated.getString(Constant.related_date_publish);
-                        String image = objRelated.getString(Constant.image);
-                        String kanal = objRelated.getString(Constant.kanal);
-                        String shared_url = objRelated.getString(Constant.url);
-                        relatedArticleArrayList.add(new RelatedArticle(id, article_id, related_article_id, related_title,
-                                related_channel_level_1_id, channel_id, related_date_publish, image, kanal, shared_url));
-                        Log.i(Constant.TAG, "RELATED ARTICLE CACHED : " + relatedArticleArrayList.get(i).getRelated_title());
+                    if (related_article.length() > 0) {
+                        for (int i=0; i<related_article.length(); i++) {
+                            JSONObject objRelated = related_article.getJSONObject(i);
+                            String id = objRelated.getString(Constant.id);
+                            String article_id = objRelated.getString(Constant.article_id);
+                            String related_article_id = objRelated.getString(Constant.related_article_id);
+                            String related_title = objRelated.getString(Constant.related_title);
+                            String related_channel_level_1_id = objRelated.getString(Constant.related_channel_level_1_id);
+                            String channel_id = objRelated.getString(Constant.channel_id);
+                            String related_date_publish = objRelated.getString(Constant.related_date_publish);
+                            String image = objRelated.getString(Constant.image);
+                            String kanal = objRelated.getString(Constant.kanal);
+                            String shared_url = objRelated.getString(Constant.url);
+                            relatedArticleArrayList.add(new RelatedArticle(id, article_id, related_article_id, related_title,
+                                    related_channel_level_1_id, channel_id, related_date_publish, image, kanal, shared_url));
+                            Log.i(Constant.TAG, "RELATED ARTICLE CACHED : " + relatedArticleArrayList.get(i).getRelated_title());
+                        }
                     }
 
                     JSONArray comment_list = response.getJSONArray(Constant.comment_list);
-                    for (int i=0; i<comment_list.length(); i++) {
-                        JSONObject objRelated = comment_list.getJSONObject(i);
-                        String id = objRelated.getString(Constant.id);
-                        String name = objRelated.getString(Constant.name);
-                        String comment_text = objRelated.getString(Constant.comment_text);
-                        commentArrayList.add(new Comment(id, null, name, null, comment_text, null, null, null));
-                        Log.i(Constant.TAG, "COMMENTS PREVIEW : " + commentArrayList.get(i).getComment_text());
+                    if (comment_list.length() > 0) {
+                        for (int i=0; i<comment_list.length(); i++) {
+                            JSONObject objRelated = comment_list.getJSONObject(i);
+                            String id = objRelated.getString(Constant.id);
+                            String name = objRelated.getString(Constant.name);
+                            String comment_text = objRelated.getString(Constant.comment_text);
+                            commentArrayList.add(new Comment(id, null, name, null, comment_text, null, null, null));
+                            Log.i(Constant.TAG, "COMMENTS PREVIEW : " + commentArrayList.get(i).getComment_text());
+                        }
                     }
 
                     tvTitleDetail.setText(title);
@@ -456,9 +466,6 @@ public class ActDetailContentDefault extends ActionBarActivity
                                 try {
                                     while (true) {
                                         Thread.sleep(3000);
-                                        if (ActDetailContentDefault.this == null) {
-                                            return;
-                                        }
                                         runOnUiThread(new Runnable() {
                                             @Override
                                             public void run() {
@@ -508,7 +515,7 @@ public class ActDetailContentDefault extends ActionBarActivity
 
     private void defineViews() {
         mParentLayout = (LinearLayout) findViewById(R.id.parent_layout);
-
+        scrollView = (ParallaxScrollView) findViewById(R.id.scroll_layout);
         mPagingButtonLayout = (LinearLayout) findViewById(R.id.layout_button_next_previous);
 
         viewPager = (ViewPager) findViewById(R.id.horizontal_list);
@@ -698,8 +705,9 @@ public class ActDetailContentDefault extends ActionBarActivity
                 .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                     @Override
                     public void onClick(SweetAlertDialog sDialog) {
+                        String contents = Global.getInstance(ActDetailContentDefault.this).getInstanceGson().toJson(pagingContents);
                         favoritesArrayList.add(new Favorites(ids, title, channel_id, channel,
-                                image_url, date_publish, reporter_name, url_shared, pagingContents.get(0), image_caption, sliderContentImages));
+                                image_url, date_publish, reporter_name, url_shared, contents, image_caption, sliderContentImages));
                         String favorite = Global.getInstance(ActDetailContentDefault.this).getInstanceGson().toJson(favoritesArrayList);
                         Global.getInstance(ActDetailContentDefault.this).getDefaultEditor().putString(Constant.FAVORITES_LIST, favorite);
                         Global.getInstance(ActDetailContentDefault.this).getDefaultEditor().putInt(Constant.FAVORITES_LIST_SIZE, favoritesArrayList.size());
@@ -785,8 +793,8 @@ public class ActDetailContentDefault extends ActionBarActivity
             textPagePrevious.setTextColor(getResources().getColor(R.color.new_base_color));
         }
         if (pageCount < pagingContents.size()) {
-            ivThumbDetail.requestFocus();
             setTextViewHTML(tvContentDetail, pagingContents.get(pageCount));
+            scrollView.smoothScrollTo(0, 0);
         }
         if (pageCount == pagingContents.size() - 1) {
             textPageNext.setEnabled(false);
@@ -801,15 +809,15 @@ public class ActDetailContentDefault extends ActionBarActivity
             textPageNext.setTextColor(getResources().getColor(R.color.new_base_color));
         }
         if (pageCount == 0) {
-            ivThumbDetail.requestFocus();
             setTextViewHTML(tvContentDetail, pagingContents.get(pageCount));
+            scrollView.smoothScrollTo(0, 0);
             textPagePrevious.setEnabled(false);
             textPagePrevious.setTextColor(getResources().getColor(R.color.switch_thumb_normal_material_dark));
         } else {
             textPagePrevious.setEnabled(true);
             if (pageCount > -1 && pageCount < pagingContents.size()) {
-                ivThumbDetail.requestFocus();
                 setTextViewHTML(tvContentDetail, pagingContents.get(pageCount));
+                scrollView.smoothScrollTo(0, 0);
             }
         }
     }

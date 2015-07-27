@@ -33,6 +33,7 @@ public class Global {
     private ArrayList<Favorites> favoritesList;
     private Type typeFavorites;
     private Type typeSlider;
+    private Type typeContents;
     private Gson gson;
     private SharedPreferences.Editor editor;
     private Context mContext;
@@ -106,6 +107,13 @@ public class Global {
             typeSlider = new TypeToken<ArrayList<SliderContentImage>>(){}.getType();
         }
         return typeSlider;
+    }
+
+    public Type getContents() {
+        if (typeContents == null) {
+            typeContents = new TypeToken<ArrayList<String>>(){}.getType();
+        }
+        return typeContents;
     }
 
     public Gson getInstanceGson() {

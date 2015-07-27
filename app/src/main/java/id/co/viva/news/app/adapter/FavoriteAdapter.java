@@ -53,7 +53,7 @@ public class FavoriteAdapter extends BaseAdapter implements UndoAdapter {
     public View getView(int position, View view, ViewGroup viewGroup) {
         ViewHolder holder;
 
-        if(view == null) {
+        if (view == null) {
             LayoutInflater inflater = LayoutInflater.from(context);
             view = inflater.inflate(R.layout.item_favorites_list, null);
             holder = new ViewHolder();
@@ -69,11 +69,11 @@ public class FavoriteAdapter extends BaseAdapter implements UndoAdapter {
         holder.title_item_favorite.setText(favorites.getTitle());
         holder.date_item_favorite.setText(favorites.getDate_publish());
         if (favorites.getKanal() != null) {
-            if (favorites.getKanal().equalsIgnoreCase("bola")) {
+            if (favorites.getKanal().equalsIgnoreCase("bola") || favorites.getKanal().equalsIgnoreCase("sport")) {
                 holder.image_item_favorite.setImageResource(R.drawable.icon_viva_bola);
-            } else if(favorites.getKanal().equalsIgnoreCase("vivalife")) {
+            } else if (favorites.getKanal().equalsIgnoreCase("vivalife")) {
                 holder.image_item_favorite.setImageResource(R.drawable.icon_viva_life);
-            } else if(favorites.getKanal().equalsIgnoreCase("otomotif")) {
+            } else if (favorites.getKanal().equalsIgnoreCase("otomotif")) {
                 holder.image_item_favorite.setImageResource(R.drawable.icon_viva_otomotif);
             } else {
                 holder.image_item_favorite.setImageResource(R.drawable.icon_viva_news);

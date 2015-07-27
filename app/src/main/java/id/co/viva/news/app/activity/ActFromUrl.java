@@ -26,6 +26,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.flaviofaria.kenburnsview.KenBurnsView;
+import com.nirhart.parallaxscroll.views.ParallaxScrollView;
 import com.squareup.picasso.Picasso;
 import com.viewpagerindicator.LinePageIndicator;
 
@@ -67,6 +68,7 @@ public class ActFromUrl extends ActionBarActivity implements View.OnClickListene
     private KenBurnsView ivThumbDetail;
     private TextView textLinkVideo;
     private Button btnComment;
+    private ParallaxScrollView scrollView;
 
     private ArrayList<String> pagingContents;
     private ArrayList<SliderContentImage> sliderContentImages;
@@ -97,6 +99,7 @@ public class ActFromUrl extends ActionBarActivity implements View.OnClickListene
 
     private void defineViews() {
         mPagingButtonLayout = (LinearLayout) findViewById(R.id.layout_button_next_previous);
+        scrollView = (ParallaxScrollView) findViewById(R.id.scroll_layout);
 
         viewPager = (ViewPager) findViewById(R.id.horizontal_list);
         viewPager.setVisibility(View.GONE);
@@ -228,7 +231,7 @@ public class ActFromUrl extends ActionBarActivity implements View.OnClickListene
                                 setThemes(channel);
                                 //Get list image content
                                 JSONArray sliderImageArray = detail.getJSONArray(Constant.content_images);
-                                if (sliderImageArray != null) {
+                                if (sliderImageArray.length() > 0) {
                                     for (int i=0; i<sliderImageArray.length(); i++) {
                                         JSONObject objSlider = sliderImageArray.getJSONObject(i);
                                         sliderPhotoUrl = objSlider.getString("src");
@@ -238,8 +241,10 @@ public class ActFromUrl extends ActionBarActivity implements View.OnClickListene
                                 }
                                 //Get video content
                                 JSONArray content_video = detail.getJSONArray(Constant.content_video);
-                                JSONObject objVideo = content_video.getJSONObject(0);
-                                urlVideo = objVideo.getString("src_1");
+                                if (content_video.length() > 0) {
+                                    JSONObject objVideo = content_video.getJSONObject(0);
+                                    urlVideo = objVideo.getString("src_1");
+                                }
                                 //Set data to views
                                 tvTitleDetail.setText(title);
                                 tvDateDetail.setText(date_publish);
@@ -410,8 +415,8 @@ public class ActFromUrl extends ActionBarActivity implements View.OnClickListene
             textPagePrevious.setTextColor(getResources().getColor(R.color.new_base_color));
         }
         if (pageCount < pagingContents.size()) {
-            ivThumbDetail.requestFocus();
             setTextViewHTML(tvContentDetail, pagingContents.get(pageCount));
+            scrollView.smoothScrollTo(0, 0);
         }
         if (pageCount == pagingContents.size() - 1) {
             textPageNext.setEnabled(false);
@@ -426,15 +431,15 @@ public class ActFromUrl extends ActionBarActivity implements View.OnClickListene
             textPageNext.setTextColor(getResources().getColor(R.color.new_base_color));
         }
         if (pageCount == 0) {
-            ivThumbDetail.requestFocus();
             setTextViewHTML(tvContentDetail, pagingContents.get(pageCount));
+            scrollView.smoothScrollTo(0, 0);
             textPagePrevious.setEnabled(false);
             textPagePrevious.setTextColor(getResources().getColor(R.color.switch_thumb_normal_material_dark));
         } else {
             textPagePrevious.setEnabled(true);
             if (pageCount > -1 && pageCount < pagingContents.size()) {
-                ivThumbDetail.requestFocus();
                 setTextViewHTML(tvContentDetail, pagingContents.get(pageCount));
+                scrollView.smoothScrollTo(0, 0);
             }
         }
     }

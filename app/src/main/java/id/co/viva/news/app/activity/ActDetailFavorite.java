@@ -7,9 +7,11 @@ import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.flaviofaria.kenburnsview.KenBurnsView;
+import com.nirhart.parallaxscroll.views.ParallaxScrollView;
 import com.squareup.picasso.Picasso;
 import com.viewpagerindicator.LinePageIndicator;
 
@@ -29,24 +31,30 @@ import id.co.viva.news.app.services.Analytics;
 public class ActDetailFavorite extends ActionBarActivity implements View.OnClickListener {
 
     private KenBurnsView imageDetail;
+    private ParallaxScrollView scrollView;
+    private LinearLayout mPagingButtonLayout;
     private TextView tvTitle;
     private TextView tvDatePublish;
     private TextView tvContent;
     private TextView tvReporterName;
+    private TextView textPageNext;
+    private TextView textPagePrevious;
     private ViewPager viewPager;
     private LinePageIndicator linePageIndicator;
 
     private boolean isInternetPresent = false;
     private ArrayList<SliderContentImage> sliderContentImages;
+    private ArrayList<String> pagingContents;
 
     private String title;
     private String image_url;
     private String date_publish;
-    private String content;
+    private String contents;
     private String reporter_name;
     private String image_caption;
-    private int thumbSize;
     private String sThumbList;
+    private int thumbSize;
+    private int pageCount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,24 +74,28 @@ public class ActDetailFavorite extends ActionBarActivity implements View.OnClick
         //Define all views
         defineViews();
 
-        try {
-            if (image_url != null) {
+        if (image_url != null) {
+            if (image_url.length() > 0) {
                 Picasso.with(this).load(image_url)
                         .transform(new CropSquareTransformation()).into(imageDetail);
             }
-        } catch (Exception e) {
-            e.getMessage();
         }
 
         imageDetail.setOnClickListener(this);
-
         tvTitle.setText(title);
         tvDatePublish.setText(date_publish);
-        tvContent.setText(Html.fromHtml(content).toString());
         tvReporterName.setText(reporter_name);
 
+        if (pagingContents.size() > 0) {
+            tvContent.setText(Html.fromHtml(pagingContents.get(0)).toString());
+            if (pagingContents.size() > 1) {
+                mPagingButtonLayout.setVisibility(View.VISIBLE);
+            }
+        }
+
         if (thumbSize > 0 && sliderContentImages != null) {
-            ImageSliderAdapter imageSliderAdapter = new ImageSliderAdapter(getSupportFragmentManager(), sliderContentImages);
+            ImageSliderAdapter imageSliderAdapter = new ImageSliderAdapter(
+                    getSupportFragmentManager(), sliderContentImages);
             viewPager.setAdapter(imageSliderAdapter);
             viewPager.setCurrentItem(0);
             imageSliderAdapter.notifyDataSetChanged();
@@ -98,7 +110,7 @@ public class ActDetailFavorite extends ActionBarActivity implements View.OnClick
         title = intent.getStringExtra("title");
         image_url = intent.getStringExtra("image_url");
         date_publish = intent.getStringExtra("date_publish");
-        content = intent.getStringExtra("content");
+        contents = intent.getStringExtra("content");
         reporter_name = intent.getStringExtra("reporter_name");
         image_caption = intent.getStringExtra("image_caption");
         thumbSize = intent.getIntExtra("list_thumbnail_body_size", 0);
@@ -106,8 +118,12 @@ public class ActDetailFavorite extends ActionBarActivity implements View.OnClick
     }
 
     private void defineViews() {
+        mPagingButtonLayout = (LinearLayout) findViewById(R.id.layout_button_next_previous);
+        scrollView = (ParallaxScrollView) findViewById(R.id.scroll_layout);
         sliderContentImages = Global.getInstance(this).getInstanceGson().
                 fromJson(sThumbList, Global.getInstance(this).getTypeSlider());
+        pagingContents = Global.getInstance(this).getInstanceGson().
+                fromJson(contents, Global.getInstance(this).getContents());
         imageDetail = (KenBurnsView)findViewById(R.id.thumb_detail_content_favorite);
         tvTitle = (TextView)findViewById(R.id.title_detail_content_favorite);
         tvDatePublish = (TextView)findViewById(R.id.date_detail_content_favorite);
@@ -116,6 +132,11 @@ public class ActDetailFavorite extends ActionBarActivity implements View.OnClick
         viewPager = (ViewPager) findViewById(R.id.horizontal_list);
         linePageIndicator = (LinePageIndicator)findViewById(R.id.indicator);
         linePageIndicator.setVisibility(View.GONE);
+        textPageNext = (TextView) findViewById(R.id.text_page_next);
+        textPagePrevious = (TextView) findViewById(R.id.text_page_previous);
+        textPageNext.setOnClickListener(this);
+        textPagePrevious.setOnClickListener(this);
+        textPagePrevious.setEnabled(false);
         if (Constant.isTablet(this)) {
             imageDetail.getLayoutParams().height =
                     Constant.getDynamicImageSize(this, Constant.DYNAMIC_SIZE_GRID_TYPE);
@@ -128,7 +149,7 @@ public class ActDetailFavorite extends ActionBarActivity implements View.OnClick
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
-        getSupportActionBar().setTitle("Favorites");
+        getSupportActionBar().setTitle(getResources().getString(R.string.label_favorites_lowercase));
     }
 
     private void getAnalytics(String title) {
@@ -160,6 +181,46 @@ public class ActDetailFavorite extends ActionBarActivity implements View.OnClick
                 intent.putExtras(bundle);
                 startActivity(intent);
                 overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+            }
+        } else if (view.getId() == R.id.text_page_previous) {
+            showPagingPrevious();
+        } else if (view.getId() == R.id.text_page_next) {
+            showPagingNext();
+        }
+    }
+
+    private void showPagingNext() {
+        pageCount += 1;
+        if (pageCount > 0) {
+            textPagePrevious.setEnabled(true);
+            textPagePrevious.setTextColor(getResources().getColor(R.color.new_base_color));
+        }
+        if (pageCount < pagingContents.size()) {
+            tvContent.setText(Html.fromHtml(pagingContents.get(pageCount)).toString());
+            scrollView.smoothScrollTo(0, 0);
+        }
+        if (pageCount == pagingContents.size() - 1) {
+            textPageNext.setEnabled(false);
+            textPageNext.setTextColor(getResources().getColor(R.color.switch_thumb_normal_material_dark));
+        }
+    }
+
+    private void showPagingPrevious() {
+        pageCount -= 1;
+        if (pageCount < pagingContents.size() - 1) {
+            textPageNext.setEnabled(true);
+            textPageNext.setTextColor(getResources().getColor(R.color.new_base_color));
+        }
+        if (pageCount == 0) {
+            tvContent.setText(Html.fromHtml(pagingContents.get(pageCount)).toString());
+            scrollView.smoothScrollTo(0, 0);
+            textPagePrevious.setEnabled(false);
+            textPagePrevious.setTextColor(getResources().getColor(R.color.switch_thumb_normal_material_dark));
+        } else {
+            textPagePrevious.setEnabled(true);
+            if (pageCount > -1 && pageCount < pagingContents.size()) {
+                tvContent.setText(Html.fromHtml(pagingContents.get(pageCount)).toString());
+                scrollView.smoothScrollTo(0, 0);
             }
         }
     }

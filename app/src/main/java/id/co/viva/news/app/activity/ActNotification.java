@@ -31,6 +31,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.flaviofaria.kenburnsview.KenBurnsView;
 import com.google.android.gms.ads.doubleclick.PublisherAdView;
+import com.nirhart.parallaxscroll.views.ParallaxScrollView;
 import com.squareup.picasso.Picasso;
 import com.viewpagerindicator.LinePageIndicator;
 
@@ -96,6 +97,7 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
     private RippleView rippleView;
     private Button btnRetry;
     private TextView tvNoResult;
+    private ParallaxScrollView scrollView;
 
     //Ads AdMob DFP
     private LinearLayout mParentLayout;
@@ -141,9 +143,8 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
     }
 
     private void defineViews() {
-        //Add ads if exists
         mParentLayout = (LinearLayout) findViewById(R.id.parent_layout);
-
+        scrollView = (ParallaxScrollView) findViewById(R.id.scroll_layout);
         mPagingButtonLayout = (LinearLayout) findViewById(R.id.layout_button_next_previous);
 
         viewPager = (ViewPager) findViewById(R.id.horizontal_list);
@@ -244,8 +245,8 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
             textPagePrevious.setTextColor(getResources().getColor(R.color.new_base_color));
         }
         if (pageCount < pagingContents.size()) {
-            ivThumbDetail.requestFocus();
             setTextViewHTML(tvContentDetail, pagingContents.get(pageCount));
+            scrollView.smoothScrollTo(0, 0);
         }
         if (pageCount == pagingContents.size() - 1) {
             textPageNext.setEnabled(false);
@@ -260,15 +261,15 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
             textPageNext.setTextColor(getResources().getColor(R.color.new_base_color));
         }
         if (pageCount == 0) {
-            ivThumbDetail.requestFocus();
             setTextViewHTML(tvContentDetail, pagingContents.get(pageCount));
+            scrollView.smoothScrollTo(0, 0);
             textPagePrevious.setEnabled(false);
             textPagePrevious.setTextColor(getResources().getColor(R.color.switch_thumb_normal_material_dark));
         } else {
             textPagePrevious.setEnabled(true);
             if (pageCount > -1 && pageCount < pagingContents.size()) {
-                ivThumbDetail.requestFocus();
                 setTextViewHTML(tvContentDetail, pagingContents.get(pageCount));
+                scrollView.smoothScrollTo(0, 0);
             }
         }
     }
@@ -351,7 +352,7 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
                                 }
                                 //Get image content
                                 JSONArray sliderImageArray = detail.getJSONArray(Constant.content_images);
-                                if (sliderImageArray != null) {
+                                if (sliderImageArray.length() > 0) {
                                     for (int i=0; i<sliderImageArray.length(); i++) {
                                         JSONObject objSlider = sliderImageArray.getJSONObject(i);
                                         sliderPhotoUrl = objSlider.getString("src");
@@ -367,20 +368,22 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
                                 }
                                 //Get related article
                                 JSONArray related_article = response.getJSONArray(Constant.related_article);
-                                for (int i=0; i<related_article.length(); i++) {
-                                    JSONObject objRelated = related_article.getJSONObject(i);
-                                    String id = objRelated.getString(Constant.id);
-                                    String article_id = objRelated.getString(Constant.article_id);
-                                    String related_article_id = objRelated.getString(Constant.related_article_id);
-                                    String related_title = objRelated.getString(Constant.related_title);
-                                    String related_channel_level_1_id = objRelated.getString(Constant.related_channel_level_1_id);
-                                    String channel_id = objRelated.getString(Constant.channel_id);
-                                    String related_date_publish = objRelated.getString(Constant.related_date_publish);
-                                    String image = objRelated.getString(Constant.image);
-                                    String channel = objRelated.getString(Constant.kanal);
-                                    String shared_url = objRelated.getString(Constant.url);
-                                    relatedArticleArrayList.add(new RelatedArticle(id, article_id, related_article_id, related_title,
-                                            related_channel_level_1_id, channel_id, related_date_publish, image, channel, shared_url));
+                                if (related_article.length() > 0) {
+                                    for (int i=0; i<related_article.length(); i++) {
+                                        JSONObject objRelated = related_article.getJSONObject(i);
+                                        String id = objRelated.getString(Constant.id);
+                                        String article_id = objRelated.getString(Constant.article_id);
+                                        String related_article_id = objRelated.getString(Constant.related_article_id);
+                                        String related_title = objRelated.getString(Constant.related_title);
+                                        String related_channel_level_1_id = objRelated.getString(Constant.related_channel_level_1_id);
+                                        String channel_id = objRelated.getString(Constant.channel_id);
+                                        String related_date_publish = objRelated.getString(Constant.related_date_publish);
+                                        String image = objRelated.getString(Constant.image);
+                                        String channel = objRelated.getString(Constant.kanal);
+                                        String shared_url = objRelated.getString(Constant.url);
+                                        relatedArticleArrayList.add(new RelatedArticle(id, article_id, related_article_id, related_title,
+                                                related_channel_level_1_id, channel_id, related_date_publish, image, channel, shared_url));
+                                    }
                                 }
                                 //Get ads list
                                 JSONArray ad_list = response.getJSONArray(Constant.adses);
@@ -598,8 +601,9 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
                 .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                     @Override
                     public void onClick(SweetAlertDialog sDialog) {
+                        String contents = Global.getInstance(ActNotification.this).getInstanceGson().toJson(pagingContents);
                         favoritesArrayList.add(new Favorites(idFromNotification, title, channel_id, channelFromNotification,
-                                image_url, date_publish, reporter_name, shared_url, pagingContents.get(0), image_caption, sliderContentImages));
+                                image_url, date_publish, reporter_name, shared_url, contents, image_caption, sliderContentImages));
                         String favorite = Global.getInstance(ActNotification.this).getInstanceGson().toJson(favoritesArrayList);
                         Global.getInstance(ActNotification.this).getDefaultEditor().putString(Constant.FAVORITES_LIST, favorite);
                         Global.getInstance(ActNotification.this).getDefaultEditor().putInt(Constant.FAVORITES_LIST_SIZE, favoritesArrayList.size());

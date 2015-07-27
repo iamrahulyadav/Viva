@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.nirhart.parallaxscroll.views.ParallaxScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.nirhart.parallaxscroll.views.ParallaxScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:id="@+id/scroll_layout"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:parallax_factor="1.9">
     <RelativeLayout
@@ -77,12 +79,40 @@
                 app:selectedColor="@color/blue"/>
             <id.co.viva.news.app.component.RobotoTextView
                 android:id="@+id/content_detail_content_favorite"
-                android:lineSpacingExtra="10px"
+                android:lineSpacingExtra="1dp"
                 android:layout_below="@id/indicator"
                 android:layout_width="wrap_content"
-                android:textSize="18sp"
+                android:textSize="16sp"
                 android:textColor="@color/black"
                 android:layout_height="wrap_content" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:visibility="gone"
+                android:layout_below="@id/content_detail_content_favorite"
+                android:layout_margin="5dp"
+                android:layout_centerHorizontal="true"
+                android:id="@+id/layout_button_next_previous">
+                <id.co.viva.news.app.component.RobotoTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:text="@string/label_paging_previous"
+                    android:layout_marginRight="10dp"
+                    android:textColor="@color/switch_thumb_normal_material_dark"
+                    android:id="@+id/text_page_previous"/>
+                <id.co.viva.news.app.component.RobotoTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_paging_next"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:layout_marginLeft="10dp"
+                    android:textColor="@color/new_base_color"
+                    android:id="@+id/text_page_next"/>
+            </LinearLayout>
         </RelativeLayout>
     </RelativeLayout>
 </com.nirhart.parallaxscroll.views.ParallaxScrollView>
