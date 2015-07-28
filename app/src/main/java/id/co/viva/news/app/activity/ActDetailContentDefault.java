@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -78,7 +79,9 @@ public class ActDetailContentDefault extends ActionBarActivity
     private String shared_url;
     private String sliderPhotoUrl;
     private String sliderTitle;
+
     private int count = 0;
+    private int pageCount = 0;
 
     //Define Views
     private TextView tvTitleDetail;
@@ -95,8 +98,12 @@ public class ActDetailContentDefault extends ActionBarActivity
     private LinearLayout mParentLayout;
     private RelativeLayout headerRelated;
     private TextView tvNoResult;
-    private TextView textPageNext;
-    private TextView textPagePrevious;
+    private ImageView next;
+    private ImageView nextEnd;
+    private ImageView previous;
+    private ImageView previousStart;
+    private TextView textPageSize;
+    private TextView textPageIndex;
     private ProgressWheel progressWheel;
     private TextView textLinkVideo;
 
@@ -121,7 +128,6 @@ public class ActDetailContentDefault extends ActionBarActivity
     private ArrayList<Ads> adsArrayList;
     private ArrayList<SliderContentImage> sliderContentImages;
     private ArrayList<String> pagingContents;
-    private int pageCount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -235,6 +241,8 @@ public class ActDetailContentDefault extends ActionBarActivity
                                 if (pagingContents.size() > 0) {
                                     setTextViewHTML(tvContentDetail, pagingContents.get(0));
                                     if (pagingContents.size() > 1) {
+                                        textPageIndex.setText(String.valueOf(pageCount + 1));
+                                        textPageSize.setText(String.valueOf(pagingContents.size()));
                                         mPagingButtonLayout.setVisibility(View.VISIBLE);
                                     }
                                 }
@@ -345,13 +353,13 @@ public class ActDetailContentDefault extends ActionBarActivity
                     Constant.TIME_OUT,
                     0,
                     DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-            Global.getInstance(this).getRequestQueue().getCache().invalidate(Constant.NEW_DETAIL + "/id/" + id, true);
-            Global.getInstance(this).getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + id);
+            Global.getInstance(this).getRequestQueue().getCache().invalidate(Constant.NEW_DETAIL + "id/" + id + "/screen/" + "search_detail_screen", true);
+            Global.getInstance(this).getRequestQueue().getCache().get(Constant.NEW_DETAIL + "id/" + id + "/screen/" + "search_detail_screen" + id);
             Global.getInstance(this).addToRequestQueue(request, Constant.JSON_REQUEST);
         } else {
-            if (Global.getInstance(this).getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + id) != null) {
+            if (Global.getInstance(this).getRequestQueue().getCache().get(Constant.NEW_DETAIL + "id/" + id + "/screen/" + "search_detail_screen") != null) {
                 String cachedResponse = new String(Global.getInstance(this).
-                        getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + id).data);
+                        getRequestQueue().getCache().get(Constant.NEW_DETAIL + "id/" + id + "/screen/" + "search_detail_screen").data);
                 try {
                     JSONObject jsonObject = new JSONObject(cachedResponse);
                     JSONObject response = jsonObject.getJSONObject(Constant.response);
@@ -396,10 +404,10 @@ public class ActDetailContentDefault extends ActionBarActivity
                             String channel_id = objRelated.getString(Constant.channel_id);
                             String related_date_publish = objRelated.getString(Constant.related_date_publish);
                             String image = objRelated.getString(Constant.image);
-                            String kanal = objRelated.getString(Constant.kanal);
+                            String channel = objRelated.getString(Constant.kanal);
                             String shared_url = objRelated.getString(Constant.url);
                             relatedArticleArrayList.add(new RelatedArticle(id, article_id, related_article_id, related_title,
-                                    related_channel_level_1_id, channel_id, related_date_publish, image, kanal, shared_url));
+                                    related_channel_level_1_id, channel_id, related_date_publish, image, channel, shared_url));
                             Log.i(Constant.TAG, "RELATED ARTICLE CACHED : " + relatedArticleArrayList.get(i).getRelated_title());
                         }
                     }
@@ -421,6 +429,8 @@ public class ActDetailContentDefault extends ActionBarActivity
                     if (pagingContents.size() > 0) {
                         setTextViewHTML(tvContentDetail, pagingContents.get(0));
                         if (pagingContents.size() > 1) {
+                            textPageIndex.setText(String.valueOf(pageCount + 1));
+                            textPageSize.setText(String.valueOf(pagingContents.size()));
                             mPagingButtonLayout.setVisibility(View.VISIBLE);
                         }
                     }
@@ -562,11 +572,20 @@ public class ActDetailContentDefault extends ActionBarActivity
         textLinkVideo.setOnClickListener(this);
         textLinkVideo.setVisibility(View.GONE);
 
-        textPageNext = (TextView) findViewById(R.id.text_page_next);
-        textPagePrevious = (TextView) findViewById(R.id.text_page_previous);
-        textPageNext.setOnClickListener(this);
-        textPagePrevious.setOnClickListener(this);
-        textPagePrevious.setEnabled(false);
+        next = (ImageView) findViewById(R.id.page_next);
+        nextEnd = (ImageView) findViewById(R.id.page_next_end);
+        next.setOnClickListener(this);
+        nextEnd.setOnClickListener(this);
+
+        previous = (ImageView) findViewById(R.id.page_previous);
+        previousStart = (ImageView) findViewById(R.id.page_previous_start);
+        previous.setOnClickListener(this);
+        previousStart.setOnClickListener(this);
+        previous.setEnabled(false);
+        previousStart.setEnabled(false);
+
+        textPageIndex = (TextView) findViewById(R.id.text_page_index);
+        textPageSize = (TextView) findViewById(R.id.text_page_size);
 
         if (Constant.isTablet(this)) {
             ivThumbDetail.getLayoutParams().height =
@@ -580,9 +599,11 @@ public class ActDetailContentDefault extends ActionBarActivity
     public boolean onPrepareOptionsMenu(Menu menu) {
         if (shared_url == null) {
             try {
-                if (Global.getInstance(this).getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + id) != null) {
+                if (Global.getInstance(this).getRequestQueue().getCache().get(
+                        Constant.NEW_DETAIL + "id/" + id + "/screen/" + "search_detail_screen") != null) {
                     String cachedResponse = new String(Global.getInstance(this).
-                            getRequestQueue().getCache().get(Constant.NEW_DETAIL + "/id/" + id).data);
+                            getRequestQueue().getCache().get(
+                            Constant.NEW_DETAIL + "id/" + id + "/screen/" + "search_detail_screen").data);
                     JSONObject jsonObject = new JSONObject(cachedResponse);
                     JSONObject response = jsonObject.getJSONObject(Constant.response);
                     JSONObject detail = response.getJSONObject(Constant.detail);
@@ -789,35 +810,39 @@ public class ActDetailContentDefault extends ActionBarActivity
     private void showPagingNext() {
         pageCount += 1;
         if (pageCount > 0) {
-            textPagePrevious.setEnabled(true);
-            textPagePrevious.setTextColor(getResources().getColor(R.color.new_base_color));
+            previous.setEnabled(true);
+            previousStart.setEnabled(true);
         }
         if (pageCount < pagingContents.size()) {
             setTextViewHTML(tvContentDetail, pagingContents.get(pageCount));
             scrollView.smoothScrollTo(0, 0);
+            textPageIndex.setText(String.valueOf(pageCount + 1));
         }
         if (pageCount == pagingContents.size() - 1) {
-            textPageNext.setEnabled(false);
-            textPageNext.setTextColor(getResources().getColor(R.color.switch_thumb_normal_material_dark));
+            next.setEnabled(false);
+            nextEnd.setEnabled(false);
         }
     }
 
     private void showPagingPrevious() {
         pageCount -= 1;
         if (pageCount < pagingContents.size() - 1) {
-            textPageNext.setEnabled(true);
-            textPageNext.setTextColor(getResources().getColor(R.color.new_base_color));
+            next.setEnabled(true);
+            nextEnd.setEnabled(true);
         }
         if (pageCount == 0) {
             setTextViewHTML(tvContentDetail, pagingContents.get(pageCount));
             scrollView.smoothScrollTo(0, 0);
-            textPagePrevious.setEnabled(false);
-            textPagePrevious.setTextColor(getResources().getColor(R.color.switch_thumb_normal_material_dark));
+            previous.setEnabled(false);
+            previousStart.setEnabled(false);
+            textPageIndex.setText(String.valueOf(pageCount + 1));
         } else {
-            textPagePrevious.setEnabled(true);
+            previous.setEnabled(true);
+            previousStart.setEnabled(true);
             if (pageCount > -1 && pageCount < pagingContents.size()) {
                 setTextViewHTML(tvContentDetail, pagingContents.get(pageCount));
                 scrollView.smoothScrollTo(0, 0);
+                textPageIndex.setText(String.valueOf(pageCount + 1));
             }
         }
     }
@@ -846,10 +871,32 @@ public class ActDetailContentDefault extends ActionBarActivity
             moveVideoPage(urlVideo);
         } else if (view.getId() == R.id.btn_comment) {
             moveCommentPage();
-        } else if (view.getId() == R.id.text_page_next) {
+        } else if (view.getId() == R.id.page_next) {
             showPagingNext();
-        } else if (view.getId() == R.id.text_page_previous) {
+        } else if (view.getId() == R.id.page_previous) {
             showPagingPrevious();
+        } else if (view.getId() == R.id.page_next_end) {
+            if (pageCount < pagingContents.size() - 1) {
+                pageCount = pagingContents.size() - 1;
+                setTextViewHTML(tvContentDetail, pagingContents.get(pageCount));
+                scrollView.smoothScrollTo(0, 0);
+                next.setEnabled(false);
+                nextEnd.setEnabled(false);
+                previous.setEnabled(true);
+                previousStart.setEnabled(true);
+                textPageIndex.setText(String.valueOf(pageCount + 1));
+            }
+        } else if (view.getId() == R.id.page_previous_start) {
+            if (pageCount > 0) {
+                pageCount = 0;
+                setTextViewHTML(tvContentDetail, pagingContents.get(pageCount));
+                scrollView.smoothScrollTo(0, 0);
+                previous.setEnabled(false);
+                previousStart.setEnabled(false);
+                next.setEnabled(true);
+                nextEnd.setEnabled(true);
+                textPageIndex.setText(String.valueOf(pageCount + 1));
+            }
         }
     }
 

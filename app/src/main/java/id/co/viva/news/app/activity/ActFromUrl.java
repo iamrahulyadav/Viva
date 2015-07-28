@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -63,12 +64,16 @@ public class ActFromUrl extends ActionBarActivity implements View.OnClickListene
     private TextView tvDateDetail;
     private TextView tvReporterDetail;
     private TextView tvContentDetail;
-    private TextView textPageNext;
-    private TextView textPagePrevious;
     private KenBurnsView ivThumbDetail;
     private TextView textLinkVideo;
     private Button btnComment;
     private ParallaxScrollView scrollView;
+    private ImageView next;
+    private ImageView nextEnd;
+    private ImageView previous;
+    private ImageView previousStart;
+    private TextView textPageIndex;
+    private TextView textPageSize;
 
     private ArrayList<String> pagingContents;
     private ArrayList<SliderContentImage> sliderContentImages;
@@ -137,11 +142,20 @@ public class ActFromUrl extends ActionBarActivity implements View.OnClickListene
         textLinkVideo.setOnClickListener(this);
         textLinkVideo.setVisibility(View.GONE);
 
-        textPageNext = (TextView) findViewById(R.id.text_page_next);
-        textPagePrevious = (TextView) findViewById(R.id.text_page_previous);
-        textPageNext.setOnClickListener(this);
-        textPagePrevious.setOnClickListener(this);
-        textPagePrevious.setEnabled(false);
+        next = (ImageView) findViewById(R.id.page_next);
+        nextEnd = (ImageView) findViewById(R.id.page_next_end);
+        next.setOnClickListener(this);
+        nextEnd.setOnClickListener(this);
+
+        previous = (ImageView) findViewById(R.id.page_previous);
+        previousStart = (ImageView) findViewById(R.id.page_previous_start);
+        previous.setOnClickListener(this);
+        previousStart.setOnClickListener(this);
+        previous.setEnabled(false);
+        previousStart.setEnabled(false);
+
+        textPageIndex = (TextView) findViewById(R.id.text_page_index);
+        textPageSize = (TextView) findViewById(R.id.text_page_size);
 
         if (Constant.isTablet(this)) {
             ivThumbDetail.getLayoutParams().height =
@@ -194,10 +208,32 @@ public class ActFromUrl extends ActionBarActivity implements View.OnClickListene
             moveVideoPage(urlVideo);
         } else if (view.getId() == R.id.btn_comment) {
             moveCommentPage();
-        } else if (view.getId() == R.id.text_page_next) {
+        } else if (view.getId() == R.id.page_next) {
             showPagingNext();
-        } else if (view.getId() == R.id.text_page_previous) {
+        } else if (view.getId() == R.id.page_previous) {
             showPagingPrevious();
+        } else if (view.getId() == R.id.page_next_end) {
+            if (pageCount < pagingContents.size() - 1) {
+                pageCount = pagingContents.size() - 1;
+                setTextViewHTML(tvContentDetail, pagingContents.get(pageCount));
+                scrollView.smoothScrollTo(0, 0);
+                next.setEnabled(false);
+                nextEnd.setEnabled(false);
+                previous.setEnabled(true);
+                previousStart.setEnabled(true);
+                textPageIndex.setText(String.valueOf(pageCount + 1));
+            }
+        } else if (view.getId() == R.id.page_previous_start) {
+            if (pageCount > 0) {
+                pageCount = 0;
+                setTextViewHTML(tvContentDetail, pagingContents.get(pageCount));
+                scrollView.smoothScrollTo(0, 0);
+                previous.setEnabled(false);
+                previousStart.setEnabled(false);
+                next.setEnabled(true);
+                nextEnd.setEnabled(true);
+                textPageIndex.setText(String.valueOf(pageCount + 1));
+            }
         }
     }
 
@@ -251,6 +287,8 @@ public class ActFromUrl extends ActionBarActivity implements View.OnClickListene
                                 if (pagingContents.size() > 0) {
                                     setTextViewHTML(tvContentDetail, pagingContents.get(0));
                                     if (pagingContents.size() > 1) {
+                                        textPageIndex.setText(String.valueOf(pageCount + 1));
+                                        textPageSize.setText(String.valueOf(pagingContents.size()));
                                         mPagingButtonLayout.setVisibility(View.VISIBLE);
                                     }
                                 }
@@ -361,7 +399,7 @@ public class ActFromUrl extends ActionBarActivity implements View.OnClickListene
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         if (mChannel != null) {
-            if (mChannel.equalsIgnoreCase("bola")) {
+            if (mChannel.equalsIgnoreCase("bola") || mChannel.equalsIgnoreCase("sport")) {
                 colorDrawable.setColor(getResources().getColor(R.color.color_bola));
                 getSupportActionBar().setBackgroundDrawable(colorDrawable);
                 getSupportActionBar().setTitle(R.string.label_item_navigation_bola);
@@ -411,35 +449,39 @@ public class ActFromUrl extends ActionBarActivity implements View.OnClickListene
     private void showPagingNext() {
         pageCount += 1;
         if (pageCount > 0) {
-            textPagePrevious.setEnabled(true);
-            textPagePrevious.setTextColor(getResources().getColor(R.color.new_base_color));
+            previous.setEnabled(true);
+            previousStart.setEnabled(true);
         }
         if (pageCount < pagingContents.size()) {
             setTextViewHTML(tvContentDetail, pagingContents.get(pageCount));
             scrollView.smoothScrollTo(0, 0);
+            textPageIndex.setText(String.valueOf(pageCount + 1));
         }
         if (pageCount == pagingContents.size() - 1) {
-            textPageNext.setEnabled(false);
-            textPageNext.setTextColor(getResources().getColor(R.color.switch_thumb_normal_material_dark));
+            next.setEnabled(false);
+            nextEnd.setEnabled(false);
         }
     }
 
     private void showPagingPrevious() {
         pageCount -= 1;
         if (pageCount < pagingContents.size() - 1) {
-            textPageNext.setEnabled(true);
-            textPageNext.setTextColor(getResources().getColor(R.color.new_base_color));
+            next.setEnabled(true);
+            nextEnd.setEnabled(true);
         }
         if (pageCount == 0) {
             setTextViewHTML(tvContentDetail, pagingContents.get(pageCount));
             scrollView.smoothScrollTo(0, 0);
-            textPagePrevious.setEnabled(false);
-            textPagePrevious.setTextColor(getResources().getColor(R.color.switch_thumb_normal_material_dark));
+            previous.setEnabled(false);
+            previousStart.setEnabled(false);
+            textPageIndex.setText(String.valueOf(pageCount + 1));
         } else {
-            textPagePrevious.setEnabled(true);
+            previous.setEnabled(true);
+            previousStart.setEnabled(true);
             if (pageCount > -1 && pageCount < pagingContents.size()) {
                 setTextViewHTML(tvContentDetail, pagingContents.get(pageCount));
                 scrollView.smoothScrollTo(0, 0);
+                textPageIndex.setText(String.valueOf(pageCount + 1));
             }
         }
     }

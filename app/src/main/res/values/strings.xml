@@ -87,8 +87,6 @@
     <string name="label_item_navigation_life">Life</string>
     <string name="label_loading">Loading...</string>
 
-    <string name="label_paging_next"><u>Selanjutnya</u></string>
-    <string name="label_paging_previous"><u>Kembali</u></string>
     <string name="label_amount_rating">Jumlah Rating</string>
     <string name="label_hint_email">Email</string>
     <string name="label_hint_password">Password</string>

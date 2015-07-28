@@ -94,24 +94,51 @@
                 android:layout_margin="5dp"
                 android:layout_centerHorizontal="true"
                 android:id="@+id/layout_button_next_previous">
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:id="@+id/page_previous_start"
+                    android:src="@drawable/previous_start"/>
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:id="@+id/page_previous"
+                    android:src="@drawable/previous"/>
                 <id.co.viva.news.app.component.RobotoTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:text="@string/label_paging_previous"
-                    android:layout_marginRight="10dp"
-                    android:textColor="@color/switch_thumb_normal_material_dark"
-                    android:id="@+id/text_page_previous"/>
-                <id.co.viva.news.app.component.RobotoTextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/label_paging_next"
                     android:textSize="16sp"
                     android:textStyle="bold"
                     android:layout_marginLeft="10dp"
-                    android:textColor="@color/new_base_color"
-                    android:id="@+id/text_page_next"/>
+                    android:textColor="@color/black"
+                    android:id="@+id/text_page_index"/>
+                <id.co.viva.news.app.component.RobotoTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:text="Of"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginLeft="5dp"
+                    android:textColor="@color/black" />
+                <id.co.viva.news.app.component.RobotoTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:layout_marginRight="10dp"
+                    android:textColor="@color/black"
+                    android:id="@+id/text_page_size"/>
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:id="@+id/page_next"
+                    android:src="@drawable/next"/>
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:id="@+id/page_next_end"
+                    android:src="@drawable/next_end"/>
             </LinearLayout>
         </RelativeLayout>
     </RelativeLayout>

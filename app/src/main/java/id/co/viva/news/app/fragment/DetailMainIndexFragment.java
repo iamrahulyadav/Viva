@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -97,8 +98,12 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
     private KenBurnsView ivThumbDetailMain;
     private TextView tvPreviewCommentUser;
     private TextView tvPreviewCommentContent;
-    private TextView textPageNext;
-    private TextView textPagePrevious;
+    private ImageView previousStart;
+    private ImageView previous;
+    private TextView textPageIndex;
+    private ImageView next;
+    private TextView textPageSize;
+    private ImageView nextEnd;
     private LinearLayout layoutCommentPreview;
     private Button btnComment;
     private ViewPager viewPager;
@@ -219,11 +224,20 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
         textLinkVideo.setOnClickListener(this);
         textLinkVideo.setVisibility(View.GONE);
 
-        textPageNext = (TextView) view.findViewById(R.id.text_page_next);
-        textPagePrevious = (TextView) view.findViewById(R.id.text_page_previous);
-        textPageNext.setOnClickListener(this);
-        textPagePrevious.setOnClickListener(this);
-        textPagePrevious.setEnabled(false);
+        next = (ImageView) view.findViewById(R.id.page_next);
+        nextEnd = (ImageView) view.findViewById(R.id.page_next_end);
+        next.setOnClickListener(this);
+        nextEnd.setOnClickListener(this);
+
+        previous = (ImageView) view.findViewById(R.id.page_previous);
+        previousStart = (ImageView) view.findViewById(R.id.page_previous_start);
+        previous.setOnClickListener(this);
+        previousStart.setOnClickListener(this);
+        previous.setEnabled(false);
+        previousStart.setEnabled(false);
+
+        textPageIndex = (TextView) view.findViewById(R.id.text_page_index);
+        textPageSize = (TextView) view.findViewById(R.id.text_page_size);
 
         if (Constant.isTablet(mActivity)) {
             ivThumbDetailMain.getLayoutParams().height =
@@ -354,6 +368,8 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
             if (pagingContents.size() > 0) {
                 setTextViewHTML(tvContentMainDetail, pagingContents.get(0));
                 if (pagingContents.size() > 1) {
+                    textPageIndex.setText(String.valueOf(pageCount + 1));
+                    textPageSize.setText(String.valueOf(pagingContents.size()));
                     mPagingButtonLayout.setVisibility(View.VISIBLE);
                 }
             }
@@ -621,11 +637,35 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
             case R.id.btn_comment:
                 moveCommentPage();
                 break;
-            case R.id.text_page_previous:
+            case R.id.page_next:
+                showPagingNext();
+                break;
+            case R.id.page_next_end:
+                if (pageCount < pagingContents.size() - 1) {
+                    pageCount = pagingContents.size() - 1;
+                    setTextViewHTML(tvContentMainDetail, pagingContents.get(pageCount));
+                    scrollView.smoothScrollTo(0, 0);
+                    next.setEnabled(false);
+                    nextEnd.setEnabled(false);
+                    previous.setEnabled(true);
+                    previousStart.setEnabled(true);
+                    textPageIndex.setText(String.valueOf(pageCount + 1));
+                }
+                break;
+            case R.id.page_previous:
                 showPagingPrevious();
                 break;
-            case R.id.text_page_next:
-                showPagingNext();
+            case R.id.page_previous_start:
+                if (pageCount > 0) {
+                    pageCount = 0;
+                    setTextViewHTML(tvContentMainDetail, pagingContents.get(pageCount));
+                    scrollView.smoothScrollTo(0, 0);
+                    previous.setEnabled(false);
+                    previousStart.setEnabled(false);
+                    next.setEnabled(true);
+                    nextEnd.setEnabled(true);
+                    textPageIndex.setText(String.valueOf(pageCount + 1));
+                }
                 break;
         }
     }
@@ -709,35 +749,39 @@ public class DetailMainIndexFragment extends Fragment implements View.OnClickLis
     private void showPagingNext() {
         pageCount += 1;
         if (pageCount > 0) {
-            textPagePrevious.setEnabled(true);
-            textPagePrevious.setTextColor(getResources().getColor(R.color.new_base_color));
+            previous.setEnabled(true);
+            previousStart.setEnabled(true);
         }
         if (pageCount < pagingContents.size()) {
             setTextViewHTML(tvContentMainDetail, pagingContents.get(pageCount));
             scrollView.smoothScrollTo(0, 0);
+            textPageIndex.setText(String.valueOf(pageCount + 1));
         }
         if (pageCount == pagingContents.size() - 1) {
-            textPageNext.setEnabled(false);
-            textPageNext.setTextColor(getResources().getColor(R.color.switch_thumb_normal_material_dark));
+            next.setEnabled(false);
+            nextEnd.setEnabled(false);
         }
     }
 
     private void showPagingPrevious() {
         pageCount -= 1;
         if (pageCount < pagingContents.size() - 1) {
-            textPageNext.setEnabled(true);
-            textPageNext.setTextColor(getResources().getColor(R.color.new_base_color));
+            next.setEnabled(true);
+            nextEnd.setEnabled(true);
         }
         if (pageCount == 0) {
             setTextViewHTML(tvContentMainDetail, pagingContents.get(pageCount));
             scrollView.smoothScrollTo(0, 0);
-            textPagePrevious.setEnabled(false);
-            textPagePrevious.setTextColor(getResources().getColor(R.color.switch_thumb_normal_material_dark));
+            previous.setEnabled(false);
+            previousStart.setEnabled(false);
+            textPageIndex.setText(String.valueOf(pageCount + 1));
         } else {
-            textPagePrevious.setEnabled(true);
+            previous.setEnabled(true);
+            previousStart.setEnabled(true);
             if (pageCount > -1 && pageCount < pagingContents.size()) {
                 setTextViewHTML(tvContentMainDetail, pagingContents.get(pageCount));
                 scrollView.smoothScrollTo(0, 0);
+                textPageIndex.setText(String.valueOf(pageCount + 1));
             }
         }
     }
