@@ -26,7 +26,6 @@ public class TutorialFragment extends Fragment {
 
     private String mUrl;
     private boolean isInternetPresent = false;
-    private ImageView imageView;
     private Activity mActivity;
     private ProgressWheel progressWheel;
     private TextView labelText;
@@ -62,7 +61,7 @@ public class TutorialFragment extends Fragment {
     }
 
     private void defineViews(View mView) {
-        imageView = (ImageView) mView.findViewById(R.id.tutorial_screen_image);
+        ImageView imageView = (ImageView) mView.findViewById(R.id.tutorial_screen_image);
         labelText = (TextView) mView.findViewById(R.id.text_on_tutorial_page);
         labelText.setText(getResources().getString(R.string.label_process_get_image_tutorial));
         progressWheel = (ProgressWheel) mView.findViewById(R.id.progress_wheel);

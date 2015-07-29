@@ -61,11 +61,9 @@ public class GridChannelFragment extends Fragment implements View.OnClickListene
     private PublisherAdView publisherAdViewBottom;
     private PublisherAdView publisherAdViewTop;
     private LinearLayout mParentLayout;
-    private SwingBottomInAnimationAdapter swingBottomInAnimationAdapter;
     private ProgressWheel progressWheel;
     private TextView tvNoResult;
     private TextView textHeader;
-    private Analytics analytics;
     private RippleView rippleView;
     private ImageView imageHeader;
     private String channel_title_header_grid;
@@ -127,9 +125,11 @@ public class GridChannelFragment extends Fragment implements View.OnClickListene
     private void defineViews(View rootView) {
         mParentLayout = (LinearLayout) rootView.findViewById(R.id.parent_layout);
 
-        analytics = new Analytics(getActivity());
-        analytics.getAnalyticByATInternet(name.replace(" ", "_") + "_Screen");
-        analytics.getAnalyticByGoogleAnalytic(name.replace(" ", "_") + "_Screen");
+        if (isInternetPresent) {
+            Analytics analytics = new Analytics(getActivity());
+            analytics.getAnalyticByATInternet(name.replace(" ", "_") + "_Screen");
+            analytics.getAnalyticByGoogleAnalytic(name.replace(" ", "_") + "_Screen");
+        }
 
         tvNoResult = (TextView) rootView.findViewById(R.id.text_no_result);
         tvNoResult.setVisibility(View.GONE);
@@ -287,7 +287,7 @@ public class GridChannelFragment extends Fragment implements View.OnClickListene
             }
             //Collect for grid type
             if (channels.size() > 0 || !channels.isEmpty()) {
-                swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(
+                SwingBottomInAnimationAdapter swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(
                         new ChannelGridAdapter(getActivity(), channels));
                 swingBottomInAnimationAdapter.setAbsListView(gridChannel);
                 assert swingBottomInAnimationAdapter.getViewAnimator() != null;

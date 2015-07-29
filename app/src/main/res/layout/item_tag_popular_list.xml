@@ -5,13 +5,14 @@
     <id.co.viva.news.app.component.RobotoBoldTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textSize="16sp"
         android:layout_centerVertical="true"
         android:textColor="@color/black"
         android:id="@+id/item_text_tag_list"/>
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
         android:layout_centerVertical="true"
         android:layout_alignParentRight="true"
-        android:src="@drawable/abc_btn_check_to_on_mtrl_015"/>
+        android:src="@drawable/arrow"/>
 </RelativeLayout>

@@ -84,7 +84,6 @@ public class ListMainFragment extends Fragment implements View.OnClickListener, 
     private TextView labelLoadData;
     private RippleView rippleView;
     private Analytics analytics;
-    private TextView labelText;
     private TextView lastUpdate;
     private LoadMoreListView listViewSmallCard;
     private LoadMoreListView listView;
@@ -200,7 +199,7 @@ public class ListMainFragment extends Fragment implements View.OnClickListener, 
         analytics.getAnalyticByGoogleAnalytic(name.replace(" ", "_") + "_Screen_" + String.valueOf(page));
 
         //Set some text on top of view
-        labelText = (TextView) rootView.findViewById(R.id.text_main_list);
+        TextView labelText = (TextView) rootView.findViewById(R.id.text_main_list);
         labelText.setText(name.toUpperCase());
         lastUpdate = (TextView) rootView.findViewById(R.id.date_main_list);
 
@@ -542,6 +541,7 @@ public class ListMainFragment extends Fragment implements View.OnClickListener, 
                         }
                     }
                 }
+                assert menu != null;
                 MenuItem mi = menu.add(Menu.NONE, R.id.action_change_layout, 2, "");
                 mi.setIcon(R.drawable.ic_preview_small);
                 mi.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_IF_ROOM);
@@ -555,6 +555,7 @@ public class ListMainFragment extends Fragment implements View.OnClickListener, 
                         }
                     }
                 }
+                assert menu != null;
                 MenuItem mi = menu.add(Menu.NONE, R.id.action_change_layout, 2, "");
                 mi.setIcon(R.drawable.ic_preview_big);
                 mi.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_IF_ROOM);

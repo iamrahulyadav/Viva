@@ -29,9 +29,7 @@ import id.co.viva.news.app.activity.ActNotification;
  */
 public class GcmIntentService extends IntentService {
 
-    private NotificationManager mNotificationManager;
     private Intent intent;
-    private Bitmap remote_picture = null;
 
     public GcmIntentService() {
         super("GcmIntentService");
@@ -42,12 +40,12 @@ public class GcmIntentService extends IntentService {
         Bundle bundle = intent.getExtras();
         GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(this);
         String messageType = gcm.getMessageType(intent);
-        if(!bundle.isEmpty()) {
-            if(GoogleCloudMessaging.MESSAGE_TYPE_SEND_ERROR.equals(messageType)) {
+        if (!bundle.isEmpty()) {
+            if (GoogleCloudMessaging.MESSAGE_TYPE_SEND_ERROR.equals(messageType)) {
                 Log.e(Constant.TAG, "Send error: " + bundle.toString());
-            } else if(GoogleCloudMessaging.MESSAGE_TYPE_DELETED.equals(messageType)) {
+            } else if (GoogleCloudMessaging.MESSAGE_TYPE_DELETED.equals(messageType)) {
                 Log.e(Constant.TAG, "Deleted messages on server: " + bundle.toString());
-            } else if(GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE.equals(messageType)) {
+            } else if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE.equals(messageType)) {
                 Log.i(Constant.TAG, "Received: " + bundle.toString());
                 getContentFromNotification(bundle);
             }
@@ -57,7 +55,7 @@ public class GcmIntentService extends IntentService {
 
     private void sendNotification(String id, String title, String kanal, int notification_id, String type,
                                   String message, String image, String url) {
-        mNotificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager mNotificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
 
         if (type.equalsIgnoreCase("browse")) {
             Uri uri = Uri.parse(url);
@@ -89,7 +87,7 @@ public class GcmIntentService extends IntentService {
         if (image != null) {
             if (image.length() > 0) {
                 try {
-                    remote_picture = BitmapFactory.decodeStream(
+                    Bitmap remote_picture = BitmapFactory.decodeStream(
                             (InputStream) new URL(image).getContent());
                     builder.setLargeIcon(remote_picture);
                     builder.setStyle(new NotificationCompat
@@ -126,13 +124,13 @@ public class GcmIntentService extends IntentService {
         String title = extras.containsKey("title") ? extras.getString("title") : "";
         String message = extras.containsKey("msg") ? extras.getString("msg") : "";
         String image = extras.containsKey("img") ? extras.getString("img") : "";
-        String kanal = extras.containsKey("cat") ? extras.getString("cat") : "";
+        String channel = extras.containsKey("cat") ? extras.getString("cat") : "";
         String type = extras.containsKey("act") ? extras.getString("act") : "";
         String nid = extras.containsKey("nid") ? extras.getString("nid") : "0";
         String url = extras.containsKey("url") ? extras.getString("url") : "";
         int notification_id = Integer.parseInt(nid);
         if (notification_id != 0) {
-            sendNotification(id, title, kanal, notification_id, type, message, image, url);
+            sendNotification(id, title, channel, notification_id, type, message, image, url);
         }
     }
 

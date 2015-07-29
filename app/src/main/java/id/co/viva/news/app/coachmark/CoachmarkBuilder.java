@@ -10,9 +10,9 @@ import id.co.viva.news.app.interfaces.CoachmarkListener;
  */
 public class CoachmarkBuilder {
 
-    CoachmarkView showtipsView;
+    CoachMarkView showtipsView;
     public CoachmarkBuilder(Activity activity) {
-        this.showtipsView = new CoachmarkView(activity);
+        this.showtipsView = new CoachMarkView(activity);
     }
 
     /**
@@ -44,7 +44,7 @@ public class CoachmarkBuilder {
         return this;
     }
 
-    public CoachmarkView build() {
+    public CoachMarkView build() {
         return showtipsView;
     }
 

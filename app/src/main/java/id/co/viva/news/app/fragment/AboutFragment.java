@@ -19,13 +19,10 @@ import id.co.viva.news.app.model.DeviceInfo;
  */
 public class AboutFragment extends Fragment {
 
-    private TextView textAppVersion;
-    private ActionBarActivity mActivity;
-
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        mActivity = (ActionBarActivity) activity;
+        ActionBarActivity mActivity = (ActionBarActivity) activity;
         mActivity.getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.new_base_color)));
         mActivity.getSupportActionBar().setIcon(R.drawable.logo_viva_coid_second);
     }
@@ -33,7 +30,7 @@ public class AboutFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.frag_about, container, false);
-        textAppVersion = (TextView) rootView.findViewById(R.id.text_app_version);
+        TextView textAppVersion = (TextView) rootView.findViewById(R.id.text_app_version);
         DeviceInfo deviceInfo = new DeviceInfo(getActivity());
         textAppVersion.setText("Version " + deviceInfo.getAppVersionName());
         return rootView;

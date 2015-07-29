@@ -28,8 +28,6 @@ public class FloatingLabelView extends LinearLayout implements OnFocusChangeList
 
     private EditText input;
     private RobotoTextView display;
-    private LinearLayout.LayoutParams inpuTextParams;
-    private LinearLayout.LayoutParams displayTextParams;
     private Animation bottomUp, bottomDown;
 
     public FloatingLabelView(Context context, AttributeSet attrs, int defStyle) {
@@ -54,13 +52,13 @@ public class FloatingLabelView extends LinearLayout implements OnFocusChangeList
         bottomUp = AnimationUtils.loadAnimation(context, R.anim.txt_bottom_up);
         bottomDown = AnimationUtils.loadAnimation(context, R.anim.txt_bottom_down);
         //Default Layout
-        inpuTextParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT);
-        displayTextParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT);
-        input.setLayoutParams(inpuTextParams);
+        LayoutParams inputTextParams = new LayoutParams(
+                LayoutParams.MATCH_PARENT,
+                LayoutParams.WRAP_CONTENT);
+        LayoutParams displayTextParams = new LayoutParams(
+                LayoutParams.MATCH_PARENT,
+                LayoutParams.WRAP_CONTENT);
+        input.setLayoutParams(inputTextParams);
         display.setLayoutParams(displayTextParams);
         setOrientation(LinearLayout.VERTICAL);
         createDefaultLayout();

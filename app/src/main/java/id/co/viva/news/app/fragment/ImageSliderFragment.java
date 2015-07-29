@@ -21,7 +21,6 @@ import id.co.viva.news.app.component.CropSquareTransformation;
  */
 public class ImageSliderFragment extends Fragment implements View.OnClickListener {
 
-    private ImageView imageView;
     private String mPhotoUrl;
     private String mTitle;
 
@@ -44,7 +43,7 @@ public class ImageSliderFragment extends Fragment implements View.OnClickListene
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.item_slider_detail_image, container, false);
-        imageView = (ImageView) rootView.findViewById(R.id.image_item_slider_detail);
+        ImageView imageView = (ImageView) rootView.findViewById(R.id.image_item_slider_detail);
         imageView.setOnClickListener(this);
         if (mPhotoUrl.length() > 0) {
             if (getActivity() != null) {

@@ -97,6 +97,12 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
     private Button btnRetry;
     private TextView tvNoResult;
     private ParallaxScrollView scrollView;
+    private TextView textPageIndex;
+    private ImageView previousStart;
+    private ImageView nextEnd;
+    private TextView textPageSize;
+    private ImageView next;
+    private ImageView previous;
 
     //Ads AdMob DFP
     private LinearLayout mParentLayout;
@@ -114,12 +120,6 @@ public class ActNotification extends ActionBarActivity implements View.OnClickLi
     private String urlVideo;
     private String shared_url;
     private String channel_id;
-    private TextView textPageIndex;
-    private ImageView previousStart;
-    private ImageView nextEnd;
-    private TextView textPageSize;
-    private ImageView next;
-    private ImageView previous;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

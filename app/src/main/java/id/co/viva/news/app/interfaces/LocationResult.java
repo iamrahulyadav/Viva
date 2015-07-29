@@ -6,5 +6,5 @@ import android.location.Location;
  * Created by reza on 24/02/15.
  */
 public interface LocationResult {
-    public void getLocation(Location location);
+    void getLocation(Location location);
 }

@@ -28,7 +28,7 @@ import id.co.viva.news.app.interfaces.CoachmarkListener;
 /**
  * Created by reza on 19/11/14.
  */
-public class CoachmarkView extends RelativeLayout {
+public class CoachMarkView extends RelativeLayout {
 
     private Point showhintPoints;
     private int radius = 0;
@@ -48,17 +48,17 @@ public class CoachmarkView extends RelativeLayout {
     private int title_color, description_color,
             background_color, circleColor;
 
-    public CoachmarkView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public CoachMarkView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }
 
-    public CoachmarkView(Context context, AttributeSet attrs) {
+    public CoachMarkView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public CoachmarkView(Context context) {
+    public CoachMarkView(Context context) {
         super(context);
         init();
     }
@@ -120,7 +120,7 @@ public class CoachmarkView extends RelativeLayout {
     public void show(final Activity activity) {
         if (isDisplayOneTime() && showTipsStore.hasShown(getDisplayOneTimeID())) {
             setVisibility(View.GONE);
-            ((ViewGroup) ((Activity) getContext()).getWindow().getDecorView()).removeView(CoachmarkView.this);
+            ((ViewGroup) ((Activity) getContext()).getWindow().getDecorView()).removeView(CoachMarkView.this);
             return;
         } else {
             if (isDisplayOneTime())
@@ -130,11 +130,11 @@ public class CoachmarkView extends RelativeLayout {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                ((ViewGroup) activity.getWindow().getDecorView()).addView(CoachmarkView.this);
+                ((ViewGroup) activity.getWindow().getDecorView()).addView(CoachMarkView.this);
 
-                CoachmarkView.this.setVisibility(View.VISIBLE);
+                CoachMarkView.this.setVisibility(View.VISIBLE);
                 Animation fadeInAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.coachmark);
-                CoachmarkView.this.startAnimation(fadeInAnimation);
+                CoachMarkView.this.startAnimation(fadeInAnimation);
 
                 final ViewTreeObserver observer = targetView.getViewTreeObserver();
                 observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -267,7 +267,7 @@ public class CoachmarkView extends RelativeLayout {
 
                 setVisibility(View.GONE);
                 ((ViewGroup) ((Activity) getContext()).getWindow().getDecorView())
-                        .removeView(CoachmarkView.this);
+                        .removeView(CoachMarkView.this);
 
             }
         });

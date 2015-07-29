@@ -119,9 +119,7 @@ public class Constant {
     public static final String TAG_GCM = "VIVA-GCM";
 
     //Base URL Production
-//    private static String BASE_URL_NEW = "http://api.viva.co.id/v/209/";
-    //Base URL Stagging
-    private static String BASE_URL_NEW = "http://api.viva.co.id/v/2091/";
+    private static String BASE_URL_NEW = "http://api.viva.co.id/v/210/";
 
     //Main Content URL
     public static String MAIN_CONFIG = BASE_URL_NEW + "mainconf/app/android";

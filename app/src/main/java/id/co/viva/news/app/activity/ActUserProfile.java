@@ -36,7 +36,7 @@ import id.co.viva.news.app.Global;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.adapter.ProCityAdapter;
 import id.co.viva.news.app.coachmark.CoachmarkBuilder;
-import id.co.viva.news.app.coachmark.CoachmarkView;
+import id.co.viva.news.app.coachmark.CoachMarkView;
 import id.co.viva.news.app.component.CropSquareTransformation;
 import id.co.viva.news.app.component.ProgressGenerator;
 import id.co.viva.news.app.component.ZoomFlip;
@@ -63,18 +63,16 @@ public class ActUserProfile extends ActionBarActivity implements View.OnClickLis
     private ActionProcessButton btnSave;
     private TextView mProfileName;
     private TextView mProfileEmail;
-    private ImageView mprofileThumb;
+    private ImageView mProfileThumb;
     private EditText etBirth;
     private EditText etState;
-    private UserAccount userAccount;
     private Spinner spinProvince;
     private Spinner spinCity;
     private Spinner spinnerGender;
 
     private String genderSelected;
-    private String provinceIdSelected;
     private String citySelected;
-    private String fullname;
+    private String fullName;
     private String email;
     private String photo;
     private String gender;
@@ -87,19 +85,11 @@ public class ActUserProfile extends ActionBarActivity implements View.OnClickLis
     private ArrayList<City> cityArrayList;
     private ProCityAdapter proCityAdapter;
 
-    private ProgressGenerator progressGenerator;
-
     private ZoomFlip zoomFlip;
-    private FrameLayout mParentLayout;
-    private RelativeLayout mMainContainer;
-    private RelativeLayout mOverlayLayout;
+    private View coachMarkView;
     private CardBackFragment mBackFragment;
-    private CardFrontFragment mFrontFragment;
     private boolean mShowingBack = false;
     private GetDataUtils getDataUtils;
-
-    private View coachmarkView;
-    private CoachmarkView showtips;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,8 +103,8 @@ public class ActUserProfile extends ActionBarActivity implements View.OnClickLis
         getProfile();
         defineView();
 
-        if (fullname.length() > 0) {
-            mProfileName.setText(fullname);
+        if (fullName.length() > 0) {
+            mProfileName.setText(fullName);
         }
         if (email.length() > 0) {
             mProfileEmail.setText(email);
@@ -123,9 +113,9 @@ public class ActUserProfile extends ActionBarActivity implements View.OnClickLis
             Picasso.with(ActUserProfile.this)
                     .load(photo)
                     .transform(new CropSquareTransformation())
-                    .into(mprofileThumb);
+                    .into(mProfileThumb);
         } else {
-            mprofileThumb.setImageResource(R.drawable.ic_profile);
+            mProfileThumb.setImageResource(R.drawable.ic_profile);
         }
         if(birthdays.length() > 0) {
             etBirth.setText(birthdays);
@@ -154,8 +144,9 @@ public class ActUserProfile extends ActionBarActivity implements View.OnClickLis
 
     @Override
     public void onClick(View view) {
+        UserAccount userAccount;
         if (view.getId() == R.id.btn_logout) {
-            progressGenerator = new ProgressGenerator(this);
+            ProgressGenerator progressGenerator = new ProgressGenerator(this);
             progressGenerator.start(btnLogout);
             userAccount = new UserAccount(this);
             userAccount.deleteLoginStates();
@@ -164,7 +155,7 @@ public class ActUserProfile extends ActionBarActivity implements View.OnClickLis
             btnSave.setProgress(1);
             userAccount = new UserAccount(this);
             userAccount.saveAttributesUserProfile(genderSelected, birth, country, province, city);
-            userAccount.editProfile(fullname, genderSelected, citySelected, birth, this);
+            userAccount.editProfile(fullName, genderSelected, citySelected, birth, this);
         } else if (view.getId() == R.id.form_regist_birthdate) {
             DatePickerBuilder dpb = new DatePickerBuilder()
                     .setFragmentManager(getSupportFragmentManager())
@@ -173,13 +164,13 @@ public class ActUserProfile extends ActionBarActivity implements View.OnClickLis
         } else if (view.getId() == R.id.img_thumb_profile) {
             if (photo.length() > 0) {
                 flip();
-                zoomFlip.zoomImageFromThumb(mprofileThumb);
+                zoomFlip.zoomImageFromThumb(mProfileThumb);
             }
         }
     }
 
     private void disableViews() {
-        mprofileThumb.setEnabled(false);
+        mProfileThumb.setEnabled(false);
         spinnerGender.setEnabled(false);
         etBirth.setEnabled(false);
         etState.setEnabled(false);
@@ -190,7 +181,7 @@ public class ActUserProfile extends ActionBarActivity implements View.OnClickLis
     }
 
     private void enableViews() {
-        mprofileThumb.setEnabled(true);
+        mProfileThumb.setEnabled(true);
         spinnerGender.setEnabled(true);
         etBirth.setEnabled(true);
         etState.setEnabled(true);
@@ -230,7 +221,7 @@ public class ActUserProfile extends ActionBarActivity implements View.OnClickLis
 
     private void getProfile() {
         Global.getInstance(this).getDefaultEditor();
-        fullname = Global.getInstance(this).getSharedPreferences(this)
+        fullName = Global.getInstance(this).getSharedPreferences(this)
                 .getString(Constant.LOGIN_STATES_FULL_NAME, "");
         email = Global.getInstance(this).getSharedPreferences(this)
                 .getString(Constant.LOGIN_STATES_EMAIL, "");
@@ -252,7 +243,7 @@ public class ActUserProfile extends ActionBarActivity implements View.OnClickLis
         //Initiate Views
         cityArrayList = new ArrayList<>();
         provinceArrayList = new ArrayList<>();
-        coachmarkView = findViewById(R.id.coachmark_img_profile);
+        coachMarkView = findViewById(R.id.coachmark_img_profile);
         spinnerGender = (Spinner) findViewById(R.id.spin_regist_gender);
         spinCity = (Spinner) findViewById(R.id.spin_regist_city);
         spinProvince = (Spinner) findViewById(R.id.spin_regist_province);
@@ -261,25 +252,25 @@ public class ActUserProfile extends ActionBarActivity implements View.OnClickLis
         etState.addTextChangedListener(mTextEditorWatcher);
         mProfileName = (TextView) findViewById(R.id.tv_profile_name);
         mProfileEmail = (TextView) findViewById(R.id.tv_profile_email);
-        mprofileThumb = (ImageView) findViewById(R.id.img_thumb_profile);
+        mProfileThumb = (ImageView) findViewById(R.id.img_thumb_profile);
         btnLogout = (CircularProgressButton) findViewById(R.id.btn_logout);
         btnSave = (ActionProcessButton) findViewById(R.id.btn_change_data_user);
         btnSave.setMode(ActionProcessButton.Mode.ENDLESS);
-        mBackFragment = new CardBackFragment(fullname, photo, this);
-        mFrontFragment = new CardFrontFragment(photo, this);
+        mBackFragment = new CardBackFragment(photo, this);
+        CardFrontFragment mFrontFragment = new CardFrontFragment(photo, this);
         getFragmentManager().beginTransaction()
                 .add(R.id.main, mFrontFragment).commit();
-        mParentLayout = (FrameLayout) findViewById(R.id.container);
-        mMainContainer = (RelativeLayout) findViewById(R.id.main);
+        FrameLayout mParentLayout = (FrameLayout) findViewById(R.id.container);
+        RelativeLayout mMainContainer = (RelativeLayout) findViewById(R.id.main);
         mMainContainer.setVisibility(View.GONE);
-        mOverlayLayout = (RelativeLayout) findViewById(R.id.overlay);
+        RelativeLayout mOverlayLayout = (RelativeLayout) findViewById(R.id.overlay);
         zoomFlip = new ZoomFlip(mParentLayout, mMainContainer, mOverlayLayout);
         //Add Listener
         zoomFlip.setShowingBackListener(this);
         btnLogout.setOnClickListener(this);
         btnSave.setOnClickListener(this);
         etBirth.setOnClickListener(this);
-        mprofileThumb.setOnClickListener(this);
+        mProfileThumb.setOnClickListener(this);
         spinnerGender.setOnItemSelectedListener(this);
         spinProvince.setOnItemSelectedListener(this);
         spinCity.setOnItemSelectedListener(this);
@@ -293,15 +284,15 @@ public class ActUserProfile extends ActionBarActivity implements View.OnClickLis
             RelativeLayout relativeLayout = new RelativeLayout(this);
             relativeLayout.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT));
-            ((RelativeLayout) coachmarkView).addView(relativeLayout);
-            showtips = new CoachmarkBuilder(this)
-                    .setTarget(mprofileThumb)
+            ((RelativeLayout) coachMarkView).addView(relativeLayout);
+            CoachMarkView showTips = new CoachmarkBuilder(this)
+                    .setTarget(mProfileThumb)
                     .setTitle(getResources().getString(R.string.label_image_profile))
                     .setBackgroundColor(getResources().getColor(R.color.transparent))
                     .setDescription(getResources().getString(R.string.label_image_profile_desc))
                     .setDelay(1000)
                     .build();
-            showtips.show(this);
+            showTips.show(this);
             Global.getInstance(this).getSharedPreferences(this).
                     edit().putBoolean(Constant.FIRST_INSTALL_PROFILE, false).commit();
         }
@@ -333,10 +324,10 @@ public class ActUserProfile extends ActionBarActivity implements View.OnClickLis
     }
 
     private void populateDataGender() {
-        ArrayList<String> genderList = new ArrayList<String>();
+        ArrayList<String> genderList = new ArrayList<>();
         genderList.add(getResources().getString(R.string.label_gender_male));
         genderList.add(getResources().getString(R.string.label_gender_female));
-        ArrayAdapter<String> genderAdapter = new ArrayAdapter<String>(
+        ArrayAdapter<String> genderAdapter = new ArrayAdapter<>(
                 this, android.R.layout.simple_spinner_item, genderList);
         genderAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerGender.setAdapter(genderAdapter);
@@ -361,7 +352,7 @@ public class ActUserProfile extends ActionBarActivity implements View.OnClickLis
             genderSelected = adapterView.getItemAtPosition(position).toString();
         } else if (spinner.getId() == R.id.spin_regist_province) {
             Province mProvince = provinceArrayList.get(position);
-            provinceIdSelected = mProvince.getId_propinsi();
+            String provinceIdSelected = mProvince.getId_propinsi();
             if (isInternetPresent) {
                 getDataUtils = new GetDataUtils(this, ActUserProfile.this);
                 getDataUtils.getDataCity(provinceIdSelected);
@@ -460,11 +451,11 @@ public class ActUserProfile extends ActionBarActivity implements View.OnClickLis
 
     @Override
     public void onErrorLoadDataSpinner(String error, String type) {
-        if(type.equals(Constant.ADAPTER_PROVINCE)) {
+//        if(type.equals(Constant.ADAPTER_PROVINCE)) {
 //            Toast.makeText(this, R.string.label_failed_get_province, Toast.LENGTH_SHORT).show();
-        } else {
+//        } else {
 //            Toast.makeText(this, R.string.label_failed_get_city, Toast.LENGTH_SHORT).show();
-        }
+//        }
     }
 
     @Override

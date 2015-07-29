@@ -19,13 +19,10 @@ import id.co.viva.news.app.component.CropSquareTransformation;
  */
 public class CardBackFragment extends Fragment {
 
-    private ImageView mFrontImage;
     private String photoUrl;
-    private String title;
     private Context context;
 
-    public CardBackFragment(String title, String photoUrl, Context context) {
-        this.title = title;
+    public CardBackFragment(String photoUrl, Context context) {
         this.photoUrl = photoUrl;
         this.context = context;
     }
@@ -33,8 +30,8 @@ public class CardBackFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_card_back, container, false);
-        mFrontImage = (ImageView) v.findViewById(R.id.image_card_back);
-        if(photoUrl.length() > 0) {
+        ImageView mFrontImage = (ImageView) v.findViewById(R.id.image_card_back);
+        if (photoUrl.length() > 0) {
             Picasso.with(context).load(photoUrl)
                     .transform(new CropSquareTransformation()).into(mFrontImage);
         }

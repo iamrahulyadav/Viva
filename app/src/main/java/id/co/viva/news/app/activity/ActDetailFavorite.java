@@ -40,6 +40,12 @@ public class ActDetailFavorite extends ActionBarActivity implements View.OnClick
     private TextView tvReporterName;
     private ViewPager viewPager;
     private LinePageIndicator linePageIndicator;
+    private ImageView nextEnd;
+    private ImageView next;
+    private ImageView previous;
+    private ImageView previousStart;
+    private TextView textPageIndex;
+    private TextView textPageSize;
 
     private boolean isInternetPresent = false;
     private ArrayList<SliderContentImage> sliderContentImages;
@@ -54,12 +60,6 @@ public class ActDetailFavorite extends ActionBarActivity implements View.OnClick
     private String sThumbList;
     private int thumbSize;
     private int pageCount = 0;
-    private ImageView nextEnd;
-    private ImageView next;
-    private ImageView previous;
-    private ImageView previousStart;
-    private TextView textPageIndex;
-    private TextView textPageSize;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

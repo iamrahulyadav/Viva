@@ -21,8 +21,6 @@ import id.co.viva.news.app.interfaces.OnLoadMoreListener;
 public class LoadMoreListView extends ListView implements AbsListView.OnScrollListener {
 
     private OnScrollListener mOnScrollListener;
-    private LayoutInflater mInflater;
-    private RelativeLayout mFooterView;
     private ProgressBar mProgressBarLoadMore;
     private OnLoadMoreListener mOnLoadMoreListener;
     private boolean mIsLoadingMore = false;
@@ -44,9 +42,9 @@ public class LoadMoreListView extends ListView implements AbsListView.OnScrollLi
     }
 
     private void init(Context context) {
-        mInflater = (LayoutInflater) context
+        LayoutInflater mInflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        mFooterView = (RelativeLayout) mInflater.inflate(
+        RelativeLayout mFooterView = (RelativeLayout) mInflater.inflate(
                 R.layout.load_more_footer, this, false);
         mFooterView.setOnClickListener(null);
         mFooterView.setOnLongClickListener(null);

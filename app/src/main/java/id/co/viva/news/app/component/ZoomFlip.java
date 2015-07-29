@@ -27,7 +27,6 @@ public class ZoomFlip {
     private final Point globalOffset = new Point();
     private float startScaleFinal;
 
-    private OnClickListener zoomOutClickListener;
     private ShowingBackListener mShowingBackListener;
     private boolean mIsShowingBack = false;
 
@@ -142,7 +141,7 @@ public class ZoomFlip {
         moveToCenter(startBounds, finalBounds, startScale);
 
         startScaleFinal = startScale;
-        zoomOutClickListener = new View.OnClickListener() {
+        OnClickListener zoomOutClickListener = new OnClickListener() {
 
             @Override
             public void onClick(View view) {
