@@ -18,18 +18,16 @@ import id.co.viva.news.app.model.Ads;
 public class AdsConfigList {
 
     private SharedPreferences settings;
-    private SharedPreferences.Editor editor;
-    private ArrayList<Ads> adsArrayList;
 
     public AdsConfigList() {}
 
     private void saveAds(Context context, ArrayList<Ads> adsArrayList) {
         settings = context.getSharedPreferences(Constant.PREFS_ADS_NAME, Context.MODE_PRIVATE);
-        editor = settings.edit();
+        SharedPreferences.Editor editor = settings.edit();
         Gson gson = new Gson();
         String jsonAds = gson.toJson(adsArrayList);
         editor.putString(Constant.ADS_LIST, jsonAds);
-        editor.commit();
+        editor.apply();
     }
 
     public void removeAds(Context context, ArrayList<Ads> adsArrayList) {
@@ -56,7 +54,7 @@ public class AdsConfigList {
             String jsonFavorites = settings.getString(Constant.ADS_LIST, "");
             Gson gson = new Gson();
             Type type = new TypeToken<ArrayList<Ads>>(){}.getType();
-            adsArrayList = gson.fromJson(jsonFavorites, type);
+            ArrayList<Ads> adsArrayList = gson.fromJson(jsonFavorites, type);
             return adsArrayList;
         }
         return null;

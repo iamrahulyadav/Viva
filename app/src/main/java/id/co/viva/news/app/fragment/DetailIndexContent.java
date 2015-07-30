@@ -260,7 +260,10 @@ public class DetailIndexContent extends Fragment implements
 
     private void retrieveData() {
         StringRequest request = new StringRequest(Request.Method.GET, Constant.NEW_DETAIL + "id/" + id
-                + "/screen/" + channels + "_" + mChannelTitle.replace(" ", "_").toLowerCase() + "_detail_screen",
+                + "/screen/" + channels + "_" + mChannelTitle
+                .replace(" ", "_")
+                .replaceAll("&+'", "")
+                .replace("__", "_").toLowerCase() + "_detail_screen",
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String volleyResponse) {
@@ -279,18 +282,30 @@ public class DetailIndexContent extends Fragment implements
                 0,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         Global.getInstance(getActivity()).getRequestQueue().getCache().invalidate(Constant.NEW_DETAIL + "id/" + id
-                + "/screen/" + channels + "_" + mChannelTitle.replace(" ", "_").toLowerCase() + "_detail_screen", true);
+                + "/screen/" + channels + "_" + mChannelTitle
+                .replace(" ", "_")
+                .replaceAll("&+'", "")
+                .replace("__", "_").toLowerCase() + "_detail_screen", true);
         Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_DETAIL + "id/" + id
-                + "/screen/" + channels + "_" + mChannelTitle.replace(" ", "_").toLowerCase() + "_detail_screen");
+                + "/screen/" + channels + "_" + mChannelTitle
+                .replace(" ", "_")
+                .replaceAll("&+'", "")
+                .replace("__", "_").toLowerCase() + "_detail_screen");
         Global.getInstance(getActivity()).addToRequestQueue(request, Constant.JSON_REQUEST);
     }
 
     private void checkCache() {
         if (Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_DETAIL + "id/" + id
-                + "/screen/" + channels + "_" + mChannelTitle.replace(" ", "_").toLowerCase() + "_detail_screen") != null) {
+                + "/screen/" + channels + "_" + mChannelTitle
+                .replace(" ", "_")
+                .replaceAll("&+'", "")
+                .replace("__", "_").toLowerCase() + "_detail_screen") != null) {
             String cachedResponse = new String(Global.getInstance(getActivity()).
                     getRequestQueue().getCache().get(Constant.NEW_DETAIL + "id/" + id
-                    + "/screen/" + channels + "_" + mChannelTitle.replace(" ", "_").toLowerCase() + "_detail_screen").data);
+                    + "/screen/" + channels + "_" + mChannelTitle
+                    .replace(" ", "_")
+                    .replaceAll("&+'", "")
+                    .replace("__", "_").toLowerCase() + "_detail_screen").data);
             parseData(cachedResponse);
         } else {
             progressWheel.setVisibility(View.GONE);
@@ -674,10 +689,16 @@ public class DetailIndexContent extends Fragment implements
         if (url_shared == null || url_shared.length() < 1) {
             try {
                 if (Global.getInstance(getActivity()).getRequestQueue().getCache().get(Constant.NEW_DETAIL + "id/" + id
-                        + "/screen/" + channels + "_" + mChannelTitle.replace(" ", "_").toLowerCase() + "_detail_screen") != null) {
+                        + "/screen/" + channels + "_" + mChannelTitle
+                        .replace(" ", "_")
+                        .replaceAll("&+'", "")
+                        .replace("__", "_").toLowerCase() + "_detail_screen") != null) {
                     String cachedResponse = new String(Global.getInstance(getActivity()).
                             getRequestQueue().getCache().get(Constant.NEW_DETAIL + "id/" + id
-                            + "/screen/" + channels + "_" + mChannelTitle.replace(" ", "_").toLowerCase() + "_detail_screen").data);
+                            + "/screen/" + channels + "_" + mChannelTitle
+                            .replace(" ", "_")
+                            .replaceAll("&+'", "")
+                            .replace("__", "_").toLowerCase() + "_detail_screen").data);
                     JSONObject jsonObject = new JSONObject(cachedResponse);
                     JSONObject response = jsonObject.getJSONObject(Constant.response);
                     JSONObject detail = response.getJSONObject(Constant.detail);

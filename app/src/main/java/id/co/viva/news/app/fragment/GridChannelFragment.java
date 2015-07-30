@@ -39,6 +39,7 @@ import id.co.viva.news.app.Constant;
 import id.co.viva.news.app.Global;
 import id.co.viva.news.app.R;
 import id.co.viva.news.app.activity.ActDetailChannel;
+import id.co.viva.news.app.activity.ActDetailContentDefault;
 import id.co.viva.news.app.adapter.ChannelGridAdapter;
 import id.co.viva.news.app.ads.AdsConfig;
 import id.co.viva.news.app.component.CropSquareTransformation;
@@ -262,9 +263,10 @@ public class GridChannelFragment extends Fragment implements View.OnClickListene
                         String title = field.getString("title");
                         String kanal = field.getString("kanal");
                         String image_url = field.getString("image_url");
+                        String url = field.getString("url");
                         if (!channel_title.equalsIgnoreCase("Semua Berita")) {
                             channels.add(new Channel(channel_title, id,
-                                    channel_id, level, title, kanal, image_url));
+                                    channel_id, level, title, kanal, image_url, url));
                             Log.i(Constant.TAG, "TITLE GRID : " + channels.get(j).getChannel_title());
                         }
                     }
@@ -407,16 +409,28 @@ public class GridChannelFragment extends Fragment implements View.OnClickListene
         if (channels.size() > 0) {
             Channel channel = channels.get(position);
             Bundle bundle = new Bundle();
-            bundle.putString("id", channel.getChannel_id());
-            bundle.putString("channel_title", channel.getChannel_title());
-            bundle.putString("color", color);
-            bundle.putString("name", name);
-            bundle.putString("level", channels.get(position).getLevel());
-            bundle.putString("channel", channels.get(position).getKanal());
-            Intent intent = new Intent(getActivity(), ActDetailChannel.class);
-            intent.putExtras(bundle);
-            getActivity().startActivity(intent);
-            getActivity().overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+            int lastIndex = channels.size() - 1;
+            if (position == lastIndex) {
+                Intent intent = new Intent(getActivity(), ActDetailContentDefault.class);
+                bundle.putString("id", channel.getId());
+                bundle.putString("kanal", channel.getKanal());
+                bundle.putString("shared_url", channel.getUrl());
+                bundle.putString("type", "editor_choice");
+                intent.putExtras(bundle);
+                getActivity().startActivity(intent);
+                getActivity().overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+            } else {
+                bundle.putString("id", channel.getChannel_id());
+                bundle.putString("channel_title", channel.getChannel_title());
+                bundle.putString("color", color);
+                bundle.putString("name", name);
+                bundle.putString("level", channels.get(position).getLevel());
+                bundle.putString("channel", channels.get(position).getKanal());
+                Intent intent = new Intent(getActivity(), ActDetailChannel.class);
+                intent.putExtras(bundle);
+                getActivity().startActivity(intent);
+                getActivity().overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+            }
         }
     }
 

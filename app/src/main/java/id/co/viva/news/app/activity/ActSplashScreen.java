@@ -46,7 +46,6 @@ public class ActSplashScreen extends Activity {
     private ImageView backgroundLayout;
     private LinearLayout layoutProgress;
     private boolean isInternet = false;
-    private ArrayList<Ads> adsList;
     private AdsConfigList mConfigList;
     private GCM gcm;
 
@@ -85,6 +84,7 @@ public class ActSplashScreen extends Activity {
         imageSplash.setImageResource(R.drawable.icon_launcher);
         Animation fadeInAnimation = AnimationUtils.loadAnimation(this, R.anim.fade);
         imageSplash.startAnimation(fadeInAnimation);
+        checkPreferences();
     }
 
     private void checkFirstTime(String intentType) {
@@ -103,10 +103,10 @@ public class ActSplashScreen extends Activity {
     }
 
     private void getAds() {
-        adsList = mConfigList.getAdList(this);
+        ArrayList<Ads> adsList = mConfigList.getAdList(this);
         if (adsList != null) {
             if (adsList.size() > 0) {
-                for (int i=0; i<adsList.size(); i++) {
+                for (int i=0; i< adsList.size(); i++) {
                     if (adsList.get(i).getmPosition() == Constant.ADS_TYPE_OPENING_POSITION) {
                         InterstitialAd interstitialAd = new InterstitialAd(this);
                         AdsConfig adsConfig = new AdsConfig();

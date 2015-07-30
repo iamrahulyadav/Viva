@@ -75,8 +75,6 @@ public class ActDetailChannel extends ActionBarActivity implements
     private TextView tvChannel;
     private LoadMoreListView listView;
     private LoadMoreListView listViewBigCard;
-    private AnimationAdapter mAnimAdapter;
-    private SwingBottomInAnimationAdapter swingBottomInAnimationAdapter;
     private Analytics analytics;
     private int dataSize = 0;
     private RippleView rippleView;
@@ -121,15 +119,15 @@ public class ActDetailChannel extends ActionBarActivity implements
         setActionBarTheme(color, channel);
 
         if (isInternetPresent) {
-            retrieveData(channel, channel_title, level);
+            retrieveData(channel_title, level);
         } else {
             checkCache(channel_title);
         }
     }
 
-    private void retrieveData(String channel, String channelTitle, String level) {
+    private void retrieveData(String channelTitle, String level) {
         StringRequest request = new StringRequest(Request.Method.GET,
-                getUrl(channelTitle, level) + "/screen/" + channel.replace(" ", "_") + "_" + channelTitle.replace(" ", "_") + "_screen",
+                getUrl(channelTitle, level),
                 new Response.Listener<String>() {
             @Override
             public void onResponse(String s) {
@@ -147,10 +145,8 @@ public class ActDetailChannel extends ActionBarActivity implements
                 Constant.TIME_OUT,
                 0,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        Global.getInstance(this).getRequestQueue().getCache().invalidate(
-                getUrl(channelTitle, level) + "/screen/" + channel.replace(" ", "_") + "_" + channelTitle.replace(" ", "_") + "_screen", true);
-        Global.getInstance(this).getRequestQueue().getCache()
-                .get(getUrl(channelTitle, level) + "/screen/" + channel.replace(" ", "_") + "_" + channelTitle.replace(" ", "_") + "_screen");
+        Global.getInstance(this).getRequestQueue().getCache().invalidate(getUrl(channelTitle, level), true);
+        Global.getInstance(this).getRequestQueue().getCache().get(getUrl(channelTitle, level));
         Global.getInstance(this).addToRequestQueue(request, Constant.JSON_REQUEST);
     }
 
@@ -188,12 +184,10 @@ public class ActDetailChannel extends ActionBarActivity implements
 
     private void checkCache(String channelTitle) {
         if (Global.getInstance(this).getRequestQueue().getCache()
-                .get(getUrl(channelTitle, level) + "/screen/" +
-                        channel.replace(" ", "_") + "_" + channelTitle.replace(" ", "_") + "_screen") != null) {
+                .get(getUrl(channelTitle, level)) != null) {
             String cachedResponse = new String(Global.getInstance(this)
                     .getRequestQueue().getCache()
-                    .get(getUrl(channelTitle, level) + "/screen/" +
-                            channel.replace(" ", "_") + "_" + channelTitle.replace(" ", "_") + "_screen").data);
+                    .get(getUrl(channelTitle, level)).data);
             parseData(cachedResponse, isLoadMoreContent);
         } else {
             progressWheel.setVisibility(View.GONE);
@@ -221,7 +215,7 @@ public class ActDetailChannel extends ActionBarActivity implements
                         String timestamp = jsonHeadline.getString(Constant.timestamp);
                         channelListArrayList.add(new ChannelList(id, title, channel,
                                 image_url, date_publish, url, timestamp));
-                        Log.i(Constant.TAG, "CHANNEL LIST : " + channelListArrayList.get(i).getTitle());
+                        Log.i(Constant.TAG, "Channel List : " + channelListArrayList.get(i).getTitle());
                     }
                 }
                 //Check Ads if exists
@@ -247,7 +241,7 @@ public class ActDetailChannel extends ActionBarActivity implements
             //Populate content
             if (channelListArrayList.size() > 0 || !channelListArrayList.isEmpty()) {
                 //Small Card List Style
-                mAnimAdapter = new ScaleInAnimationAdapter(adapter);
+                AnimationAdapter mAnimAdapter = new ScaleInAnimationAdapter(adapter);
                 mAnimAdapter.setAbsListView(listView);
                 if (!isLoadMore) {
                     listView.setAdapter(mAnimAdapter);
@@ -257,7 +251,7 @@ public class ActDetailChannel extends ActionBarActivity implements
                     listView.onLoadMoreComplete();
                 }
                 //Big Card List Style
-                swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(bigAdapter);
+                SwingBottomInAnimationAdapter swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(bigAdapter);
                 swingBottomInAnimationAdapter.setAbsListView(listViewBigCard);
                 assert swingBottomInAnimationAdapter.getViewAnimator() != null;
                 swingBottomInAnimationAdapter.getViewAnimator().setInitialDelayMillis(1000);
@@ -283,23 +277,21 @@ public class ActDetailChannel extends ActionBarActivity implements
     }
 
     private void showAds() {
-        if (ActDetailChannel.this != null) {
-            if (adsArrayList != null) {
-                if (adsArrayList.size() > 0) {
-                    AdsConfig adsConfig = new AdsConfig();
-                    for (int i=0; i<adsArrayList.size(); i++) {
-                        if (adsArrayList.get(i).getmPosition() == Constant.POSITION_BANNER_TOP) {
-                            if (publisherAdViewTop == null) {
-                                publisherAdViewTop = new PublisherAdView(this);
-                                adsConfig.setAdsBanner(publisherAdViewTop,
-                                        adsArrayList.get(i).getmUnitId(), Constant.POSITION_BANNER_TOP, mParentLayout);
-                            }
-                        } else if (adsArrayList.get(i).getmPosition() == Constant.POSITION_BANNER_BOTTOM) {
-                            if (publisherAdViewBottom == null) {
-                                publisherAdViewBottom = new PublisherAdView(this);
-                                adsConfig.setAdsBanner(publisherAdViewBottom,
-                                        adsArrayList.get(i).getmUnitId(), Constant.POSITION_BANNER_BOTTOM, mParentLayout);
-                            }
+        if (adsArrayList != null) {
+            if (adsArrayList.size() > 0) {
+                AdsConfig adsConfig = new AdsConfig();
+                for (int i=0; i<adsArrayList.size(); i++) {
+                    if (adsArrayList.get(i).getmPosition() == Constant.POSITION_BANNER_TOP) {
+                        if (publisherAdViewTop == null) {
+                            publisherAdViewTop = new PublisherAdView(this);
+                            adsConfig.setAdsBanner(publisherAdViewTop,
+                                    adsArrayList.get(i).getmUnitId(), Constant.POSITION_BANNER_TOP, mParentLayout);
+                        }
+                    } else if (adsArrayList.get(i).getmPosition() == Constant.POSITION_BANNER_BOTTOM) {
+                        if (publisherAdViewBottom == null) {
+                            publisherAdViewBottom = new PublisherAdView(this);
+                            adsConfig.setAdsBanner(publisherAdViewBottom,
+                                    adsArrayList.get(i).getmUnitId(), Constant.POSITION_BANNER_BOTTOM, mParentLayout);
                         }
                     }
                 }
@@ -333,6 +325,7 @@ public class ActDetailChannel extends ActionBarActivity implements
                     }
                 }
             }
+            assert menu != null;
             MenuItem mi = menu.add(Menu.NONE, R.id.action_change_layout, 2, "");
             mi.setIcon(R.drawable.ic_preview_small);
             mi.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_IF_ROOM);
@@ -346,6 +339,7 @@ public class ActDetailChannel extends ActionBarActivity implements
                     }
                 }
             }
+            assert menu != null;
             MenuItem mi = menu.add(Menu.NONE, R.id.action_change_layout, 2, "");
             mi.setIcon(R.drawable.ic_preview_big);
             mi.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_IF_ROOM);
@@ -421,7 +415,7 @@ public class ActDetailChannel extends ActionBarActivity implements
             if (isInternetPresent) {
                 rippleView.setVisibility(View.GONE);
                 progressWheel.setVisibility(View.VISIBLE);
-                retrieveData(channel, channel_title, level);
+                retrieveData(channel_title, level);
             }
         } else if (view.getId() == R.id.fab) {
             if (listView.getVisibility() == View.VISIBLE) {

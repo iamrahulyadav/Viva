@@ -12,6 +12,11 @@ public class Channel {
     private String title;
     private String image_url;
     private String kanal;
+    private String url;
+
+    public String getUrl() {
+        return url;
+    }
 
     public String getChannel_title() {
         return channel_title;
@@ -42,7 +47,8 @@ public class Channel {
     }
 
     public Channel(String channel_title, String id, String channel_id,
-                        String level, String title, String kanal, String image_url) {
+                   String level, String title, String kanal,
+                   String image_url, String url) {
         this.id = id;
         this.image_url = image_url;
         this.kanal = kanal;
@@ -50,6 +56,7 @@ public class Channel {
         this.level = level;
         this.channel_title = channel_title;
         this.title = title;
+        this.url = url;
     }
 
 }
